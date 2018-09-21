@@ -1,0 +1,16 @@
+version: 2
+jobs:
+  clang_7_0_0:
+    docker:
+      - image: enumack/mitama-env:clang-7.0.0
+    steps:
+      - checkout
+      - run: cmake --build . && ctest --no-label-summary
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      # GCC
+      # Clang
+      - clang_7_0_0
