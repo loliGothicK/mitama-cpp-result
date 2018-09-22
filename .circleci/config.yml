@@ -1,10 +1,12 @@
 version: 2
 jobs:
   clang_7_0_0:
+    working_directory: /mitama-cpp-result
     docker:
       - image: enumack/mitama-env:clang-7.0.0
     steps:
       - checkout
+      - run: ls
       - run: cmake --build . && ctest --no-label-summary
 
 workflows:
