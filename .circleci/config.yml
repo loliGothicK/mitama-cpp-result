@@ -7,7 +7,8 @@ jobs:
     steps:
       - checkout
       - run: ls
-      - run: cmake --build . && ctest --no-label-summary
+      - run: cmake --version
+      - run: cmake . && make && ctest --no-label-summary
 
 workflows:
   version: 2

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8)
 project(result VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-Wall -Werror")
