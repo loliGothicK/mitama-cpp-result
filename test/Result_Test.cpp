@@ -45,7 +45,8 @@ inline constexpr bool is_complete_type_v = is_complete_type<T>::value;
  * compile time type traits checking
  */
 
-#include "special_member_tests.hpp"
+// memory exhausted
+// #include "special_member_tests.hpp"
 
 struct Complete{};
 struct Incomplete;
