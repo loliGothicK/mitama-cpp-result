@@ -338,7 +338,7 @@ workflows:
       # - gcc_7_2_0: [virtual memory exhausted]
       - gcc_7_1_0:
           requires:
-            - gcc_7_2_0
+            - gcc_8_1_0
       # Clang
       - clang_HEAD:
           requires:
