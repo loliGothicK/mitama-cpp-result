@@ -1,5 +1,4 @@
-#include <Result.hpp>
-#include "gtest/gtest.h"
+#include "../include/Result.hpp"
 #include <boost/hana/assert.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/lambda/lambda.hpp>
@@ -9,6 +8,15 @@
 #include <regex>
 #include <stdexcept>
 #include <string>
+#include <cassert>
+
+
+#define ASSERT_SHOULD_BE_INVALID_EXPR(...) ASSERT_SHOULD_BE_INVALID_EXPR_IMPL1(__VA_ARGS__) \
+ASSERT_SHOULD_BE_INVALID_EXPR_IMPL2
+
+#define ASSERT_SHOULD_BE_INVALID_EXPR_IMPL1(...) static_assert(false?::mitama::make_overload([](auto x)->decltype(__VA_ARGS__, std::false_type{}){return{};},[](...)->std::true_type{return{};})
+#define ASSERT_SHOULD_BE_INVALID_EXPR_IMPL2(...) (::mitama::type_transfer<__VA_ARGS__>{}): ::mitama::protean_bool{})
+#define DECLVAL std::declval<typename decltype(x)::type>()
 
 using namespace boost::xpressive;
 using namespace rust_std;
@@ -18,26 +26,17 @@ namespace hana = boost::hana;
 using boost::lambda::_1;
 using boost::lambda::_2;
 
-#define assert_eq ASSERT_EQ
-#define assert_true ASSERT_TRUE
-#define assert_false ASSERT_FALSE
+#define assert_eq(A,B) assert([](auto&& x, auto&& y){ return x == y; }(A, B))
+#define assert_true(A) assert(A)
+#define assert_false(A) assert(!(A))
 
-struct is_complete_type_impl
-{
-  template <class T>
-  static auto check(T *) -> decltype(
-      sizeof(T),
-      std::true_type());
 
-  template <class T>
-  static auto check(...) -> std::false_type;
-};
+template <class T, class=void>
+struct is_complete_type: std::false_type {};
 
 template <class T>
-struct is_complete_type
-    : decltype(is_complete_type_impl::check<T>(nullptr))
-{
-};
+struct is_complete_type<T,std::void_t<decltype(sizeof(T))>>
+    : std::true_type {};
 
 template < class T >
 inline constexpr bool is_complete_type_v = is_complete_type<T>::value;
@@ -158,45 +157,40 @@ auto parse = [](str s) -> Result<T, str> {
   }
 };
 
-class ResultTest : public ::testing::Test
-{
-protected:
-  virtual void SetUp() {}
-};
+int main(){
 
-TEST_F(ResultTest, IsOkTest)
 {
   Result<u32, str> x = Ok(-3);
   assert_eq(x.is_ok(), true);
 
   Result<u32, str> y = Err("Some error message");
   assert_eq(y.is_ok(), false);
+  std::cout << "is_ok test passed !\n";
 }
-TEST_F(ResultTest, IsErrTest)
 {
   Result<u32, str> x = Ok(-3);
   assert_eq(x.is_err(), false);
 
   Result<u32, str> y = Err("Some error message");
   assert_eq(y.is_err(), true);
+  std::cout << "is_err test passed !\n";
 }
-TEST_F(ResultTest, OkTest)
 {
   Result<u32, str> x = Ok(2);
   assert_eq(x.err(), None);
 
   Result<int, str> y = Err("Nothing here");
   assert_eq(y.err(), Some("Nothing here"));
+  std::cout << "ok test passed !\n";
 }
-TEST_F(ResultTest, ErrTest)
 {
   Result<u32, str> x = Ok(2);
   assert_eq(x.err(), None);
 
   Result<u32, str> y = Err("Nothing here");
   assert_eq(y.err(), Some("Nothing here"));
+  std::cout << "err test passed !\n";
 }
-TEST_F(ResultTest, MapTest)
 {
   std::string line = "1,3,5,7";
 
@@ -207,8 +201,8 @@ TEST_F(ResultTest, MapTest)
       assert_true(res.ok().value() % 2 == 0);
     }
   }
+  std::cout << "map test passed !\n";
 }
-TEST_F(ResultTest, MapErrTest)
 {
   auto stringify = [](u32 x) -> str {
     return "error code: "s + std::to_string(x);
@@ -219,8 +213,8 @@ TEST_F(ResultTest, MapErrTest)
 
   Result<u32, u32> y = Err(13);
   assert_eq(y.map_err(stringify), Err("error code: 13"s));
+  std::cout << "map_err test passed !\n";
 }
-TEST_F(ResultTest, LogicalAndTest)
 {
   {
     Result<u32, str> x = Ok(2);
@@ -244,9 +238,8 @@ TEST_F(ResultTest, LogicalAndTest)
     Result<str, str> y = Ok("different result type"s);
     assert_eq(x && y, Ok("different result type"s));
   }
+  std::cout << "operator&& test passed !\n";
 }
-
-TEST_F(ResultTest, AndThenTest)
 {
   auto sq = [](u32 x) -> Result<u32, u32> { return Ok(x * x); };
   auto err = [](u32 x) -> Result<u32, u32> { return Err(x); };
@@ -255,9 +248,8 @@ TEST_F(ResultTest, AndThenTest)
   assert_eq(Ok(2u).and_then(sq).and_then(err), Err(4u));
   assert_eq(Ok(2u).and_then(err).and_then(sq), Err(2u));
   assert_eq(Err(3u).and_then(sq).and_then(sq), Err(3u));
+  std::cout << "and_then test passed !\n";
 }
-
-TEST_F(ResultTest, LogicalOrTest)
 {
   {
     Result<u32, str> x = Ok(2);
@@ -279,9 +271,8 @@ TEST_F(ResultTest, LogicalOrTest)
     Result<u32, str> y = Ok(100);
     assert_eq(x || y, Ok(2u));
   }
+  std::cout << "operator|| test passed !\n";
 }
-
-TEST_F(ResultTest, OrElseTest)
 {
   auto sq = [](u32 x) -> Result<u32, u32> { return Ok(x * x); };
   auto err = [](u32 x) -> Result<u32, u32> { return Err(x); };
@@ -290,25 +281,23 @@ TEST_F(ResultTest, OrElseTest)
   assert_eq(Ok(2).or_else(err).or_else(sq), Ok(2u));
   assert_eq(Err(3).or_else(sq).or_else(err), Ok(9u));
   assert_eq(Err(3).or_else(err).or_else(err), Err(3u));
+  std::cout << "or_else test passed !\n";
 }
-TEST_F(ResultTest, UnwrapOrTest)
 {
   Result<u32, u32> err = Err(2);
   Result<u32, u32> ok = Ok(2);
 
   assert_eq(ok.unwrap_or(1u), 2u);
   assert_eq(err.unwrap_or(1u), 1u);
+  std::cout << "unwrap_or test passed !\n";
 }
-
-TEST_F(ResultTest, UnwrapOrElseTest)
 {
   auto count = [](str x) -> size_t { return x.size(); };
 
   assert_eq(Ok(2).unwrap_or_else(count), 2);
   assert_eq(Err("foo"s).unwrap_or_else(count), 3);
+  std::cout << "unwrap_or_else test passed !\n";
 }
-
-TEST_F(ResultTest, UnwrapTest)
 {
   {
     Result<u32, str> x = Ok(2);
@@ -326,12 +315,10 @@ TEST_F(ResultTest, UnwrapTest)
             R"(runtime panicked at 'called `Result::unwrap() on an `Err` value: emergency failure', )") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
-    std::cout << p.what() << std::endl;
-    EXPECT_TRUE(regex_match(std::string{p.what()}, what, re));
+    assert_true(regex_match(std::string{p.what()}, what, re));
   }
+  std::cout << "unwrap test passed !\n";
 }
-
-TEST_F(ResultTest, UnwrapErrTest)
 {
   try {
     Result<u32, str> x = Ok(2);
@@ -345,17 +332,15 @@ TEST_F(ResultTest, UnwrapErrTest)
             R"(runtime panicked at 'called `Result::unwrap_err() on an `Ok` value: 2', )") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
-    std::cout << p.what() << std::endl;
-    EXPECT_TRUE(regex_match(std::string{p.what()}, what, re));
+    assert_true(regex_match(std::string{p.what()}, what, re));
   }
 
   {
     Result<u32, str> x = Err("emergency failure"s);
     assert_eq(x.unwrap_err(), "emergency failure"s);
   }
+  std::cout << "unwrap_err test passed !\n";
 }
-
-TEST_F(ResultTest, UnwrapOrDefaultTest)
 {
   auto good_year_from_input = "1909"s;
   auto bad_year_from_input = "190blarg"s;
@@ -364,9 +349,8 @@ TEST_F(ResultTest, UnwrapOrDefaultTest)
 
   assert_eq(1909, good_year);
   assert_eq(0, bad_year);
+  std::cout << "unwrap_or_default test passed !\n";
 }
-
-TEST_F(ResultTest, BasicUsageTest)
 {
   auto even = [](u32 u) -> Result<u32, str> {
     if (u % 2 == 0)
@@ -377,4 +361,9 @@ TEST_F(ResultTest, BasicUsageTest)
   auto func = [](auto u) -> Result<u32, str> { if(u%3==0) return Ok(1u); else return Err("error"s); };
   assert_eq(even(2).and_then(func), Err("error"s));
   assert_eq(even(2), Ok(2u));
+  std::cout << "basic usage test passed !\n";
+}
+
+std::cout << "\nall green !" << std::endl;
+
 }
