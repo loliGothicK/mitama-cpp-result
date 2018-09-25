@@ -329,23 +329,27 @@ workflows:
   wandbox:
     jobs:
       # GCC
-      - gcc_HEAD
+      # - gcc_HEAD [internal compiler error]
       - gcc_8_2_0
-      - gcc_8_1_0
-      - gcc_7_3_0
-      - gcc_7_2_0
-      - gcc_7_1_0
-      # - gcc_6_3_0
-      # - gcc_6_2_0
-      # - gcc_6_1_0
-      # - gcc_5_5_0
-      # - gcc_5_4_0
-      # - gcc_5_3_0
-      # - gcc_5_2_0
-      # - gcc_5_1_0
+      - gcc_8_1_0:
+          requires:
+            - gcc_8_2_0
+      # - gcc_7_3_0: [virtual memory exhausted]
+      # - gcc_7_2_0: [virtual memory exhausted]
+      - gcc_7_1_0:
+          requires:
+            - gcc_7_2_0
       # Clang
-      - clang_HEAD
-      - clang_7_0_0
-      - clang_6_0_1
-      - clang_6_0_0
+      - clang_HEAD:
+          requires:
+            - gcc_7_1_0
+      - clang_7_0_0:
+          requires:
+            - clang_HEAD
+      - clang_6_0_1:
+          requires:
+            - clang_7_0_0
+      - clang_6_0_0:
+          requires:
+            - clang_6_0_1
       # - clang_5_0_0 invoke_result is not supported
