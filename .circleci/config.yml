@@ -335,14 +335,14 @@ workflows:
       - gcc_7_3_0
       - gcc_7_2_0
       - gcc_7_1_0
-      - gcc_6_3_0
-      - gcc_6_2_0
-      - gcc_6_1_0
-      - gcc_5_5_0
-      - gcc_5_4_0
-      - gcc_5_3_0
-      - gcc_5_2_0
-      - gcc_5_1_0
+      # - gcc_6_3_0
+      # - gcc_6_2_0
+      # - gcc_6_1_0
+      # - gcc_5_5_0
+      # - gcc_5_4_0
+      # - gcc_5_3_0
+      # - gcc_5_2_0
+      # - gcc_5_1_0
       # Clang
       - clang_HEAD
       - clang_7_0_0
