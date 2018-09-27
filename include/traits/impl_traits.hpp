@@ -4,7 +4,7 @@
 #include <utility>
 #include <iostream>
 
-namespace rust_std::trait {
+namespace mitama::trait {
 
 // Trait Helpers
 

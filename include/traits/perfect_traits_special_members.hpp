@@ -1,7 +1,7 @@
 #pragma once
 #include <type_traits>
 
-namespace _detail
+namespace mitamagic
 {
 
 template <bool Copy, bool CopyAssignment,

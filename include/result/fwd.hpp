@@ -1,6 +1,6 @@
 #pragma once
 //! @cond
-namespace rust_std {
+namespace mitama {
 template <class T, class E, class /* for detection idiom */ = decltype(nullptr)>
 class Result;
 

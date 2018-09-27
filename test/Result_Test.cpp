@@ -19,7 +19,7 @@ ASSERT_SHOULD_BE_INVALID_EXPR_IMPL2
 #define DECLVAL std::declval<typename decltype(x)::type>()
 
 using namespace boost::xpressive;
-using namespace rust_std;
+using namespace mitama;
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 namespace hana = boost::hana;

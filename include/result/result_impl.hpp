@@ -3,7 +3,7 @@
 #include "detail.hpp"
 #include "../traits/impl_traits.hpp"
 
-namespace rust_std::result
+namespace mitama::result
 {
 
 // default injectors

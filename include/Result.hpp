@@ -23,12 +23,12 @@
  * If args include a value not formattable, raise an exception.
  */
 #define PANIC(...) \
-  throw ::rust_std::runtime_panic { macro_use, __FILE__, __LINE__, __VA_ARGS__ }
+  throw ::mitama::runtime_panic { macro_use, __FILE__, __LINE__, __VA_ARGS__ }
 
 class macro_use_tag_t{};
 inline static constexpr macro_use_tag_t macro_use{};
 
-namespace rust_std
+namespace mitama
 {
 /*!
  * \brief exceotion class.
@@ -85,12 +85,12 @@ template <class T>
 struct is_ok_type<Ok<T>> : std::true_type
 {
 };
-} // namespace rust_std
+} // namespace mitama
 
 #include "result/result_impl.hpp"
 //! @endcond
 
-namespace rust_std
+namespace mitama
 {
 /** @defgroup Result
  *  
@@ -100,7 +100,7 @@ namespace rust_std
 //!  Ok stat generator class.
 template <class T>
 class[[nodiscard]] Ok
-    : private _detail::perfect_trait_copy_move<
+    : private mitamagic::perfect_trait_copy_move<
           std::is_copy_constructible_v<T>,
           std::conjunction_v<std::is_copy_constructible<T>, std::is_copy_assignable<T>>,
           std::is_move_constructible_v<T>,
@@ -338,7 +338,7 @@ Ok(T &&)->Ok<std::decay_t<T>>;
  */
 template <class E>
 class[[nodiscard]] Err
-    : private _detail::perfect_trait_copy_move<
+    : private mitamagic::perfect_trait_copy_move<
           std::is_copy_constructible_v<E>,
           std::conjunction_v<std::is_copy_constructible<E>, std::is_copy_assignable<E>>,
           std::is_move_constructible_v<E>,
@@ -612,7 +612,7 @@ template <class T, class E>
 class[[nodiscard]] Result<T, E,
                           trait::where<std::is_destructible<T>,
                                        std::is_destructible<E>>>
-    : private _detail::perfect_trait_copy_move<
+    : private mitamagic::perfect_trait_copy_move<
           std::conjunction_v<std::is_copy_constructible<T>, std::is_copy_constructible<E>>,
           std::conjunction_v<std::is_copy_constructible<T>, std::is_copy_assignable<T>, std::is_copy_constructible<E>, std::is_copy_assignable<E>>,
           std::conjunction_v<std::is_move_constructible<T>, std::is_move_constructible<E>>,
@@ -796,7 +796,7 @@ public:
    * -------
    * @code
    *     using my_result = Result<std::tuple<int, int>, std::string>;
-   *     auto res = my_result( rust_std::in_place_ok, 1, 1 ); // Ok(std::tuple{1,1})
+   *     auto res = my_result( mitama::in_place_ok, 1, 1 ); // Ok(std::tuple{1,1})
    * @endcode
    */
   template <class... Args,
@@ -818,7 +818,7 @@ public:
    * -------
    * @code
    *     using my_result = Result<int, std::string>;
-   *     auto res = my_result( rust_std::in_place_err, 'a', 5 ); // Err("aaaaa")
+   *     auto res = my_result( mitama::in_place_err, 'a', 5 ); // Err("aaaaa")
    * @endcode
    */
   template <class... Args,
@@ -983,4 +983,4 @@ public:
 
 /** @} */ // end of Result
 
-} // namespace rust_std
+} // namespace mitama
