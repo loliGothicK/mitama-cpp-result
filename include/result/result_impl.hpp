@@ -190,19 +190,19 @@ struct ok_err_trait_injector<Result<T, E>,
    * This function can be used for control flow based on result values.
    */
   template <class O>
-  constexpr auto or_else(O &&op) const & -> std::enable_if_t<is_result_v<std::invoke_result_t<O, T>>,
-                                                             std::invoke_result_t<O, T>>
+  constexpr auto or_else(O &&op) const & -> std::enable_if_t<is_result_v<std::invoke_result_t<O, E>>,
+                                                             std::invoke_result_t<O, E>>
   {
-    using result_type = std::invoke_result_t<O, T>;
+    using result_type = std::invoke_result_t<O, E>;
     return static_cast<Result<T, E> const *>(this)->is_err()
                ? std::forward<O>(op)(std::get<Err<E>>(static_cast<Result<T, E> const *>(this)->storage_).x)
                : static_cast<result_type>(Ok{typename result_type::ok_type(std::get<Ok<T>>(static_cast<Result<T, E> const *>(this)->storage_).x)});
   }
   template <class O>
-  constexpr auto or_else(O &&op) && -> std::enable_if_t<is_result_v<std::invoke_result_t<O, T>>,
-                                                        std::invoke_result_t<O, T>>
+  constexpr auto or_else(O &&op) && -> std::enable_if_t<is_result_v<std::invoke_result_t<O, E>>,
+                                                        std::invoke_result_t<O, E>>
   {
-    using result_type = std::invoke_result_t<O, T>;
+    using result_type = std::invoke_result_t<O, E>;
     return static_cast<Result<T, E> *>(this)->is_err()
                ? std::forward<O>(op)(std::get<Err<E>>(std::move(static_cast<Result<T, E> *>(this)->storage_)).x)
                : static_cast<result_type>(Ok{typename result_type::ok_type(std::get<Ok<T>>(std::move(static_cast<Result<T, E> *>(this)->storage_)).x)});

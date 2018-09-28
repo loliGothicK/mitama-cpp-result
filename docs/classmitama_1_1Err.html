@@ -281,7 +281,7 @@ template&lt;class Op &gt; </div>
 </div><div class="memdoc">
 
 <p>If has err value apply operator. </p>
-<p class="">Always apply operator </p>
+<dl class="section remark"><dt>Remarks</dt><dd>The expression inside noexcept is equivalent to is_nothrow_invocable_v&lt;Op, E&gt;. This constructor shall not participate in overload resolution unless is_result_v&lt;std::invoke_result_t&lt;Op, E&gt;&gt; is true. Always apply operator </dd></dl>
 
 </div>
 </div>
