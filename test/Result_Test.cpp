@@ -11,10 +11,9 @@
 #include <cassert>
 
 
-#define ASSERT_SHOULD_BE_INVALID_EXPR(...) ASSERT_SHOULD_BE_INVALID_EXPR_IMPL1(__VA_ARGS__) \
-ASSERT_SHOULD_BE_INVALID_EXPR_IMPL2
+#define ASSERT_SHOULD_BE_INVALID_EXPR(...) ASSERT_SHOULD_BE_INVALID_EXPR_IMPL1(__VA_ARGS__)ASSERT_SHOULD_BE_INVALID_EXPR_IMPL2
 
-#define ASSERT_SHOULD_BE_INVALID_EXPR_IMPL1(...) static_assert(false?::mitama::make_overload([](auto x)->decltype(__VA_ARGS__, std::false_type{}){return{};},[](...)->std::true_type{return{};})
+#define ASSERT_SHOULD_BE_INVALID_EXPR_IMPL1(...) static_assert(false ? ::mitama::make_overload([](auto x)->decltype(__VA_ARGS__, std::false_type{}){return{};},[](...)->std::true_type{return{};})
 #define ASSERT_SHOULD_BE_INVALID_EXPR_IMPL2(...) (::mitama::type_transfer<__VA_ARGS__>{}): ::mitama::protean_bool{})
 #define DECLVAL std::declval<typename decltype(x)::type>()
 

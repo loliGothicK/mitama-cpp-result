@@ -979,7 +979,17 @@ public:
   {
     return this->is_err() ? this->unwrap_err() == rhs.x : false;
   }
+
 };
+
+template <class Ok, class Err, trait::where<trait::formattable<Ok>, trait::formattable<Err>> = nullptr>
+std::ostream &operator<<(std::ostream &os, Result<Ok, Err> const &res)
+{
+  if (res.is_ok())
+    return os << boost::format("Ok(%1%)") % res.unwrap();
+  else
+    return os << boost::format("Err(%1%)") % res.unwrap_err();
+}
 
 /** @} */ // end of Result
 
