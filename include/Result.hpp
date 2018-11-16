@@ -802,8 +802,8 @@ public:
   template <class... Args,
             where<std::is_constructible<T, Args...>> = required>
   explicit Result(in_place_ok_t, Args && ... args)
+      : storage_{std::in_place_type<Ok<T>>, std::forward<Args>(args)...}
   {
-    construct_ok(std::forward<Args>(args)...);
   }
 
   /*!
@@ -824,8 +824,8 @@ public:
   template <class... Args,
             where<std::is_constructible<E, Args...>> = required>
   explicit Result(in_place_err_t, Args && ... args)
+      : storage_{std::in_place_type<Err<E>>, std::forward<Args>(args)...}
   {
-    construct_err(std::forward<Args>(args)...);
   }
 
   /*!
