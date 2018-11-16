@@ -9,7 +9,7 @@
 #include <stdexcept>
 #include <string>
 #include <cassert>
-
+#include <array>
 
 #define ASSERT_SHOULD_BE_INVALID_EXPR(...) ASSERT_SHOULD_BE_INVALID_EXPR_IMPL1(__VA_ARGS__)ASSERT_SHOULD_BE_INVALID_EXPR_IMPL2
 
@@ -362,6 +362,15 @@ int main(){
   assert_eq(even(2).and_then(func), Err("error"s));
   assert_eq(even(2), Ok(2u));
   std::cout << "basic usage test passed !\n";
+}
+{
+  auto res = Result<int,int>{Ok(2)};
+  res = Result<int, int>{Err(2)};
+  (void)Result<std::string, double>{in_place_ok, "hoge"};
+  (void)Result<double, std::string>{in_place_err, "hoge"};
+
+  res = Ok(1);
+  res = Err(2);
 }
 
 std::cout << "\nall green !" << std::endl;
