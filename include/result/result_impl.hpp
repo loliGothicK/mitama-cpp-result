@@ -25,10 +25,10 @@ struct ok_err_trait_injector
 };
 
 template <class, class = std::nullptr_t> 
-struct printer_friend_injector {};
+class printer_friend_injector {};
 
 template <class T>
-struct printer_friend_injector<Ok<T>,
+class printer_friend_injector<Ok<T>,
                                trait::where<
                                    trait::formattable<T>>>
 {
@@ -36,13 +36,14 @@ struct printer_friend_injector<Ok<T>,
   {
     return os << "Ok(" << static_cast<const Ok<T> *>(this)->x << ")";
   }
+public:
   friend std::ostream &operator<<(std::ostream& os, const Ok<T> &ok) {
     return ok.print(os);
   }
 };
 
 template <class T>
-struct printer_friend_injector<Err<T>,
+class printer_friend_injector<Err<T>,
                                trait::where<
                                    trait::formattable<T>>>
 {
@@ -50,6 +51,7 @@ struct printer_friend_injector<Err<T>,
   {
     return os << "Err(" << static_cast<const Err<T> *>(this)->x << ")";
   }
+public:
   friend std::ostream &operator<<(std::ostream &os, const Err<T> &err)
   {
     return err.print(os);

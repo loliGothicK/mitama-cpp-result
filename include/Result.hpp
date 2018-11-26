@@ -840,7 +840,7 @@ public:
    *
    * This constructor be a overload condidate
    * if and only if
-   * E is conctructible from Args... ,
+   * E is conctructible from (std::initializer_list<U>, Args...) ,
    * otherwise be excluded from overload condidates.
    *
    * Example
