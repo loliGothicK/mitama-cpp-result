@@ -120,6 +120,8 @@ class[[nodiscard]] Ok
   friend struct result::err_trait_injector;
   template <class, class>
   friend struct result::ok_err_trait_injector;
+  template <class, class>
+  friend struct result::printer_friend_injector;
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
 
@@ -323,6 +325,7 @@ public:
   {
     return false;
   }
+
 };
 
 /*!
@@ -343,7 +346,9 @@ class[[nodiscard]] Err
           std::conjunction_v<std::is_copy_constructible<E>, std::is_copy_assignable<E>>,
           std::is_move_constructible_v<E>,
           std::conjunction_v<std::is_move_constructible<E>, std::is_move_assignable<E>>,
-          Err<E>>
+          Err<E>>,
+      public result::impl<Err<E>>
+
 {
   //! @cond
   template <class>
@@ -358,6 +363,8 @@ class[[nodiscard]] Err
   friend struct result::err_trait_injector;
   template <class, class>
   friend struct result::ok_err_trait_injector;
+  template <class, class>
+  friend struct result::printer_friend_injector;
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
 
