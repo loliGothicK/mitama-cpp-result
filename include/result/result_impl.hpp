@@ -24,6 +24,38 @@ struct ok_err_trait_injector
 {
 };
 
+template <class, class = std::nullptr_t> 
+struct printer_friend_injector {};
+
+template <class T>
+struct printer_friend_injector<Ok<T>,
+                               trait::where<
+                                   trait::formattable<T>>>
+{
+  std::ostream& print(std::ostream &os) const
+  {
+    return os << "Ok(" << static_cast<const Ok<T> *>(this)->x << ")";
+  }
+  friend std::ostream &operator<<(std::ostream& os, const Ok<T> &ok) {
+    return ok.print(os);
+  }
+};
+
+template <class T>
+struct printer_friend_injector<Err<T>,
+                               trait::where<
+                                   trait::formattable<T>>>
+{
+  std::ostream& print(std::ostream &os) const
+  {
+    return os << "Err(" << static_cast<const Err<T> *>(this)->x << ")";
+  }
+  friend std::ostream &operator<<(std::ostream &os, const Err<T> &err)
+  {
+    return err.print(os);
+  }
+};
+
 // copy-move injector
 template <class T, class E>
 struct ok_trait_injector<Result<T, E>,
@@ -339,7 +371,8 @@ struct impl
     : unwrap_or_default_injector<T>,
       ok_trait_injector<T>,
       err_trait_injector<T>,
-      ok_err_trait_injector<T>
+      ok_err_trait_injector<T>,
+      printer_friend_injector<T>
 {
 };
 

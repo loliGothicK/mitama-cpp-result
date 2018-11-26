@@ -372,6 +372,18 @@ int main(){
   res = Ok(1);
   res = Err(2);
 }
+{
+  using namespace std::literals;
+  std::stringstream ss;
+  ss << Ok(1);
+  assert_eq(ss.str(), "Ok(1)"s);
+}
+{
+  using namespace std::literals;
+  std::stringstream ss;
+  ss << Err(1);
+  assert_eq(ss.str(), "Err(1)"s);
+}
 
 std::cout << "\nall green !" << std::endl;
 
