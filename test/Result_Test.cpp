@@ -368,9 +368,13 @@ int main(){
   res = Result<int, int>{Err(2)};
   (void)Result<std::string, double>{in_place_ok, "hoge"};
   (void)Result<double, std::string>{in_place_err, "hoge"};
+  (void)Result<std::vector<int>, double>{in_place_ok, {1, 2, 3, 4}};
+  (void)Result<double, std::vector<double>>{in_place_err, {1., 2., 3., 4.}};
 
   res = Ok(1);
   res = Err(2);
+
+  std::cout << "constructors and assignments test passed !\n";
 }
 {
   using namespace std::literals;

@@ -836,6 +836,50 @@ public:
   }
 
   /*!
+   * \biref constructor for ok value
+   *
+   * This constructor be a overload condidate
+   * if and only if
+   * E is conctructible from Args... ,
+   * otherwise be excluded from overload condidates.
+   *
+   * Example
+   * -------
+   * @code
+   *     using my_result = Result<int, std::string>;
+   *     auto res = my_result( mitama::in_place_err, 'a', 5 ); // Err("aaaaa")
+   * @endcode
+   */
+  template <class U, class... Args,
+            where<std::is_constructible<T, std::initializer_list<U>, Args...>> = required>
+  explicit Result(in_place_ok_t, std::initializer_list<U> il, Args && ... args)
+      : storage_{std::in_place_type<Ok<T>>, il, std::forward<Args>(args)...}
+  {
+  }
+
+  /*!
+   * \biref constructor for ok value
+   *
+   * This constructor be a overload condidate
+   * if and only if
+   * E is conctructible from Args... ,
+   * otherwise be excluded from overload condidates.
+   *
+   * Example
+   * -------
+   * @code
+   *     using my_result = Result<int, std::string>;
+   *     auto res = my_result( mitama::in_place_err, 'a', 5 ); // Err("aaaaa")
+   * @endcode
+   */
+  template <class U, class... Args,
+            where<std::is_constructible<E, Args...>> = required>
+  explicit Result(in_place_err_t, std::initializer_list<U> il, Args && ... args)
+      : storage_{std::in_place_type<Err<E>>, il, std::forward<Args>(args)...}
+  {
+  }
+
+  /*!
    * \brief Returns true if the result is Ok.
    * 
    * Example

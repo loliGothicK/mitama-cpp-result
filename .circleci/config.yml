@@ -31,8 +31,6 @@ workflows:
       - test:
           compiler: clang-head
       - test:
-          compiler: clang-head
-      - test:
           compiler: clang-7.0.0
       - test:
           compiler: clang-6.0.1
@@ -48,4 +46,3 @@ workflows:
           compiler: gcc-7.2.0
       - test:
           compiler: gcc-7.1.0
-
