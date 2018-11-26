@@ -64,11 +64,6 @@ struct ok_trait_injector<Result<T, E>,
                          trait::where<
                              std::is_copy_constructible<T>>>
 {
-  /*!
-   * \brief Converts from Result<T, E> to std::optional<T>.
-   * 
-   * Converts self into an std::optional<T>, copying self, and discarding the error, if any.
-   */
   constexpr std::optional<T> ok() const &
   {
     if (static_cast<Result<T, E> const *>(this)->is_ok())
@@ -81,11 +76,6 @@ struct ok_trait_injector<Result<T, E>,
     }
   }
 
-  /*!
-   * \brief Converts from Result<T, E> to std::optional<T>.
-   * 
-   * Converts self into an std::optional<T>, comsuming self, and discarding the error, if any.
-   */
   constexpr std::optional<T> ok() &&
   {
     if (static_cast<Result<T, E> *>(this)->is_ok())
@@ -103,11 +93,6 @@ struct err_trait_injector<Result<T, E>,
                           trait::where<
                               std::is_copy_constructible<E>>>
 {
-  /*!
-   * \brief Converts from Result<T, E> to std::optional<E>.
-   * 
-   * Converts self into an std::optional<E>, copying self, and discarding the success value, if any.
-   */
   constexpr std::optional<E> err() const &
   {
     if (static_cast<Result<T, E> const *>(this)->is_err())
@@ -119,11 +104,7 @@ struct err_trait_injector<Result<T, E>,
       return std::optional<E>{std::nullopt};
     }
   }
-  /*!
-   * \brief Converts from Result<T, E> to std::optional<E>.
-   * 
-   * Converts self into an std::optional<E>, consuming self, and discarding the success value, if any.
-   */
+
   constexpr std::optional<E> err() &&
   {
     if (static_cast<Result<T, E> *>(this)->is_err())
@@ -143,11 +124,6 @@ struct ok_err_trait_injector<Result<T, E>,
                                  std::is_copy_constructible<T>,
                                  std::is_copy_constructible<E>>>
 {
-  /*!
-   * \brief Maps a Result<T, E> to Result<U, E> by applying a function to a contained Ok value, leaving an Err value untouched.
-   * 
-   * This function can be used to compose the results of two functions.
-   */
   template <class O>
   constexpr auto map(O &&op) const & -> std::enable_if_t<std::is_invocable_v<O, T>,
                                                          Result<std::invoke_result_t<O, T>, E>>
@@ -167,11 +143,7 @@ struct ok_err_trait_injector<Result<T, E>,
                ? static_cast<result_type>(Ok{std::forward<O>(op)(std::get<Ok<T>>(std::move(static_cast<Result<T, E> *>(this)->storage_)).x)})
                : static_cast<result_type>(Err{std::get<Err<E>>(std::move(static_cast<Result<T, E> *>(this)->storage_)).x});
   }
-  /*!
-   * \brief Maps a Result<T, E> to Result<T, F> by applying a function to a contained Err value, leaving an Ok value untouched.
-   * 
-   * This function can be used to pass through a successful result while handling an error.
-   */
+
   template <class O>
   constexpr auto map_err(O &&op) const & -> std::enable_if_t<std::is_invocable_v<O, E>,
                                                              Result<T, std::invoke_result_t<O, E>>>
@@ -190,11 +162,7 @@ struct ok_err_trait_injector<Result<T, E>,
                ? static_cast<result_type>(Err{std::forward<O>(op)(std::get<Err<E>>(std::move(static_cast<Result<T, E> *>(this)->storage_)).x)})
                : static_cast<result_type>(Ok{std::get<Ok<T>>(std::move(static_cast<Result<T, E> *>(this)->storage_)).x});
   }
-  /*!
-   * \brief Calls op if the result is Ok, otherwise returns the Err value of self.
-   * 
-   * This function can be used for control flow based on Result values.
-   */
+
   template <class O>
   constexpr auto and_then(O &&op) const & -> std::enable_if_t<is_result_v<std::invoke_result_t<O, T>>,
                                                               std::invoke_result_t<O, T>>
@@ -204,11 +172,7 @@ struct ok_err_trait_injector<Result<T, E>,
                ? std::forward<O>(op)(std::get<Ok<T>>(static_cast<Result<T, E> const *>(this)->storage_).x)
                : static_cast<result_type>(Err{typename result_type::err_type(std::get<Err<E>>(static_cast<Result<T, E> const *>(this)->storage_).x)});
   }
-  /*!
-   * \brief Calls op if the result is Ok, otherwise returns the Err value of self.
-   * 
-   * This function can be used for control flow based on Result values.
-   */
+
   template <class O>
   constexpr auto and_then(O &&op) && -> std::enable_if_t<is_result_v<std::invoke_result_t<O, T>>,
                                                          std::invoke_result_t<O, T>>
@@ -218,11 +182,7 @@ struct ok_err_trait_injector<Result<T, E>,
                ? std::forward<O>(op)(std::get<Ok<T>>(std::move(static_cast<Result<T, E> *>(this)->storage_)).x)
                : static_cast<result_type>(Err{typename result_type::err_type(std::get<Err<E>>(std::move(static_cast<Result<T, E> *>(this)->storage_)).x)});
   }
-  /*!
-   * \brief Calls op if the result is Err, otherwise returns the Ok value of self.
-   * 
-   * This function can be used for control flow based on result values.
-   */
+
   template <class O>
   constexpr auto or_else(O &&op) const & -> std::enable_if_t<is_result_v<std::invoke_result_t<O, E>>,
                                                              std::invoke_result_t<O, E>>
@@ -251,11 +211,7 @@ struct ok_trait_injector<Result<T, E>,
                        std::is_move_constructible<T>>>
 {
   constexpr std::optional<T> ok() const & = delete;
-  /*!
-   * \brief Converts from Result<T, E> to std::optional<T>.
-   * 
-   * Converts self into an std::optional<T>, copying self, and discarding the error, if any.
-   */
+
   constexpr std::optional<T> ok() &&
   {
     if (static_cast<Result<T, E> *>(this)->is_ok())
@@ -275,11 +231,7 @@ struct err_trait_injector<Result<T, E>,
                        std::is_move_constructible<E>>>
 {
   constexpr std::optional<E> err() const & = delete;
-  /*!
-   * \brief Converts from Result<T, E> to std::optional<E>.
-   * 
-   * Converts self into an std::optional<E>, consuming self, and discarding the success value, if any.
-   */
+
   constexpr auto err() &&
   {
     if (static_cast<Result<T, E> *>(this)->is_err())
@@ -324,11 +276,7 @@ struct ok_err_trait_injector<Result<T, E>,
                ? static_cast<result_type>(Err{std::forward<O>(op)(std::get<Err<E>>(std::move(static_cast<Result<T, E> *>(this)->storage_)).x)})
                : static_cast<result_type>(Ok{std::get<Ok<T>>(std::move(static_cast<Result<T, E> *>(this)->storage_)).x});
   }
-  /*!
-   * \brief Calls op if the result is Ok, otherwise returns the Err value of self.
-   * 
-   * This function can be used for control flow based on Result values.
-   */
+
   template <class O>
   constexpr auto and_then(O &&op) && -> std::enable_if_t<is_result_v<std::invoke_result_t<O, T>>,
                                                          std::invoke_result_t<O, T>>
@@ -368,6 +316,7 @@ struct unwrap_or_default_injector<Ok<T>,
   }
 };
 
+// impl Injector
 template <class T>
 struct impl
     : unwrap_or_default_injector<T>,

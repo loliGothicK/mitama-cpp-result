@@ -5,43 +5,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Mitama.Result: User Manual</title>
+<title>My Project: User Manual</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
-<link href="navtree.css" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="resize.js"></script>
-<script type="text/javascript" src="navtreedata.js"></script>
-<script type="text/javascript" src="navtree.js"></script>
-<script type="text/javascript">
-/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-  $(document).ready(initResizable);
-/* @license-end */</script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
-<script type="text/javascript">
-/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-  $(document).ready(function() { init_search(); });
-/* @license-end */
-</script>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX","output/HTML-CSS"],
-});
-// Copyright Louis Dionne 2013-2017
-// Distributed under the Boost Software License, Version 1.0.
-// (See accompanying file LICENSE.md or copy at http://boost.org/LICENSE_1_0.txt)
-MathJax.Hub.Config({
-    "HTML-CSS": {
-        linebreaks: {
-            automatic: true,
-            width: "75% container"
-        }
-    }
-});
-</script><script type="text/javascript" async="async" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -51,26 +21,9 @@ MathJax.Hub.Config({
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Mitama.Result
-   &#160;<span id="projectnumber">1.0.0</span>
+   <div id="projectname">My Project
    </div>
-   <div id="projectbrief">algebraic data type for error handling.</div>
   </td>
-   <td>        <div id="MSearchBox" class="MSearchBoxInactive">
-        <span class="left">
-          <img id="MSearchSelect" src="search/mag_sel.png"
-               onmouseover="return searchBox.OnSearchSelectShow()"
-               onmouseout="return searchBox.OnSearchSelectHide()"
-               alt=""/>
-          <input type="text" id="MSearchField" value="Search" accesskey="S"
-               onfocus="searchBox.OnSearchFieldFocus(true)" 
-               onblur="searchBox.OnSearchFieldFocus(false)" 
-               onkeyup="searchBox.OnSearchFieldChange(event)"/>
-          </span><span class="right">
-            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.png" alt=""/></a>
-          </span>
-        </div>
-</td>
  </tr>
  </tbody>
 </table>
@@ -82,23 +35,17 @@ MathJax.Hub.Config({
 var searchBox = new SearchBox("searchBox", "search",false,'Search');
 /* @license-end */
 </script>
-</div><!-- top -->
-<div id="side-nav" class="ui-resizable side-nav-resizable">
-  <div id="nav-tree">
-    <div id="nav-tree-contents">
-      <div id="nav-sync" class="sync"></div>
-    </div>
-  </div>
-  <div id="splitbar" style="-moz-user-select:none;" 
-       class="ui-resizable-handle">
-  </div>
-</div>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('index.html','');});
-/* @license-end */
-</script>
-<div id="doc-content">
+$(function() {
+  initMenu('',true,false,'search.php','Search');
+  $(document).ready(function() { init_search(); });
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -120,7 +67,7 @@ $(document).ready(function(){initNavTree('index.html','');});
 <div class="contents">
 <div class="toc"><h3>Table of Contents</h3>
 <ul><li class="level1"><a href="#tutorial-description">Description</a></li>
-<li class="level1"><a href="#tutorial-installation">Prerequisites</a></li>
+<li class="level1"><a href="#tutorial-installation">Prerequisites and installation</a></li>
 <li class="level1"><a href="#tutorial-basics">Basic Usage</a></li>
 </ul>
 </div>
@@ -128,9 +75,8 @@ $(document).ready(function(){initNavTree('index.html','');});
 <h1><a class="anchor" id="tutorial-description"></a>
 Description</h1>
 <p class="">Result is a header only C++17 library for error handling.</p>
-<p class="">Result is a type that represents either success (Ok) or failure (Err).</p>
 <h1><a class="anchor" id="tutorial-installation"></a>
-Prerequisites</h1>
+Prerequisites and installation</h1>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">Compiler/Toolchain  </th><th class="markdownTableHeadNone">Status   </th></tr>
@@ -139,7 +85,7 @@ Prerequisites</h1>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">gcc &gt;= 7.1.0  </td><td class="markdownTableBodyNone">Testing on Wandbox; tested on each push to GitHub   </td></tr>
 </table>
-<p class="">More specifically, Mitama.Result requires a compiler/standard library supporting the following C++17 features:</p>
+<p class="">More specifically, Hana requires a compiler/standard library supporting the following C++17 features:</p>
 <ul>
 <li>constexpr if</li>
 <li>inline variables</li>
@@ -151,19 +97,16 @@ Prerequisites</h1>
 <h1><a class="anchor" id="tutorial-basics"></a>
 Basic Usage</h1>
 <p class="">This is a bad code, see below.</p>
-<p class="">If this program fails to assert, you don't know the reason for the error.</p>
+<p class="">If this program fail to assert, you don't know the reason for the error.</p>
 <div class="fragment"><div class="line"><span class="keywordtype">bool</span> func(<span class="keywordtype">int</span> a) {</div><div class="line">  <span class="keywordflow">if</span> ( first check )</div><div class="line">    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div><div class="line">  <span class="keywordflow">if</span> ( second check )</div><div class="line">    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div><div class="line">  <span class="keywordflow">if</span> ( third check )</div><div class="line">    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div><div class="line"></div><div class="line">  <span class="comment">// function body...</span></div><div class="line"></div><div class="line">  <span class="keywordflow">return</span> <span class="keyword">true</span>;</div><div class="line">}</div><div class="line"><span class="comment">// ...</span></div><div class="line"></div><div class="line">assert(func(42));</div></div><!-- fragment --><p class="">Here is a code using Result.</p>
-<p class="">Even when this program fails to assert, you can get the reason for the error.</p>
+<p class="">If this program fail to assert, and you can get the reason for the error.</p>
 <div class="fragment"><div class="line"><span class="keyword">auto</span> func(<span class="keywordtype">int</span> a) -&gt; <a class="code" href="classmitama_1_1Result.html">mitama::Result&lt;int, std::string&gt;</a> {</div><div class="line">  <span class="keywordflow">if</span> ( first check )</div><div class="line">    <span class="keywordflow">return</span> <a class="code" href="classmitama_1_1Err.html">mitama::Err</a>(<span class="stringliteral">&quot;first check failed&quot;</span>);</div><div class="line">  <span class="keywordflow">if</span> ( second check )</div><div class="line">    <span class="keywordflow">return</span> <a class="code" href="classmitama_1_1Err.html">mitama::Err</a>(<span class="stringliteral">&quot;second check failed&quot;</span>);</div><div class="line">  <span class="keywordflow">if</span> ( third check )</div><div class="line">    <span class="keywordflow">return</span> <a class="code" href="classmitama_1_1Err.html">mitama::Err</a>(<span class="stringliteral">&quot;third check failed&quot;</span>);</div><div class="line"></div><div class="line">  <span class="comment">// function body...</span></div><div class="line"></div><div class="line">  <span class="keywordflow">return</span> <a class="code" href="classmitama_1_1Ok.html">mitama::Ok</a>(42);</div><div class="line">}</div><div class="line"><span class="comment">// ...</span></div><div class="line"></div><div class="line"><span class="keywordtype">int</span> value func(42).unwrap(); <span class="comment">// if fail to unwrap, raise runtime_panic and you see reason for the error.</span></div></div><!-- fragment --> </div></div><!-- PageDoc -->
 </div><!-- contents -->
-</div><!-- doc-content -->
 <!-- start footer part -->
-<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
-  <ul>
-    <li class="footer">Generated by
-    <a href="http://www.doxygen.org/index.html">
-    <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>
-  </ul>
-</div>
+<hr class="footer"/><address class="footer"><small>
+Generated by &#160;<a href="http://www.doxygen.org/index.html">
+<img class="footer" src="doxygen.png" alt="doxygen"/>
+</a> 1.8.15
+</small></address>
 </body>
 </html>

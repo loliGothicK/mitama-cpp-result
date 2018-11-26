@@ -6,8 +6,9 @@ var indexSectionsWithContent =
   3: "aeimoru",
   4: "i",
   5: "eo",
-  6: "m",
-  7: "u"
+  6: "o",
+  7: "m",
+  8: "u"
 };
 
 var indexSectionNames =
@@ -18,8 +19,9 @@ var indexSectionNames =
   3: "functions",
   4: "variables",
   5: "typedefs",
-  6: "groups",
-  7: "pages"
+  6: "related",
+  7: "groups",
+  8: "pages"
 };
 
 var indexSectionLabels =
@@ -30,7 +32,8 @@ var indexSectionLabels =
   3: "Functions",
   4: "Variables",
   5: "Typedefs",
-  6: "Modules",
-  7: "Pages"
+  6: "Friends",
+  7: "Modules",
+  8: "Pages"
 };
 
