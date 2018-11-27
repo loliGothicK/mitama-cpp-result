@@ -388,6 +388,43 @@ int main(){
   ss << Err(1);
   assert_eq(ss.str(), "Err(1)"s);
 }
+{
+  using namespace std::literals;
+  std::stringstream ss;
+  ss << Result<int, std::string>{Ok(1)};
+  assert_eq(ss.str(), "Ok(1)"s);
+}
+{
+  using namespace std::literals;
+  std::stringstream ss;
+  ss << Result<int, std::string>{Err("hoge"s)};
+  assert_eq(ss.str(), "Err(hoge)"s);
+}
+{
+  using namespace std::literals;
+  std::stringstream ss;
+  ss << Ok(std::vector<std::string>{"foo"s, "bar"s});
+  assert_eq(ss.str(), "Ok([foo,bar])"s);
+}
+{
+  using namespace std::literals;
+  std::stringstream ss;
+  ss << Err(std::vector<std::string>{"foo"s, "bar"s});
+  assert_eq(ss.str(), "Err([foo,bar])"s);
+}
+{
+  using namespace std::literals;
+  std::stringstream ss;
+  ss << Err("foo"s);
+  assert_eq(ss.str(), "Err(foo)"s);
+}
+{
+  using namespace std::literals;
+  auto res = Result<int, std::vector<int>>{in_place_err, {1,2,3}};
+  assert_eq((boost::format("%1%") % res).str(), "Err([1,2,3])"s);
+  res = Ok(1);
+  assert_eq((boost::format("%1%") % res).str(), "Ok(1)"s);
+}
 
 std::cout << "\nall green !" << std::endl;
 
