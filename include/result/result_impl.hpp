@@ -124,7 +124,8 @@ class printer_friend_injector<Result<T, E>,
         return os << "Ok(" << std::get<Ok<T>>(static_cast<Result<T, E> const *>(this)->storage_).x << ")";
       }
     }
-    else{
+    else
+    {
       if constexpr (trait::formattable_range<E>::value)
       {
         auto iter = std::begin(std::get<Err<E>>(static_cast<Result<T, E> const *>(this)->storage_).x);

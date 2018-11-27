@@ -277,8 +277,8 @@ int main(){
   auto sq = [](u32 x) -> Result<u32, u32> { return Ok(x * x); };
   auto err = [](u32 x) -> Result<u32, u32> { return Err(x); };
 
-  assert_eq(Ok(2).or_else(sq).or_else(sq), Ok(2u));
-  assert_eq(Ok(2).or_else(err).or_else(sq), Ok(2u));
+  assert_eq(Ok(2).or_else(sq).or_else(sq), Ok(2));
+  assert_eq(Ok(2).or_else(err).or_else(sq), Ok(2));
   assert_eq(Err(3).or_else(sq).or_else(err), Ok(9u));
   assert_eq(Err(3).or_else(err).or_else(err), Err(3u));
   std::cout << "or_else test passed !\n";
@@ -295,13 +295,13 @@ int main(){
   auto count = [](str x) -> size_t { return x.size(); };
 
   assert_eq(Ok(2).unwrap_or_else(count), 2);
-  assert_eq(Err("foo"s).unwrap_or_else(count), 3);
+  assert_eq(Err("foo"s).unwrap_or_else(count), 3ull);
   std::cout << "unwrap_or_else test passed !\n";
 }
 {
   {
     Result<u32, str> x = Ok(2);
-    assert_eq(x.unwrap(), 2);
+    assert_eq(x.unwrap(), 2u);
   }
   try {
     Result<u32, str> x = Err("emergency failure"s);

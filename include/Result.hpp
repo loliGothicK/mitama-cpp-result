@@ -93,7 +93,7 @@ class[[nodiscard]] Ok
   template <class, class>
   friend struct result::ok_err_trait_injector;
   template <class, class>
-  friend struct result::printer_friend_injector;
+  friend class result::printer_friend_injector;
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
 
@@ -230,7 +230,7 @@ class[[nodiscard]] Err
   template <class, class>
   friend struct result::ok_err_trait_injector;
   template <class, class>
-  friend struct result::printer_friend_injector;
+  friend class result::printer_friend_injector;
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
 
@@ -383,7 +383,7 @@ class[[nodiscard]] Result<T, E,
   friend struct result::ok_err_trait_injector;
   std::variant<Ok<T>, Err<E>> storage_;
   template <class, class>
-  friend struct result::printer_friend_injector;
+  friend class result::printer_friend_injector;
 
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
