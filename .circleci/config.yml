@@ -18,7 +18,7 @@ jobs:
       - run: curl -sLJO https://github.com/LoliGothick/cbt/releases/download/v0.5.2/cbt_linux_amd64.tar
       - run: tar -vzxf ./cbt_linux_amd64.tar
       - run: chmod +x ./cbt
-      - run: ./cbt wandbox cpp test/Result_Test.cpp --compiler=<< parameters.compiler >> --std=c++17 --boost=1.65.1
+      - run: ./cbt wandbox cpp test/Result_Test.cpp --compiler=<< parameters.compiler >> --std=c++17 --boost=1.65.1 --warning --pedantic=errors
       - store_artifacts:
           path: /results/permlink
           destination: raw-test-output
