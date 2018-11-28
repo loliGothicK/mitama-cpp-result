@@ -277,8 +277,8 @@ int main(){
   auto sq = [](u32 x) -> Result<u32, u32> { return Ok(x * x); };
   auto err = [](u32 x) -> Result<u32, u32> { return Err(x); };
 
-  assert_eq(Ok(2).or_else(sq).or_else(sq), Ok(2u));
-  assert_eq(Ok(2).or_else(err).or_else(sq), Ok(2u));
+  assert_eq(Ok(2).or_else(sq).or_else(sq), Ok(2));
+  assert_eq(Ok(2).or_else(err).or_else(sq), Ok(2));
   assert_eq(Err(3).or_else(sq).or_else(err), Ok(9u));
   assert_eq(Err(3).or_else(err).or_else(err), Err(3u));
   std::cout << "or_else test passed !\n";
@@ -295,13 +295,13 @@ int main(){
   auto count = [](str x) -> size_t { return x.size(); };
 
   assert_eq(Ok(2).unwrap_or_else(count), 2);
-  assert_eq(Err("foo"s).unwrap_or_else(count), 3);
+  assert_eq(Err("foo"s).unwrap_or_else(count), 3ull);
   std::cout << "unwrap_or_else test passed !\n";
 }
 {
   {
     Result<u32, str> x = Ok(2);
-    assert_eq(x.unwrap(), 2);
+    assert_eq(x.unwrap(), 2u);
   }
   try {
     Result<u32, str> x = Err("emergency failure"s);
@@ -387,6 +387,43 @@ int main(){
   std::stringstream ss;
   ss << Err(1);
   assert_eq(ss.str(), "Err(1)"s);
+}
+{
+  using namespace std::literals;
+  std::stringstream ss;
+  ss << Result<int, std::string>{Ok(1)};
+  assert_eq(ss.str(), "Ok(1)"s);
+}
+{
+  using namespace std::literals;
+  std::stringstream ss;
+  ss << Result<int, std::string>{Err("hoge"s)};
+  assert_eq(ss.str(), "Err(hoge)"s);
+}
+{
+  using namespace std::literals;
+  std::stringstream ss;
+  ss << Ok(std::vector<std::string>{"foo"s, "bar"s});
+  assert_eq(ss.str(), "Ok([foo,bar])"s);
+}
+{
+  using namespace std::literals;
+  std::stringstream ss;
+  ss << Err(std::vector<std::string>{"foo"s, "bar"s});
+  assert_eq(ss.str(), "Err([foo,bar])"s);
+}
+{
+  using namespace std::literals;
+  std::stringstream ss;
+  ss << Err("foo"s);
+  assert_eq(ss.str(), "Err(foo)"s);
+}
+{
+  using namespace std::literals;
+  auto res = Result<int, std::vector<int>>{in_place_err, {1,2,3}};
+  assert_eq((boost::format("%1%") % res).str(), "Err([1,2,3])"s);
+  res = Ok(1);
+  assert_eq((boost::format("%1%") % res).str(), "Ok(1)"s);
 }
 
 std::cout << "\nall green !" << std::endl;

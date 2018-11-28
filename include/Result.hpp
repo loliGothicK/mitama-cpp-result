@@ -93,7 +93,7 @@ class[[nodiscard]] Ok
   template <class, class>
   friend struct result::ok_err_trait_injector;
   template <class, class>
-  friend struct result::printer_friend_injector;
+  friend class result::printer_friend_injector;
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
 
@@ -230,7 +230,7 @@ class[[nodiscard]] Err
   template <class, class>
   friend struct result::ok_err_trait_injector;
   template <class, class>
-  friend struct result::printer_friend_injector;
+  friend class result::printer_friend_injector;
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
 
@@ -382,6 +382,8 @@ class[[nodiscard]] Result<T, E,
   template <class, class>
   friend struct result::ok_err_trait_injector;
   std::variant<Ok<T>, Err<E>> storage_;
+  template <class, class>
+  friend class result::printer_friend_injector;
 
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
@@ -580,15 +582,5 @@ public:
   }
 
 };
-
-template <class Ok, class Err, trait::where<trait::formattable<Ok>, trait::formattable<Err>> = nullptr>
-std::ostream &operator<<(std::ostream &os, Result<Ok, Err> const &res)
-{
-  if (res.is_ok())
-    return os << boost::format("Ok(%1%)") % res.unwrap();
-  else
-    return os << boost::format("Err(%1%)") % res.unwrap_err();
-}
-
 
 } // namespace mitama

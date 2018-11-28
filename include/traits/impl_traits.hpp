@@ -27,6 +27,19 @@ struct formattable<T, std::void_t<
 {
 };
 
+template <class, class=void>
+struct formattable_range : std::false_type
+{
+};
 
+template <>
+struct formattable_range<std::string> : std::false_type
+{
+};
 
+template <class Range>
+struct formattable_range<Range, std::void_t<decltype(std::cout << *std::begin(std::declval<Range const&>()))>>
+    : std::true_type
+{
+};
 }
