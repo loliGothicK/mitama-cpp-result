@@ -76,11 +76,6 @@ struct NonDefaultConstructibleType{
   ~NonDefaultConstructibleType() = default;
 };
 
-static_assert(MITAMA_HAS_FUNC(unwrap_or_default, Result<DefaultConstructibleType, std::string>));
-static_assert(!MITAMA_HAS_FUNC(unwrap_or_default, Result<NonDefaultConstructibleType, std::string>));
-static_assert(MITAMA_HAS_FUNC(unwrap_or_default, Ok<DefaultConstructibleType>));
-static_assert(!MITAMA_HAS_FUNC(unwrap_or_default, Ok<NonDefaultConstructibleType>));
-
 using str = std::string;
 using u32 = std::uint32_t;
 using i32 = std::int32_t;
@@ -179,7 +174,7 @@ int main(){
   Result<u32, str> x = Ok(2);
   assert_eq(x.err(), None);
 
-  Result<int, str> y = Err("Nothing here");
+  Result<u32, str> y = Err("Nothing here");
   assert_eq(y.err(), Some("Nothing here"));
   std::cout << "ok test passed !\n";
 }
@@ -349,6 +344,7 @@ int main(){
 
   assert_eq(1909, good_year);
   assert_eq(0, bad_year);
+  assert_eq(Ok(1).unwrap_or_default(), 1);
   std::cout << "unwrap_or_default test passed !\n";
 }
 {
