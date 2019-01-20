@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MITAMA_RESULT_MATCH
+#define MITAMA_RESULT_MATCH
 
 #include <tuple>
 #include <type_traits>
@@ -228,3 +229,5 @@ template <class... Args>
 constexpr mitamagic::MatchProxy<std::tuple<Args...>> match(Args... args) { return {args...}; }
 
 } // namespace mitama::match
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MITAMA_RESULT_IMPL
+#define MITAMA_RESULT_IMPL
 
 #include "detail.hpp"
 #include "../traits/impl_traits.hpp"
@@ -132,3 +133,4 @@ public:
 
 
 } // namespace rust_std::result
+#endif

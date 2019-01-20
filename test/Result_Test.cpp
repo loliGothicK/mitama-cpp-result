@@ -1,4 +1,5 @@
 #include "../include/Result.hpp"
+#include "../include/Result.hpp"
 #include <boost/hana/assert.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/lambda/lambda.hpp>

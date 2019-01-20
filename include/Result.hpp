@@ -4,7 +4,8 @@
  * @author いなむのみたま
  */
 
-#pragma once
+#ifndef MITAMA_RESULT_HPP
+#define MITAMA_RESULT_HPP
 #include <boost/format.hpp>
 #include <functional>
 #include <optional>
@@ -73,7 +74,7 @@ namespace mitama
 {
 template <class T>
 class[[nodiscard]] Ok
-    : private mitamagic::perfect_trait_copy_move<
+    : private ::mitamagic::perfect_trait_copy_move<
           std::is_copy_constructible_v<T>,
           std::conjunction_v<std::is_copy_constructible<T>, std::is_copy_assignable<T>>,
           std::is_move_constructible_v<T>,
@@ -210,7 +211,7 @@ Ok(T &&)->Ok<std::decay_t<T>>;
 
 template <class E>
 class[[nodiscard]] Err
-    : private mitamagic::perfect_trait_copy_move<
+    : private ::mitamagic::perfect_trait_copy_move<
           std::is_copy_constructible_v<E>,
           std::conjunction_v<std::is_copy_constructible<E>, std::is_copy_assignable<E>>,
           std::is_move_constructible_v<E>,
@@ -362,7 +363,7 @@ template <class T, class E>
 class[[nodiscard]] Result<T, E,
                           trait::where<std::is_destructible<T>,
                                        std::is_destructible<E>>>
-    : private mitamagic::perfect_trait_copy_move<
+    : private ::mitamagic::perfect_trait_copy_move<
           std::conjunction_v<std::is_copy_constructible<T>, std::is_copy_constructible<E>>,
           std::conjunction_v<std::is_copy_constructible<T>, std::is_copy_assignable<T>, std::is_copy_constructible<E>, std::is_copy_assignable<E>>,
           std::conjunction_v<std::is_move_constructible<T>, std::is_move_constructible<E>>,
@@ -720,3 +721,4 @@ public:
 };
 
 } // namespace mitama
+#endif

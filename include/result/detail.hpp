@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MITAMA_RESULT_DETAIL
+#define MITAMA_RESULT_DETAIL
 #include <type_traits>
 #include <utility>
 
@@ -69,3 +70,4 @@ struct type_transfer
                  [](...) -> std::false_type { return {}; })(::mitama::type_transfer<__VA_ARGS__>{}) \
            : ::mitama::protean_bool{})
 } // namespace mitama
+#endif
