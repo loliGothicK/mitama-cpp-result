@@ -79,19 +79,13 @@ class[[nodiscard]] Ok
           std::is_move_constructible_v<T>,
           std::conjunction_v<std::is_move_constructible<T>, std::is_move_assignable<T>>,
           Ok<T>>,
-      public result::impl<Ok<T>>
+      public result::printer_friend_injector<Ok<T>>
 {
   template <class>
   friend class Ok;
   T x;
   template <class, class, class>
   friend class Result;
-  template <class, class>
-  friend struct result::ok_trait_injector;
-  template <class, class>
-  friend struct result::err_trait_injector;
-  template <class, class>
-  friend struct result::ok_err_trait_injector;
   template <class, class>
   friend class result::printer_friend_injector;
   template <class... Requiers>
@@ -215,7 +209,7 @@ class[[nodiscard]] Err
           std::is_move_constructible_v<E>,
           std::conjunction_v<std::is_move_constructible<E>, std::is_move_assignable<E>>,
           Err<E>>,
-      public result::impl<Err<E>>
+      public result::printer_friend_injector<Err<E>>
 
 {
   template <class>
@@ -223,12 +217,6 @@ class[[nodiscard]] Err
   E x;
   template <class, class, class>
   friend class Result;
-  template <class, class>
-  friend struct result::ok_trait_injector;
-  template <class, class>
-  friend struct result::err_trait_injector;
-  template <class, class>
-  friend struct result::ok_err_trait_injector;
   template <class, class>
   friend class result::printer_friend_injector;
   template <class... Requiers>
@@ -312,7 +300,15 @@ public:
   template <class O>
   auto unwrap_or_else(O && op) const noexcept
   {
-    return std::forward<O>(op)(x);
+    if constexpr (std::is_invocable_v<O, E>) {
+      return std::invoke(std::forward<O>(op), x);
+    }
+    else if constexpr (std::is_invocable_v<O>) {
+      return std::invoke(std::forward<O>(op));
+    }
+    else {
+      static_assert(always_false_v<O>, "invalid argument: designated function object is not invocable");
+    }
   }
 
   template <class T_, class E_>
@@ -373,14 +369,9 @@ class[[nodiscard]] Result<T, E,
           std::conjunction_v<std::is_move_constructible<T>, std::is_move_constructible<E>>,
           std::conjunction_v<std::is_move_constructible<T>, std::is_move_assignable<T>, std::is_move_constructible<E>, std::is_move_assignable<E>>,
           Result<T, E>>,
-      public result::impl<Result<T, E>>
+      public result::printer_friend_injector<Result<T, E>>,
+      public result::unwrap_or_default_friend_injector<Result<T, E>>
 {
-  template <class, class>
-  friend struct result::ok_trait_injector;
-  template <class, class>
-  friend struct result::err_trait_injector;
-  template <class, class>
-  friend struct result::ok_err_trait_injector;
   std::variant<Ok<T>, Err<E>> storage_;
   template <class, class>
   friend class result::printer_friend_injector;
@@ -486,6 +477,142 @@ public:
 
   constexpr bool is_err() const noexcept { return std::holds_alternative<Err<E>>(storage_); }
 
+  template <class U = T>
+  constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_copy_constructible_v<U>, std::optional<T>>
+  ok() const &
+  {
+    if (is_ok())
+    {
+      return std::optional<T>{std::get<Ok<T>>(storage_).x};
+    }
+    else
+    {
+      return std::optional<T>{std::nullopt};
+    }
+  }
+
+  template <class U = T>
+  constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_move_constructible_v<U>, std::optional<T>>
+  ok() &&
+  {
+    if (is_ok())
+    {
+      return std::optional<T>{std::get<Ok<T>>(std::move(storage_)).x};
+    }
+    else
+    {
+      return std::optional<T>{std::nullopt};
+    }
+  }
+
+  template <class F = E>
+  constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_copy_constructible_v<E>, std::optional<E>>
+  err() const &
+  {
+    if (is_err())
+    {
+      return std::optional<E>{std::get<Err<E>>(storage_).x};
+    }
+    else
+    {
+      return std::optional<E>{std::nullopt};
+    }
+  }
+
+  template <class F = E>
+  constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_move_constructible_v<E>, std::optional<E>>
+  err() &&
+  {
+    if (is_err())
+    {
+      return std::optional<E>{std::get<Err<E>>(std::move(storage_)).x};
+    }
+    else
+    {
+      return std::optional<E>{std::nullopt};
+    }
+  }
+
+  template <class O, class U = T, class F = E>
+  constexpr auto map(O && op) const &->std::enable_if_t<std::conjunction_v<std::is_invocable<O, T>, std::is_same<U, T>, std::is_same<F, E>, std::is_copy_constructible<U>, std::is_copy_constructible<F>>,
+                                                        Result<std::invoke_result_t<O, T>, E>>
+  {
+    using result_type = Result<std::invoke_result_t<O, T>, E>;
+    return is_ok()
+               ? static_cast<result_type>(Ok{std::invoke(std::forward<O>(op), std::get<Ok<T>>(storage_).x)})
+               : static_cast<result_type>(Err{std::get<Err<E>>(storage_).x});
+  }
+
+  template <class O, class U = T, class F = E>
+  constexpr auto map(O && op) &&->std::enable_if_t<std::conjunction_v<std::is_invocable<O, T>, std::is_same<U, T>, std::is_same<F, E>, std::is_move_constructible<U>, std::is_move_constructible<F>>,
+                                                        Result<std::invoke_result_t<O, T>, E>>
+  {
+    using result_type = Result<std::invoke_result_t<O, T>, E>;
+    return is_ok()
+               ? static_cast<result_type>(Ok{std::invoke(std::forward<O>(op), std::get<Ok<T>>(std::move(storage_)).x)})
+               : static_cast<result_type>(Err{std::get<Err<E>>(std::move(storage_)).x});
+  }
+
+  template <class O, class U = T, class F = E>
+  constexpr auto map_err(O && op) const &->std::enable_if_t<std::conjunction_v<std::is_invocable<O, E>, std::is_same<U, T>, std::is_same<F, E>, std::is_copy_constructible<U>, std::is_copy_constructible<F>>,
+                                                            Result<T, std::invoke_result_t<O, E>>>
+  {
+    using result_type = Result<T, std::invoke_result_t<O, E>>;
+    return is_err()
+               ? static_cast<result_type>(Err{std::invoke(std::forward<O>(op), std::get<Err<E>>(storage_).x)})
+               : static_cast<result_type>(Ok{std::get<Ok<T>>(storage_).x});
+  }
+
+  template <class O, class U = T, class F = E>
+  constexpr auto map_err(O && op) &&->std::enable_if_t<std::conjunction_v<std::is_invocable<O, E>, std::is_same<U, T>, std::is_same<F, E>, std::is_move_constructible<U>, std::is_move_constructible<F>>,
+                                                       Result<T, std::invoke_result_t<O, E>>>
+  {
+    using result_type = Result<T, std::invoke_result_t<O, E>>;
+    return is_err()
+               ? static_cast<result_type>(Err{std::invoke(std::forward<O>(op), std::get<Err<E>>(std::move(storage_)).x)})
+               : static_cast<result_type>(Ok{std::get<Ok<T>>(std::move(storage_)).x});
+  }
+
+  template <class O, class U = T, class F = E>
+  constexpr auto and_then(O && op) const &->std::enable_if_t<std::conjunction_v<is_result<std::invoke_result_t<O, T>>, std::is_same<U, T>, std::is_same<F, E>, std::is_copy_constructible<U>, std::is_copy_constructible<F>>,
+                                                             std::invoke_result_t<O, T>>
+  {
+    using result_type = std::invoke_result_t<O, T>;
+    return is_ok()
+               ? std::invoke(std::forward<O>(op), std::get<Ok<T>>(storage_).x)
+               : static_cast<result_type>(Err{typename result_type::err_type(std::get<Err<E>>(storage_).x)});
+  }
+
+  template <class O, class U = T, class F = E>
+  constexpr auto and_then(O && op) &&->std::enable_if_t<std::conjunction_v<is_result<std::invoke_result_t<O, T>>, std::is_same<U, T>, std::is_same<F, E>, std::is_move_constructible<U>, std::is_move_constructible<F>>,
+                                                        std::invoke_result_t<O, T>>
+  {
+    using result_type = std::invoke_result_t<O, T>;
+    return is_ok()
+               ? std::invoke(std::forward<O>(op), std::get<Ok<T>>(std::move(storage_)).x)
+               : static_cast<result_type>(Err{typename result_type::err_type(std::get<Err<E>>(std::move(storage_)).x)});
+  }
+
+  template <class O, class U = T, class F = E>
+  constexpr auto or_else(O && op) const &->std::enable_if_t<std::conjunction_v<is_result<std::invoke_result_t<O, E>>, std::is_same<U, T>, std::is_same<F, E>, std::is_copy_constructible<U>, std::is_copy_constructible<F>>,
+                                                            std::invoke_result_t<O, E>>
+  {
+    using result_type = std::invoke_result_t<O, E>;
+    return is_err()
+               ? std::invoke(std::forward<O>(op), std::get<Err<E>>(storage_).x)
+               : static_cast<result_type>(Ok{typename result_type::ok_type(std::get<Ok<T>>(storage_).x)});
+  }
+
+  template <class O, class U = T, class F = E>
+  constexpr auto or_else(O && op) &&->std::enable_if_t<std::conjunction_v<is_result<std::invoke_result_t<O, E>>, std::is_same<U, T>, std::is_same<F, E>, std::is_move_constructible<U>, std::is_move_constructible<F>>,
+                                                       std::invoke_result_t<O, E>>
+  {
+    using result_type = std::invoke_result_t<O, E>;
+    return is_err()
+               ? std::invoke(std::forward<O>(op), std::get<Err<E>>(std::move(storage_)).x)
+               : static_cast<result_type>(Ok{typename result_type::ok_type(std::get<Ok<T>>(std::move(storage_)).x)});
+  }
+
   template <class U>
   constexpr auto operator&&(Result<U, E> const &res) const &->Result<U, E>
   {
@@ -512,10 +639,18 @@ public:
   }
 
   template <class O>
-  auto unwrap_or_else(O && op) const noexcept(std::is_nothrow_invocable_r_v<T, O, E>)
+  auto unwrap_or_else(O && op) const
       ->std::enable_if_t<std::is_invocable_r_v<T, O, E>, T>
   {
-    return is_ok() ? std::get<Ok<T>>(storage_).x : std::forward<O>(op)(std::get<Err<E>>(storage_).x);
+    if constexpr (std::is_invocable_r_v<T, O, E>) {
+      return is_ok() ? std::get<Ok<T>>(storage_).x : std::invoke(std::forward<O>(op), std::get<Err<E>>(storage_).x);
+    }
+    else if constexpr (std::is_invocable_r_v<T, O>) {
+      return is_ok() ? std::get<Ok<T>>(storage_).x : std::invoke(std::forward<O>(op));
+    }
+    else {
+      static_assert(::mitama::always_false_v<O>, "invalid argument: designated function object is not invocable");
+    }
   }
 
   T unwrap() const
