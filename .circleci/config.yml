@@ -3,46 +3,52 @@ executors:
   default:
     docker:
       - image: buildpack-deps:bionic-curl
-
-jobs:
-  test:
-    description: Testing the library using wandbox
+  test-env:
     parameters:
       compiler:
         description: "compiler-version"
-        default: "clang-head"
+        default: "clang-7.0.0"
         type: string
-    executor: default
+    docker:
+      - image: enumack/mitama-env:<< parameters.compiler >>
+
+jobs:
+  full-test:
+    description: Testing the library using Catch2
+    parameters:
+      compiler:
+        description: "compiler-version"
+        default: "clang-7.0.0"
+        type: string
+    executor:
+      name: test-env
+      compiler: << parameters.compiler >>
     steps:
       - checkout
-      - run: curl -sLJO https://github.com/LoliGothick/cbt/releases/download/v0.5.2/cbt_linux_amd64.tar
-      - run: tar -vzxf ./cbt_linux_amd64.tar
-      - run: chmod +x ./cbt
-      - run: ./cbt wandbox cpp test/Result_Test.cpp --compiler=<< parameters.compiler >> --std=c++17 --boost=1.65.1 --warning --pedantic=errors
-      - store_artifacts:
-          path: /results/permlink
-          destination: raw-test-output
-      - store_artifacts:
-          path: /results
+      - run: apt upgrade -y && apt update -y && apt install -y git
+      - run: git submodule update --init --recursive
+      - run: mkdir build && cd build && cmake .. &&  make && ./tests
 
 workflows:
   build:
     jobs:
-      - test:
-          compiler: clang-head
-      - test:
+      - full-test:
+          compiler: clang-7.0.1
+      - full-test:
           compiler: clang-7.0.0
-      - test:
+      - full-test:
           compiler: clang-6.0.1
-      - test:
+      - full-test:
           compiler: clang-6.0.0
-      - test:
-          compiler: gcc-8.2.0
-      - test:
-          compiler: gcc-8.1.0
-      - test:
-          compiler: gcc-7.3.0
-      - test:
-          compiler: gcc-7.2.0
-      - test:
-          compiler: gcc-7.1.0
+      - full-test:
+          compiler: gcc-8.3
+      - full-test:
+          compiler: gcc-8.2
+      - full-test:
+          compiler: gcc-8.1
+      - full-test:
+          compiler: gcc-7.3
+      - full-test:
+          compiler: gcc-7.2
+      - full-test:
+          compiler: gcc-7.1
