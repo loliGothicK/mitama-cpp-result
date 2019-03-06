@@ -308,7 +308,15 @@ public:
   template <class O>
   auto unwrap_or_else(O && op) const noexcept
   {
-    return std::forward<O>(op)(x);
+    if constexpr (std::is_invocable_v<O, E>) {
+      return std::invoke(std::forward<O>(op), x);
+    }
+    else if constexpr (std::is_invocable_v<O>) {
+      return std::invoke(std::forward<O>(op));
+    }
+    else {
+      static_assert(always_false_v<O>, "invalid argument: designated function object is not invocable");
+    }
   }
 
   template <class T_, class E_>
@@ -369,7 +377,8 @@ class[[nodiscard]] Result<T, E,
           std::conjunction_v<std::is_move_constructible<T>, std::is_move_constructible<E>>,
           std::conjunction_v<std::is_move_constructible<T>, std::is_move_assignable<T>, std::is_move_constructible<E>, std::is_move_assignable<E>>,
           Result<T, E>>,
-      public result::printer_friend_injector<Result<T, E>>
+      public result::printer_friend_injector<Result<T, E>>,
+      public result::unwrap_or_default_friend_injector<Result<T, E>>
 {
   std::variant<Ok<T>, Err<E>> storage_;
   template <class, class>
@@ -538,7 +547,7 @@ public:
   {
     using result_type = Result<std::invoke_result_t<O, T>, E>;
     return is_ok()
-               ? static_cast<result_type>(Ok{std::forward<O>(op)(std::get<Ok<T>>(storage_).x)})
+               ? static_cast<result_type>(Ok{std::invoke(std::forward<O>(op), std::get<Ok<T>>(storage_).x)})
                : static_cast<result_type>(Err{std::get<Err<E>>(storage_).x});
   }
 
@@ -548,7 +557,7 @@ public:
   {
     using result_type = Result<std::invoke_result_t<O, T>, E>;
     return is_ok()
-               ? static_cast<result_type>(Ok{std::forward<O>(op)(std::get<Ok<T>>(std::move(storage_)).x)})
+               ? static_cast<result_type>(Ok{std::invoke(std::forward<O>(op), std::get<Ok<T>>(std::move(storage_)).x)})
                : static_cast<result_type>(Err{std::get<Err<E>>(std::move(storage_)).x});
   }
 
@@ -558,7 +567,7 @@ public:
   {
     using result_type = Result<T, std::invoke_result_t<O, E>>;
     return is_err()
-               ? static_cast<result_type>(Err{std::forward<O>(op)(std::get<Err<E>>(storage_).x)})
+               ? static_cast<result_type>(Err{std::invoke(std::forward<O>(op), std::get<Err<E>>(storage_).x)})
                : static_cast<result_type>(Ok{std::get<Ok<T>>(storage_).x});
   }
 
@@ -568,7 +577,7 @@ public:
   {
     using result_type = Result<T, std::invoke_result_t<O, E>>;
     return is_err()
-               ? static_cast<result_type>(Err{std::forward<O>(op)(std::get<Err<E>>(std::move(storage_)).x)})
+               ? static_cast<result_type>(Err{std::invoke(std::forward<O>(op), std::get<Err<E>>(std::move(storage_)).x)})
                : static_cast<result_type>(Ok{std::get<Ok<T>>(std::move(storage_)).x});
   }
 
@@ -578,7 +587,7 @@ public:
   {
     using result_type = std::invoke_result_t<O, T>;
     return is_ok()
-               ? std::forward<O>(op)(std::get<Ok<T>>(storage_).x)
+               ? std::invoke(std::forward<O>(op), std::get<Ok<T>>(storage_).x)
                : static_cast<result_type>(Err{typename result_type::err_type(std::get<Err<E>>(storage_).x)});
   }
 
@@ -588,7 +597,7 @@ public:
   {
     using result_type = std::invoke_result_t<O, T>;
     return is_ok()
-               ? std::forward<O>(op)(std::get<Ok<T>>(std::move(storage_)).x)
+               ? std::invoke(std::forward<O>(op), std::get<Ok<T>>(std::move(storage_)).x)
                : static_cast<result_type>(Err{typename result_type::err_type(std::get<Err<E>>(std::move(storage_)).x)});
   }
 
@@ -598,7 +607,7 @@ public:
   {
     using result_type = std::invoke_result_t<O, E>;
     return is_err()
-               ? std::forward<O>(op)(std::get<Err<E>>(storage_).x)
+               ? std::invoke(std::forward<O>(op), std::get<Err<E>>(storage_).x)
                : static_cast<result_type>(Ok{typename result_type::ok_type(std::get<Ok<T>>(storage_).x)});
   }
 
@@ -608,7 +617,7 @@ public:
   {
     using result_type = std::invoke_result_t<O, E>;
     return is_err()
-               ? std::forward<O>(op)(std::get<Err<E>>(std::move(storage_)).x)
+               ? std::invoke(std::forward<O>(op), std::get<Err<E>>(std::move(storage_)).x)
                : static_cast<result_type>(Ok{typename result_type::ok_type(std::get<Ok<T>>(std::move(storage_)).x)});
   }
 
@@ -638,10 +647,18 @@ public:
   }
 
   template <class O>
-  auto unwrap_or_else(O && op) const noexcept(std::is_nothrow_invocable_r_v<T, O, E>)
+  auto unwrap_or_else(O && op) const
       ->std::enable_if_t<std::is_invocable_r_v<T, O, E>, T>
   {
-    return is_ok() ? std::get<Ok<T>>(storage_).x : std::forward<O>(op)(std::get<Err<E>>(storage_).x);
+    if constexpr (std::is_invocable_r_v<T, O, E>) {
+      return is_ok() ? std::get<Ok<T>>(storage_).x : std::invoke(std::forward<O>(op), std::get<Err<E>>(storage_).x);
+    }
+    else if constexpr (std::is_invocable_r_v<T, O>) {
+      return is_ok() ? std::get<Ok<T>>(storage_).x : std::invoke(std::forward<O>(op));
+    }
+    else {
+      static_assert(::mitama::always_false_v<O>, "invalid argument: designated function object is not invocable");
+    }
   }
 
   T unwrap() const

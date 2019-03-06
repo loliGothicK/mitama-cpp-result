@@ -1,0 +1,3 @@
+# v1.1.1
+
+- Result<T, E>::unwrap_or_default() is now explicitly deleted if and only if `std::is_default_constructible_v<T> || std::is_aggregate_v<T>` is false.

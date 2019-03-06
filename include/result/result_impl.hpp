@@ -131,6 +131,30 @@ public:
   }
 };
 
+template <class, class = void>
+class unwrap_or_default_friend_injector
+{
+public:
+  void unwrap_or_default() const = delete;
+};
+
+template <class T, class E>
+class unwrap_or_default_friend_injector<Result<T, E>,
+                                        std::enable_if_t<std::disjunction_v<std::is_default_constructible<T>, std::is_aggregate<T>>>>
+{
+public:
+  T unwrap_or_default() const
+  {
+    if constexpr (std::is_aggregate_v<T>){
+      return static_cast<Result<T, E> const *>(this)->is_ok() ? static_cast<Result<T, E> const *>(this)->unwrap()
+                                                              : T{};
+    }
+    else {
+      return static_cast<Result<T, E> const *>(this)->is_ok() ? static_cast<Result<T, E> const *>(this)->unwrap()
+                                                              : T();
+    }
+  }
+};
 
 } // namespace rust_std::result
 #endif

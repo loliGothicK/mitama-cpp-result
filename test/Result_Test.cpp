@@ -1,5 +1,8 @@
-#include "../include/Result.hpp"
-#include "../include/Result.hpp"
+#define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
+#include <Result.hpp>
+#include "test_util.hpp"
+
 #include <boost/hana/assert.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/lambda/lambda.hpp>
@@ -12,12 +15,6 @@
 #include <cassert>
 #include <array>
 
-#define ASSERT_SHOULD_BE_INVALID_EXPR(...) ASSERT_SHOULD_BE_INVALID_EXPR_IMPL1(__VA_ARGS__)ASSERT_SHOULD_BE_INVALID_EXPR_IMPL2
-
-#define ASSERT_SHOULD_BE_INVALID_EXPR_IMPL1(...) static_assert(false ? ::mitama::make_overload([](auto x)->decltype(__VA_ARGS__, std::false_type{}){return{};},[](...)->std::true_type{return{};})
-#define ASSERT_SHOULD_BE_INVALID_EXPR_IMPL2(...) (::mitama::type_transfer<__VA_ARGS__>{}): ::mitama::protean_bool{})
-#define DECLVAL std::declval<typename decltype(x)::type>()
-
 using namespace boost::xpressive;
 using namespace mitama;
 using namespace std::string_literals;
@@ -25,11 +22,6 @@ using namespace std::string_view_literals;
 namespace hana = boost::hana;
 using boost::lambda::_1;
 using boost::lambda::_2;
-
-#define assert_eq(A,B) assert([](auto&& x, auto&& y){ return x == y; }(A, B))
-#define assert_true(A) assert(A)
-#define assert_false(A) assert(!(A))
-
 
 template <class T, class=void>
 struct is_complete_type: std::false_type {};
@@ -101,11 +93,11 @@ auto parse = [](str s) -> Result<T, str> {
       sregex re1 = +range('0', '9');
       smatch what;
       if (!regex_match(s, what, re1))
-        return Err("parse error at string: " + s);
+        return Err("parse error at string: "s + s);
       if constexpr (std::is_unsigned_v<T>) {
         sregex re2 = as_xpr("-") >> +range('0', '9');
         if (regex_match(s, what, re1))
-          return Err("negative value: " + s);
+          return Err("negative value: "s + s);
       };
       if constexpr (std::is_same_v<T, int>)
       {
@@ -153,151 +145,150 @@ auto parse = [](str s) -> Result<T, str> {
   }
 };
 
-int main(){
-
-{
+TEST_CASE("is_ok() test", "[result][is_ok]"){
   Result<u32, str> x = Ok(-3);
-  assert_eq(x.is_ok(), true);
+  REQUIRE(x.is_ok() == true);
 
-  Result<u32, str> y = Err("Some error message");
-  assert_eq(y.is_ok(), false);
-  std::cout << "is_ok test passed !\n";
+  Result<u32, str> y = Err("Some error message"s);
+  REQUIRE(y.is_ok() == false);
 }
-{
+
+TEST_CASE("is_err() test", "[result][is_err]"){
   Result<u32, str> x = Ok(-3);
-  assert_eq(x.is_err(), false);
+  REQUIRE(x.is_err() == false);
 
-  Result<u32, str> y = Err("Some error message");
-  assert_eq(y.is_err(), true);
-  std::cout << "is_err test passed !\n";
+  Result<u32, str> y = Err("Some error message"s);
+  REQUIRE(y.is_err() == true);
 }
-{
+
+TEST_CASE("ok() test", "[result][ok]"){
   Result<u32, str> x = Ok(2);
-  assert_eq(x.err(), None);
+  REQUIRE(x.err() == None);
 
-  Result<u32, str> y = Err("Nothing here");
-  assert_eq(y.err(), Some("Nothing here"));
-  std::cout << "ok test passed !\n";
+  Result<int, str> y = Err("Nothing here"s);
+  REQUIRE(y.err() == Some("Nothing here"s));
 }
-{
+
+TEST_CASE("err() test", "[result][err]"){
   Result<u32, str> x = Ok(2);
-  assert_eq(x.err(), None);
+  REQUIRE(x.err() == None);
 
-  Result<u32, str> y = Err("Nothing here");
-  assert_eq(y.err(), Some("Nothing here"));
-  std::cout << "err test passed !\n";
+  Result<u32, str> y = Err("Nothing here"s);
+  REQUIRE(y.err() == Some("Nothing here"s));
 }
-{
+
+TEST_CASE("map() test", "[result][map]"){
   std::string line = "1,3,5,7";
 
   for (auto num : split(line, ","))
   {
     if (auto res = parse<i32>(num).map(_1 * 2); res.is_ok())
     {
-      assert_true(res.ok().value() % 2 == 0);
+      REQUIRE(res.ok().value() % 2 == 0);
     }
   }
-  std::cout << "map test passed !\n";
 }
-{
+
+TEST_CASE("map_err() test", "[result][map_err]"){
   auto stringify = [](u32 x) -> str {
     return "error code: "s + std::to_string(x);
   };
 
   Result<u32, u32> x = Ok(2);
-  assert_eq(x.map_err(stringify), Ok(2u));
+  REQUIRE(x.map_err(stringify) == Ok(2u));
 
   Result<u32, u32> y = Err(13);
-  assert_eq(y.map_err(stringify), Err("error code: 13"s));
-  std::cout << "map_err test passed !\n";
+  REQUIRE(y.map_err(stringify) == Err("error code: 13"s));
 }
-{
+
+TEST_CASE("operator&& test", "[result][and]"){
   {
     Result<u32, str> x = Ok(2);
     Result<str, str> y = Err("late error"s);
-    assert_eq(x && y, Err("late error"s));
+    REQUIRE((x && y) == Err("late error"s));
   }
 
   {
     Result<u32, str> x = Err("early error"s);
     Result<str, str> y = Ok("foo"s);
-    assert_eq(x && y, Err("early error"s));
+    REQUIRE((x && y) == Err("early error"s));
   }
   {
     Result<u32, str> x = Err("not a 2"s);
     Result<str, str> y = Err("late error"s);
-    assert_eq(x && y, Err("not a 2"s));
+    REQUIRE((x && y) == Err("not a 2"s));
   }
 
   {
     Result<u32, str> x = Ok(2);
     Result<str, str> y = Ok("different result type"s);
-    assert_eq(x && y, Ok("different result type"s));
+    REQUIRE((x && y) == Ok("different result type"s));
   }
-  std::cout << "operator&& test passed !\n";
 }
-{
+
+TEST_CASE("and_then() test", "[result][and_then]"){
   auto sq = [](u32 x) -> Result<u32, u32> { return Ok(x * x); };
   auto err = [](u32 x) -> Result<u32, u32> { return Err(x); };
 
-  assert_eq(Ok(2u).and_then(sq).and_then(sq), Ok(16u));
-  assert_eq(Ok(2u).and_then(sq).and_then(err), Err(4u));
-  assert_eq(Ok(2u).and_then(err).and_then(sq), Err(2u));
-  assert_eq(Err(3u).and_then(sq).and_then(sq), Err(3u));
-  std::cout << "and_then test passed !\n";
+  REQUIRE(Ok(2u).and_then(sq).and_then(sq) == Ok(16u));
+  REQUIRE(Ok(2u).and_then(sq).and_then(err) == Err(4u));
+  REQUIRE(Ok(2u).and_then(err).and_then(sq) == Err(2u));
+  REQUIRE(Err(3u).and_then(sq).and_then(sq) == Err(3u));
 }
-{
+
+TEST_CASE("operator|| test", "[result][or]"){
   {
     Result<u32, str> x = Ok(2);
     Result<u32, str> y = Err("late error"s);
-    assert_eq(x || y, Ok(2u));
+    REQUIRE((x || y) ==  Ok(2u));
   }
   {
     Result<u32, str> x = Err("early error"s);
     Result<u32, str> y = Ok(2);
-    assert_eq(x || y, Ok(2u));
+    REQUIRE((x || y) ==  Ok(2u));
   }
   {
     Result<u32, str> x = Err("not a 2"s);
     Result<u32, str> y = Err("late error"s);
-    assert_eq(x || y, Err("late error"s));
+    REQUIRE((x || y) ==  Err("late error"s));
   }
   {
     Result<u32, str> x = Ok(2);
     Result<u32, str> y = Ok(100);
-    assert_eq(x || y, Ok(2u));
+    REQUIRE((x || y) ==  Ok(2u));
   }
-  std::cout << "operator|| test passed !\n";
 }
-{
+
+TEST_CASE("or_else() test", "[result][or_else]"){
   auto sq = [](u32 x) -> Result<u32, u32> { return Ok(x * x); };
   auto err = [](u32 x) -> Result<u32, u32> { return Err(x); };
 
-  assert_eq(Ok(2).or_else(sq).or_else(sq), Ok(2));
-  assert_eq(Ok(2).or_else(err).or_else(sq), Ok(2));
-  assert_eq(Err(3).or_else(sq).or_else(err), Ok(9u));
-  assert_eq(Err(3).or_else(err).or_else(err), Err(3u));
-  std::cout << "or_else test passed !\n";
+  REQUIRE(Ok(2).or_else(sq).or_else(sq) ==  Ok(2));
+  REQUIRE(Ok(2).or_else(err).or_else(sq) ==  Ok(2));
+  REQUIRE(Err(3).or_else(sq).or_else(err) ==  Ok(9u));
+  REQUIRE(Err(3).or_else(err).or_else(err) ==  Err(3u));
 }
-{
+
+TEST_CASE("unwrap_or() test", "[result][unwrap_or]"){
   Result<u32, u32> err = Err(2);
   Result<u32, u32> ok = Ok(2);
 
-  assert_eq(ok.unwrap_or(1u), 2u);
-  assert_eq(err.unwrap_or(1u), 1u);
-  std::cout << "unwrap_or test passed !\n";
+  REQUIRE(ok.unwrap_or(1u) ==  2u);
+  REQUIRE(err.unwrap_or(1u) ==  1u);
 }
-{
+
+TEST_CASE("unwrap_or_else() test", "[result][unwrap_or_else]"){
   auto count = [](str x) -> size_t { return x.size(); };
 
-  assert_eq(Ok(2).unwrap_or_else(count), 2);
-  assert_eq(Err("foo"s).unwrap_or_else(count), 3ull);
-  std::cout << "unwrap_or_else test passed !\n";
+  REQUIRE(Ok(2).unwrap_or_else(count) ==  2);
+  REQUIRE(Err("foo"s).unwrap_or_else(count) ==  3ull);
+  REQUIRE(Err("foo"s).unwrap_or_else([]{ return 3ull; }) ==  3ull);
 }
-{
+
+TEST_CASE("unwrap() test", "[result][unwrap]"){
   {
     Result<u32, str> x = Ok(2);
-    assert_eq(x.unwrap(), 2u);
+    REQUIRE(x.unwrap() ==  2u);
   }
   try {
     Result<u32, str> x = Err("emergency failure"s);
@@ -311,11 +302,11 @@ int main(){
             R"(runtime panicked at 'called `Result::unwrap() on an `Err` value: emergency failure', )") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
-    assert_true(regex_match(std::string{p.what()}, what, re));
+    REQUIRE(regex_match(std::string{p.what()}, what, re));
   }
-  std::cout << "unwrap test passed !\n";
 }
-{
+
+TEST_CASE("unwrap_err() test", "[result][unwrap_err]"){
   try {
     Result<u32, str> x = Ok(2);
     x.unwrap_err(); // panics with `2`
@@ -328,27 +319,26 @@ int main(){
             R"(runtime panicked at 'called `Result::unwrap_err() on an `Ok` value: 2', )") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
-    assert_true(regex_match(std::string{p.what()}, what, re));
+    REQUIRE(regex_match(std::string{p.what()}, what, re));
   }
 
   {
     Result<u32, str> x = Err("emergency failure"s);
-    assert_eq(x.unwrap_err(), "emergency failure"s);
+    REQUIRE(x.unwrap_err() ==  "emergency failure"s);
   }
-  std::cout << "unwrap_err test passed !\n";
 }
-{
+
+TEST_CASE("unwrap_or_default() test", "[result][unwrap_or_default]"){
   auto good_year_from_input = "1909"s;
   auto bad_year_from_input = "190blarg"s;
   auto good_year = parse<int>(good_year_from_input).unwrap_or_default();
   auto bad_year = parse<int>(bad_year_from_input).unwrap_or_default();
 
-  assert_eq(1909, good_year);
-  assert_eq(0, bad_year);
-  assert_eq(Ok(1).unwrap_or_default(), 1);
-  std::cout << "unwrap_or_default test passed !\n";
+  REQUIRE(1909 ==  good_year);
+  REQUIRE(0 ==  bad_year);
 }
-{
+
+TEST_CASE("basics test", "[result][basics]"){
   auto even = [](u32 u) -> Result<u32, str> {
     if (u % 2 == 0)
       return Ok(u);
@@ -356,11 +346,11 @@ int main(){
       return Err("odd"s);
   };
   auto func = [](auto u) -> Result<u32, str> { if(u%3==0) return Ok(1u); else return Err("error"s); };
-  assert_eq(even(2).and_then(func), Err("error"s));
-  assert_eq(even(2), Ok(2u));
-  std::cout << "basic usage test passed !\n";
+  REQUIRE(even(2).and_then(func) ==  Err("error"s));
+  REQUIRE(even(2) ==  Ok(2u));
 }
-{
+
+TEST_CASE("constructors and assignments test", "[result][constructors][assignments]"){
   auto res = Result<int,int>{Ok(2)};
   res = Result<int, int>{Err(2)};
   (void)Result<std::string, double>{in_place_ok, "hoge"};
@@ -370,59 +360,56 @@ int main(){
 
   res = Ok(1);
   res = Err(2);
-
-  std::cout << "constructors and assignments test passed !\n";
-}
-{
-  using namespace std::literals;
-  std::stringstream ss;
-  ss << Ok(1);
-  assert_eq(ss.str(), "Ok(1)"s);
-}
-{
-  using namespace std::literals;
-  std::stringstream ss;
-  ss << Err(1);
-  assert_eq(ss.str(), "Err(1)"s);
-}
-{
-  using namespace std::literals;
-  std::stringstream ss;
-  ss << Result<int, std::string>{Ok(1)};
-  assert_eq(ss.str(), "Ok(1)"s);
-}
-{
-  using namespace std::literals;
-  std::stringstream ss;
-  ss << Result<int, std::string>{Err("hoge"s)};
-  assert_eq(ss.str(), "Err(hoge)"s);
-}
-{
-  using namespace std::literals;
-  std::stringstream ss;
-  ss << Ok(std::vector<std::string>{"foo"s, "bar"s});
-  assert_eq(ss.str(), "Ok([foo,bar])"s);
-}
-{
-  using namespace std::literals;
-  std::stringstream ss;
-  ss << Err(std::vector<std::string>{"foo"s, "bar"s});
-  assert_eq(ss.str(), "Err([foo,bar])"s);
-}
-{
-  using namespace std::literals;
-  std::stringstream ss;
-  ss << Err("foo"s);
-  assert_eq(ss.str(), "Err(foo)"s);
-}
-{
-  using namespace std::literals;
-  auto res = Result<int, std::vector<int>>{in_place_err, {1,2,3}};
-  assert_eq((boost::format("%1%") % res).str(), "Err([1,2,3])"s);
-  res = Ok(1);
-  assert_eq((boost::format("%1%") % res).str(), "Ok(1)"s);
 }
 
-std::cout << "\nall green !" << std::endl;
-
+TEST_CASE("format test", "[result][format]"){
+  SECTION("Ok"){
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << Ok(1);
+    REQUIRE(ss.str() ==  "Ok(1)"s);
+  }
+  SECTION("Err"){
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << Err(1);
+    REQUIRE(ss.str() ==  "Err(1)"s);
+  }
+  SECTION("Result ok"){
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << Result<int, std::string>{Ok(1)};
+    REQUIRE(ss.str() ==  "Ok(1)"s);
+  }
+  SECTION("Result err"){
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << Result<int, std::string>{Err("hoge"s)};
+    REQUIRE(ss.str() ==  "Err(hoge)"s);
+  }
+  SECTION("Result of range ok"){
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << Ok(std::vector<std::string>{"foo"s, "bar"s});
+    REQUIRE(ss.str() == "Ok([foo,bar])"s);
+  }
+  SECTION("Result of range err"){
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << Err(std::vector<std::string>{"foo"s, "bar"s});
+    REQUIRE(ss.str() == "Err([foo,bar])"s);
+  }
+  SECTION("Err"){
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << Err("foo"s);
+    REQUIRE(ss.str() ==  "Err(foo)"s);
+  }
+  SECTION("replace"){
+    using namespace std::literals;
+    auto res = Result<int, std::vector<int>>{in_place_err, {1,2,3}};
+    REQUIRE((boost::format("%1%") % res).str() == "Err([1,2,3])"s);
+    res = Ok(1);
+    REQUIRE((boost::format("%1%") % res).str() ==  "Ok(1)"s);
+  }
 }
