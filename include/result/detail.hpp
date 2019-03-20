@@ -57,11 +57,8 @@ make_overload(F &&... f)
 {
   return {{std::forward<F>(f)}...};
 }
-template <class T>
-struct type_transfer
-{
-  using type = T;
-};
+template <class... Ts> struct type_transfer { using type = std::tuple<Ts...>; };
+
 
 #define MITAMA_HAS_FUNC(XXX, ...)                                                                   \
   bool(false                                                                                        \
