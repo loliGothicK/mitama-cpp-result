@@ -11,7 +11,7 @@
   IS_INVALID_EXPR_IMPL1(__VA_ARGS__)                             \
   IS_INVALID_EXPR_IMPL2
 
-#define IS_INVALID_EXPR_IMPL1(...) bool(false ? ::mitama::make_overload([](auto x)->decltype(__VA_ARGS__, std::false_type{}){return{};},[](auto&&...)->std::true_type{return{};})
+#define IS_INVALID_EXPR_IMPL1(...) bool(false ? ::mitama::make_overload([](auto x)->decltype(__VA_ARGS__, std::false_type{}){return{};},[](...)->std::true_type{return{};})
 #define IS_INVALID_EXPR_IMPL2(...) (::mitama::type_transfer<__VA_ARGS__>{}): ::mitama::protean_bool{})
 #define DECLVAL(N) std::declval<std::tuple_element_t<N,typename decltype(x)::type>>()
 #define DECLTYPE(N) std::tuple_element_t<N,typename decltype(x)::type>
