@@ -7,6 +7,8 @@
 #include <boost/hana/functional/overload.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/xpressive/xpressive.hpp>
+#include <boost/type_index.hpp>
+#include <functional>
 #include <cstdint>
 #include <iostream>
 #include <regex>
@@ -234,6 +236,21 @@ TEST_CASE("and_then() test", "[result][and_then]"){
   REQUIRE(Ok(2u).and_then(sq).and_then(err) == Err(4u));
   REQUIRE(Ok(2u).and_then(err).and_then(sq) == Err(2u));
   REQUIRE(Err(3u).and_then(sq).and_then(sq) == Err(3u));
+  REQUIRE(Err(3u).and_then(sq).and_then(sq) == Err(3u));
+}
+
+TEMPLATE_TEST_CASE("is_result_with_v meta test", "[is_result_with_v][and_then][meta]",
+                    int, unsigned, std::string, std::vector<int>)
+{
+  REQUIRE(is_result_with_v<mitama::Result<int, TestType>, mitama::Err<TestType>>);
+  REQUIRE(!is_result_with_v<Result<unsigned, std::vector<TestType>>, mitama::Err<TestType>>);
+}
+
+TEMPLATE_TEST_CASE("and_then() meta test", "[result][and_then][meta]",
+                    int, unsigned, std::string, std::vector<int>)
+{
+  REQUIRE(!IS_INVALID_EXPR(DECLVAL(0).and_then(DECLVAL(1)))(Result<double, TestType>, std::function<Result<float, TestType>(unsigned)>));
+  REQUIRE(IS_INVALID_EXPR(std::declval<Result<double, TestType>>().and_then(DECLVAL(0)))(std::function<Result<TestType, float>(unsigned)>));
 }
 
 TEST_CASE("operator|| test", "[result][or]"){
