@@ -334,7 +334,7 @@ public:
       return std::invoke(std::forward<O>(op));
     }
     else {
-      static_assert(always_false_v<O>, "invalid argument: designated function object is not invocable");
+      static_assert(dependent_bool::always_false_v<O>, "invalid argument: designated function object is not invocable");
     }
   }
 
@@ -676,7 +676,7 @@ public:
       return is_ok() ? std::get<Ok<T>>(storage_).x : std::invoke(std::forward<O>(op));
     }
     else {
-      static_assert(::mitama::always_false_v<O>, "invalid argument: designated function object is not invocable");
+      static_assert(::mitama::dependent_bool::always_false_v<O>, "invalid argument: designated function object is not invocable");
     }
   }
 
@@ -729,7 +729,7 @@ public:
       bool>
   operator==(Result<T_, E_> const &rhs) const &
   {
-    return std::visit(::mitama::make_overload(
+    return std::visit(::mitama::detail::overload(
                           [](Ok<T> const &l, Ok<T_> const &r) { return l.x == r.x; },
                           [](Err<E> const &l, Err<E_> const &r) { return l.x == r.x; },
                           [](auto &&...) { return false; }),

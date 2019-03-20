@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 #include <Result.hpp>
-#include "test_util.hpp"
+#include <utest_utility/is_invalid_expr.hpp>
 
 #include <boost/hana/assert.hpp>
 #include <boost/hana/functional/overload.hpp>

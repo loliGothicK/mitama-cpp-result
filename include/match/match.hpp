@@ -150,7 +150,7 @@ public:
       {
         if constexpr (!std::is_void_v<std::common_type_t<typename decltype(first)::result_type, typename decltype(rest)::result_type...>>)
         {
-          static_assert(always_false_v<std::common_type_t<typename decltype(first)::result_type, typename decltype(rest)::result_type...>>,
+          static_assert(dependent_bool::always_false_v<std::common_type_t<typename decltype(first)::result_type, typename decltype(rest)::result_type...>>,
               "Error: non-void match expression without default case");
         }
       }
