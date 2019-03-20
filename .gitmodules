@@ -3,4 +3,4 @@
 	url = https://github.com/catchorg/Catch2.git
 [submodule "mitama-utest-utilities"]
 	path = mitama-utest-utilities
-	url = git@github.com:LoliGothick/mitama-utest-utilities.git
+	url = https://github.com/LoliGothick/mitama-utest-utilities.git
