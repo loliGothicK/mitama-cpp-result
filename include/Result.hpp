@@ -601,7 +601,7 @@ public:
   }
 
   template <class O, class U = T, class F = E>
-  constexpr auto and_then(O && op) const &->std::enable_if_t<std::conjunction_v<is_result<std::invoke_result_t<O, T>>, std::is_same<U, T>, std::is_same<F, E>, std::is_copy_constructible<U>, std::is_copy_constructible<F>>,
+  constexpr auto and_then(O && op) const &->std::enable_if_t<std::conjunction_v<is_result_with<std::invoke_result_t<O, T>, Err<F>>, std::is_same<U, T>, std::is_same<F, E>, std::is_copy_constructible<U>, std::is_copy_constructible<F>>,
                                                              std::invoke_result_t<O, T>>
   {
     using result_type = std::invoke_result_t<O, T>;
@@ -611,7 +611,7 @@ public:
   }
 
   template <class O, class U = T, class F = E>
-  constexpr auto and_then(O && op) &&->std::enable_if_t<std::conjunction_v<is_result<std::invoke_result_t<O, T>>, std::is_same<U, T>, std::is_same<F, E>, std::is_move_constructible<U>, std::is_move_constructible<F>>,
+  constexpr auto and_then(O && op) &&->std::enable_if_t<std::conjunction_v<is_result_with<std::invoke_result_t<O, T>, Err<F>>, std::is_same<U, T>, std::is_same<F, E>, std::is_move_constructible<U>, std::is_move_constructible<F>>,
                                                         std::invoke_result_t<O, T>>
   {
     using result_type = std::invoke_result_t<O, T>;
@@ -621,7 +621,7 @@ public:
   }
 
   template <class O, class U = T, class F = E>
-  constexpr auto or_else(O && op) const &->std::enable_if_t<std::conjunction_v<is_result<std::invoke_result_t<O, E>>, std::is_same<U, T>, std::is_same<F, E>, std::is_copy_constructible<U>, std::is_copy_constructible<F>>,
+  constexpr auto or_else(O && op) const &->std::enable_if_t<std::conjunction_v<is_result_with<std::invoke_result_t<O, T>, Ok<U>>, std::is_same<U, T>, std::is_same<F, E>, std::is_copy_constructible<U>, std::is_copy_constructible<F>>,
                                                             std::invoke_result_t<O, E>>
   {
     using result_type = std::invoke_result_t<O, E>;
@@ -631,7 +631,7 @@ public:
   }
 
   template <class O, class U = T, class F = E>
-  constexpr auto or_else(O && op) &&->std::enable_if_t<std::conjunction_v<is_result<std::invoke_result_t<O, E>>, std::is_same<U, T>, std::is_same<F, E>, std::is_move_constructible<U>, std::is_move_constructible<F>>,
+  constexpr auto or_else(O && op) &&->std::enable_if_t<std::conjunction_v<is_result_with<std::invoke_result_t<O, T>, Ok<U>>, std::is_same<U, T>, std::is_same<F, E>, std::is_move_constructible<U>, std::is_move_constructible<F>>,
                                                        std::invoke_result_t<O, E>>
   {
     using result_type = std::invoke_result_t<O, E>;
