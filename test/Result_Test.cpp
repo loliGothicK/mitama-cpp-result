@@ -430,3 +430,10 @@ TEST_CASE("format test", "[result][format]"){
     REQUIRE((boost::format("%1%") % res).str() ==  "Ok(1)"s);
   }
 }
+
+TEST_CASE("monostate Ok test", "[result][monostate]"){
+  (void)[]() -> Result<std::monostate, std::string> {
+    if (false) return Err("hoge"s);
+    return Ok<>{};
+  }();
+}
