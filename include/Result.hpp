@@ -91,7 +91,7 @@ struct is_ok_type<Ok<T>> : std::true_type
 
 namespace mitama
 {
-template <class T>
+template <class T = std::monostate>
 class[[nodiscard]] Ok
     : private ::mitamagic::perfect_trait_copy_move<
           std::is_copy_constructible_v<T>,
@@ -237,7 +237,6 @@ class[[nodiscard]] Err
           std::conjunction_v<std::is_move_constructible<E>, std::is_move_assignable<E>>,
           Err<E>>,
       public result::printer_friend_injector<Err<E>>
-
 {
   template <class>
   friend class Err;
