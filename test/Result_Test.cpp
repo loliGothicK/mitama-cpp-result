@@ -191,6 +191,19 @@ TEST_CASE("map() test", "[result][map]"){
   }
 }
 
+TEST_CASE("map_or_else(F, M) test", "[result][map_or_else]"){
+  auto k = 21;
+  {
+    Result<str, str> x = Ok("foo"s);
+    REQUIRE(x.map_or_else([k](auto){ return k * 2; }, [](auto v) { return v.length(); }) == 3);
+  }
+  {
+    Result<str, str> x = Err("bar"s);
+    REQUIRE(x.map_or_else([k](auto){ return k * 2; }, [](auto v) { return v.length(); }) == 42);
+  }
+}
+
+
 TEST_CASE("map_err() test", "[result][map_err]"){
   auto stringify = [](u32 x) -> str {
     return "error code: "s + std::to_string(x);
