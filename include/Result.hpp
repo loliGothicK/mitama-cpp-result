@@ -108,6 +108,8 @@ class[[nodiscard]] Ok
   friend class Result;
   template <class, class>
   friend class result::printer_friend_injector;
+  template <class, class>
+  friend class result::transpose_friend_injector;
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
 
@@ -245,6 +247,8 @@ class[[nodiscard]] Err
   friend class Result;
   template <class, class>
   friend class result::printer_friend_injector;
+  template <class, class>
+  friend class result::transpose_friend_injector;
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
 
@@ -396,11 +400,14 @@ class[[nodiscard]] Result<T, E,
           std::conjunction_v<std::is_move_constructible<T>, std::is_move_assignable<T>, std::is_move_constructible<E>, std::is_move_assignable<E>>,
           Result<T, E>>,
       public result::printer_friend_injector<Result<T, E>>,
-      public result::unwrap_or_default_friend_injector<Result<T, E>>
+      public result::unwrap_or_default_friend_injector<Result<T, E>>,
+      public result::transpose_friend_injector<Result<T, E>>
 {
   std::variant<Ok<T>, Err<E>> storage_;
   template <class, class>
   friend class result::printer_friend_injector;
+  template <class, class>
+  friend class result::transpose_friend_injector;
 
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;

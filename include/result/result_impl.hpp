@@ -156,5 +156,36 @@ public:
   }
 };
 
+template <class, class = void>
+class transpose_friend_injector
+{
+public:
+  void unwrap_or_default() const = delete;
+};
+
+
+template <class T, class E>
+class transpose_friend_injector<Result<std::optional<T>, E>>
+{
+  using optional_type = std::optional<Result<T, E>>;
+  using result_type = Result<T, E>;
+public:
+  std::optional<Result<T, E>> transpose() const
+  {
+    if (static_cast<Result<std::optional<T>, E> const *>(this)->is_ok()) {
+      if (auto opt = static_cast<Result<std::optional<T>, E> const *>(this)->unwrap(); opt) {
+        return optional_type(std::in_place, Ok(opt.value()));
+      }
+      else {
+        return std::nullopt;
+      }
+    }
+    else {
+        return optional_type(std::in_place, Err(static_cast<Result<std::optional<T>, E> const *>(this)->unwrap_err()));
+    }
+  }
+};
+
+
 } // namespace rust_std::result
 #endif
