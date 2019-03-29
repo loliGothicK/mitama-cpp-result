@@ -579,6 +579,42 @@ public:
                : static_cast<result_type>(Err{std::get<Err<E>>(std::move(storage_)).x});
   }
 
+  template <class Map, class Fallback, class U = T, class F = E>
+  constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) const&
+      -> std::enable_if_t<std::conjunction_v<std::is_invocable<Map, T>,
+                                             std::is_invocable<Fallback, E>,
+                                             std::is_convertible<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>,
+                                             std::is_convertible<std::invoke_result_t<Fallback, E>, std::invoke_result_t<Map, T>>,
+                                             std::is_same<U, T>,
+                                             std::is_same<F, E>,
+                                             std::is_move_constructible<U>,
+                                             std::is_move_constructible<F>>,
+                          std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>>
+  {
+    using result_type = std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
+    return is_ok()
+               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), std::get<Ok<T>>(storage_).x))
+               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), std::get<Err<E>>(storage_).x));
+  }
+
+  template <class Map, class Fallback, class U = T, class F = E>
+  constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) &&
+      -> std::enable_if_t<std::conjunction_v<std::is_invocable<Map, T>,
+                                             std::is_invocable<Fallback, E>,
+                                             std::is_convertible<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>,
+                                             std::is_convertible<std::invoke_result_t<Fallback, E>, std::invoke_result_t<Map, T>>,
+                                             std::is_same<U, T>,
+                                             std::is_same<F, E>,
+                                             std::is_move_constructible<U>,
+                                             std::is_move_constructible<F>>,
+                          std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>>
+  {
+    using result_type = std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
+    return is_ok()
+               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), std::get<Ok<T>>(std::move(storage_)).x))
+               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), std::get<Err<E>>(std::move(storage_)).x));
+  }
+
   template <class O, class U = T, class F = E>
   constexpr auto map_err(O && op) const &->std::enable_if_t<std::conjunction_v<std::is_invocable<O, E>, std::is_same<U, T>, std::is_same<F, E>, std::is_copy_constructible<U>, std::is_copy_constructible<F>>,
                                                             Result<T, std::invoke_result_t<O, E>>>
