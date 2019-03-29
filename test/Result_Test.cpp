@@ -368,6 +368,13 @@ TEST_CASE("unwrap_or_default() test", "[result][unwrap_or_default]"){
   REQUIRE(0 ==  bad_year);
 }
 
+TEST_CASE("transpose() test", "[result][transpose]"){
+  Result<std::optional<i32>, std::monostate> x = Ok(Some(5));
+  std::optional<Result<i32, std::monostate>> y = Some(Result<i32, std::monostate>(Ok(5)));
+  
+  REQUIRE(x.transpose() == y);
+}
+
 TEST_CASE("basics test", "[result][basics]"){
   auto even = [](u32 u) -> Result<u32, str> {
     if (u % 2 == 0)
