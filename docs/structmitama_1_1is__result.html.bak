@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Mitama Result: mitama::is_ok_type&lt; class &gt; Struct Template Reference</title>
+<title>My Project: mitama::is_result&lt; class &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,7 +21,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Mitama Result
+   <div id="projectname">My Project
    </div>
   </td>
  </tr>
@@ -61,32 +61,32 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>mitama</b></li><li class="navelem"><a class="el" href="structmitama_1_1is__ok__type.html">is_ok_type</a></li>  </ul>
+<li class="navelem"><b>mitama</b></li><li class="navelem"><a class="el" href="structmitama_1_1is__result.html">is_result</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="headertitle">
-<div class="title">mitama::is_ok_type&lt; class &gt; Struct Template Reference</div>  </div>
+<div class="title">mitama::is_result&lt; class &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>meta-function that detect type is <a class="el" href="classmitama_1_1Ok.html" title="Ok stat generator class.">mitama::Ok</a>  
- <a href="structmitama_1_1is__ok__type.html#details">More...</a></p>
+<p>meta-function that detect type is <a class="el" href="classmitama_1_1Result.html" title="data Result = Ok | Err">mitama::Result</a>  
+ <a href="structmitama_1_1is__result.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Result_8hpp_source.html">Result.hpp</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for mitama::is_ok_type&lt; class &gt;:</div>
+Inheritance diagram for mitama::is_result&lt; class &gt;:</div>
 <div class="dyncontent">
  <div class="center">
-  <img src="structmitama_1_1is__ok__type.png" usemap="#mitama::is_5Fok_5Ftype_3C_20class_20_3E_map" alt=""/>
-  <map id="mitama::is_5Fok_5Ftype_3C_20class_20_3E_map" name="mitama::is_5Fok_5Ftype_3C_20class_20_3E_map">
+  <img src="structmitama_1_1is__result.png" usemap="#mitama::is_5Fresult_3C_20class_20_3E_map" alt=""/>
+  <map id="mitama::is_5Fresult_3C_20class_20_3E_map" name="mitama::is_5Fresult_3C_20class_20_3E_map">
 </map>
  </div></div>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class&gt;<br />
-struct mitama::is_ok_type&lt; class &gt;</h3>
+struct mitama::is_result&lt; class &gt;</h3>
 
-<p class="">meta-function that detect type is <a class="el" href="classmitama_1_1Ok.html" title="Ok stat generator class.">mitama::Ok</a> </p>
+<p class="">meta-function that detect type is <a class="el" href="classmitama_1_1Result.html" title="data Result = Ok | Err">mitama::Result</a> </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li><a class="el" href="Result_8hpp_source.html">Result.hpp</a></li>
 </ul>
