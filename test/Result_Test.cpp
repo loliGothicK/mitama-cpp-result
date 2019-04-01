@@ -459,3 +459,11 @@ TEST_CASE("monostate Ok test", "[result][monostate]"){
 
   REQUIRE(func().is_ok());
 }
+
+TEST_CASE("monostate Err test", "[result][monostate]"){
+  auto func = []() -> Result</*defaulted monostate*/> {
+    if (false) return Ok<>{};
+    return Err<>();
+  };
+  REQUIRE(func().is_err());
+}
