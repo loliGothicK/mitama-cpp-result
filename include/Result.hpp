@@ -4,7 +4,8 @@
  * @author いなむのみたま
  */
 
-#pragma once
+#ifndef MITAMA_RESULT_HPP
+#define MITAMA_RESULT_HPP
 #include <boost/format.hpp>
 #include <functional>
 #include <optional>
@@ -49,6 +50,25 @@ struct is_result<Result<T, E>> : std::true_type
 template <class T>
 inline constexpr bool is_result_v = is_result<T>::value;
 
+template <class, class...>
+struct is_result_with : std::false_type
+{
+};
+template <class T, class E>
+struct is_result_with<Result<T, E>, Ok<T>> : std::true_type
+{
+};
+template <class T, class E>
+struct is_result_with<Result<T, E>, Err<E>> : std::true_type
+{
+};
+template <class T, class E>
+struct is_result_with<Result<T, E>, Ok<T>, Err<E>> : std::true_type
+{
+};
+template <class T, class... Requires>
+inline constexpr bool is_result_with_v = is_result_with<T, Requires...>::value;
+
 template <class>
 struct is_err_type : std::false_type
 {
@@ -73,7 +93,7 @@ namespace mitama
 {
 template <class T>
 class[[nodiscard]] Ok
-    : private mitamagic::perfect_trait_copy_move<
+    : private ::mitamagic::perfect_trait_copy_move<
           std::is_copy_constructible_v<T>,
           std::conjunction_v<std::is_copy_constructible<T>, std::is_copy_assignable<T>>,
           std::is_move_constructible_v<T>,
@@ -88,6 +108,8 @@ class[[nodiscard]] Ok
   friend class Result;
   template <class, class>
   friend class result::printer_friend_injector;
+  template <class, class>
+  friend class result::transpose_friend_injector;
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
 
@@ -97,9 +119,12 @@ class[[nodiscard]] Ok
   using not_self = std::negation<std::is_same<Ok, U>>;
 public:
   using ok_type = T;
-  using err_type = void;
 
-  Ok() = default;
+  template <class U = T>
+  Ok (std::enable_if_t<std::is_same_v<std::monostate, U>, std::nullptr_t> = nullptr)
+  {
+    // whatever
+  }
 
   template <class U,
             where<not_self<std::decay_t<U>>,
@@ -166,6 +191,13 @@ public:
     return *this;
   }
 
+  template < class U = T >
+  constexpr std::enable_if_t<std::is_copy_constructible_v<U>, T>
+  unwrap_or_default() noexcept
+  {
+    return x;
+  }
+
   template <class O>
   T unwrap_or_else(O &&) const noexcept
   {
@@ -203,14 +235,13 @@ Ok(T &&)->Ok<std::decay_t<T>>;
 
 template <class E>
 class[[nodiscard]] Err
-    : private mitamagic::perfect_trait_copy_move<
+    : private ::mitamagic::perfect_trait_copy_move<
           std::is_copy_constructible_v<E>,
           std::conjunction_v<std::is_copy_constructible<E>, std::is_copy_assignable<E>>,
           std::is_move_constructible_v<E>,
           std::conjunction_v<std::is_move_constructible<E>, std::is_move_assignable<E>>,
           Err<E>>,
       public result::printer_friend_injector<Err<E>>
-
 {
   template <class>
   friend class Err;
@@ -219,6 +250,8 @@ class[[nodiscard]] Err
   friend class Result;
   template <class, class>
   friend class result::printer_friend_injector;
+  template <class, class>
+  friend class result::transpose_friend_injector;
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
 
@@ -227,10 +260,13 @@ class[[nodiscard]] Err
   template <class U>
   using not_self = std::negation<std::is_same<Err, U>>;
 public:
-  using ok_type = void;
   using err_type = E;
 
-  Err() = default;
+  template <class F = E>
+  Err (std::enable_if_t<std::is_same_v<std::monostate, F>, std::nullptr_t> = nullptr)
+  {
+    // whatever
+  }
 
   template <class U,
             where<not_self<std::decay_t<U>>,
@@ -307,7 +343,7 @@ public:
       return std::invoke(std::forward<O>(op));
     }
     else {
-      static_assert(always_false_v<O>, "invalid argument: designated function object is not invocable");
+      static_assert(dependent_bool::always_false_v<O>, "invalid argument: designated function object is not invocable");
     }
   }
 
@@ -363,18 +399,21 @@ template <class T, class E>
 class[[nodiscard]] Result<T, E,
                           trait::where<std::is_destructible<T>,
                                        std::is_destructible<E>>>
-    : private mitamagic::perfect_trait_copy_move<
+    : private ::mitamagic::perfect_trait_copy_move<
           std::conjunction_v<std::is_copy_constructible<T>, std::is_copy_constructible<E>>,
           std::conjunction_v<std::is_copy_constructible<T>, std::is_copy_assignable<T>, std::is_copy_constructible<E>, std::is_copy_assignable<E>>,
           std::conjunction_v<std::is_move_constructible<T>, std::is_move_constructible<E>>,
           std::conjunction_v<std::is_move_constructible<T>, std::is_move_assignable<T>, std::is_move_constructible<E>, std::is_move_assignable<E>>,
           Result<T, E>>,
       public result::printer_friend_injector<Result<T, E>>,
-      public result::unwrap_or_default_friend_injector<Result<T, E>>
+      public result::unwrap_or_default_friend_injector<Result<T, E>>,
+      public result::transpose_friend_injector<Result<T, E>>
 {
-  std::variant<Ok<T>, Err<E>> storage_;
+  std::variant<std::monostate, Ok<T>, Err<E>> storage_;
   template <class, class>
   friend class result::printer_friend_injector;
+  template <class, class>
+  friend class result::transpose_friend_injector;
 
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
@@ -477,6 +516,8 @@ public:
 
   constexpr bool is_err() const noexcept { return std::holds_alternative<Err<E>>(storage_); }
 
+  constexpr operator bool() const noexcept { return std::holds_alternative<Ok<T>>(storage_); }
+
   template <class U = T>
   constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_copy_constructible_v<U>, std::optional<T>>
   ok() const &
@@ -553,6 +594,42 @@ public:
                : static_cast<result_type>(Err{std::get<Err<E>>(std::move(storage_)).x});
   }
 
+  template <class Map, class Fallback, class U = T, class F = E>
+  constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) const&
+      -> std::enable_if_t<std::conjunction_v<std::is_invocable<Map, T>,
+                                             std::is_invocable<Fallback, E>,
+                                             std::is_convertible<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>,
+                                             std::is_convertible<std::invoke_result_t<Fallback, E>, std::invoke_result_t<Map, T>>,
+                                             std::is_same<U, T>,
+                                             std::is_same<F, E>,
+                                             std::is_move_constructible<U>,
+                                             std::is_move_constructible<F>>,
+                          std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>>
+  {
+    using result_type = std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
+    return is_ok()
+               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), std::get<Ok<T>>(storage_).x))
+               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), std::get<Err<E>>(storage_).x));
+  }
+
+  template <class Map, class Fallback, class U = T, class F = E>
+  constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) &&
+      -> std::enable_if_t<std::conjunction_v<std::is_invocable<Map, T>,
+                                             std::is_invocable<Fallback, E>,
+                                             std::is_convertible<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>,
+                                             std::is_convertible<std::invoke_result_t<Fallback, E>, std::invoke_result_t<Map, T>>,
+                                             std::is_same<U, T>,
+                                             std::is_same<F, E>,
+                                             std::is_move_constructible<U>,
+                                             std::is_move_constructible<F>>,
+                          std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>>
+  {
+    using result_type = std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
+    return is_ok()
+               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), std::get<Ok<T>>(std::move(storage_)).x))
+               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), std::get<Err<E>>(std::move(storage_)).x));
+  }
+
   template <class O, class U = T, class F = E>
   constexpr auto map_err(O && op) const &->std::enable_if_t<std::conjunction_v<std::is_invocable<O, E>, std::is_same<U, T>, std::is_same<F, E>, std::is_copy_constructible<U>, std::is_copy_constructible<F>>,
                                                             Result<T, std::invoke_result_t<O, E>>>
@@ -574,7 +651,7 @@ public:
   }
 
   template <class O, class U = T, class F = E>
-  constexpr auto and_then(O && op) const &->std::enable_if_t<std::conjunction_v<is_result<std::invoke_result_t<O, T>>, std::is_same<U, T>, std::is_same<F, E>, std::is_copy_constructible<U>, std::is_copy_constructible<F>>,
+  constexpr auto and_then(O && op) const &->std::enable_if_t<std::conjunction_v<is_result_with<std::invoke_result_t<O, T>, Err<F>>, std::is_same<U, T>, std::is_same<F, E>, std::is_copy_constructible<U>, std::is_copy_constructible<F>>,
                                                              std::invoke_result_t<O, T>>
   {
     using result_type = std::invoke_result_t<O, T>;
@@ -584,7 +661,7 @@ public:
   }
 
   template <class O, class U = T, class F = E>
-  constexpr auto and_then(O && op) &&->std::enable_if_t<std::conjunction_v<is_result<std::invoke_result_t<O, T>>, std::is_same<U, T>, std::is_same<F, E>, std::is_move_constructible<U>, std::is_move_constructible<F>>,
+  constexpr auto and_then(O && op) &&->std::enable_if_t<std::conjunction_v<is_result_with<std::invoke_result_t<O, T>, Err<F>>, std::is_same<U, T>, std::is_same<F, E>, std::is_move_constructible<U>, std::is_move_constructible<F>>,
                                                         std::invoke_result_t<O, T>>
   {
     using result_type = std::invoke_result_t<O, T>;
@@ -594,7 +671,7 @@ public:
   }
 
   template <class O, class U = T, class F = E>
-  constexpr auto or_else(O && op) const &->std::enable_if_t<std::conjunction_v<is_result<std::invoke_result_t<O, E>>, std::is_same<U, T>, std::is_same<F, E>, std::is_copy_constructible<U>, std::is_copy_constructible<F>>,
+  constexpr auto or_else(O && op) const &->std::enable_if_t<std::conjunction_v<is_result_with<std::invoke_result_t<O, T>, Ok<U>>, std::is_same<U, T>, std::is_same<F, E>, std::is_copy_constructible<U>, std::is_copy_constructible<F>>,
                                                             std::invoke_result_t<O, E>>
   {
     using result_type = std::invoke_result_t<O, E>;
@@ -604,7 +681,7 @@ public:
   }
 
   template <class O, class U = T, class F = E>
-  constexpr auto or_else(O && op) &&->std::enable_if_t<std::conjunction_v<is_result<std::invoke_result_t<O, E>>, std::is_same<U, T>, std::is_same<F, E>, std::is_move_constructible<U>, std::is_move_constructible<F>>,
+  constexpr auto or_else(O && op) &&->std::enable_if_t<std::conjunction_v<is_result_with<std::invoke_result_t<O, T>, Ok<U>>, std::is_same<U, T>, std::is_same<F, E>, std::is_move_constructible<U>, std::is_move_constructible<F>>,
                                                        std::invoke_result_t<O, E>>
   {
     using result_type = std::invoke_result_t<O, E>;
@@ -618,7 +695,7 @@ public:
   {
     using result_type = Result<U, E>;
     return this->is_err()
-               ? static_cast<result_type>(Err{std::get<Err<E>>(static_cast<Result<T, E> const *>(this)->storage_).x})
+               ? static_cast<result_type>(Err{std::get<Err<E>>(storage_).x})
                : res.is_err() ? static_cast<result_type>(Err{res.unwrap_err()})
                               : static_cast<result_type>(Ok{res.unwrap()});
   }
@@ -649,7 +726,7 @@ public:
       return is_ok() ? std::get<Ok<T>>(storage_).x : std::invoke(std::forward<O>(op));
     }
     else {
-      static_assert(::mitama::always_false_v<O>, "invalid argument: designated function object is not invocable");
+      static_assert(::mitama::dependent_bool::always_false_v<O>, "invalid argument: designated function object is not invocable");
     }
   }
 
@@ -685,13 +762,24 @@ public:
     }
   }
 
+  template <class U = T, std::enable_if_t<std::is_same_v<T, U> && (std::is_default_constructible_v<U> || std::is_aggregate_v<U>), std::nullptr_t> = nullptr>
+  T unwrap_or_default() const
+  {
+    if constexpr (std::is_aggregate_v<T>){
+      return is_ok() ? unwrap() : T{};
+    }
+    else {
+      return is_ok() ? unwrap() : T();
+    }
+  }
+
   template <class T_, class E_>
   std::enable_if_t<
       std::conjunction_v<mitama::is_comparable_with<T, T_>, mitama::is_comparable_with<E, E_>>,
       bool>
   operator==(Result<T_, E_> const &rhs) const &
   {
-    return std::visit(::mitama::make_overload(
+    return std::visit(::mitama::detail::overload(
                           [](Ok<T> const &l, Ok<T_> const &r) { return l.x == r.x; },
                           [](Err<E> const &l, Err<E_> const &r) { return l.x == r.x; },
                           [](auto &&...) { return false; }),
@@ -719,3 +807,4 @@ public:
 };
 
 } // namespace mitama
+#endif

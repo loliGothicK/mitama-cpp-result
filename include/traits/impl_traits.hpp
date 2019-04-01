@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MITAMA_RESULT_TRAIT
+#define MITAMA_RESULT_TRAIT
 
 #include <type_traits>
 #include <utility>
@@ -43,3 +44,4 @@ struct formattable_range<Range, std::void_t<decltype(std::cout << *std::begin(st
 {
 };
 }
+#endif

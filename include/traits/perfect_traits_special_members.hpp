@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MITAMA_RESULT_PERFECT_TRAIT
+#define MITAMA_RESULT_PERFECT_TRAIT
 #include <type_traits>
 
 namespace mitamagic
@@ -257,3 +258,4 @@ struct perfect_trait_copy_move<false, false, false, false, Tag>
 };
 
 } // namespace _detail
+#endif
