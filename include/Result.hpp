@@ -91,7 +91,7 @@ struct is_ok_type<Ok<T>> : std::true_type
 
 namespace mitama
 {
-template <class T = std::monostate>
+template <class T>
 class[[nodiscard]] Ok
     : private ::mitamagic::perfect_trait_copy_move<
           std::is_copy_constructible_v<T>,
@@ -403,7 +403,7 @@ class[[nodiscard]] Result<T, E,
       public result::unwrap_or_default_friend_injector<Result<T, E>>,
       public result::transpose_friend_injector<Result<T, E>>
 {
-  std::variant<Ok<T>, Err<E>> storage_;
+  std::variant<std::monostate, Ok<T>, Err<E>> storage_;
   template <class, class>
   friend class result::printer_friend_injector;
   template <class, class>
