@@ -44,9 +44,3 @@ workflows:
           compiler: gcc-8.2
       - full-test:
           compiler: gcc-8.1
-      - full-test:
-          compiler: gcc-7.3
-      - full-test:
-          compiler: gcc-7.2
-      - full-test:
-          compiler: gcc-7.1
