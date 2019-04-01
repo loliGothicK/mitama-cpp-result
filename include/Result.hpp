@@ -262,7 +262,11 @@ class[[nodiscard]] Err
 public:
   using err_type = E;
 
-  Err() = default;
+  template <class F = E>
+  Err (std::enable_if_t<std::is_same_v<std::monostate, F>, std::nullptr_t> = nullptr)
+  {
+    // whatever
+  }
 
   template <class U,
             where<not_self<std::decay_t<U>>,
