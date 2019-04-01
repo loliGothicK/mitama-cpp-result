@@ -120,7 +120,11 @@ class[[nodiscard]] Ok
 public:
   using ok_type = T;
 
-  Ok() = default;
+  template <class U = T>
+  Ok (std::enable_if_t<std::is_same_v<std::monostate, U>, std::nullptr_t> = nullptr)
+  {
+    // whatever
+  }
 
   template <class U,
             where<not_self<std::decay_t<U>>,
