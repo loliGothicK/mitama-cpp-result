@@ -452,8 +452,10 @@ TEST_CASE("format test", "[result][format]"){
 }
 
 TEST_CASE("monostate Ok test", "[result][monostate]"){
-  (void)[]() -> Result<std::monostate, std::string> {
-    if (false) return Err("hoge"s);
+  auto func = []() -> Result<std::monostate, std::string> {
+    if (false) return Err<std::string>("hoge"s);
     return Ok<>{};
-  }();
+  };
+
+  REQUIRE(func().is_ok());
 }
