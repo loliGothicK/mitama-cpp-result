@@ -119,7 +119,6 @@ class[[nodiscard]] Ok
   using not_self = std::negation<std::is_same<Ok, U>>;
 public:
   using ok_type = T;
-  using err_type = void;
 
   Ok() = default;
 
