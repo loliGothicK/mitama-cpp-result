@@ -516,6 +516,8 @@ public:
 
   constexpr bool is_err() const noexcept { return std::holds_alternative<Err<E>>(storage_); }
 
+  constexpr operator bool() const noexcept { return std::holds_alternative<Ok<T>>(storage_); }
+
   template <class U = T>
   constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_copy_constructible_v<U>, std::optional<T>>
   ok() const &
