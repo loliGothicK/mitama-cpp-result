@@ -256,7 +256,6 @@ class[[nodiscard]] Err
   template <class U>
   using not_self = std::negation<std::is_same<Err, U>>;
 public:
-  using ok_type = void;
   using err_type = E;
 
   Err() = default;
