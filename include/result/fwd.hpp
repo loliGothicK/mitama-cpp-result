@@ -1,15 +1,16 @@
 #ifndef MITAMA_RESULT_FWD
 #define MITAMA_RESULT_FWD
-//! @cond
+#include <variant>
 namespace mitama {
-template <class T, class E, class /* for detection idiom */ = decltype(nullptr)>
+template <class = std::monostate, // Ok type
+          class = std::monostate, // Err type
+          class /* for detection idiom */ = decltype(nullptr)>
 class Result;
 
-template <class>
+template <class T = std::monostate>
 class Ok;
 
-template <class>
+template <class = std::monostate>
 class Err;
 }
-//! @endcond
 #endif

@@ -91,7 +91,7 @@ struct is_ok_type<Ok<T>> : std::true_type
 
 namespace mitama
 {
-template <class T = std::monostate>
+template <class T>
 class[[nodiscard]] Ok
     : private ::mitamagic::perfect_trait_copy_move<
           std::is_copy_constructible_v<T>,
@@ -119,9 +119,12 @@ class[[nodiscard]] Ok
   using not_self = std::negation<std::is_same<Ok, U>>;
 public:
   using ok_type = T;
-  using err_type = void;
 
-  Ok() = default;
+  template <class U = T>
+  Ok (std::enable_if_t<std::is_same_v<std::monostate, U>, std::nullptr_t> = nullptr)
+  {
+    // whatever
+  }
 
   template <class U,
             where<not_self<std::decay_t<U>>,
@@ -257,10 +260,13 @@ class[[nodiscard]] Err
   template <class U>
   using not_self = std::negation<std::is_same<Err, U>>;
 public:
-  using ok_type = void;
   using err_type = E;
 
-  Err() = default;
+  template <class F = E>
+  Err (std::enable_if_t<std::is_same_v<std::monostate, F>, std::nullptr_t> = nullptr)
+  {
+    // whatever
+  }
 
   template <class U,
             where<not_self<std::decay_t<U>>,
@@ -403,7 +409,7 @@ class[[nodiscard]] Result<T, E,
       public result::unwrap_or_default_friend_injector<Result<T, E>>,
       public result::transpose_friend_injector<Result<T, E>>
 {
-  std::variant<Ok<T>, Err<E>> storage_;
+  std::variant<std::monostate, Ok<T>, Err<E>> storage_;
   template <class, class>
   friend class result::printer_friend_injector;
   template <class, class>
@@ -509,6 +515,8 @@ public:
   constexpr bool is_ok() const noexcept { return std::holds_alternative<Ok<T>>(storage_); }
 
   constexpr bool is_err() const noexcept { return std::holds_alternative<Err<E>>(storage_); }
+
+  constexpr operator bool() const noexcept { return std::holds_alternative<Ok<T>>(storage_); }
 
   template <class U = T>
   constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_copy_constructible_v<U>, std::optional<T>>

@@ -452,8 +452,31 @@ TEST_CASE("format test", "[result][format]"){
 }
 
 TEST_CASE("monostate Ok test", "[result][monostate]"){
-  (void)[]() -> Result<std::monostate, std::string> {
-    if (false) return Err("hoge"s);
+  auto func = []() -> Result<std::monostate, std::string> {
+    if (false) return Err<std::string>("hoge"s);
     return Ok<>{};
-  }();
+  };
+
+  REQUIRE(func().is_ok());
+}
+
+TEST_CASE("monostate Err test", "[result][monostate]"){
+  auto func = []() -> Result</*defaulted monostate*/> {
+    if (false) return Ok<>{};
+    return Err<>();
+  };
+  REQUIRE(func().is_err());
+}
+
+TEST_CASE("contectual convert to boll test", "[result][monostate]"){
+  auto err_func = []() -> Result</*defaulted monostate*/> {
+    if (false) return Err<>{};
+    return Err<>();
+  };
+  auto ok_func = []() -> Result<std::monostate, std::string> {
+    if (false) return Err<std::string>("hoge"s);
+    return Ok<>{};
+  };
+  REQUIRE(!err_func());
+  REQUIRE(ok_func());
 }
