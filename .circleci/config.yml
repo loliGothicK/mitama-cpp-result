@@ -33,11 +33,15 @@ workflows:
   build:
     jobs:
       - full-test:
+          compiler: clang-8.0.0
+      - full-test:
+          compiler: clang-7.1.0
+      - full-test:
           compiler: clang-7.0.1
       - full-test:
           compiler: clang-7.0.0
       - full-test:
-          compiler: clang-8.0.0
+          compiler: gcc-9.1
       - full-test:
           compiler: gcc-8.3
       - full-test:
