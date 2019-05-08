@@ -121,7 +121,7 @@ public:
   using ok_type = T;
 
   template <class U = T>
-  Ok (std::enable_if_t<std::is_same_v<std::monostate, U>, std::nullptr_t> = nullptr)
+  constexpr Ok (std::enable_if_t<std::is_same_v<std::monostate, U>, std::nullptr_t> = nullptr)
   {
     // whatever
   }
@@ -130,14 +130,14 @@ public:
             where<not_self<std::decay_t<U>>,
                   std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
-  Ok(U && u) noexcept(std::is_nothrow_constructible_v<T, U>)
+  constexpr Ok(U && u) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::forward<U>(u)) {}
 
   template <class U,
             where<not_self<std::decay_t<U>>,
                   std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  explicit Ok(U && u) noexcept(std::is_nothrow_constructible_v<T, U>)
+  explicit constexpr Ok(U && u) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::forward<U>(u)) {}
 
   template <typename U,
@@ -199,7 +199,7 @@ public:
   }
 
   template <class O>
-  T unwrap_or_else(O &&) const noexcept
+  constexpr T unwrap_or_else(O &&) const noexcept
   {
     return x;
   }
@@ -208,7 +208,7 @@ public:
   std::enable_if_t<
       mitama::is_comparable_with<T, T_>::value,
       bool>
-  operator==(Result<T_, E_> const &rhs) const
+  constexpr operator==(Result<T_, E_> const &rhs) const
   {
     return rhs.is_ok() ? rhs.unwrap() == this->x : false;
   }
@@ -217,13 +217,13 @@ public:
   std::enable_if_t<
       mitama::is_comparable_with<T, T_>::value,
       bool>
-  operator==(Ok<T_> const &rhs) const
+  constexpr operator==(Ok<T_> const &rhs) const
   {
     return this->x == rhs.x;
   }
 
   template <class E_>
-  bool operator==(Err<E_> const &) const
+  constexpr bool operator==(Err<E_> const &) const
   {
     return false;
   }
@@ -263,7 +263,7 @@ public:
   using err_type = E;
 
   template <class F = E>
-  Err (std::enable_if_t<std::is_same_v<std::monostate, F>, std::nullptr_t> = nullptr)
+  constexpr Err (std::enable_if_t<std::is_same_v<std::monostate, F>, std::nullptr_t> = nullptr)
   {
     // whatever
   }
@@ -272,14 +272,14 @@ public:
             where<not_self<std::decay_t<U>>,
                   std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
-  Err(U && u) noexcept(std::is_nothrow_constructible_v<E, U>)
+  constexpr Err(U && u) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(std::forward<U>(u)) {}
 
   template <class U,
             where<not_self<std::decay_t<U>>,
                   std::is_constructible<E, U>,
                   std::negation<std::is_convertible<U, E>>> = required>
-  explicit Err(U && u) noexcept(std::is_nothrow_constructible_v<E, U>)
+  explicit constexpr Err(U && u) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(std::forward<U>(u)) {}
 
   template <typename U,
@@ -334,7 +334,7 @@ public:
   }
 
   template <class O>
-  auto unwrap_or_else(O && op) const noexcept
+  constexpr auto unwrap_or_else(O && op) const noexcept
   {
     if constexpr (std::is_invocable_v<O, E>) {
       return std::invoke(std::forward<O>(op), x);
@@ -348,6 +348,7 @@ public:
   }
 
   template <class T_, class E_>
+  constexpr
   std::enable_if_t<
       mitama::is_comparable_with<E, E_>::value,
       bool>
@@ -357,6 +358,7 @@ public:
   }
 
   template <class E_>
+  constexpr
   std::enable_if_t<
       mitama::is_comparable_with<E, E_>::value,
       bool>
@@ -366,7 +368,7 @@ public:
   }
 
   template <class T_>
-  bool operator==(Ok<T_> const &) const
+  constexpr bool operator==(Ok<T_> const &) const
   {
     return false;
   }
