@@ -736,13 +736,13 @@ public:
     if constexpr (trait::formattable<E>::value)
     {
       return is_ok()
-                 ? std::get<Ok<T>>(storage_).x
+                 ? static_cast<T>(std::get<Ok<T>>(storage_).x)
                  : PANIC(R"(called `Result::unwrap() on an `Err` value: %1%)", std::get<Err<E>>(storage_).x);
     }
     else
     {
       return is_ok()
-                 ? std::get<Ok<T>>(storage_).x
+                 ? static_cast<T>(std::get<Ok<T>>(storage_).x)
                  : PANIC(R"(called `Result::unwrap() on an `Err`)");
     }
   }
@@ -752,13 +752,13 @@ public:
     if constexpr (trait::formattable<T>::value)
     {
       return is_err()
-                 ? std::get<Err<E>>(storage_).x
+                 ? static_cast<E>(std::get<Err<E>>(storage_).x)
                  : PANIC(R"(called `Result::unwrap_err() on an `Ok` value: %1%)", std::get<Ok<T>>(storage_).x);
     }
     else
     {
       return is_err()
-                 ? std::get<Err<E>>(storage_).x
+                 ? static_cast<E>(std::get<Err<E>>(storage_).x)
                  : PANIC(R"(called `Result::unwrap_err() on an `Ok` value)");
     }
   }

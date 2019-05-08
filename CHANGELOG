@@ -15,3 +15,25 @@ It means `op` must only maps `T -> U`, never changes `E`.
 
 `std::invoke_result_t<O&&, E>` must be returns `Result<T, F>`.
 It means `op` must only maps `E -> F`, never changes `T`.
+
+# v2.0.0
+
+## New feature
+
+- `map_or_else`
+
+- `transpose`
+
+## Ends to support
+
+- gcc 7.1
+- gcc 7.2
+- gcc 7.3
+
+# v2.1.0
+
+## Start to support
+
+- gcc 9.1
+- clang 8.0.0
+- clang 7.1.0
