@@ -1,12 +1,14 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 #include <Result.hpp>
-#include "test_util.hpp"
+#include <utest_utility/is_invalid_expr.hpp>
 
 #include <boost/hana/assert.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/xpressive/xpressive.hpp>
+#include <boost/type_index.hpp>
+#include <functional>
 #include <cstdint>
 #include <iostream>
 #include <regex>
@@ -189,6 +191,19 @@ TEST_CASE("map() test", "[result][map]"){
   }
 }
 
+TEST_CASE("map_or_else(F, M) test", "[result][map_or_else]"){
+  auto k = 21;
+  {
+    Result<str, str> x = Ok("foo"s);
+    REQUIRE(x.map_or_else([k](auto){ return k * 2; }, [](auto v) { return v.length(); }) == 3);
+  }
+  {
+    Result<str, str> x = Err("bar"s);
+    REQUIRE(x.map_or_else([k](auto){ return k * 2; }, [](auto v) { return v.length(); }) == 42);
+  }
+}
+
+
 TEST_CASE("map_err() test", "[result][map_err]"){
   auto stringify = [](u32 x) -> str {
     return "error code: "s + std::to_string(x);
@@ -234,6 +249,21 @@ TEST_CASE("and_then() test", "[result][and_then]"){
   REQUIRE(Ok(2u).and_then(sq).and_then(err) == Err(4u));
   REQUIRE(Ok(2u).and_then(err).and_then(sq) == Err(2u));
   REQUIRE(Err(3u).and_then(sq).and_then(sq) == Err(3u));
+  REQUIRE(Err(3u).and_then(sq).and_then(sq) == Err(3u));
+}
+
+TEMPLATE_TEST_CASE("is_result_with_v meta test", "[is_result_with_v][and_then][meta]",
+                    int, unsigned, std::string, std::vector<int>)
+{
+  REQUIRE(is_result_with_v<mitama::Result<int, TestType>, mitama::Err<TestType>>);
+  REQUIRE(!is_result_with_v<Result<unsigned, std::vector<TestType>>, mitama::Err<TestType>>);
+}
+
+TEMPLATE_TEST_CASE("and_then() meta test", "[result][and_then][meta]",
+                    int, unsigned, std::string, std::vector<int>)
+{
+  REQUIRE(!IS_INVALID_EXPR(DECLVAL(0).and_then(DECLVAL(1)))(Result<double, TestType>, std::function<Result<float, TestType>(unsigned)>));
+  REQUIRE(IS_INVALID_EXPR(std::declval<Result<double, TestType>>().and_then(DECLVAL(0)))(std::function<Result<TestType, float>(unsigned)>));
 }
 
 TEST_CASE("operator|| test", "[result][or]"){
@@ -338,6 +368,13 @@ TEST_CASE("unwrap_or_default() test", "[result][unwrap_or_default]"){
   REQUIRE(0 ==  bad_year);
 }
 
+TEST_CASE("transpose() test", "[result][transpose]"){
+  Result<std::optional<i32>, std::monostate> x = Ok(Some(5));
+  std::optional<Result<i32, std::monostate>> y = Some(Result<i32, std::monostate>(Ok(5)));
+  
+  REQUIRE(x.transpose() == y);
+}
+
 TEST_CASE("basics test", "[result][basics]"){
   auto even = [](u32 u) -> Result<u32, str> {
     if (u % 2 == 0)
@@ -412,4 +449,34 @@ TEST_CASE("format test", "[result][format]"){
     res = Ok(1);
     REQUIRE((boost::format("%1%") % res).str() ==  "Ok(1)"s);
   }
+}
+
+TEST_CASE("monostate Ok test", "[result][monostate]"){
+  auto func = []() -> Result<std::monostate, std::string> {
+    if (false) return Err<std::string>("hoge"s);
+    return Ok<>{};
+  };
+
+  REQUIRE(func().is_ok());
+}
+
+TEST_CASE("monostate Err test", "[result][monostate]"){
+  auto func = []() -> Result</*defaulted monostate*/> {
+    if (false) return Ok<>{};
+    return Err<>();
+  };
+  REQUIRE(func().is_err());
+}
+
+TEST_CASE("contectual convert to boll test", "[result][monostate]"){
+  auto err_func = []() -> Result</*defaulted monostate*/> {
+    if (false) return Err<>{};
+    return Err<>();
+  };
+  auto ok_func = []() -> Result<std::monostate, std::string> {
+    if (false) return Err<std::string>("hoge"s);
+    return Ok<>{};
+  };
+  REQUIRE(!err_func());
+  REQUIRE(ok_func());
 }

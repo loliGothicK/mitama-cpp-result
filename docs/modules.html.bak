@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Mitama Result: mitama::is_ok_type&lt; class &gt; Struct Template Reference</title>
+<title>My Project: Modules</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,7 +21,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Mitama Result
+   <div id="projectname">My Project
    </div>
   </td>
  </tr>
@@ -45,6 +45,7 @@ $(function() {
 });
 /* @license-end */</script>
 <div id="main-nav"></div>
+</div><!-- top -->
 <!-- window showing the filter options -->
 <div id="MSearchSelectWindow"
      onmouseover="return searchBox.OnSearchSelectShow()"
@@ -59,37 +60,16 @@ $(function() {
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><b>mitama</b></li><li class="navelem"><a class="el" href="structmitama_1_1is__ok__type.html">is_ok_type</a></li>  </ul>
-</div>
-</div><!-- top -->
 <div class="header">
   <div class="headertitle">
-<div class="title">mitama::is_ok_type&lt; class &gt; Struct Template Reference</div>  </div>
+<div class="title">Modules</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p>meta-function that detect type is <a class="el" href="classmitama_1_1Ok.html" title="Ok stat generator class.">mitama::Ok</a>  
- <a href="structmitama_1_1is__ok__type.html#details">More...</a></p>
-
-<p><code>#include &lt;<a class="el" href="Result_8hpp_source.html">Result.hpp</a>&gt;</code></p>
-<div class="dynheader">
-Inheritance diagram for mitama::is_ok_type&lt; class &gt;:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="structmitama_1_1is__ok__type.png" usemap="#mitama::is_5Fok_5Ftype_3C_20class_20_3E_map" alt=""/>
-  <map id="mitama::is_5Fok_5Ftype_3C_20class_20_3E_map" name="mitama::is_5Fok_5Ftype_3C_20class_20_3E_map">
-</map>
- </div></div>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;class&gt;<br />
-struct mitama::is_ok_type&lt; class &gt;</h3>
-
-<p class="">meta-function that detect type is <a class="el" href="classmitama_1_1Ok.html" title="Ok stat generator class.">mitama::Ok</a> </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
-<li><a class="el" href="Result_8hpp_source.html">Result.hpp</a></li>
-</ul>
+<div class="textblock">Here is a list of all modules:</div><div class="directory">
+<table class="directory">
+<tr id="row_0_" class="even"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><a class="el" href="group__Modules.html" target="_self">Mitama.Result modules</a></td><td class="desc"></td></tr>
+</table>
+</div><!-- directory -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

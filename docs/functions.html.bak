@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Mitama Result: Class Members - Functions</title>
+<title>My Project: Class Members</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,7 +21,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">Mitama Result
+   <div id="projectname">My Project
    </div>
   </td>
  </tr>
@@ -61,7 +61,7 @@ $(function() {
 </div>
 
 <div class="contents">
-&#160;
+<div class="textblock">Here is a list of all documented class members with links to the class documentation for each member:</div>
 
 <h3><a id="index_a"></a>- a -</h3><ul>
 <li>and_then()
@@ -77,7 +77,11 @@ $(function() {
 : <a class="el" href="classmitama_1_1Err.html#a484e75002a5f7b15991300713b71660c">mitama::Err&lt; E &gt;</a>
 </li>
 <li>err()
-: <a class="el" href="classmitama_1_1Result.html#a7b8010b01f6dc19ec147d68b3aba7f5b">mitama::Result&lt; T, E &gt;</a>
+: <a class="el" href="classmitama_1_1Result.html#a9c9d99621b6a1fd42ca8225051c7eefc">mitama::Result&lt; T, E &gt;</a>
+</li>
+<li>err_type
+: <a class="el" href="classmitama_1_1Err.html#a45d53378b5ac5a37085c6814dd2fec29">mitama::Err&lt; E &gt;</a>
+, <a class="el" href="classmitama_1_1Result.html#a8a89c986e309f6ab5f15872e8bfc91f8">mitama::Result&lt; T, E &gt;</a>
 </li>
 </ul>
 
@@ -113,8 +117,16 @@ $(function() {
 <li>ok()
 : <a class="el" href="classmitama_1_1Result.html#a59edaa99e2fc00599a2f76433b399a6f">mitama::Result&lt; T, E &gt;</a>
 </li>
+<li>ok_type
+: <a class="el" href="classmitama_1_1Ok.html#a445eabde6500cc7d7e2e5d12a7c6f161">mitama::Ok&lt; T &gt;</a>
+, <a class="el" href="classmitama_1_1Result.html#a9199dd0837f4ec69d51ddf26cc5a0c45">mitama::Result&lt; T, E &gt;</a>
+</li>
 <li>operator &amp;&amp;()
 : <a class="el" href="classmitama_1_1Result.html#ae2f98b94748ee8e7577d5fe12a64a7b2">mitama::Result&lt; T, E &gt;</a>
+</li>
+<li>operator&lt;&lt;
+: <a class="el" href="classmitama_1_1Err.html#af13923664f23e33efdc7e8b9ddb7fb61">mitama::Err&lt; E &gt;</a>
+, <a class="el" href="classmitama_1_1Ok.html#a35a8fa198d3ea688dc0b7caba910d895">mitama::Ok&lt; T &gt;</a>
 </li>
 <li>operator==()
 : <a class="el" href="classmitama_1_1Ok.html#afdfadaecb84a0fb144eb9b8b2c0ee2e4">mitama::Ok&lt; T &gt;</a>
