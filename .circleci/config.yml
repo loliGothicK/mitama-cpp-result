@@ -37,16 +37,14 @@ workflows:
       - full-test:
           compiler: clang-7.0.0
       - full-test:
+          compiler: clang-7.1.0
+      - full-test:
           compiler: clang-8.0.0
+      - full-test:
+          compiler: gcc-9.1
       - full-test:
           compiler: gcc-8.3
       - full-test:
           compiler: gcc-8.2
       - full-test:
           compiler: gcc-8.1
-      - full-test:
-          compiler: gcc-7.3
-      - full-test:
-          compiler: gcc-7.2
-      - full-test:
-          compiler: gcc-7.1
