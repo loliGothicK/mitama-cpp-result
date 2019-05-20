@@ -1,701 +1,938 @@
 
-<!DOCTYPE HTML>
-<html lang="" >
-    <head>
-        <meta charset="UTF-8">
-        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>Ok · GitBook</title>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="description" content="">
-        <meta name="generator" content="GitBook 3.2.3">
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+        <meta name="description" content="Mitama.Result C++17 Library">
+      
+      
+        <link rel="canonical" href="https://loligothick.github.io/mitama-cpp-result/Result101/Ok/">
+      
+      
+        <meta name="author" content="mitama">
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.1.2">
+    
+    
+      
+        <title>Ok - Mitama.Result | User Manual</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.3020aac5.css">
+      
+        <link rel="stylesheet" href="../../assets/stylesheets/application-palette.224b79ff.css">
+      
+      
         
         
-        
-    
-    <link rel="stylesheet" href="../../gitbook/style.css">
-
-    
-            
-                
-                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-katex/katex.min.css">
-                
-            
-                
-                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-hints/plugin-hints.css">
-                
-            
-                
-                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-etoc/plugin.css">
-                
-            
-                
-                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-highlight/website.css">
-                
-            
-                
-                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-search/search.css">
-                
-            
-                
-                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-fontsettings/website.css">
-                
-            
-        
-
-    
-
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-
-        
+        <meta name="theme-color" content="#009688">
+      
     
     
-    <meta name="HandheldFriendly" content="true"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
-    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
-
-    
-    <link rel="next" href="constructors.html" />
+      <script src="../../assets/javascripts/modernizr.01ccdecf.js"></script>
     
     
-    <link rel="prev" href="../" />
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
     
-
-    </head>
-    <body>
-        
-<div class="book">
-    <div class="book-summary">
-        
-            
-<div id="book-search-input" role="search">
-    <input type="text" placeholder="Type to search" />
-</div>
-
-            
-                <nav role="navigation">
-                
-
-
-<ul class="summary">
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
     
     
-
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     
-
+      <link rel="stylesheet" href="../../cppmap_styles.css">
     
+    
+      
+    
+    
+  </head>
+  
+    
+    
+    <body dir="ltr" data-md-color-primary="teal" data-md-color-accent="teal">
+  
+    <svg class="md-svg">
+      <defs>
         
         
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448"
+    viewBox="0 0 416 448" id="__github">
+  <path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19-18.125
+        8.5-18.125-8.5-10.75-19-3.125-20.5 3.125-20.5 10.75-19 18.125-8.5
+        18.125 8.5 10.75 19 3.125 20.5zM320 304q0 10-3.125 20.5t-10.75
+        19-18.125 8.5-18.125-8.5-10.75-19-3.125-20.5 3.125-20.5 10.75-19
+        18.125-8.5 18.125 8.5 10.75 19 3.125 20.5zM360
+        304q0-30-17.25-51t-46.75-21q-10.25 0-48.75 5.25-17.75 2.75-39.25
+        2.75t-39.25-2.75q-38-5.25-48.75-5.25-29.5 0-46.75 21t-17.25 51q0 22 8
+        38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0
+        37.25-1.75t35-7.375 30.5-15 20.25-25.75 8-38.375zM416 260q0 51.75-15.25
+        82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5-41.75
+        1.125q-19.5 0-35.5-0.75t-36.875-3.125-38.125-7.5-34.25-12.875-30.25-20.25-21.5-28.75q-15.5-30.75-15.5-82.75
+        0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25
+        30.875q36.75-8.75 77.25-8.75 37 0 70 8 26.25-20.5
+        46.75-30.25t47.25-9.75q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34
+        99.5z" />
+</svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-        <li class="chapter " data-level="1.1" data-path="../../">
-            
-                <a href="../../">
-            
-                    
-                    Introduction
-            
-                </a>
-            
-
-            
-        </li>
+      <a href="#class-ok" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
     
-        <li class="chapter " data-level="1.2" data-path="../">
-            
-                <a href="../">
-            
-                    
-                    Result 101
-            
-                </a>
-            
-
-            
-            <ul class="articles">
-                
     
-        <li class="chapter active" data-level="1.2.1" data-path="./">
-            
-                <a href="./">
-            
-                    
-                    Ok
-            
-                </a>
-            
-
-            
-            <ul class="articles">
-                
-    
-        <li class="chapter " data-level="1.2.1.1" data-path="constructors.html">
-            
-                <a href="constructors.html">
-            
-                    
-                    constructors
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.1.2" data-path="deduction_guides.html">
-            
-                <a href="deduction_guides.html">
-            
-                    
-                    deduction guides
-            
-                </a>
-            
-
-            
-        </li>
-    
-
-            </ul>
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.2" data-path="../Err/">
-            
-                <a href="../Err/">
-            
-                    
-                    Err
-            
-                </a>
-            
-
-            
-            <ul class="articles">
-                
-    
-        <li class="chapter " data-level="1.2.2.1" data-path="../Err/constructors.html">
-            
-                <a href="../Err/constructors.html">
-            
-                    
-                    constructors
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.2.2" data-path="../Err/deduction_guides.html">
-            
-                <a href="../Err/deduction_guides.html">
-            
-                    
-                    deduction guides
-            
-                </a>
-            
-
-            
-        </li>
-    
-
-            </ul>
-            
-        </li>
-    
-        <li class="chapter " data-level="1.2.3" data-path="../Result/">
-            
-                <a href="../Result/">
-            
-                    
-                    Result
-            
-                </a>
-            
-
-            
-            <ul class="articles">
-                
-    
-        <li class="chapter " data-level="1.2.3.1" data-path="../Result/constructors.html">
-            
-                <a href="../Result/constructors.html">
-            
-                    
-                    constructors
-            
-                </a>
-            
-
-            
-        </li>
-    
-
-            </ul>
-            
-        </li>
-    
-
-            </ul>
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3" data-path="../../api/">
-            
-                <a href="../../api/">
-            
-                    
-                    API Reference
-            
-                </a>
-            
-
-            
-            <ul class="articles">
-                
-    
-        <li class="chapter " data-level="1.3.1" data-path="../../api/is_ok.html">
-            
-                <a href="../../api/is_ok.html">
-            
-                    
-                    is_ok
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.2" data-path="../../api/is_err.html">
-            
-                <a href="../../api/is_err.html">
-            
-                    
-                    is_err
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.3" data-path="../../api/ok.html">
-            
-                <a href="../../api/ok.html">
-            
-                    
-                    ok
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.4" data-path="../../api/err.html">
-            
-                <a href="../../api/err.html">
-            
-                    
-                    err
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.5" data-path="../../api/map.html">
-            
-                <a href="../../api/map.html">
-            
-                    
-                    map
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.6" data-path="../../api/map_or_else.html">
-            
-                <a href="../../api/map_or_else.html">
-            
-                    
-                    map_or_else
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.7" data-path="../../api/map_err.html">
-            
-                <a href="../../api/map_err.html">
-            
-                    
-                    map_err
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.8" data-path="../../api/and.html">
-            
-                <a href="../../api/and.html">
-            
-                    
-                    and
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.9" data-path="../../api/and_then.html">
-            
-                <a href="../../api/and_then.html">
-            
-                    
-                    and_then
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.10" data-path="../../api/or.html">
-            
-                <a href="../../api/or.html">
-            
-                    
-                    or
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.11" data-path="../../api/or_else.html">
-            
-                <a href="../../api/or_else.html">
-            
-                    
-                    or_else
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.12" data-path="../../api/unwrap_or.html">
-            
-                <a href="../../api/unwrap_or.html">
-            
-                    
-                    unwrap_or
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.13" data-path="../../api/unwrap_or_else.html">
-            
-                <a href="../../api/unwrap_or_else.html">
-            
-                    
-                    unwrap_or_else
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.14" data-path="../../api/unwrap.html">
-            
-                <a href="../../api/unwrap.html">
-            
-                    
-                    unwrap
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.15" data-path="../../api/unwrap_err.html">
-            
-                <a href="../../api/unwrap_err.html">
-            
-                    
-                    unwrap_err
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.16" data-path="../../api/unwrap_or_default.html">
-            
-                <a href="../../api/unwrap_or_default.html">
-            
-                    
-                    unwrap_or_default
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.17" data-path="../../api/transpose.html">
-            
-                <a href="../../api/transpose.html">
-            
-                    
-                    transpose
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.3.18" data-path="../../api/equality.html">
-            
-                <a href="../../api/equality.html">
-            
-                    
-                    operator==
-            
-                </a>
-            
-
-            
-        </li>
-    
-
-            </ul>
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4" data-path="../../meta/">
-            
-                <a href="../../meta/">
-            
-                    
-                    Meta Function Reference
-            
-                </a>
-            
-
-            
-            <ul class="articles">
-                
-    
-        <li class="chapter " data-level="1.4.1" data-path="../../meta/is_result.html">
-            
-                <a href="../../meta/is_result.html">
-            
-                    
-                    is_result
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="1.4.2" data-path="../../meta/is_result_with.html">
-            
-                <a href="../../meta/is_result_with.html">
-            
-                    
-                    is_result_with
-            
-                </a>
-            
-
-            
-        </li>
-    
-
-            </ul>
-            
-        </li>
-    
-
-    
-
-    <li class="divider"></li>
-
-    <li>
-        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
-            Published with GitBook
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="https://loligothick.github.io/mitama-cpp-result/" title="Mitama.Result | User Manual" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon">donut_small</i>
+          
         </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              Mitama.Result | User Manual
+            </span>
+            <span class="md-header-nav__topic">
+              Ok
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+<a href="https://github.com/loligothick/mitama-cpp-result" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    loligothick/mitama-cpp-result
+  </div>
+</a>
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+        
+
+  
+
+<nav class="md-tabs md-tabs--active" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  <li class="md-tabs__item">
+    
+      <a href="../.." title="Home" class="md-tabs__link">
+        Home
+      </a>
+    
+  </li>
+
+      
+        
+  <li class="md-tabs__item">
+    
+      <a href="../" title="Result 101" class="md-tabs__link">
+        Result 101
+      </a>
+    
+  </li>
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="./" title="Class Reference" class="md-tabs__link md-tabs__link--active">
+          Class Reference
+        </a>
+      
     </li>
-</ul>
+  
 
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../api/" title="API Reference" class="md-tabs__link">
+          API Reference
+        </a>
+      
+    </li>
+  
 
-                </nav>
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../../meta/is_result/" title="Meta Function Reference" class="md-tabs__link">
+          Meta Function Reference
+        </a>
+      
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+      
+      <main class="md-main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
             
-        
-    </div>
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="https://loligothick.github.io/mitama-cpp-result/" title="Mitama.Result | User Manual" class="md-nav__button md-logo">
+      
+        <i class="md-icon">donut_small</i>
+      
+    </a>
+    Mitama.Result | User Manual
+  </label>
+  
+    <div class="md-nav__source">
+      
 
-    <div class="book-body">
+
+  
+
+<a href="https://github.com/loligothick/mitama-cpp-result" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    loligothick/mitama-cpp-result
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../" title="Result 101" class="md-nav__link">
+      Result 101
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+    
+    <label class="md-nav__link" for="nav-3">
+      Class Reference
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        Class Reference
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
         
-            <div class="body-inner">
-                
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Ok
+      </label>
+    
+    <a href="./" title="Ok" class="md-nav__link md-nav__link--active">
+      Ok
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#class-ok" title="class Ok" class="md-nav__link">
+    class Ok
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="constructors/" title="constructors" class="md-nav__link">
+      constructors
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="deduction_guides/" title="deduction guides" class="md-nav__link">
+      deduction guides
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Err/" title="Err" class="md-nav__link">
+      Err
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Err/constructors/" title="constructors" class="md-nav__link">
+      constructors
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Err/deduction_guides/" title="deduction guides" class="md-nav__link">
+      deduction guides
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Result/" title="Result" class="md-nav__link">
+      Result
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Result/constructors/" title="constructors" class="md-nav__link">
+      constructors
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+    
+    <label class="md-nav__link" for="nav-4">
+      API Reference
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-4">
+        API Reference
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/" title="CHANGELOG" class="md-nav__link">
+      CHANGELOG
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/is_ok/" title="is_ok" class="md-nav__link">
+      is_ok
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/is_err/" title="is_err" class="md-nav__link">
+      is_err
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/ok/" title="ok" class="md-nav__link">
+      ok
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/err/" title="err" class="md-nav__link">
+      err
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/map/" title="map" class="md-nav__link">
+      map
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/map_or_else/" title="map_or_else" class="md-nav__link">
+      map_or_else
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/map_err/" title="map_err" class="md-nav__link">
+      map_err
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/and/" title="and" class="md-nav__link">
+      and
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/and_then/" title="and_then" class="md-nav__link">
+      and_then
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/or/" title="or" class="md-nav__link">
+      or
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/or_else/" title="or_else" class="md-nav__link">
+      or_else
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/unwrap_or/" title="unwrap_or" class="md-nav__link">
+      unwrap_or
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/unwrap_or_else/" title="unwrap_or_else" class="md-nav__link">
+      unwrap_or_else
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/unwrap/" title="unwrap" class="md-nav__link">
+      unwrap
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/unwrap_err/" title="unwrap_err" class="md-nav__link">
+      unwrap_err
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/unwrap_or_default/" title="unwrap_or_default" class="md-nav__link">
+      unwrap_or_default
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/transpose/" title="transpose" class="md-nav__link">
+      transpose
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../api/equality/" title="operator==" class="md-nav__link">
+      operator==
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+    
+    <label class="md-nav__link" for="nav-5">
+      Meta Function Reference
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-5">
+        Meta Function Reference
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../meta/is_result/" title="is_result" class="md-nav__link">
+      is_result
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../meta/is_result_with/" title="is_result_with" class="md-nav__link">
+      is_result_with
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
                     
-
-<div class="book-header" role="navigation">
-    
-
-    <!-- Title -->
-    <h1>
-        <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href="../.." >Ok</a>
-    </h1>
-</div>
-
-
-
-
-                    <div class="page-wrapper" tabindex="-1" role="main">
-                        <div class="page-inner">
-                            
-<div id="book-search-results">
-    <div class="search-noresults">
-    
-                                <section class="normal markdown-section">
-                                
-                                <h2 id="class-ok">class Ok</h2>
-<p><code>Ok</code> is a helper class to construct <code>Result</code>.
-<code>Result</code> has constructor </p>
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#class-ok" title="class Ok" class="md-nav__link">
+    class Ok
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  <h1>Ok</h1>
+                
+                <h2 id="class-ok">class Ok</h2>
+<p><code class="codehilite">Ok</code> is a helper class to construct <code class="codehilite">Result</code>.
+<code class="codehilite">Result</code> has constructor </p>
 <p><strong>Example</strong></p>
-<pre><code class="lang-cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;string&gt;</span></span>
-[](<span class="hljs-keyword">auto</span> value) -&gt; Result&lt;<span class="hljs-keyword">int</span>, <span class="hljs-built_in">std</span>::<span class="hljs-built_in">string</span>&gt; {
-    <span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> <span class="hljs-built_in">std</span>::literals;
-    <span class="hljs-keyword">if</span> (value)
-        <span class="hljs-keyword">return</span> Ok(value);
-    <span class="hljs-keyword">else</span>
-        <span class="hljs-keyword">return</span> Err(<span class="hljs-string">&quot;error&quot;</span>s);
-};
-</code></pre>
-
-                                
-                                </section>
-                            
-    </div>
-    <div class="search-results">
-        <div class="has-results">
-            
-            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
-            <ul class="search-results-list"></ul>
-            
-        </div>
-        <div class="no-results">
-            
-            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
-            
-        </div>
-    </div>
-</div>
-
-                        </div>
-                    </div>
+<div class="codehilite"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="p">[](</span><span class="k">auto</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">literals</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Ok</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="k">return</span> <span class="nf">Err</span><span class="p">(</span><span class="s">&quot;error&quot;</span><span class="n">s</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
                 
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../" title="Result 101" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
-
-            
-                
-                <a href="../" class="navigation navigation-prev " aria-label="Previous page: Result 101">
-                    <i class="fa fa-angle-left"></i>
-                </a>
-                
-                
-                <a href="constructors.html" class="navigation navigation-next " aria-label="Next page: constructors">
-                    <i class="fa fa-angle-right"></i>
-                </a>
-                
-            
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Result 101
+              </span>
+            </div>
+          </a>
         
+        
+          <a href="constructors/" title="constructors" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                constructors
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
     </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
+    
+      <a href="https://twitter.com/mitama_rs" class="md-footer-social__link fa fa-twitter"></a>
+    
+  </div>
 
-    <script>
-        var gitbook = gitbook || [];
-        gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Ok","level":"1.2.1","depth":2,"next":{"title":"constructors","level":"1.2.1.1","depth":3,"path":"Result101/Ok/constructors.md","ref":"Result101/Ok/constructors.md","articles":[]},"previous":{"title":"Result 101","level":"1.2","depth":1,"path":"Result101/README.md","ref":"Result101/README.md","articles":[{"title":"Ok","level":"1.2.1","depth":2,"path":"Result101/Ok/README.md","ref":"Result101/Ok/README.md","articles":[{"title":"constructors","level":"1.2.1.1","depth":3,"path":"Result101/Ok/constructors.md","ref":"Result101/Ok/constructors.md","articles":[]},{"title":"deduction guides","level":"1.2.1.2","depth":3,"path":"Result101/Ok/deduction_guides.md","ref":"Result101/Ok/deduction_guides.md","articles":[]}]},{"title":"Err","level":"1.2.2","depth":2,"path":"Result101/Err/README.md","ref":"Result101/Err/README.md","articles":[{"title":"constructors","level":"1.2.2.1","depth":3,"path":"Result101/Err/constructors.md","ref":"Result101/Err/constructors.md","articles":[]},{"title":"deduction guides","level":"1.2.2.2","depth":3,"path":"Result101/Err/deduction_guides.md","ref":"Result101/Err/deduction_guides.md","articles":[]}]},{"title":"Result","level":"1.2.3","depth":2,"path":"Result101/Result/README.md","ref":"Result101/Result/README.md","articles":[{"title":"constructors","level":"1.2.3.1","depth":3,"path":"Result101/Result/constructors.md","ref":"Result101/Result/constructors.md","articles":[]}]}]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":["katex","hints","hide-published-with","etoc"],"pluginsConfig":{"etoc":{"h2lb":3,"header":1,"maxdepth":4,"mindepth":3,"notoc":false},"search":{},"hints":{"danger":"fa fa-exclamation-circle","info":"fa fa-info-circle","tip":"fa fa-mortar-board","working":"fa fa-wrench"},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"hide-published-with":{},"katex":{},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"Result101/Ok/README.md","mtime":"2019-05-20T20:13:43.743Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-05-20T20:14:17.247Z"},"basePath":"../..","book":{"language":""}});
-        });
-    </script>
-</div>
-
-        
-    <script src="../../gitbook/gitbook.js"></script>
-    <script src="../../gitbook/theme.js"></script>
+    </div>
+  </div>
+</footer>
+      
+    </div>
     
-        
-        <script src="../../gitbook/gitbook-plugin-hide-published-with/plugin.js"></script>
-        
+      <script src="../../assets/javascripts/application.267712eb.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+      
+        <script src="../../mathjaxhelper.js"></script>
+      
     
-        
-        <script src="../../gitbook/gitbook-plugin-etoc/plugin.js"></script>
-        
-    
-        
-        <script src="../../gitbook/gitbook-plugin-search/search-engine.js"></script>
-        
-    
-        
-        <script src="../../gitbook/gitbook-plugin-search/search.js"></script>
-        
-    
-        
-        <script src="../../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
-        
-    
-        
-        <script src="../../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
-        
-    
-        
-        <script src="../../gitbook/gitbook-plugin-sharing/buttons.js"></script>
-        
-    
-        
-        <script src="../../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
-        
-    
-
-    </body>
+  </body>
 </html>
-
