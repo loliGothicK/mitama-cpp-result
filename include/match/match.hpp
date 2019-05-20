@@ -5,8 +5,8 @@
 #include <type_traits>
 #include <utility>
 #include <functional>
-#include "../result/fwd.hpp"
-#include "../result/detail.hpp"
+#include <result/detail/fwd.hpp>
+#include <result/detail/detail.hpp>
 
 namespace mitama::match
 {

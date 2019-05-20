@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <Result.hpp>
+#include <result/Result.hpp>
 #include <utest_utility/is_invalid_expr.hpp>
 
 #include <boost/hana/assert.hpp>
