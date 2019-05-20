@@ -15,3 +15,7 @@ It means `op` must only maps `T -> U`, never changes `E`.
 
 `std::invoke_result_t<O&&, E>` must be returns `Result<T, F>`.
 It means `op` must only maps `E -> F`, never changes `T`.
+
+# v3.0.0
+
+- change directory/namespace structure
