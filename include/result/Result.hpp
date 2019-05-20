@@ -13,18 +13,20 @@
 #include <type_traits>
 #include <utility>
 #include <variant>
-#include "traits/perfect_traits_special_members.hpp"
-#include "result/detail.hpp"
-#include "result/fwd.hpp"
+#include <result/traits/perfect_traits_special_members.hpp>
+#include <result/detail/detail.hpp>
+#include <result/detail/fwd.hpp>
 
 #define PANIC(...) \
-  throw ::mitama::runtime_panic { macro_use, __FILE__, __LINE__, __VA_ARGS__ }
+  throw ::mitama::runtime_panic { ::mitama::result::macro_use, __FILE__, __LINE__, __VA_ARGS__ }
+
+
+namespace mitama {
+inline namespace result {
 
 class macro_use_tag_t{};
 inline static constexpr macro_use_tag_t macro_use{};
 
-namespace mitama
-{
 class runtime_panic : public std::runtime_error
 {
 public:
@@ -85,12 +87,12 @@ template <class T>
 struct is_ok_type<Ok<T>> : std::true_type
 {
 };
-} // namespace mitama
+}} // namespace mitama::result
 
-#include "result/result_impl.hpp"
+#include <result/detail/result_impl.hpp>
 
-namespace mitama
-{
+namespace mitama {
+inline namespace result {
 template <class T>
 class[[nodiscard]] Ok
     : private ::mitamagic::perfect_trait_copy_move<
@@ -206,7 +208,7 @@ public:
 
   template <class T_, class E_>
   std::enable_if_t<
-      mitama::is_comparable_with<T, T_>::value,
+      is_comparable_with<T, T_>::value,
       bool>
   operator==(Result<T_, E_> const &rhs) const
   {
@@ -215,7 +217,7 @@ public:
 
   template <class T_>
   std::enable_if_t<
-      mitama::is_comparable_with<T, T_>::value,
+      is_comparable_with<T, T_>::value,
       bool>
   operator==(Ok<T_> const &rhs) const
   {
@@ -349,7 +351,7 @@ public:
 
   template <class T_, class E_>
   std::enable_if_t<
-      mitama::is_comparable_with<E, E_>::value,
+      is_comparable_with<E, E_>::value,
       bool>
   operator==(Result<T_, E_> const &rhs) const
   {
@@ -358,7 +360,7 @@ public:
 
   template <class E_>
   std::enable_if_t<
-      mitama::is_comparable_with<E, E_>::value,
+      is_comparable_with<E, E_>::value,
       bool>
   operator==(Err<E_> const &rhs) const
   {
@@ -405,15 +407,15 @@ class[[nodiscard]] Result<T, E,
           std::conjunction_v<std::is_move_constructible<T>, std::is_move_constructible<E>>,
           std::conjunction_v<std::is_move_constructible<T>, std::is_move_assignable<T>, std::is_move_constructible<E>, std::is_move_assignable<E>>,
           Result<T, E>>,
-      public result::printer_friend_injector<Result<T, E>>,
-      public result::unwrap_or_default_friend_injector<Result<T, E>>,
-      public result::transpose_friend_injector<Result<T, E>>
+      public printer_friend_injector<Result<T, E>>,
+      public unwrap_or_default_friend_injector<Result<T, E>>,
+      public transpose_friend_injector<Result<T, E>>
 {
   std::variant<std::monostate, Ok<T>, Err<E>> storage_;
   template <class, class>
-  friend class result::printer_friend_injector;
+  friend class printer_friend_injector;
   template <class, class>
-  friend class result::transpose_friend_injector;
+  friend class transpose_friend_injector;
 
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
@@ -775,7 +777,7 @@ public:
 
   template <class T_, class E_>
   std::enable_if_t<
-      std::conjunction_v<mitama::is_comparable_with<T, T_>, mitama::is_comparable_with<E, E_>>,
+      std::conjunction_v<is_comparable_with<T, T_>, is_comparable_with<E, E_>>,
       bool>
   operator==(Result<T_, E_> const &rhs) const &
   {
@@ -788,7 +790,7 @@ public:
 
   template <class T_>
   std::enable_if_t<
-      mitama::is_comparable_with<T, T_>::value,
+      is_comparable_with<T, T_>::value,
       bool>
   operator==(Ok<T_> const &rhs) const
   {
@@ -797,7 +799,7 @@ public:
 
   template <class E_>
   std::enable_if_t<
-      mitama::is_comparable_with<E, E_>::value,
+      is_comparable_with<E, E_>::value,
       bool>
   operator==(Err<E_> const &rhs) const
   {
@@ -806,5 +808,5 @@ public:
 
 };
 
-} // namespace mitama
+}} // namespace mitama
 #endif

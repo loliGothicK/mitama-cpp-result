@@ -4,8 +4,8 @@
 #include "detail.hpp"
 #include "../traits/impl_traits.hpp"
 
-namespace mitama::result
-{
+namespace mitama {
+inline namespace result {
 
 template <class, class = std::nullptr_t> 
 class printer_friend_injector {};
@@ -187,5 +187,5 @@ public:
 };
 
 
-} // namespace rust_std::result
+}} // namespace rust_std::result
 #endif

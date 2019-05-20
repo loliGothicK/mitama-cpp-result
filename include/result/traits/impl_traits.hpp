@@ -5,7 +5,9 @@
 #include <utility>
 #include <iostream>
 
-namespace mitama::trait {
+namespace mitama {
+inline namespace result {
+namespace trait {
 
 // Trait Helpers
 
@@ -39,9 +41,9 @@ struct formattable_range<std::string> : std::false_type
 };
 
 template <class Range>
-struct formattable_range<Range, std::void_t<decltype(std::cout << *std::begin(std::declval<Range const&>()))>>
+struct formattable_range<Range, std::void_t<decltype(std::declval<std::ostream&>() << *std::begin(std::declval<Range const&>()))>>
     : std::true_type
 {
 };
-}
+}}}
 #endif
