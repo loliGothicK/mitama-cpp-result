@@ -1,5 +1,5 @@
 # mitama-cpp-result
-rust inspired Result Library
+See [the document](https://loligothick.github.io/mitama-cpp-result/).
 
 ## Test Status
 
