@@ -127,18 +127,20 @@ MatchExpression(Constraint constraint, CallBack call_back)->MatchExpression<Cons
 template <class Tuple>
 class MatchProxy
 {
-  Tuple args_;
+  Tuple seq_;
 
 public:
-  template <class... Args>
-  constexpr MatchProxy(Args... args) : args_{args...} {}
-
   template <class... MatchSequence>
-  constexpr auto operator()(MatchSequence &&... seq) const
+  constexpr MatchProxy(MatchSequence... seq) : seq_{seq...} {}
+
+  template <class... Args>
+  constexpr auto operator()(Args&&... args) const
   {
-    return [impl = [this](auto f, auto first, auto... rest)
+    auto arg_pack = std::forward_as_tuple(std::forward<Args>(args)...);
+    return std::apply(
+      [impl = [&](auto f, auto first, auto... rest)
                 -> std::common_type_t<typename decltype(first)::result_type, typename decltype(rest)::result_type...> {
-      if (first(args_))
+      if (first(arg_pack))
       {
         return first.result();
       }
@@ -146,17 +148,9 @@ public:
       {
         return f(f, rest...);
       }
-      else
-      {
-        if constexpr (!std::is_void_v<std::common_type_t<typename decltype(first)::result_type, typename decltype(rest)::result_type...>>)
-        {
-          static_assert(dependent_bool::always_false_v<std::common_type_t<typename decltype(first)::result_type, typename decltype(rest)::result_type...>>,
-              "Error: non-void match expression without default case");
-        }
-      }
-    }](auto... args) {
-      return impl(impl, args...);
-    }(std::forward<MatchSequence>(seq)...);
+    }](auto... cases) mutable {
+      return impl(impl, cases...);
+    }, seq_);
   }
 };
 
