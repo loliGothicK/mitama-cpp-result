@@ -6,7 +6,6 @@
 #include <utility>
 #include <functional>
 #include <result/detail/fwd.hpp>
-#include <result/detail/detail.hpp>
 
 namespace mitama::match
 {
@@ -20,6 +19,11 @@ using ignore_t = decltype(std::ignore);
 namespace mitamagic
 {
 
+struct result_match_tag{};
+
+template < class T >
+inline constexpr bool is_result_match_v = std::is_base_of_v<result_match_tag, std::decay_t<T>>;
+
 template < class, class, class = void >
 struct is_comparable_with: std::false_type {};
 
@@ -30,6 +34,22 @@ template < class T, class U >
 inline constexpr bool is_comparable_with_v = is_comparable_with<T, U>::value;
 
 namespace _detail {
+  template < class E, class A >
+  struct is_compatible_type
+    : std::disjunction<
+      is_comparable_with<E, A>,
+      std::is_same<std::decay_t<E>, std::decay_t<ignore_t>>,
+      std::conjunction<
+        std::is_same<std::decay_t<E>, mitama::Ok<std::decay_t<ignore_t>>>,
+        mitama::is_result<std::decay_t<A>>
+      >,
+      std::conjunction<
+        std::is_same<std::decay_t<E>, mitama::Err<std::decay_t<ignore_t>>>,
+        mitama::is_result<std::decay_t<A>>
+      >
+    >
+  {};
+
   template < class, class, class >
   struct is_comparable_case;
 
@@ -37,17 +57,14 @@ namespace _detail {
   struct is_comparable_case<std::tuple<E...>, std::tuple<A...>, std::index_sequence<I...>>
     : std::conjunction<
         std::disjunction<
-          is_comparable_with<
+          is_compatible_type<
             std::tuple_element_t<I, std::tuple<E...>>,
             std::tuple_element_t<I, std::tuple<A...>>
-          >,
-          std::is_same<
-            std::decay_t<ignore_t>,
-            std::decay_t<std::tuple_element_t<I, std::tuple<E...>>>
-          >
-        >...
+          >...
+        >
       >
   {};
+
 }
 
 template < class, class >
@@ -92,25 +109,37 @@ struct is_tuple_like<T, std::void_t<decltype(std::tuple_size_v<T>)>> : is_tuple_
 
 struct conjunction
 {
-  template <class Actual, class... Preds>
-  static constexpr bool apply(Actual const &act, Preds &&... preds)
-  {
-    return (std::forward<Preds>(preds)[act] && ...);
+  template < class F, class G >
+  static
+  constexpr
+  std::enable_if_t<
+    std::conjunction_v<
+      std::is_invocable_r<bool, F>,
+      std::is_invocable_r<bool, G>>,
+  bool>
+  Apply(F f, G g) {
+    return f() && g();
   }
 };
 
 struct disjunction
 {
-  template <class Actual, class... Preds>
-  static constexpr bool apply(Actual const &act, Preds &&... preds)
-  {
-    return (std::forward<Preds>(preds)[act] || ...);
+  template < class F, class G >
+  static
+  constexpr
+  std::enable_if_t<
+    std::conjunction_v<
+      std::is_invocable_r<bool, F>,
+      std::is_invocable_r<bool, G>>,
+  bool>
+  Apply(F f, G g) {
+    return f() || g();
   }
 };
 
 struct is_constraints {};
 
-template <class, class...>
+template <class, class, class>
 class Constraints;
 
 template <class C1, class C2,
@@ -118,27 +147,27 @@ template <class C1, class C2,
       std::is_base_of<is_constraints, std::decay_t<C1>>,
       std::is_base_of<is_constraints, std::decay_t<C2>>>,
     bool> = false>
-constexpr auto operator&(C1 &&c1, C2 &&c2)
+constexpr auto operator&(C1 c1, C2 c2)
 {
-  return Constraints<conjunction, C1, C2>{std::forward<C1>(c1), std::forward<C2>(c2)};
+  return Constraints<conjunction, C1, C2>{c1, c2};
 }
 template <class C1, class C2,
     std::enable_if_t<std::conjunction_v<
       std::is_base_of<is_constraints, std::decay_t<C1>>,
       std::is_base_of<is_constraints, std::decay_t<C2>>>,
     bool> = false>
-constexpr auto operator|(C1 &&c1, C2 &&c2)
+constexpr auto operator|(C1 c1, C2 c2)
 {
-  return Constraints<disjunction, C1, C2>{std::forward<C1>(c1), std::forward<C2>(c2)};
+  return Constraints<disjunction, C1, C2>{c1, c2};
 }
 
-template <class Supplier, class... Preds>
+template <class Supplier, class Pre, class Post>
 class Constraints : is_constraints
 {
-  std::tuple<Preds...> constraints;
-
+  Pre pre_fn;
+  Post post_fn;
 public:
-  constexpr Constraints(Preds... preds): constraints{preds...} {}
+  constexpr Constraints(Pre a, Post b): pre_fn(a), post_fn(b) {}
 
   Constraints(Constraints const &) = default;
   Constraints &operator=(Constraints const &) = default;
@@ -146,32 +175,23 @@ public:
   template <class... Expected>
   constexpr
   std::enable_if_t<
-    std::conjunction_v<is_invocable_constrait<Preds, Expected...>...>,
+    std::conjunction_v<
+      is_invocable_constrait<Pre, Expected...>,
+      is_invocable_constrait<Post, Expected...>>,
   bool>
   operator[](std::tuple<Expected...> const &actual) const
   {
-    return std::apply([&actual](auto&&... preds) {
-      return Supplier::apply(actual, std::forward<decltype(preds)>(preds)...);
-    }, constraints);
+    return Supplier::Apply(
+      [&actual, this]{ return std::apply(pre_fn, actual); },
+      [&actual, this]{ return std::apply(post_fn, actual); }
+    );
   }
 };
-
-template <class Constraint, class Fallback>
-class MatchExpression;
 
 template <class Second, class First>
 class MatchSequence;
 
-template <class>
-struct is_match_expr: std::false_type {};
-
-template <class C, class F>
-struct is_match_expr<MatchExpression<C, F>>: std::true_type {};
-
-template <class T>
-inline constexpr bool is_match_expr_v = is_match_expr<T>::value;
-
-template <class Constraint, class Fallback>
+template <class Constraint, class Fallback, class = void>
 class MatchExpression
 {
   Constraint constraint;
@@ -194,10 +214,10 @@ public:
   }
 
   template <class... Args>
-  constexpr decltype(auto) operator()(Args&&... args) const
+  constexpr auto operator()(Args... args) const
   {
-    if constexpr (std::is_invocable_v<Fallback, Args&&...>) {
-      return std::invoke(fallback, std::forward<Args>(args)...);
+    if constexpr (std::is_invocable_v<Fallback, Args...>) {
+      return std::invoke(fallback, args...);
     }
     else if constexpr (std::is_invocable_v<Fallback>) {
       return std::invoke(fallback);
@@ -209,7 +229,57 @@ public:
 };
 
 template <class Constraint, class Fallback>
-MatchExpression(Constraint, Fallback) -> MatchExpression<Constraint, Fallback>;
+class MatchExpression<Constraint, Fallback, std::enable_if_t<is_result_match_v<Constraint>>>
+{
+  Constraint constraint;
+  mutable std::decay_t<Fallback> fallback;
+
+public:
+  constexpr MatchExpression(Constraint cons, Fallback cb): constraint{cons}, fallback{cb} {}
+
+  MatchExpression(MatchExpression const &) = default;
+  MatchExpression &operator=(MatchExpression const &) = default;
+
+  template <class... Args>
+  constexpr
+  std::enable_if_t<
+    is_invocable_constrait_v<Constraint, Args...>,
+  bool>
+  operator[](std::tuple<Args...> const& args) const
+  {
+    return constraint[args];
+  }
+
+  template <class Res>
+  constexpr auto operator()(Res const& res) const
+  {
+    if constexpr (Constraint::ok) {
+      if constexpr (std::is_invocable_v<Fallback, typename Res::ok_type>) {
+        return std::invoke(fallback, res.unwrap());
+      }
+      else if constexpr (std::is_invocable_v<Fallback>) {
+        return std::invoke(fallback);
+      }
+      else {
+        static_assert([]{ return false; }(), "not invocable");
+      }
+    }
+    else {
+      if constexpr (std::is_invocable_v<Fallback, typename Res::err_type>) {
+        return std::invoke(fallback, res.unwrap_err());
+      }
+      else if constexpr (std::is_invocable_v<Fallback>) {
+        return std::invoke(fallback);
+      }
+      else {
+        static_assert([]{ return false; }(), "not invocable");
+      }
+    }
+  }
+};
+
+template <class Constraint, class Fallback>
+MatchExpression(Constraint, Fallback) -> MatchExpression<std::decay_t<Constraint>, std::decay_t<Fallback>>;
 
 } // ! namespace mitamagic
 
@@ -223,11 +293,11 @@ constexpr MatchDefault Default{};
 
 namespace mitamagic {
 
-template <class, class>
+template <class>
 class MatchProxy;
 
-template <class SuppressNonExhaustive, class... MatchSequence>
-class MatchProxy<SuppressNonExhaustive, std::tuple<MatchSequence...>>
+template <class... MatchSequence>
+class MatchProxy<std::tuple<MatchSequence...>>
 {
   std::tuple<MatchSequence...> seq_;
 
@@ -236,38 +306,27 @@ public:
   constexpr MatchProxy(Sequence... seq): seq_{seq...} {}
 
   template <class... Args>
-  constexpr auto operator()(Args&&... args) const
+  constexpr auto operator()(Args const&... args) const
   {
-    auto arg_pack = std::tuple<Args...>{ std::forward<Args>(args)... };
+    static_assert(
+      std::conjunction_v<is_invocable_constrait<MatchSequence, Args...>...>,
+      "Error: non-invocable match arm(s) exist.");
     return std::apply(
-      [impl = [&](auto f, auto first, auto... rest)
-          -> std::common_type_t<decltype(std::apply(first, arg_pack)), decltype(std::apply(rest, arg_pack))...>
+      [impl = [&, args...](auto f, auto first, auto... rest)
+          -> std::common_type_t<decltype(std::apply(first, std::declval<std::tuple<Args...>>())), decltype(std::apply(rest, std::declval<std::tuple<Args...>>()))...>
     {
-      if constexpr (is_invocable_constrait_v<decltype(first), Args...>) {
-        if (first[arg_pack]) {
-          return std::apply(first, arg_pack);
-        }
+      if (first[std::tuple(args...)]) {
+        return std::apply(first, std::tuple(args...));
       }
       if constexpr (sizeof...(rest) > 0) {
         return f(f, rest...);
       }
       else {
-        if constexpr (!std::is_same_v<SuppressNonExhaustive, suppress_non_exhaustive>) {
-          static_assert(
-            std::disjunction_v<
-              std::disjunction<std::is_same<MatchSequence, MatchDefault>...>,
-              std::negation<std::is_void<std::common_type_t<decltype(std::apply(first, arg_pack)), decltype(std::apply(rest, arg_pack))...>>>>,
-            "Error: non-exhaustive pattern"
-          );
-          throw std::runtime_error("reached to non-exhaustive path");
+        if constexpr (std::is_void_v<std::common_type_t<decltype(std::apply(first, std::tuple(args...))), decltype(std::apply(rest, std::tuple(args...)))...>>) {
+          return;
         }
         else {
-          if constexpr (std::is_void_v<std::common_type_t<decltype(std::apply(first, arg_pack)), decltype(std::apply(rest, arg_pack))...>>) {
-            return;
-          }
-          else {
-            throw std::runtime_error("reached to non-exhaustive path");
-          }
+          throw std::runtime_error("reached to non-exhaustive path");
         }
       }
     }](auto... cases) {
@@ -276,47 +335,58 @@ public:
   }
 };
 
-template < class, class >
+template < class >
 class ImmediateMatchProxy;
 
-template < class SuppressNonExhaustive, class... Args >
-class ImmediateMatchProxy<SuppressNonExhaustive, std::tuple<Args...>> {
+template < class... Args >
+class ImmediateMatchProxy<std::tuple<Args...>> {
   std::tuple<Args...> args_;
 public:
   template < class... Args_ >
-  constexpr ImmediateMatchProxy(Args_&&... args) noexcept : args_( std::forward<Args_>(args)... ) {}
+  constexpr ImmediateMatchProxy(Args_... args) noexcept : args_( args... ) {}
 
   template < class... Cases >
-  decltype(auto) operator()(Cases&&... cases) const {
-    return std::apply(MatchProxy<SuppressNonExhaustive, std::tuple<Cases...>>{ std::forward<Cases>(cases)... }, std::move(args_));
+  auto operator()(Cases... cases) const {
+    return std::apply(MatchProxy<std::tuple<Cases...>>{ cases... }, args_);
   }
 };
 
 template <class Constraints, class Fallback>
 constexpr std::enable_if_t<std::is_base_of_v<is_constraints, std::decay_t<Constraints>>,
-                           MatchExpression<Constraints, Fallback>>
-operator>>=(Constraints &&co, Fallback &&ca)
+                           MatchExpression<std::decay_t<Constraints>, std::decay_t<Fallback>>>
+operator>>=(Constraints co, Fallback fb)
 {
-  return {std::forward<Constraints>(co), std::forward<Fallback>(ca)};
+  return {co, fb};
 }
+
+template <class Constraints, class FallbackValue,
+    std::enable_if_t<
+      std::is_base_of_v<is_constraints, std::decay_t<Constraints>>,
+    bool> = false>
+constexpr auto
+operator<<=(Constraints co, FallbackValue fv)
+{
+  return MatchExpression{co, [value = fv]{ return value; }};
+}
+
 
 class match_builder {
 public:
   template <class Arg>
   constexpr auto
-  operator[](Arg&& arg) const {
+  operator[](Arg arg) const {
     if constexpr (mitamagic::is_tuple_like<std::decay_t<Arg>>::value) {
-      return ImmediateMatchProxy<void, std::decay_t<Arg>>{std::forward<Arg>(arg)};
+      return ImmediateMatchProxy<std::decay_t<Arg>>{arg};
     }
     else {
-      return ImmediateMatchProxy<void, std::tuple<std::decay_t<Arg>>>{std::forward<Arg>(arg)};
+      return ImmediateMatchProxy<std::tuple<std::decay_t<Arg>>>{arg};
     }
   }
 
   template <class... Args>
-  constexpr MatchProxy<void, std::tuple<Args...>>
-  operator()(Args&&... args) const {
-    return {std::forward<Args>(args)...};
+  constexpr MatchProxy<std::tuple<Args...>>
+  operator()(Args... args) const {
+    return {args...};
   }
 };
 
@@ -337,6 +407,14 @@ class Case : mitamagic::is_constraints
     return ([&](auto const& lhs, auto const& rhs){
       if constexpr (std::is_same_v<ignore_t, std::remove_reference_t<decltype(lhs)>>) {
         return true;
+      }
+      else if constexpr (std::conjunction_v<std::is_same<mitama::Ok<std::decay_t<ignore_t>>, std::decay_t<decltype(lhs)>>, 
+                                            mitama::result::is_result<std::decay_t<decltype(rhs)>>>) {
+        return rhs.is_ok();
+      }
+      else if constexpr (std::conjunction_v<std::is_same<mitama::Err<std::decay_t<ignore_t>>, std::decay_t<decltype(lhs)>>, 
+                                            mitama::result::is_result<std::decay_t<decltype(rhs)>>>) {
+        return rhs.is_err();
       }
       else {
         return lhs == rhs;
@@ -359,6 +437,125 @@ public:
     return compare(expected, actual, std::index_sequence_for<Expected...>{});
   }
 };
+
+template <class T>
+class Case<Ok<T>>
+  : mitamagic::is_constraints
+  , mitamagic::result_match_tag
+{
+  Ok<T> expected;
+
+public:
+  explicit constexpr Case(Ok<T> expected) : expected{expected} {}
+  static constexpr bool ok = true;
+
+  Case(Case const &) = default;
+  Case &operator=(Case const &) = default;
+
+  template < class U, class E >
+  constexpr 
+  std::enable_if_t<
+    std::is_same_v<std::decay_t<ignore_t>, std::decay_t<T>> ||
+    mitamagic::is_comparable_with<T, U>::value,
+  bool>
+  operator[](std::tuple<mitama::Result<U, E>> const& res) const {
+    if constexpr (std::is_same_v<std::decay_t<ignore_t>, std::decay_t<T>>) {
+      return std::get<0>(res).is_ok();
+    }
+    else {
+      return expected == std::get<0>(res);
+    }
+  }
+};
+
+template <class E>
+class Case<Err<E>>
+  : mitamagic::is_constraints
+  , mitamagic::result_match_tag
+{
+  Err<E> expected;
+
+public:
+  explicit constexpr Case(Err<E> expected) : expected{expected} {}
+  static constexpr bool ok = false;
+
+  Case(Case const &) = default;
+  Case &operator=(Case const &) = default;
+
+  template < class T, class F >
+  constexpr 
+  std::enable_if_t<
+    std::is_same_v<std::decay_t<ignore_t>, std::decay_t<E>> ||
+    mitamagic::is_comparable_with<E, F>::value,
+  bool>
+  operator[](std::tuple<mitama::Result<T, F>> const& res) const {
+    if constexpr (std::is_same_v<std::decay_t<ignore_t>, std::decay_t<E>>) {
+      return std::get<0>(res).is_err();
+    }
+    else {
+      return expected == std::get<0>(res);
+    }
+  }
+};
+
+namespace mitamagic {
+template <class Supplier, class T, class Post>
+class Constraints<Supplier, Case<mitama::Ok<T>>, Post>
+  : is_constraints
+  , result_match_tag
+{
+  Case<mitama::Ok<T>> ok_case;
+  Post post_fn;
+public:
+  constexpr Constraints(Case<mitama::Ok<T>> a, Post b): ok_case(a), post_fn(b) {}
+  static constexpr bool ok = true;
+
+  Constraints(Constraints const &) = default;
+  Constraints &operator=(Constraints const &) = default;
+
+  template < class U, class E >
+  constexpr 
+  std::enable_if_t<
+    std::is_same_v<std::decay_t<ignore_t>, std::decay_t<T>> ||
+    mitamagic::is_comparable_with<T, U>::value,
+  bool>
+  operator[](std::tuple<mitama::Result<U, E>> const &actual) const
+  {
+    Supplier::Apply(
+      [&actual, this]{ return ok_case[std::get<0>(actual)]; },
+      [&actual, this]{ return std::apply(post_fn, std::get<0>(actual).unwrap()); }
+    );
+  }
+};
+template <class Supplier, class E, class Post>
+class Constraints<Supplier, Case<mitama::Err<E>>, Post>
+  : is_constraints
+  , result_match_tag
+{
+  Case<mitama::Err<E>> err_case;
+  Post post_fn;
+public:
+  constexpr Constraints(Case<mitama::Err<E>> a, Post b): err_case(a), post_fn(b) {}
+  static constexpr bool ok = false;
+
+  Constraints(Constraints const &) = default;
+  Constraints &operator=(Constraints const &) = default;
+
+  template < class T, class F >
+  constexpr 
+  std::enable_if_t<
+    std::is_same_v<std::decay_t<ignore_t>, std::decay_t<E>> ||
+    mitamagic::is_comparable_with<E, F>::value,
+  bool>
+  operator[](std::tuple<mitama::Result<T, F>> const &actual) const
+  {
+    Supplier::Apply(
+      [&actual, this]{ return err_case[std::get<0>(actual)]; },
+      [&actual, this]{ return std::apply(post_fn, std::get<0>(actual).unwrap_err()); }
+    );
+  }
+};
+}
 
 template <class Pred>
 class Guard : private mitamagic::is_constraints
