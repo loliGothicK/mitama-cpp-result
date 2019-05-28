@@ -161,7 +161,7 @@ constexpr auto operator|(C1 c1, C2 c2)
   return Constraints<disjunction, C1, C2>{c1, c2};
 }
 
-template <class Supplier, class Pre, class Post>
+template <class LogicalOperator, class Pre, class Post>
 class Constraints : is_constraints
 {
   Pre pre_fn;
@@ -181,7 +181,7 @@ public:
   bool>
   operator[](std::tuple<Expected...> const &actual) const
   {
-    return Supplier::Apply(
+    return LogicalOperator::Apply(
       [&actual, this]{ return std::apply(pre_fn, actual); },
       [&actual, this]{ return std::apply(post_fn, actual); }
     );
@@ -499,8 +499,8 @@ public:
 };
 
 namespace mitamagic {
-template <class Supplier, class T, class Post>
-class Constraints<Supplier, Case<mitama::Ok<T>>, Post>
+template <class LogicalOperator, class T, class Post>
+class Constraints<LogicalOperator, Case<mitama::Ok<T>>, Post>
   : is_constraints
   , result_match_tag
 {
@@ -521,14 +521,14 @@ public:
   bool>
   operator[](std::tuple<mitama::Result<U, E>> const &actual) const
   {
-    Supplier::Apply(
-      [&actual, this]{ return ok_case[std::get<0>(actual)]; },
-      [&actual, this]{ return std::apply(post_fn, std::get<0>(actual).unwrap()); }
+    LogicalOperator::Apply(
+      [&]{ return ok_case[std::get<0>(actual)]; },
+      [&]{ return std::apply(post_fn, std::get<0>(actual).unwrap()); }
     );
   }
 };
-template <class Supplier, class E, class Post>
-class Constraints<Supplier, Case<mitama::Err<E>>, Post>
+template <class LogicalOperator, class E, class Post>
+class Constraints<LogicalOperator, Case<mitama::Err<E>>, Post>
   : is_constraints
   , result_match_tag
 {
@@ -549,9 +549,9 @@ public:
   bool>
   operator[](std::tuple<mitama::Result<T, F>> const &actual) const
   {
-    Supplier::Apply(
-      [&actual, this]{ return err_case[std::get<0>(actual)]; },
-      [&actual, this]{ return std::apply(post_fn, std::get<0>(actual).unwrap_err()); }
+    LogicalOperator::Apply(
+      [&]{ return err_case[std::get<0>(actual)]; },
+      [&]{ return std::apply(post_fn, std::get<0>(actual).unwrap_err()); }
     );
   }
 };
