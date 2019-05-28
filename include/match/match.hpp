@@ -328,7 +328,7 @@ public:
     static_assert(
       std::conjunction_v<is_invocable_constrait<MatchSequence, Args...>...>,
       "Error: non-invocable match arm(s) exist.");
-    return std::apply(fix{[&, args...](auto f, auto first, auto... rest)
+    return std::apply(fix{[&, args...]([[maybe_unused]] auto f, auto first, auto... rest)
           -> std::common_type_t<
               decltype(std::apply(first, std::declval<std::tuple<Args...>>())),
               decltype(std::apply(rest, std::declval<std::tuple<Args...>>()))...>
