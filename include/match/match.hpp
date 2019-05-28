@@ -10,6 +10,23 @@
 namespace mitama::match
 {
 
+template <class F>
+struct fix
+{
+  F f_;
+
+  template <class ...Args>
+  constexpr auto operator()(Args&& ...args) const
+    noexcept(noexcept(f_(*std::declval<fix const *>(), std::declval<Args>()...)))
+    -> decltype(f_(*std::declval<fix const *>(), std::declval<Args>()...))
+  {
+    return f_(std::move(*this), std::forward<Args>(args)...);
+  }
+};
+
+template <class F>
+fix(F&&f) -> fix<std::decay_t<F>>;
+
 struct suppress_non_exhaustive {};
 
 inline constexpr auto _ = std::ignore;
@@ -311,27 +328,27 @@ public:
     static_assert(
       std::conjunction_v<is_invocable_constrait<MatchSequence, Args...>...>,
       "Error: non-invocable match arm(s) exist.");
-    return std::apply(
-      [impl = [&, args...](auto f, auto first, auto... rest)
-          -> std::common_type_t<decltype(std::apply(first, std::declval<std::tuple<Args...>>())), decltype(std::apply(rest, std::declval<std::tuple<Args...>>()))...>
+    return std::apply(fix{[&, args...](auto f, auto first, auto... rest)
+          -> std::common_type_t<
+              decltype(std::apply(first, std::declval<std::tuple<Args...>>())),
+              decltype(std::apply(rest, std::declval<std::tuple<Args...>>()))...>
     {
       if (first[std::tuple(args...)]) {
         return std::apply(first, std::tuple(args...));
       }
       if constexpr (sizeof...(rest) > 0) {
-        return f(f, rest...);
+        return std::invoke(f, rest...);
       }
       else {
-        if constexpr (std::is_void_v<std::common_type_t<decltype(std::apply(first, std::tuple(args...))), decltype(std::apply(rest, std::tuple(args...)))...>>) {
+        if constexpr (std::is_void_v<std::common_type_t<decltype(std::apply(first, std::tuple(args...))), 
+                                                        decltype(std::apply(rest, std::tuple(args...)))...>>) {
           return;
         }
         else {
           throw std::runtime_error("reached to non-exhaustive path");
         }
       }
-    }](auto... cases) {
-      return impl(impl, cases...);
-    }, seq_);
+    }}, seq_);
   }
 };
 
