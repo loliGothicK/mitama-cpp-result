@@ -259,12 +259,12 @@ TEMPLATE_TEST_CASE("is_result_with_v meta test", "[is_result_with_v][and_then][m
   REQUIRE(!is_result_with_v<Result<unsigned, std::vector<TestType>>, mitama::Err<TestType>>);
 }
 
-TEMPLATE_TEST_CASE("and_then() meta test", "[result][and_then][meta]",
-                    int, unsigned, std::string, std::vector<int>)
-{
-  REQUIRE(!IS_INVALID_EXPR(DECLVAL(0).and_then(DECLVAL(1)))(Result<double, TestType>, std::function<Result<float, TestType>(unsigned)>));
-  REQUIRE(IS_INVALID_EXPR(std::declval<Result<double, TestType>>().and_then(DECLVAL(0)))(std::function<Result<TestType, float>(unsigned)>));
-}
+// TEMPLATE_TEST_CASE("and_then() meta test", "[result][and_then][meta]",
+//                     int, unsigned, std::string, std::vector<int>)
+// {
+//   REQUIRE(!IS_INVALID_EXPR(DECLVAL(0).and_then(DECLVAL(1)))(Result<double, TestType>, std::function<Result<float, TestType>(unsigned)>));
+//   REQUIRE(IS_INVALID_EXPR(std::declval<Result<double, TestType>>().and_then(DECLVAL(0)))(std::function<Result<TestType, float>(unsigned)>));
+// }
 
 TEST_CASE("operator|| test", "[result][or]"){
   {

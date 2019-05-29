@@ -27,7 +27,19 @@ jobs:
       - checkout
       - run: apt upgrade -y && apt update -y && apt install -y git
       - run: git submodule update --init --recursive
-      - run: mkdir build && cd build && cmake .. &&  make && ./tests
+      - run: |
+          mkdir build && cd build && cmake .. &&  make
+          ./result-tests
+          ./match-tests
+          # if [[ $CXX =~ ^clang.*$ ]]
+          # then
+          #   mkdir build && cd build && cmake .. &&  make
+          #   ./result-tests
+          #   ./match-tests
+          # else
+          #   mkdir build && cd build && cmake .. &&  make result-tests
+          #   ./result-tests
+          # fi
 
 workflows:
   build:
