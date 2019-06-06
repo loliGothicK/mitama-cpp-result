@@ -44,4 +44,12 @@ It means `op` must only maps `E -> F`, never changes `T`.
 
 # v4.0.0
 
-- match expression
+## New feature
+
+- add match expression
+
+# v4.0.1
+
+## bug fix
+
+- fix compile error on valid code in match expression
