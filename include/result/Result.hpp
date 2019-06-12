@@ -520,7 +520,7 @@ public:
 
   constexpr bool is_err() const noexcept { return std::holds_alternative<Err<E>>(storage_); }
 
-  constexpr operator bool() const noexcept { return std::holds_alternative<Ok<T>>(storage_); }
+  explicit constexpr operator bool() const noexcept { return std::holds_alternative<Ok<T>>(storage_); }
   constexpr bool operator !() const noexcept { return std::holds_alternative<Err<E>>(storage_); }
 
   template <class U = T>
