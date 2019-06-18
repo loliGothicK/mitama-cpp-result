@@ -59,3 +59,10 @@ It means `op` must only maps `E -> F`, never changes `T`.
 ## bug fix
 
 - mark operator bool explicit
+
+# v4.1.0
+
+## New API
+
+- `expect`, `expect_err`
+- `match<R>`
