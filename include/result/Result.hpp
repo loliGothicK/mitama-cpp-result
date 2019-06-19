@@ -1,9 +1,3 @@
-/**
- * @file Result.hpp
- * @brief emulation Rust std::result::Result
- * @author いなむのみたま
- */
-
 #ifndef MITAMA_RESULT_HPP
 #define MITAMA_RESULT_HPP
 #include <boost/format.hpp>
@@ -19,7 +13,6 @@
 
 #define PANIC(...) \
   throw ::mitama::runtime_panic { ::mitama::result::macro_use, __FILE__, __LINE__, __VA_ARGS__ }
-
 
 namespace mitama {
 inline namespace result {
@@ -778,6 +771,16 @@ public:
     }
   }
 
+  void expect(std::string_view msg) const {
+    if ( is_err() )
+      PANIC("%1%: %2%", msg, unwrap_err());
+  }
+
+  void expect_err(std::string_view msg) const {
+    if ( is_ok() )
+      PANIC("%1%: %2%", msg, unwrap());
+  }
+
   template <class T_, class E_>
   std::enable_if_t<
       std::conjunction_v<is_comparable_with<T, T_>, is_comparable_with<E, E_>>,
@@ -812,4 +815,13 @@ public:
 };
 
 }} // namespace mitama
+
+#define TRY(target) \
+  if (auto res = target; res.is_err()) \
+    return ::mitama::Err(res.unwrap_err());
+
+#define TRY_LET(var, target) \
+  if (auto var = target; var.is_err()) \
+    return ::mitama::Err(var.unwrap_err());
+  
 #endif
