@@ -115,26 +115,25 @@ TEST_CASE("match result sequence B", "[match],[result]") {
     using mitama::result::Result, mitama::result::Ok, mitama::result::Err;
     using mitama::match::_;
     using boost::lambda::_1;
-    using namespace std::literals::string_literals;
 
-    auto match_ = match::match(
+    auto match_ = match::match<double>(
         match::Case(Ok(2)) <<= 1,
         match::Case(Ok(4)) <<= 1,
         match::Case(Ok(6)) <<= 1,
-        match::Case(Ok(_)) >>= [](auto v) { return v; },
+        match::Case(Ok(_)) >>= _1,
         match::Case(Err(_)) >>= [](auto v) { return v; }
     );
     auto even = [](int u) -> Result<int, int> {
         if (u % 2 == 0)
             return Ok(u);
         else
-            return Err(u);
+            return Err(u+1);
     };
     REQUIRE(match_(even(2)) == 1);
     REQUIRE(match_(even(4)) == 1);
     REQUIRE(match_(even(6)) == 1);
     REQUIRE(match_(even(8)) == 8);
-    REQUIRE(match_(even(3)) == 3);
-    REQUIRE(match_(even(5)) == 5);
-    REQUIRE(match_(even(7)) == 7);
+    REQUIRE(match_(even(3)) == 4);
+    REQUIRE(match_(even(5)) == 6);
+    REQUIRE(match_(even(7)) == 8);
 }

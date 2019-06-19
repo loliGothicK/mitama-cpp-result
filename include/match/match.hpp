@@ -29,6 +29,8 @@ fix(F&&f) -> fix<std::decay_t<F>>;
 
 struct suppress_non_exhaustive {};
 
+struct _default_result;
+
 inline constexpr auto _ = std::ignore;
 
 using ignore_t = decltype(std::ignore);
@@ -328,11 +330,11 @@ constexpr MatchDefault Default{};
 
 namespace mitamagic {
 
-template <class>
+template <class, class>
 class MatchProxy;
 
-template <class... MatchSequence>
-class MatchProxy<std::tuple<MatchSequence...>>
+template <class R, class... MatchSequence>
+class MatchProxy<std::tuple<MatchSequence...>, R>
 {
   std::tuple<MatchSequence...> seq_;
 
@@ -347,9 +349,12 @@ public:
       std::conjunction_v<is_invocable_constrait<MatchSequence, Args...>...>,
       "Error: non-invocable match arm(s) exist.");
     return std::apply(fix{[&, args...]([[maybe_unused]] auto f, auto first, auto... rest)
-          -> std::common_type_t<
-              decltype(std::apply(first, std::declval<std::tuple<Args...>>())),
-              decltype(std::apply(rest, std::declval<std::tuple<Args...>>()))...>
+          -> std::conditional_t<
+               !std::is_same_v<R, _default_result>,
+                 R,
+                 std::common_type_t<
+                   decltype(std::apply(first, std::declval<std::tuple<Args...>>())),
+                   decltype(std::apply(rest, std::declval<std::tuple<Args...>>()))...>>
     {
       if (first[std::tuple(args...)]) {
         return std::apply(first, std::tuple(args...));
@@ -370,21 +375,21 @@ public:
   }
 };
 
-template < class >
-class ImmediateMatchProxy;
+// template < class >
+// class ImmediateMatchProxy;
 
-template < class... Args >
-class ImmediateMatchProxy<std::tuple<Args...>> {
-  std::tuple<Args...> args_;
-public:
-  template < class... Args_ >
-  constexpr ImmediateMatchProxy(Args_... args) noexcept : args_( args... ) {}
+// template < class... Args >
+// class ImmediateMatchProxy<std::tuple<Args...>> {
+//   std::tuple<Args...> args_;
+// public:
+//   template < class... Args_ >
+//   constexpr ImmediateMatchProxy(Args_... args) noexcept : args_( args... ) {}
 
-  template < class... Cases >
-  auto operator()(Cases... cases) const {
-    return std::apply(MatchProxy<std::tuple<Cases...>>{ cases... }, args_);
-  }
-};
+//   template < class... Cases >
+//   auto operator()(Cases... cases) const {
+//     return std::apply(MatchProxy<std::tuple<Cases...>>{ cases... }, args_);
+//   }
+// };
 
 template <class Constraints, class Fallback>
 constexpr std::enable_if_t<std::is_base_of_v<is_constraints, std::decay_t<Constraints>>,
@@ -403,28 +408,6 @@ operator<<=(Constraints co, FallbackValue fv)
 {
   return MatchExpression{co, [value = fv]{ return value; }};
 }
-
-
-class match_builder {
-public:
-  template <class Arg>
-  constexpr auto
-  operator[](Arg arg) const {
-    if constexpr (mitamagic::is_tuple_like<std::decay_t<Arg>>::value) {
-      return ImmediateMatchProxy<std::decay_t<Arg>>{arg};
-    }
-    else {
-      return ImmediateMatchProxy<std::tuple<std::decay_t<Arg>>>{arg};
-    }
-  }
-
-  template <class... Args>
-  constexpr MatchProxy<std::tuple<Args...>>
-  operator()(Args... args) const {
-    return {args...};
-  }
-};
-
 
 } // namespace mitamagic
 
@@ -627,7 +610,10 @@ template < class T > Range(T, T) -> Range<T>;
 
 inline constexpr auto range = [](auto lower, auto upper){ return Range{lower, upper}; };
 
-inline constexpr mitamagic::match_builder match{};
+template < class R = _default_result, class... Args >
+inline constexpr auto match(Args&&... args) {
+  return mitamagic::MatchProxy<std::tuple<Args...>, R>{ std::forward<Args>(args)... };
+}
 
 } // namespace mitama::match
 
