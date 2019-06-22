@@ -508,7 +508,7 @@ SCENARIO("test for dangling deref", "[result][deref][dangling]"){
   GIVEN( "A new result which is containing a dangling reference into the discarded vector" ) {
     auto deref = result<vec_iter, vec_iter>(success{std::vector<int>{1,3}.begin()}).deref();
 
-    REQUIRE( std::is_same_v<decltype(deref.unwrap()), dangling<int&>> );
+    REQUIRE( std::is_same_v<decltype(deref.unwrap()), dangling<std::reference_wrapper<int>>> );
     // deref.unwrap().transmute()
     // ^~~~~~~~~~~~~~~~~~~~~~~~~~ Undefined Behavior!
   }
