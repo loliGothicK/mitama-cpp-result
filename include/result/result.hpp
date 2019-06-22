@@ -15,6 +15,31 @@
 #include <result/detail/detail.hpp>
 #include <result/detail/fwd.hpp>
 
+namespace boost {
+template < class T, class U >
+std::enable_if_t<std::conjunction_v<std::negation<std::is_same<T, U>>, mitama::is_comparable_with<T, U>>,
+bool>
+operator==(optional<T> const& lhs, optional<U> const& rhs) {
+  if (!bool(lhs) || !bool(rhs)) {
+    return false;
+  }
+  else {
+    return lhs.value() == rhs.value();
+  }
+}
+template < class T, class U >
+std::enable_if_t<std::conjunction_v<std::negation<std::is_same<T, U>>, mitama::is_comparable_with<T, U>>,
+bool>
+operator!=(optional<T> const& lhs, optional<U> const& rhs) {
+  if (!bool(lhs) || !bool(rhs)) {
+    return true;
+  }
+  else {
+    return !(lhs.value() == rhs.value());
+  }
+}
+
+}
 #define PANIC(...) \
   throw ::mitama::runtime_panic { ::mitama::macro_use, __FILE__, __LINE__, __VA_ARGS__ }
 
@@ -594,18 +619,18 @@ public:
 
   template <class U = T>
   constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_copy_constructible_v<U>,
-  boost::optional<ok_type>>
-  ok() & {
-    if (is_ok()) {
-      return boost::optional<ok_type>{boost::get<success<T>>(storage_).x};
+  boost::optional<err_type>>
+  err() & {
+    if (is_err()) {
+      return boost::optional<err_type>{boost::get<failure<E>>(storage_).x};
     }
     else {
-      return boost::optional<ok_type>{boost::none};
+      return boost::optional<err_type>{boost::none};
     }
   }
 
   template <class F = E>
-  constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_copy_constructible_v<E>, boost::optional<E>>
+  constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_copy_constructible_v<E>,
   boost::optional<force_add_const_t<err_type>>>
   err() const & {
     if (is_err()) {
@@ -616,8 +641,8 @@ public:
     }
   }
 
-  template <class F = E>
-  constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_copy_constructible_v<E>, boost::optional<E>>
+  template <class F = E, std::enable_if_t<std::is_same_v<F, E> && std::is_move_constructible_v<F>, bool> = false>
+  constexpr decltype(auto)
   err() && {
     if constexpr (std::is_lvalue_reference_v<err_type>) {
       if (is_err()) {
@@ -657,6 +682,9 @@ public:
       return basic_result<std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_err, boost::get<failure<E>>(storage_).x};
   }
 
+  void as_ref() && = delete;
+  void as_ref() const && = delete;
+
   template <class O, class U = T, class F = E>
   constexpr auto map(O && op) const &
     -> std::enable_if_t<
@@ -676,8 +704,9 @@ public:
   }
 
   template <class O, class U = T, class F = E>
-  constexpr auto map(O && op) &&->std::enable_if_t<std::conjunction_v<std::is_invocable<O, T>, std::is_same<U, T>, std::is_same<F, E>, std::is_move_constructible<U>, std::is_move_constructible<F>>,
-                                                   basic_result<std::invoke_result_t<O, T>, E>>
+  constexpr auto map(O && op) &&
+    -> std::enable_if_t<std::conjunction_v<std::is_invocable<O, T>, std::is_same<U, T>, std::is_same<F, E>, std::is_move_constructible<U>, std::is_move_constructible<F>>,
+       basic_result<std::invoke_result_t<O, T>, E>>
   {
     using result_type = basic_result<std::invoke_result_t<O, T>, E>;
     return is_ok()
