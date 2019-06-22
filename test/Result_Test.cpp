@@ -29,6 +29,8 @@ using boost::lambda::_2;
 using str = std::string;
 using u32 = std::uint32_t;
 using i32 = std::int32_t;
+template < class T >
+using Rc = std::shared_ptr<T>;
 
 std::vector<std::string> split_impl(std::string &&s, std::regex &&r)
 {
@@ -128,6 +130,7 @@ TEST_CASE("ok() test", "[result][ok]"){
   REQUIRE(std::is_same_v<int&, typename result<int&, str&>::ok_type>);
   REQUIRE(std::is_same_v<boost::optional<const int&>, decltype(std::declval<result<int&, str&>&>().ok())>);
   REQUIRE(std::is_same_v<boost::optional<const int&>, decltype(std::declval<result<int&, str&> const&>().ok())>);
+  REQUIRE(std::is_same_v<boost::optional<dangle_ref<const int>>, decltype(std::declval<result<int&, str&>&&>().ok())>);
   REQUIRE(std::is_same_v<boost::optional<int&>, decltype(std::declval<mut_result<int&, str&>&>().ok())>);
   REQUIRE(std::is_same_v<boost::optional<const int&>, decltype(std::declval<mut_result<int&, str&> const&>().ok())>);
   REQUIRE(std::is_same_v<boost::optional<dangle_ref<int>>, decltype(std::declval<mut_result<int&, str&>&&>().ok())>);
@@ -207,11 +210,11 @@ TEST_CASE("and_then() test", "[result][and_then]"){
   auto sq = [](u32 x) -> result<u32, u32> { return success(x * x); };
   auto err = [](u32 x) -> result<u32, u32> { return failure(x); };
 
-  REQUIRE(result<u32, u32>{success(2u)}.and_then(sq).and_then(sq) == success(16u));
-  REQUIRE(result<u32, u32>{success(2u)}.and_then(sq).and_then(err) == failure(4u));
-  REQUIRE(result<u32, u32>{success(2u)}.and_then(err).and_then(sq) == failure(2u));
-  REQUIRE(result<u32, u32>{failure(3u)}.and_then(sq).and_then(sq) == failure(3u));
-  REQUIRE(result<u32, u32>{failure(3u)}.and_then(sq).and_then(sq) == failure(3u));
+  REQUIRE(success(2u).and_then(sq).and_then(sq) == success(16u));
+  REQUIRE(success(2u).and_then(sq).and_then(err) == failure(4u));
+  REQUIRE(success(2u).and_then(err).and_then(sq) == failure(2u));
+  REQUIRE(failure(3u).and_then(sq).and_then(sq) == failure(3u));
+  REQUIRE(failure(3u).and_then(sq).and_then(sq) == failure(3u));
 }
 
 TEMPLATE_TEST_CASE("is_result_with_v meta test", "[is_result_with_v][and_then][meta]",
@@ -327,7 +330,7 @@ TEST_CASE("transpose() test", "[result][transpose]"){
   result<boost::optional<i32>, std::monostate> x = success(some(5));
   boost::optional<result<i32, std::monostate>> y = some(result<i32, std::monostate>(success(5)));
   
-  REQUIRE(x.transpose().value() == y.value());
+  REQUIRE(x.transpose() == y);
 }
 
 TEST_CASE("basics test", "[result][basics]"){
@@ -460,19 +463,31 @@ SCENARIO("test for as_ref", "[result][as_ref]"){
   using namespace std::literals;
   GIVEN( "A new result, containing a reference into the original" ) {
     mut_result<str, str> res(success<str>{"foo"s});
-    auto ref /* result<str&, str&> */ = res.as_ref();
+    auto ref /* mut_result<str&, str&> */ = res.as_ref();
 
     REQUIRE( res == ref );
     REQUIRE( res == success("foo"s) );
     REQUIRE( ref == success("foo"s) );
+  }
+}
+
+SCENARIO("test for as_mut", "[result][as_mut]"){
+  using namespace std::literals;
+  GIVEN( "A new result, containing a reference into the original" ) {
+    auto ptr = std::make_shared<str>("foo"s);
+    mut_result<Rc<str>, Rc<str>> res(success<Rc<str>>{ptr});
+    auto ref /* result<str const&, str const&> */ = res.as_mut();
+
+    REQUIRE( res == success(ptr) );
+    REQUIRE( ref == success(ptr) );
 
     WHEN( "The new result is overwritten" ) {
-      ref.unwrap() = "bar"s;
+      *ref.unwrap() = "bar"s;
 
       THEN( "the original result change" ) {
         REQUIRE( res == ref );
-        REQUIRE( res == success("bar"s) );
-        REQUIRE( ref == success("bar"s) );
+        REQUIRE( *res.unwrap() == "bar"s );
+        REQUIRE( *ref.unwrap() == "bar"s );
       }
     }
   }
@@ -482,7 +497,7 @@ SCENARIO("test for deref", "[result][deref]"){
   using namespace std::literals;
   GIVEN( "A new result, containing a indirect reference into the original" ) {
     auto ptr = std::make_shared<int>(42);
-    mut_result<std::shared_ptr<int>, std::shared_ptr<int>> res(success<std::shared_ptr<int>&>{ptr});
+    mut_result<std::shared_ptr<int>, std::shared_ptr<int>> res(success<std::shared_ptr<int>>{ptr});
     auto deref = res.deref();
 
     REQUIRE( *res.unwrap() == deref.unwrap() );
@@ -504,7 +519,7 @@ SCENARIO("test for dangling deref", "[result][deref][dangling]"){
   using namespace std::literals;
   using vec_iter = typename std::vector<int>::iterator;
   GIVEN( "A new result which is containing a dangling reference into the discarded vector" ) {
-    auto deref = mut_result<vec_iter, vec_iter>(success{std::vector<int>{1,3}.begin()}).deref();
+    auto deref = result<vec_iter, vec_iter>(success{std::vector<int>{1,3}.begin()}).deref();
 
     REQUIRE( std::is_same_v<decltype(deref.unwrap()), dangling<std::reference_wrapper<int>>> );
     // deref.unwrap().transmute()
@@ -512,7 +527,7 @@ SCENARIO("test for dangling deref", "[result][deref][dangling]"){
   }
   GIVEN( "A new result which is containing a reference into the living vector" ) {
     std::vector<int> vec{1,3};
-    auto deref = mut_result<vec_iter, vec_iter>(success{vec.begin()}).deref();
+    auto deref = result<vec_iter, vec_iter>(success{vec.begin()}).deref();
 
     REQUIRE( deref.unwrap().transmute() == 1 );
     //       ^~~~~~~~~~~~~~~~~~~~~~~~~~ OK! 

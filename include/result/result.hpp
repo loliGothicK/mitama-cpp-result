@@ -15,31 +15,6 @@
 #include <result/detail/detail.hpp>
 #include <result/detail/fwd.hpp>
 
-namespace boost {
-template < class T, class U >
-std::enable_if_t<std::conjunction_v<std::negation<std::is_same<T, U>>, mitama::is_comparable_with<T, U>>,
-bool>
-operator==(optional<T> const& lhs, optional<U> const& rhs) {
-  if (!bool(lhs) || !bool(rhs)) {
-    return false;
-  }
-  else {
-    return lhs.value() == rhs.value();
-  }
-}
-template < class T, class U >
-std::enable_if_t<std::conjunction_v<std::negation<std::is_same<T, U>>, mitama::is_comparable_with<T, U>>,
-bool>
-operator!=(optional<T> const& lhs, optional<U> const& rhs) {
-  if (!bool(lhs) || !bool(rhs)) {
-    return true;
-  }
-  else {
-    return !(lhs.value() == rhs.value());
-  }
-}
-
-}
 #define PANIC(...) \
   throw ::mitama::runtime_panic { ::mitama::macro_use, __FILE__, __LINE__, __VA_ARGS__ }
 
@@ -77,31 +52,24 @@ public:
             (boost::format("', %1%:%2%") % std::string{func} % line).str()) {}
 };
 
-namespace detail {
-  template <class>
-  struct is_result : std::false_type {};
-  template <class T, class E>
-  struct is_result<basic_result<T, E>> : std::true_type {};
-
-  template <class, class...>
-  struct is_result_with : std::false_type {};
-  template <class T, class E>
-  struct is_result_with<basic_result<T, E>, success<T>> : std::true_type {};
-  template <class T, class E>
-  struct is_result_with<basic_result<T, E>, failure<E>> : std::true_type {};
-  template <class T, class E>
-  struct is_result_with<basic_result<T, E>, success<T>, failure<E>> : std::true_type {};
-}
-
-template <class T> struct is_result: detail::is_result<detail::remove_cvr_t<T>> {};
-
+template <class>
+struct is_result : std::false_type {};
+template <mutability _mut, class T, class E>
+struct is_result<basic_result<_mut, T, E>> : std::true_type {};
 template <class T>
 inline constexpr bool is_result_v = is_result<T>::value;
 
-template <class T, class... Requires> struct is_result_with: detail::is_result_with<detail::remove_cvr_t<T>, Requires...> {};
+template <class, class...>
+struct is_result_with : std::false_type {};
+template <mutability _mut, class T, class E>
+struct is_result_with<basic_result<_mut, T, E>, success<T>> : std::true_type {};
+template <mutability _mut, class T, class E>
+struct is_result_with<basic_result<_mut, T, E>, failure<E>> : std::true_type {};
+template <mutability _mut, class T, class E>
+struct is_result_with<basic_result<_mut, T, E>, success<T>, failure<E>> : std::true_type {};
 
 template <class T, class... Requires>
-inline constexpr bool is_result_with_v = is_result_with<T, Requires...>::value;
+inline constexpr bool is_result_with_v = is_result_with<detail::remove_cvr_t<T>, Requires...>::value;
 
 template <class>
 struct is_err_type : std::false_type {};
@@ -118,6 +86,8 @@ struct is_ok_type<success<T>> : std::true_type {};
 
 namespace mitama {
 
+/// class success:
+/// The main use of this class is to propagate successful results to the constructor of the result class.
 template <class T>
 class [[nodiscard]] success
     : private ::mitamagic::perfect_trait_copy_move<
@@ -131,7 +101,7 @@ class [[nodiscard]] success
   template <class>
   friend class success;
   T x;
-  template <class, class, class>
+  template <mutability, class, class, class>
   friend class basic_result;
   template <class, class>
   friend class printer_friend_injector;
@@ -232,11 +202,11 @@ public:
     return x;
   }
 
-  template <class T_, class E_>
+  template <mutability _mut, class T_, class E_>
   std::enable_if_t<
       is_comparable_with<T, T_>::value,
       bool>
-  constexpr operator==(basic_result<T_, E_> const &rhs) const
+  constexpr operator==(basic_result<_mut, T_, E_> const &rhs) const
   {
     return rhs.is_ok() ? rhs.unwrap() == this->x : false;
   }
@@ -258,9 +228,12 @@ public:
 
 };
 
+/// Deduction guide for `success`
 template <class T>
-success(T &&)->success<T>;
+success(T&&)->success<T>;
 
+/// class failure:
+/// The main use of this class is to propagate unsuccessful results to the constructor of the result class.
 template <class E>
 class [[nodiscard]] failure
     : private ::mitamagic::perfect_trait_copy_move<
@@ -274,7 +247,7 @@ class [[nodiscard]] failure
   template <class>
   friend class failure;
   E x;
-  template <class, class, class>
+  template <mutability, class, class, class>
   friend class basic_result;
   template <class, class>
   friend class printer_friend_injector;
@@ -376,12 +349,12 @@ public:
     }
   }
 
-  template <class T_, class E_>
+  template <mutability _mut, class T_, class E_>
   constexpr
   std::enable_if_t<
       is_comparable_with<E, E_>::value,
       bool>
-  operator==(basic_result<T_, E_> const &rhs) const
+  operator==(basic_result<_mut, T_, E_> const &rhs) const
   {
     return rhs.is_err() ? rhs.unwrap_err() == this->x : false;
   }
@@ -403,29 +376,36 @@ public:
   }
 };
 
+/// Deduction guide for `failure`
 template <class E>
-failure(E &&)->failure<E>;
+failure(E&&)->failure<E>;
 
+/// Optional aliases (for migration)
 inline auto none = boost::none;
 
 template <class T>
-inline boost::optional<T> some(T &&x)
-{
+inline boost::optional<T> some(T &&x) {
   return {std::forward<T>(x)};
 }
 template <class T, class... Args>
-inline boost::optional<T> some(Args&&... args)
-{
+inline boost::optional<T> some(Args&&... args) {
   return boost::optional<T>{boost::in_place(std::forward<Args>(args)...)};
 }
 
+/// alias template for immutable result
 template <class T = std::monostate, class E = std::monostate>
-using result = const basic_result<T, E>;
-template <class T = std::monostate, class E = std::monostate>
-using mut_result = basic_result<T, E>;
+using result = basic_result<mutability::immut, T, E>;
 
-template <class T, class E>
-class [[nodiscard]] basic_result<T, E,
+/// alias template for mutable result
+template <class T = std::monostate, class E = std::monostate>
+using mut_result = basic_result<mutability::mut, T, E>;
+
+/// @brief class basic_result
+/// @param _mutability: enum class value for mutability control
+/// @param T: Type of successful value
+/// @param E: Type of unsuccessful value
+template <mutability _mutability, class T, class E>
+class [[nodiscard]] basic_result<_mutability, T, E,
   /* bounded types requirements */ 
   trait::where< 
     std::disjunction<
@@ -441,35 +421,38 @@ class [[nodiscard]] basic_result<T, E,
     std::is_nothrow_destructible<detail::remove_cvr_t<T>>,
     std::is_nothrow_destructible<detail::remove_cvr_t<E>>
   >>
+  /* copy move traits */ 
   : private ::mitamagic::perfect_trait_copy_move<
         std::is_copy_constructible_v<boost::variant<success<T>, failure<E>>>,
         std::conjunction_v<std::is_copy_constructible<boost::variant<success<T>, failure<E>>>, std::is_copy_assignable<boost::variant<success<T>, failure<E>>>>,
         std::is_move_constructible_v<boost::variant<success<T>, failure<E>>>,
         std::conjunction_v<std::is_move_constructible<boost::variant<success<T>, failure<E>>>, std::is_move_assignable<boost::variant<success<T>, failure<E>>>>,
-        basic_result<T, E>>,
-    public printer_friend_injector<basic_result<T, E>>,
-    public unwrap_or_default_friend_injector<basic_result<T, E>>,
-    public transpose_friend_injector<basic_result<T, E>>,
-    public deref_friend_injector<basic_result<T, E>>
+        basic_result<_mutability, T, E>>,
+  /* method injection selectors */ 
+    public printer_friend_injector<basic_result<_mutability, T, E>>,
+    public unwrap_or_default_friend_injector<basic_result<_mutability, T, E>>,
+    public transpose_friend_injector<basic_result<_mutability, T, E>>,
+    public deref_friend_injector<basic_result<_mutability, T, E>>
 {
+  /// result storage
   boost::variant<success<T>, failure<E>> storage_;
+  /// friend accessors
   template <class, class>
   friend class printer_friend_injector;
   template <class, class>
   friend class transpose_friend_injector;
   template <class, class>
   friend class deref_friend_injector;
-  template <class, class, class>
+  template <mutability, class, class, class>
   friend class basic_result;
-
+  /// private aliases
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
-
   static constexpr std::nullptr_t required = nullptr;
-
-  template <class T_, class E_>
-  using not_self = std::negation<std::is_same<basic_result, basic_result<T_, E_>>>;
+  template <mutability _mut, class T_, class E_>
+  using not_self = std::negation<std::is_same<basic_result, basic_result<_mut, T_, E_>>>;
 public:
+  /// type fields
   using ok_type = T;
   using err_type = E;
   using ok_reference_type = std::remove_reference_t<T>&;
@@ -477,111 +460,151 @@ public:
   using ok_const_reference_type = detail::remove_cvr_t<T> const&;
   using err_const_reference_type = detail::remove_cvr_t<E> const&;
 
+  /* Constructors */
+
+  /// default constructor = delete
   constexpr basic_result() noexcept = delete;
 
+  /// non-explicit constructor for successful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
-  basic_result(success<U> const &ok)
+  constexpr basic_result(success<U> const &ok)
       : storage_{ok}
   {
   }
 
+  /// explicit constructor for successful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  explicit basic_result(success<U> const &ok)
+  constexpr explicit basic_result(success<U> const &ok)
       : storage_{ok}
   {
   }
 
+  /// non-explicit constructor for successful rvalue
+  template <class U,
+            where<std::is_constructible<T, U>,
+                  std::is_convertible<U, T>> = required>
+  constexpr basic_result(success<U> && ok)
+      : storage_{std::move(ok)}
+  {
+  }
+
+  /// explicit constructor for successful rvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  explicit basic_result(success<U> && ok)
-      : storage_{ok}
+  constexpr explicit basic_result(success<U> && ok)
+      : storage_{std::move(ok)}
   {
   }
 
+  /// non-explicit constructor for unsuccessful lvalue
   template <class U,
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
-  basic_result(failure<U> const &err)
+  constexpr basic_result(failure<U> const &err)
       : storage_{err}
   {
   }
 
+  /// explicit constructor for unsuccessful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  explicit basic_result(failure<U> const &err)
+  constexpr explicit basic_result(failure<U> const &err)
       : storage_{err}
   {
   }
 
+  /// non-explicit constructor for unsuccessful rvalue
   template <class U,
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
-  basic_result(failure<U> && err)
+  constexpr basic_result(failure<U> && err)
       : storage_{err}
   {
   }
 
+  /// explicit constructor for unsuccessful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  explicit basic_result(failure<U> && err)
+  constexpr explicit basic_result(failure<U> && err)
       : storage_{err}
   {
   }
 
+  /// in-place constructor for successful result
   template <class... Args,
             where<std::is_constructible<T, Args...>> = required>
-  explicit basic_result(in_place_ok_t, Args && ... args)
+  constexpr explicit basic_result(in_place_ok_t, Args && ... args)
       : storage_{success<T>{std::forward<Args>(args)...}}
   {
   }
 
+  /// in-place constructor for unsuccessful result
   template <class... Args,
             where<std::is_constructible<E, Args...>> = required>
-  explicit basic_result(in_place_err_t, Args && ... args)
+  constexpr explicit basic_result(in_place_err_t, Args && ... args)
       : storage_{failure<E>{std::forward<Args>(args)...}}
   {
   }
 
+  /// in-place constructor with initializer_list for successful result
   template <class U, class... Args,
             where<std::is_constructible<T, std::initializer_list<U>, Args...>> = required>
-  explicit basic_result(in_place_ok_t, std::initializer_list<U> il, Args && ... args)
+  constexpr explicit basic_result(in_place_ok_t, std::initializer_list<U> il, Args && ... args)
       : storage_{success<T>{il, std::forward<Args>(args)...}}
   {
   }
 
+  /// in-place constructor with initializer_list for unsuccessful result
   template <class U, class... Args,
             where<std::is_constructible<E, Args...>> = required>
-  explicit basic_result(in_place_err_t, std::initializer_list<U> il, Args && ... args)
+  constexpr explicit basic_result(in_place_err_t, std::initializer_list<U> il, Args && ... args)
       : storage_{failure<E>{il, std::forward<Args>(args)...}}
   {
   }
 
+  /// basic_result::is_ok()
+  /// Returns true if the result is succsess.
   constexpr bool is_ok() const noexcept { return ::mitama::detail::holds_alternative<success<T>>(storage_); }
 
+  /// basic_result::is_err()
+  /// Returns true if the result is failure.
   constexpr bool is_err() const noexcept { return ::mitama::detail::holds_alternative<failure<E>>(storage_); }
 
+  /// explicit basic_result::operator bool()
+  /// Covert result to bool and returns true if the result is succsess.
   explicit constexpr operator bool() const noexcept { return ::mitama::detail::holds_alternative<success<T>>(storage_); }
+
+  /// explicit basic_result::operator bool()
+  /// Covert result to bool and returns true if the result is failure.
   constexpr bool operator !() const noexcept { return ::mitama::detail::holds_alternative<failure<E>>(storage_); }
 
+  /// basic_result::ok() &
+  /// Converts from basic_result to boost::optional.
+  /// If self is
+  /// - immutable: returns boost::optional<const T>
+  /// -  mutable : returns boost::optional<T>
   template <class U = T>
   constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_copy_constructible_v<U>,
-  boost::optional<ok_type>>
+  std::conditional_t<is_mut_v<_mutability>, boost::optional<ok_type>, boost::optional<force_add_const_t<ok_type>>>>
   ok() & {
+    using ret = std::conditional_t<is_mut_v<_mutability>, boost::optional<ok_type>, boost::optional<force_add_const_t<ok_type>>>;
     if (is_ok()) {
-      return boost::optional<ok_type>{boost::get<success<T>>(storage_).x};
+      return ret{boost::get<success<T>>(storage_).x};
     }
     else {
-      return boost::optional<ok_type>{boost::none};
+      return ret{boost::none};
     }
   }
 
+  /// basic_result::ok() const&
+  /// Converts from basic_result to boost::optional<const T>.
   template <class U = T>
   constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_copy_constructible_v<U>,
   boost::optional<force_add_const_t<ok_type>>>
@@ -594,96 +617,139 @@ public:
     }
   }
 
+  /// basic_result::ok() &&
+  /// Converts from basic_result to boost::optional.
+  /// If T is lvalue reference and self is
+  ///   - immutable: returns boost::optional<dangling<std::reference_wrapper<const T>>>
+  ///   -  mutable : returns boost::optional<dangling<std::reference_wrapper<T>>>
+  /// T is not lvalue reference and self is
+  ///   - immutable: returns boost::optional<const T>
+  ///   -  mutable : returns boost::optional<T>
   template <class U = T, std::enable_if_t<std::is_same_v<U, T> && std::is_move_constructible_v<U>, bool> = false>
-  constexpr decltype(auto)
+  constexpr auto
   ok() && {
+    using ret = std::conditional_t<is_mut_v<_mutability>, boost::optional<ok_type>, boost::optional<force_add_const_t<ok_type>>>;
     if constexpr (std::is_lvalue_reference_v<ok_type>) {
       if (is_ok()) {
-        return boost::optional<dangle_ref<ok_type>>{boost::in_place(std::ref(boost::get<success<T>>(storage_).x))};
+        if constexpr (is_mut_v<_mutability>) {
+          return boost::optional<dangle_ref<std::remove_reference_t<ok_type>>>{boost::in_place(std::ref(boost::get<success<T>>(storage_).x))};
+        }
+        else {
+          return boost::optional<dangle_ref<std::add_const_t<std::remove_reference_t<ok_type>>>>{boost::in_place(std::cref(boost::get<success<T>>(storage_).x))};
+        }
       }
       else {
-        return boost::optional<dangle_ref<ok_type>>{boost::none};
+        return boost::optional<dangle_ref<std::conditional_t<is_mut_v<_mutability>, std::remove_reference_t<ok_type>, force_add_const_t<std::remove_reference_t<ok_type>>>>>{boost::none};
       }
     }
     else {
       if (is_ok()) {
-        return boost::optional<ok_type>{boost::get<success<T>>(std::move(storage_)).x};
+        return ret{boost::get<success<T>>(std::move(storage_)).x};
       }
       else {
-        return boost::optional<ok_type>{boost::none};
+        return ret{boost::none};
       }
     }
   }
 
   void ok() const&& = delete;
 
-  template <class U = T>
-  constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_copy_constructible_v<U>,
-  boost::optional<err_type>>
-  err() & {
-    if (is_err()) {
-      return boost::optional<err_type>{boost::get<failure<E>>(storage_).x};
-    }
-    else {
-      return boost::optional<err_type>{boost::none};
-    }
-  }
 
+  /// basic_result::err() &
+  /// Converts from basic_result to boost::optional.
+  /// If self is
+  /// - immutable: returns boost::optional<const E>
+  /// -  mutable : returns boost::optional<E>
   template <class F = E>
-  constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_copy_constructible_v<E>,
-  boost::optional<force_add_const_t<err_type>>>
+  constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_copy_constructible_v<E>, boost::optional<E>>
   err() const & {
     if (is_err()) {
-      return boost::optional<force_add_const_t<err_type>>{boost::get<failure<E>>(std::move(storage_)).x};
+      return boost::optional<E>{boost::get<failure<E>>(storage_).x};
     }
     else {
-      return boost::optional<force_add_const_t<err_type>>{boost::none};
+      return boost::optional<E>{boost::none};
     }
   }
 
+  /// basic_result::err() const&
+  /// Converts from basic_result to boost::optional<const E>.
+  template <class F = E>
+  constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_move_constructible_v<E>, boost::optional<E>>
+  err() && {
+    if (is_err()) {
+      return boost::optional<E>{boost::get<failure<E>>(std::move(storage_)).x};
+    }
+    else {
+      return boost::optional<E>{boost::none};
+    }
+  }
+
+  /// basic_result::err() &&
+  /// Converts from basic_result to boost::optional.
+  /// If E is lvalue reference and self is
+  ///   - immutable: returns boost::optional<dangling<std::reference_wrapper<const E>>>
+  ///   -  mutable : returns boost::optional<dangling<std::reference_wrapper<E>>>
+  /// E is not lvalue reference and self is
+  ///   - immutable: returns boost::optional<const E>
+  ///   -  mutable : returns boost::optional<E>
   template <class F = E, std::enable_if_t<std::is_same_v<F, E> && std::is_move_constructible_v<F>, bool> = false>
   constexpr decltype(auto)
   err() && {
-    if constexpr (std::is_lvalue_reference_v<err_type>) {
+    using ret = std::conditional_t<is_mut_v<_mutability>, boost::optional<err_type>, boost::optional<force_add_const_t<err_type>>>;
+    if constexpr (std::is_lvalue_reference_v<ok_type>) {
       if (is_err()) {
-        return boost::optional<dangle_ref<err_type>>{boost::in_place(std::ref(boost::get<failure<E>>(storage_).x))};
+        if constexpr (is_mut_v<_mutability>) {
+          return boost::optional<dangle_ref<std::remove_reference_t<err_type>>>{boost::in_place(std::ref(boost::get<failure<E>>(storage_).x))};
+        }
+        else {
+          return boost::optional<dangle_ref<std::add_const_t<std::remove_reference_t<err_type>>>>{boost::in_place(std::cref(boost::get<failure<E>>(storage_).x))};
+        }
       }
       else {
-        return boost::optional<dangle_ref<err_type>>{boost::none};
+        return boost::optional<dangle_ref<std::conditional_t<is_mut_v<_mutability>, std::remove_reference_t<err_type>, force_add_const_t<std::remove_reference_t<err_type>>>>>{boost::none};
       }
     }
     else {
       if (is_err()) {
-        return boost::optional<err_type>{boost::get<failure<E>>(std::move(storage_)).x};
+        return ret{boost::get<failure<E>>(std::move(storage_)).x};
       }
       else {
-        return boost::optional<err_type>{boost::none};
+        return ret{boost::none};
       }
     }
   }
-
-  void err() const&& = delete;
-
+  
+  /// basic_result::as_ref() const&
+  /// Converts from `basic_result<T, E> const&` to `basic_result<T const&, E const&>`.
+  /// Produces a new basic_result, containing a reference into the original, leaving the original in place.
   constexpr auto as_ref() const&
-    -> basic_result<detail::remove_cvr_t<T> const&, detail::remove_cvr_t<E> const&>
+    -> basic_result<_mutability, detail::remove_cvr_t<T> const&, detail::remove_cvr_t<E> const&>
   {
     if ( is_ok() )
-      return basic_result<detail::remove_cvr_t<T> const&, detail::remove_cvr_t<E> const&>{in_place_ok, boost::get<success<T>>(storage_).x};
+      return basic_result<_mutability, detail::remove_cvr_t<T> const&, detail::remove_cvr_t<E> const&>{in_place_ok, boost::get<success<T>>(storage_).x};
     else
-      return basic_result<detail::remove_cvr_t<T> const&, detail::remove_cvr_t<E> const&>{in_place_err, boost::get<failure<E>>(storage_).x};
+      return basic_result<_mutability, detail::remove_cvr_t<T> const&, detail::remove_cvr_t<E> const&>{in_place_err, boost::get<failure<E>>(storage_).x};
   }
 
-  constexpr auto as_ref() &
-    -> basic_result<std::remove_reference_t<T>&, std::remove_reference_t<E>&>
-  {
+  /// basic_result::as_mut() &
+  /// Converts from `basic_result<mutability::mut, T, E>&` to `basic_result<mutability::immut, T&, E&>`.
+  constexpr
+  auto as_mut() & -> basic_result<mutability::immut, std::remove_reference_t<T>&, std::remove_reference_t<E>&> {
+    static_assert(
+      !std::is_const_v<std::remove_reference_t<T>>,
+      "Error: ok_type is immutable");
+    static_assert(
+      !std::is_const_v<std::remove_reference_t<E>>,
+      "Error: err_type is immutable");
+    static_assert(
+      is_mut_v<_mutability>,
+      "Error: result is immutable");
+
     if ( is_ok() )
-      return basic_result<std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_ok, boost::get<success<T>>(storage_).x};
+      return basic_result<mutability::immut, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_ok, boost::get<success<T>>(storage_).x};
     else
-      return basic_result<std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_err, boost::get<failure<E>>(storage_).x};
+      return basic_result<mutability::immut, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_err, boost::get<failure<E>>(storage_).x};
   }
-
-  void as_ref() && = delete;
-  void as_ref() const && = delete;
 
   template <class O, class U = T, class F = E>
   constexpr auto map(O && op) const &
@@ -695,9 +761,9 @@ public:
           std::is_copy_constructible<U>,
           std::is_copy_constructible<F>
         >,
-        basic_result<std::invoke_result_t<O, T>, E>>
+        basic_result<_mutability, std::invoke_result_t<O, T>, E>>
   {
-    using result_type = basic_result<std::invoke_result_t<O, T>, E>;
+    using result_type = basic_result<_mutability, std::invoke_result_t<O, T>, E>;
     return is_ok()
                ? static_cast<result_type>(success{std::invoke(std::forward<O>(op), boost::get<success<T>>(storage_).x)})
                : static_cast<result_type>(failure{boost::get<failure<E>>(storage_).x});
@@ -705,13 +771,20 @@ public:
 
   template <class O, class U = T, class F = E>
   constexpr auto map(O && op) &&
-    -> std::enable_if_t<std::conjunction_v<std::is_invocable<O, T>, std::is_same<U, T>, std::is_same<F, E>, std::is_move_constructible<U>, std::is_move_constructible<F>>,
-       basic_result<std::invoke_result_t<O, T>, E>>
+    -> std::enable_if_t<
+        std::conjunction_v<
+          std::is_invocable<O, T>,
+          std::is_same<U, T>,
+          std::is_same<F, E>,
+          std::is_move_constructible<U>,
+          std::is_move_constructible<F>
+        >,
+        basic_result<_mutability, std::invoke_result_t<O, T>, E>>
   {
-    using result_type = basic_result<std::invoke_result_t<O, T>, E>;
+    using result_type = basic_result<_mutability, std::invoke_result_t<O, T>, E>;
     return is_ok()
-               ? static_cast<result_type>(success{std::invoke(std::forward<O>(op), boost::get<success<T>>(std::move(storage_)).x)})
-               : static_cast<result_type>(failure{boost::get<failure<E>>(std::move(storage_)).x});
+               ? static_cast<result_type>(success{std::invoke(std::forward<O>(op), std::move(boost::get<success<T>>(storage_).x))})
+               : static_cast<result_type>(failure{std::move(boost::get<failure<E>>(storage_).x)});
   }
 
   template <class Map, class Fallback, class U = T, class F = E>
@@ -722,9 +795,7 @@ public:
             std::is_convertible<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>,
             std::is_convertible<std::invoke_result_t<Fallback, E>, std::invoke_result_t<Map, T>>,
             std::is_same<U, T>,
-            std::is_same<F, E>,
-            std::is_move_constructible<U>,
-            std::is_move_constructible<F>
+            std::is_same<F, E>
           >,
           std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>>
   {
@@ -742,16 +813,14 @@ public:
             std::is_convertible<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>,
             std::is_convertible<std::invoke_result_t<Fallback, E>, std::invoke_result_t<Map, T>>,
             std::is_same<U, T>,
-            std::is_same<F, E>,
-            std::is_move_constructible<U>,
-            std::is_move_constructible<F>
+            std::is_same<F, E>
           >,
           std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>>
   {
     using result_type = std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
     return is_ok()
-               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), boost::get<success<T>>(std::move(storage_)).x))
-               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), boost::get<failure<E>>(std::move(storage_)).x));
+               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), std::move(boost::get<success<T>>(storage_).x)))
+               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), std::move(boost::get<failure<E>>(storage_).x)));
   }
 
   template <class O, class U = T, class F = E>
@@ -760,13 +829,11 @@ public:
         std::conjunction_v<
           std::is_invocable<O, E>,
           std::is_same<U, T>,
-          std::is_same<F, E>,
-          std::is_copy_constructible<U>,
-          std::is_copy_constructible<F>
+          std::is_same<F, E>
         >,
-        basic_result<T, std::invoke_result_t<O, E>>>
+        basic_result<_mutability, T, std::invoke_result_t<O, E>>>
   {
-    using result_type = basic_result<T, std::invoke_result_t<O, E>>;
+    using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E>>;
     return is_err()
                ? static_cast<result_type>(failure{std::invoke(std::forward<O>(op), boost::get<failure<E>>(storage_).x)})
                : static_cast<result_type>(success{boost::get<success<T>>(storage_).x});
@@ -778,30 +845,30 @@ public:
         std::conjunction_v<
           std::is_invocable<O, E>,
           std::is_same<U, T>,
-          std::is_same<F, E>,
-          std::is_move_constructible<U>,
-          std::is_move_constructible<F>
+          std::is_same<F, E>
         >,
-        basic_result<T, std::invoke_result_t<O, E>>>
+        basic_result<_mutability, T, std::invoke_result_t<O, E>>>
   {
-    using result_type = basic_result<T, std::invoke_result_t<O, E>>;
+    using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E>>;
     return is_err()
-               ? static_cast<result_type>(failure{std::invoke(std::forward<O>(op), boost::get<failure<E>>(std::move(storage_)).x)})
-               : static_cast<result_type>(success{boost::get<success<T>>(std::move(storage_)).x});
+               ? static_cast<result_type>(failure{std::invoke(std::forward<O>(op), std::move(boost::get<failure<E>>(storage_).x))})
+               : static_cast<result_type>(success{std::move(boost::get<success<T>>(storage_).x)});
   }
 
   template <class O, class U = T, class F = E>
   constexpr auto and_then(O && op) const &
     -> std::enable_if_t<
         std::conjunction_v<
-          is_result_with<std::invoke_result_t<O, T>, failure<F>>
+          is_result_with<std::invoke_result_t<O, T>, failure<F>>,
+          std::is_same<U, T>,
+          std::is_same<F, E>
         >,
         std::invoke_result_t<O, T>>
   {
     using result_type = std::invoke_result_t<O, T>;
     return is_ok()
                ? std::invoke(std::forward<O>(op), boost::get<success<T>>(storage_).x)
-               : static_cast<result_type>(failure{typename result_type::err_type(boost::get<failure<E>>(storage_).x)});
+               : static_cast<result_type>(failure{boost::get<failure<E>>(storage_).x});
   }
 
   template <class O, class U = T, class F = E>
@@ -810,16 +877,14 @@ public:
         std::conjunction_v<
           is_result_with<std::invoke_result_t<O, T>, failure<F>>,
           std::is_same<U, T>,
-          std::is_same<F, E>,
-          std::is_move_constructible<U>,
-          std::is_move_constructible<F>
+          std::is_same<F, E>
         >,
         std::invoke_result_t<O, T>>
   {
     using result_type = std::invoke_result_t<O, T>;
     return is_ok()
-               ? std::invoke(std::forward<O>(op), boost::get<success<T>>(std::move(storage_)).x)
-               : static_cast<result_type>(failure{typename result_type::err_type(boost::get<failure<E>>(std::move(storage_)).x)});
+               ? std::invoke(std::forward<O>(op), std::move(boost::get<success<T>>(storage_).x))
+               : static_cast<result_type>(failure{std::move(boost::get<failure<E>>(storage_).x)});
   }
 
   template <class O, class U = T, class F = E>
@@ -828,16 +893,14 @@ public:
         std::conjunction_v<
           is_result_with<std::invoke_result_t<O, T>, success<U>>,
           std::is_same<U, T>,
-          std::is_same<F, E>,
-          std::is_copy_constructible<U>,
-          std::is_copy_constructible<F>
+          std::is_same<F, E>
         >,
         std::invoke_result_t<O, E>>
   {
     using result_type = std::invoke_result_t<O, E>;
     return is_err()
                ? std::invoke(std::forward<O>(op), boost::get<failure<E>>(storage_).x)
-               : static_cast<result_type>(success{typename result_type::ok_type(boost::get<success<T>>(storage_).x)});
+               : static_cast<result_type>(success{boost::get<success<T>>(storage_).x});
   }
 
   template <class O, class U = T, class F = E>
@@ -846,32 +909,30 @@ public:
         std::conjunction_v<
           is_result_with<std::invoke_result_t<O, T>, success<U>>,
           std::is_same<U, T>,
-          std::is_same<F, E>,
-          std::is_move_constructible<U>,
-          std::is_move_constructible<F>
+          std::is_same<F, E>
         >,
         std::invoke_result_t<O, E>>
   {
     using result_type = std::invoke_result_t<O, E>;
     return is_err()
                ? std::invoke(std::forward<O>(op), boost::get<failure<E>>(std::move(storage_)).x)
-               : static_cast<result_type>(success{typename result_type::ok_type(boost::get<success<T>>(std::move(storage_)).x)});
+               : static_cast<result_type>(success{boost::get<success<T>>(std::move(storage_)).x});
   }
 
-  template <class U>
-  constexpr decltype(auto) operator&&(basic_result<U, E> const &res) const &
+  template <mutability _mut, class U>
+  constexpr decltype(auto) operator&&(basic_result<_mut, U, E> const &res) const &
   {
-    using result_type = basic_result<U, E>;
+    using result_type = basic_result<_mutability, U, E>;
     return this->is_err()
                ? static_cast<result_type>(failure{boost::get<failure<E>>(storage_).x})
                : res.is_err() ? static_cast<result_type>(failure{res.unwrap_err()})
                               : static_cast<result_type>(success{res.unwrap()});
   }
 
-  template <class F>
-  constexpr decltype(auto) operator||(basic_result<T, F> const &res) const &
+  template <mutability _mut, class F>
+  constexpr decltype(auto) operator||(basic_result<_mut, T, F> const &res) const &
   {
-    using result_type = basic_result<T, F>;
+    using result_type = basic_result<_mutability, T, F>;
     return this->is_ok()
                ? static_cast<result_type>(success{boost::get<success<T>>(storage_).x})
                : res.is_ok() ? static_cast<result_type>(success{res.unwrap()})
@@ -898,7 +959,7 @@ public:
     }
   }
 
-  ok_type unwrap() const &
+  T unwrap() const
   {
     if constexpr (trait::formattable<E>::value) {
       if ( is_ok() ) {
@@ -906,7 +967,7 @@ public:
       }
       else {
         PANIC(R"(called `basic_result::unwrap() on an `failure` value: %1%)", boost::get<failure<E>>(storage_).x);
-      }
+      }      
     }
     else {
       if ( is_ok() ) {
@@ -918,48 +979,7 @@ public:
     }
   }
 
-  std::conditional_t<std::is_lvalue_reference_v<ok_type>, dangle_ref<ok_type>, ok_type>
-  unwrap() &&
-  {
-    if constexpr (std::is_lvalue_reference_v<ok_type>) {
-      if constexpr (trait::formattable<E>::value) {
-        if ( is_ok() ) {
-          return dangle_ref<ok_type>{std::ref(boost::get<success<T>>(storage_).x)};
-        }
-        else {
-          PANIC(R"(called `basic_result::unwrap() on an `failure` value: %1%)", boost::get<failure<E>>(storage_).x);
-        }
-      }
-      else {
-        if ( is_ok() ) {
-          return dangle_ref<ok_type>{std::ref(boost::get<success<T>>(storage_).x)};
-        }
-        else {
-          PANIC(R"(called `basic_result::unwrap() on an `failure`)");
-        }
-      }
-    }
-    else {
-      if constexpr (trait::formattable<E>::value) {
-        if ( is_ok() ) {
-          return boost::get<success<T>>(storage_).x;
-        }
-        else {
-          PANIC(R"(called `basic_result::unwrap() on an `failure` value: %1%)", boost::get<failure<E>>(storage_).x);
-        }
-      }
-      else {
-        if ( is_ok() ) {
-          return boost::get<success<T>>(storage_).x;
-        }
-        else {
-          PANIC(R"(called `basic_result::unwrap() on an `failure`)");
-        }
-      }
-    }
-  }
-
-  err_type unwrap_err() const&
+  E unwrap_err() const
   {
     if constexpr (trait::formattable<T>::value) {
       if ( is_err() ) {
@@ -979,49 +999,15 @@ public:
     }
   }
 
-  std::conditional_t<std::is_lvalue_reference_v<err_type>, dangle_ref<err_type>, err_type>
-  unwrap_err() &&
-  {
-    if constexpr (std::is_lvalue_reference_v<err_type>) {
-      if constexpr (trait::formattable<T>::value) {
-        if ( is_err() ) {
-          return dangle_ref<err_type>{std::ref(boost::get<failure<E>>(storage_).x)};
-        }
-        else {
-          PANIC(R"(called `basic_result::unwrap_err() on an `success` value: %1%)", boost::get<success<T>>(storage_).x);
-        }
-      }
-      else {
-        if ( is_err() ) {
-          return dangle_ref<err_type>{std::ref(boost::get<failure<E>>(storage_).x)};
-        }
-        else {
-          PANIC(R"(called `basic_result::unwrap_err() on an `success` value)");
-        }
-      }
-    }
-    else {
-      if constexpr (trait::formattable<T>::value) {
-        if ( is_err() ) {
-          return boost::get<failure<E>>(storage_).x;
-        }
-        else {
-          PANIC(R"(called `basic_result::unwrap_err() on an `success` value: %1%)", boost::get<success<T>>(storage_).x);
-        }
-      }
-      else {
-        if ( is_err() ) {
-          return boost::get<failure<E>>(storage_).x;
-        }
-        else {
-          PANIC(R"(called `basic_result::unwrap_err() on an `success` value)");
-        }
-      }
-    }
-  }
-
-  template <class U = T, std::enable_if_t<std::is_same_v<T, U> && (std::is_default_constructible_v<U> || std::is_aggregate_v<U>), std::nullptr_t> = nullptr>
-  constexpr detail::remove_cvr_t<T>
+  template <class U = T>
+  constexpr
+  std::enable_if_t<
+    std::conjunction_v<
+      std::is_same<T, U>,
+      std::disjunction<
+        std::is_default_constructible<U>,
+        std::is_aggregate<U>>>,
+    detail::remove_cvr_t<T>>
   unwrap_or_default() const
   {
     if constexpr (std::is_aggregate_v<T>){
@@ -1042,11 +1028,11 @@ public:
       PANIC("%1%: %2%", msg, unwrap());
   }
 
-  template <class T_, class E_>
+  template <mutability _mut, class T_, class E_>
   std::enable_if_t<
-      std::conjunction_v<is_comparable_with<T, T_>, is_comparable_with<E, E_>>,
-      bool>
-  operator==(basic_result<T_, E_> const &rhs) const &
+    std::conjunction_v<is_comparable_with<T, T_>, is_comparable_with<E, E_>>,
+    bool>
+  operator==(basic_result<_mut, T_, E_> const &rhs) const &
   {
     return boost::apply_visitor(
       boost::hana::overload(
@@ -1058,8 +1044,8 @@ public:
 
   template <class T_>
   std::enable_if_t<
-      is_comparable_with<T, T_>::value,
-      bool>
+    is_comparable_with<T, T_>::value,
+    bool>
   operator==(success<T_> const &rhs) const
   {
     return this->is_ok() ? this->unwrap() == rhs.x : false;
@@ -1067,8 +1053,8 @@ public:
 
   template <class E_>
   std::enable_if_t<
-      is_comparable_with<E, E_>::value,
-      bool>
+    is_comparable_with<E, E_>::value,
+    bool>
   operator==(failure<E_> const &rhs) const
   {
     return this->is_err() ? this->unwrap_err() == rhs.x : false;
