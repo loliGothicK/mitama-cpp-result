@@ -10,6 +10,7 @@
 
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
+#include <boost/hana/functional/overload.hpp>
 
 #include <result/traits/perfect_traits_special_members.hpp>
 #include <result/detail/detail.hpp>
@@ -872,7 +873,7 @@ public:
   operator==(basic_result<_mut, T_, E_> const &rhs) const &
   {
     return boost::apply_visitor(
-      ::mitama::detail::overload(
+      boost::hana::overload(
         [](success<T> const& l, success<T_> const& r) { return l.x == r.x; },
         [](failure<E> const& l, failure<E_> const& r) { return l.x == r.x; },
         [](auto&&...) { return false; }),
