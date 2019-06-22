@@ -3,16 +3,7 @@
 #include <variant>
 namespace mitama {
 
-enum class mutability: bool {
-    mut = false,
-    immut = true,
-};
-
-template < mutability Mut >
-inline constexpr bool is_mut_v = !static_cast<bool>(Mut);
-
-template <mutability,
-          class = std::monostate,   // success type
+template <class = std::monostate,   // success type
           class = std::monostate,   // failure type
           class = decltype(nullptr) // for detection idiom
 >
