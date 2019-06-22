@@ -491,7 +491,8 @@ SCENARIO("test for deref", "[result][deref]"){
     REQUIRE( deref == success(42) );
 
     WHEN( "The new result is overwritten" ) {
-      deref.unwrap() = 57;
+      auto& ref = deref.unwrap();
+      ref = 57;
 
       THEN( "the original result change" ) {
         REQUIRE( *ptr == 57 );

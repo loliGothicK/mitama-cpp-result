@@ -1,5 +1,7 @@
 #ifndef MITAMA_RESULT_DETAIL_DANGLING_HPP
 #define MITAMA_RESULT_DETAIL_DANGLING_HPP
+#include <utility>
+#include <functional>
 
 namespace mitama {
 
@@ -10,10 +12,22 @@ namespace mitama {
         template < class U >
         constexpr dangling(U&& u): value_(std::forward<U>(u)) {}
 
-        T transmute() const {
+        decltype(auto) transmute() const {
             return value_;
         }
     };
+
+    template < class T >
+    class dangling<std::reference_wrapper<T>> {
+        std::reference_wrapper<T> ref_;
+    public:
+        constexpr dangling(std::reference_wrapper<T> ref): ref_(ref) {}
+
+        std::remove_reference_t<T>& transmute() const & {
+            return ref_.get();
+        }
+    };
+
 
 }
 

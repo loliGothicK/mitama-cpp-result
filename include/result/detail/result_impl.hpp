@@ -6,6 +6,7 @@
 #include <result/traits/Deref.hpp>
 #include <result/detail/dangling.hpp>
 #include <optional>
+#include <functional>
 #include <boost/optional.hpp>
 #include <boost/optional/optional_io.hpp>
 #include <boost/utility/in_place_factory.hpp>
@@ -293,9 +294,9 @@ class deref_friend_injector<basic_result<_mutability, T, E>,
   using const_deref_ok_result = basic_result<_mutability, detail::remove_cvr_t<typename traits::Deref<T>::Target> const&, detail::remove_cvr_t<E> const&>;
   using const_deref_err_result = basic_result<_mutability, detail::remove_cvr_t<T> const&, detail::remove_cvr_t<typename traits::Deref<E>::Target> const&>;
   using const_deref_result = basic_result<_mutability, detail::remove_cvr_t<typename traits::Deref<T>::Target> const&, detail::remove_cvr_t<typename traits::Deref<E>::Target> const&>;
-  using dangling_deref_ok_result = basic_result<_mutability, dangling<std::remove_reference_t<typename traits::Deref<T>::Target>&>, dangling<std::remove_reference_t<E>&>>;
-  using dangling_deref_err_result = basic_result<_mutability, dangling<std::remove_reference_t<T>&>, dangling<std::remove_reference_t<typename traits::Deref<E>::Target>&>>;
-  using dangling_deref_result = basic_result<_mutability, dangling<std::remove_reference_t<typename traits::Deref<T>::Target>&>, dangling<std::remove_reference_t<typename traits::Deref<E>::Target>&>>;
+  using dangling_deref_ok_result = basic_result<_mutability, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::Deref<T>::Target>>>, dangling<std::reference_wrapper<std::remove_reference_t<E>>>>;
+  using dangling_deref_err_result = basic_result<_mutability, dangling<std::remove_reference_t<T>&>, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::Deref<E>::Target>>>>;
+  using dangling_deref_result = basic_result<_mutability, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::Deref<T>::Target>>>, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::Deref<E>::Target>>>>;
 public:
   constexpr auto deref_ok() & -> deref_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
@@ -353,7 +354,7 @@ public:
 
   constexpr auto deref_ok() && -> dangling_deref_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return dangling_deref_ok_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_ok_result{in_place_ok, std::ref(*boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x)};
     }
     else {
       return dangling_deref_ok_result{in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
@@ -364,15 +365,15 @@ public:
       return dangling_deref_err_result{in_place_ok, boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return dangling_deref_err_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_err_result{in_place_err, std::ref(*boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x)};
     }
   }
   constexpr auto deref() && -> dangling_deref_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return dangling_deref_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_result{in_place_ok, std::ref(*boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x)};
     }
     else {
-      return dangling_deref_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_result{in_place_err, std::ref(*boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x)};
     }
   }
 
@@ -392,7 +393,7 @@ class deref_friend_injector<basic_result<_mutability, T, E>,
 {
   using deref_ok_result = basic_result<_mutability, std::remove_reference_t<typename traits::Deref<T>::Target>&, std::remove_reference_t<E>&>;
   using const_deref_ok_result = basic_result<_mutability, detail::remove_cvr_t<typename traits::Deref<T>::Target> const&, detail::remove_cvr_t<E> const&>;
-  using dangling_deref_ok_result = basic_result<_mutability, dangling<std::remove_reference_t<typename traits::Deref<T>::Target>&>, dangling<std::remove_reference_t<E>&>>;
+  using dangling_deref_ok_result = basic_result<_mutability, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::Deref<T>::Target>>>, dangling<std::reference_wrapper<std::remove_reference_t<E>>>>;
 public:
   constexpr auto deref_ok() & -> deref_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
@@ -422,7 +423,7 @@ public:
 
   constexpr auto deref_ok() && -> dangling_deref_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return dangling_deref_ok_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_ok_result{in_place_ok, std::ref(*boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x)};
     }
     else {
       return dangling_deref_ok_result{in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
@@ -481,7 +482,7 @@ public:
       return dangling_deref_err_result{in_place_ok, boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return dangling_deref_err_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_err_result{in_place_err, std::ref(*boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x)};
     }
   }
   constexpr void deref() && = delete;

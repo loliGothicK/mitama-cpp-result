@@ -817,36 +817,49 @@ public:
     }
   }
 
-  decltype(auto) unwrap() const
+  T unwrap() const
   {
     if constexpr (trait::formattable<E>::value) {
-      return is_ok()
-                 ? static_cast<T>(boost::get<success<T>>(storage_).x)
-                 : PANIC(R"(called `basic_result::unwrap() on an `failure` value: %1%)", boost::get<failure<E>>(storage_).x);
+      if ( is_ok() ) {
+        return boost::get<success<T>>(storage_).x;
+      }
+      else {
+        PANIC(R"(called `basic_result::unwrap() on an `failure` value: %1%)", boost::get<failure<E>>(storage_).x);
+      }      
     }
     else {
-      return is_ok()
-                 ? static_cast<T>(boost::get<success<T>>(storage_).x)
-                 : PANIC(R"(called `basic_result::unwrap() on an `failure`)");
+      if ( is_ok() ) {
+        return boost::get<success<T>>(storage_).x;
+      }
+      else {
+        PANIC(R"(called `basic_result::unwrap() on an `failure`)");
+      }
     }
   }
 
-  decltype(auto) unwrap_err() const
+  E unwrap_err() const
   {
     if constexpr (trait::formattable<T>::value) {
-      return is_err()
-                 ? static_cast<E>(boost::get<failure<E>>(storage_).x)
-                 : PANIC(R"(called `basic_result::unwrap_err() on an `success` value: %1%)", boost::get<success<T>>(storage_).x);
+      if ( is_err() ) {
+        return boost::get<failure<E>>(storage_).x;
+      }
+      else {
+        PANIC(R"(called `basic_result::unwrap_err() on an `success` value: %1%)", boost::get<success<T>>(storage_).x);
+      }
     }
     else {
-      return is_err()
-                 ? static_cast<E>(boost::get<failure<E>>(storage_).x)
-                 : PANIC(R"(called `basic_result::unwrap_err() on an `success` value)");
+      if ( is_err() ) {
+        return boost::get<failure<E>>(storage_).x;
+      }
+      else {
+        PANIC(R"(called `basic_result::unwrap_err() on an `success` value)");
+      }
     }
   }
 
   template <class U = T, std::enable_if_t<std::is_same_v<T, U> && (std::is_default_constructible_v<U> || std::is_aggregate_v<U>), std::nullptr_t> = nullptr>
-  T unwrap_or_default() const
+  constexpr detail::remove_cvr_t<T>
+  unwrap_or_default() const
   {
     if constexpr (std::is_aggregate_v<T>){
       return is_ok() ? unwrap() : T{};
