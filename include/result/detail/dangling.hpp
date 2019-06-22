@@ -28,6 +28,9 @@ namespace mitama {
         }
     };
 
+    template < class T >
+    using dangle_ref = dangling<std::reference_wrapper<std::remove_reference_t<T>>>;
+
 
 }
 

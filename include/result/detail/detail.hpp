@@ -20,6 +20,12 @@ namespace mitama::detail
 }
 
 namespace mitama {
+
+template < class T > struct force_add_const: std::add_const<T> {};
+template < class T > struct force_add_const<T&> { using type = std::add_const_t<T>&; };
+template < class T > struct force_add_const<T&&> { using type = std::add_const_t<T>&&; };
+template < class T > using force_add_const_t = typename force_add_const<T>::type;
+
 template <class, class = void>
 struct is_comparable : std::false_type
 {

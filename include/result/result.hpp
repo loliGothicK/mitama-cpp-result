@@ -11,7 +11,6 @@
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
 #include <boost/hana/functional/overload.hpp>
-
 #include <result/traits/perfect_traits_special_members.hpp>
 #include <result/detail/detail.hpp>
 #include <result/detail/fwd.hpp>
@@ -389,7 +388,7 @@ inline boost::optional<T> some(Args&&... args)
 }
 
 template <class T = std::monostate, class E = std::monostate>
-using result = basic_result<mutability::constant, T, E>;
+using result = basic_result<mutability::immut, T, E>;
 template <class T = std::monostate, class E = std::monostate>
 using mut_result = basic_result<mutability::mut, T, E>;
 
@@ -540,26 +539,58 @@ public:
   constexpr bool operator !() const noexcept { return ::mitama::detail::holds_alternative<failure<E>>(storage_); }
 
   template <class U = T>
-  constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_copy_constructible_v<U>, boost::optional<T>>
-  ok() const & {
+  constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_copy_constructible_v<U>,
+  std::conditional_t<is_mut_v<_mutability>, boost::optional<ok_type>, boost::optional<force_add_const_t<ok_type>>>>
+  ok() & {
+    using ret = std::conditional_t<is_mut_v<_mutability>, boost::optional<ok_type>, boost::optional<force_add_const_t<ok_type>>>;
     if (is_ok()) {
-      return boost::optional<T>{boost::get<success<T>>(storage_).x};
+      return ret{boost::get<success<T>>(storage_).x};
     }
     else {
-      return boost::optional<T>{boost::none};
+      return ret{boost::none};
     }
   }
 
   template <class U = T>
-  constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_move_constructible_v<U>, boost::optional<T>>
-  ok() && {
+  constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_copy_constructible_v<U>,
+  boost::optional<force_add_const_t<ok_type>>>
+  ok() const & {
     if (is_ok()) {
-      return boost::optional<T>{boost::get<success<T>>(std::move(storage_)).x};
+      return boost::optional<force_add_const_t<ok_type>>{boost::get<success<T>>(std::move(storage_)).x};
     }
     else {
-      return boost::optional<T>{boost::none};
+      return boost::optional<force_add_const_t<ok_type>>{boost::none};
     }
   }
+
+  template <class U = T, std::enable_if_t<std::is_same_v<U, T> && std::is_move_constructible_v<U>, bool> = false>
+  constexpr decltype(auto)
+  ok() && {
+    using ret = std::conditional_t<is_mut_v<_mutability>, boost::optional<ok_type>, boost::optional<force_add_const_t<ok_type>>>;
+    if constexpr (std::is_lvalue_reference_v<ok_type>) {
+      if (is_ok()) {
+        if constexpr (is_mut_v<_mutability>) {
+          return boost::optional<dangle_ref<std::remove_reference_t<ok_type>>>{boost::in_place(std::ref(boost::get<success<T>>(storage_).x))};
+        }
+        else {
+          return boost::optional<dangle_ref<std::add_const_t<std::remove_reference_t<ok_type>>>>{boost::in_place(std::cref(boost::get<success<T>>(storage_).x))};
+        }
+      }
+      else {
+        return boost::optional<dangle_ref<std::conditional_t<is_mut_v<_mutability>, std::remove_reference_t<ok_type>, force_add_const_t<std::remove_reference_t<ok_type>>>>>{boost::none};
+      }
+    }
+    else {
+      if (is_ok()) {
+        return ret{boost::get<success<T>>(std::move(storage_)).x};
+      }
+      else {
+        return ret{boost::none};
+      }
+    }
+  }
+
+  void ok() const&& = delete;
 
   template <class F = E>
   constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_copy_constructible_v<E>, boost::optional<E>>

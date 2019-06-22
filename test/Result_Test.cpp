@@ -124,6 +124,14 @@ TEST_CASE("ok() test", "[result][ok]"){
 
   result<int, str> y = failure("Nothing here"s);
   REQUIRE(y.err() == some("Nothing here"s));
+
+  REQUIRE(std::is_same_v<int&, typename result<int&, str&>::ok_type>);
+  REQUIRE(std::is_same_v<boost::optional<const int&>, decltype(std::declval<result<int&, str&>&>().ok())>);
+  REQUIRE(std::is_same_v<boost::optional<const int&>, decltype(std::declval<result<int&, str&> const&>().ok())>);
+  REQUIRE(std::is_same_v<boost::optional<dangle_ref<const int>>, decltype(std::declval<result<int&, str&>&&>().ok())>);
+  REQUIRE(std::is_same_v<boost::optional<int&>, decltype(std::declval<mut_result<int&, str&>&>().ok())>);
+  REQUIRE(std::is_same_v<boost::optional<const int&>, decltype(std::declval<mut_result<int&, str&> const&>().ok())>);
+  REQUIRE(std::is_same_v<boost::optional<dangle_ref<int>>, decltype(std::declval<mut_result<int&, str&>&&>().ok())>);
 }
 
 TEST_CASE("err() test", "[result][err]"){
@@ -214,13 +222,6 @@ TEMPLATE_TEST_CASE("is_result_with_v meta test", "[is_result_with_v][and_then][m
   REQUIRE(!is_result_with_v<result<unsigned, std::vector<TestType>>, mitama::failure<TestType>>);
 }
 
-// TEMPLATE_TEST_CASE("and_then() meta test", "[result][and_then][meta]",
-//                     int, unsigned, std::string, std::vector<int>)
-// {
-//   REQUIRE(!IS_INVALID_EXPR(DECLVAL(0).and_then(DECLVAL(1)))(result<double, TestType>, std::function<result<float, TestType>(unsigned)>));
-//   REQUIRE(IS_INVALID_EXPR(std::declval<result<double, TestType>>().and_then(DECLVAL(0)))(std::function<result<TestType, float>(unsigned)>));
-// }
-
 TEST_CASE("operator|| test", "[result][or]"){
   {
     result<u32, str> x = success(2);
@@ -287,7 +288,6 @@ TEST_CASE("unwrap() test", "[result][unwrap]"){
             R"(runtime panicked at 'called `basic_result::unwrap() on an `failure` value: emergency failure', )") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
-    std::cout << p.what() << std::endl;
     REQUIRE(regex_match(std::string{p.what()}, what, re));
   }
 }
@@ -305,7 +305,6 @@ TEST_CASE("unwrap_err() test", "[result][unwrap_err]"){
             R"(runtime panicked at 'called `basic_result::unwrap_err() on an `success` value: 2', )") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
-    std::cout << p.what() << std::endl;
     REQUIRE(regex_match(std::string{p.what()}, what, re));
   }
 
