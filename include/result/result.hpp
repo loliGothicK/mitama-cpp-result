@@ -898,7 +898,7 @@ public:
     }
   }
 
-  ok_type unwrap() const
+  ok_type unwrap() const &
   {
     if constexpr (trait::formattable<E>::value) {
       if ( is_ok() ) {
@@ -906,7 +906,7 @@ public:
       }
       else {
         PANIC(R"(called `basic_result::unwrap() on an `failure` value: %1%)", boost::get<failure<E>>(storage_).x);
-      }      
+      }
     }
     else {
       if ( is_ok() ) {
@@ -918,7 +918,48 @@ public:
     }
   }
 
-  err_type unwrap_err() const
+  std::conditional_t<std::is_lvalue_reference_v<ok_type>, dangle_ref<ok_type>, ok_type>
+  unwrap() &&
+  {
+    if constexpr (std::is_lvalue_reference_v<ok_type>) {
+      if constexpr (trait::formattable<E>::value) {
+        if ( is_ok() ) {
+          return dangle_ref<ok_type>{std::ref(boost::get<success<T>>(storage_).x)};
+        }
+        else {
+          PANIC(R"(called `basic_result::unwrap() on an `failure` value: %1%)", boost::get<failure<E>>(storage_).x);
+        }
+      }
+      else {
+        if ( is_ok() ) {
+          return dangle_ref<ok_type>{std::ref(boost::get<success<T>>(storage_).x)};
+        }
+        else {
+          PANIC(R"(called `basic_result::unwrap() on an `failure`)");
+        }
+      }
+    }
+    else {
+      if constexpr (trait::formattable<E>::value) {
+        if ( is_ok() ) {
+          return boost::get<success<T>>(storage_).x;
+        }
+        else {
+          PANIC(R"(called `basic_result::unwrap() on an `failure` value: %1%)", boost::get<failure<E>>(storage_).x);
+        }
+      }
+      else {
+        if ( is_ok() ) {
+          return boost::get<success<T>>(storage_).x;
+        }
+        else {
+          PANIC(R"(called `basic_result::unwrap() on an `failure`)");
+        }
+      }
+    }
+  }
+
+  err_type unwrap_err() const&
   {
     if constexpr (trait::formattable<T>::value) {
       if ( is_err() ) {
@@ -934,6 +975,47 @@ public:
       }
       else {
         PANIC(R"(called `basic_result::unwrap_err() on an `success` value)");
+      }
+    }
+  }
+
+  std::conditional_t<std::is_lvalue_reference_v<err_type>, dangle_ref<err_type>, err_type>
+  unwrap_err() &&
+  {
+    if constexpr (std::is_lvalue_reference_v<err_type>) {
+      if constexpr (trait::formattable<T>::value) {
+        if ( is_err() ) {
+          return dangle_ref<err_type>{std::ref(boost::get<failure<E>>(storage_).x)};
+        }
+        else {
+          PANIC(R"(called `basic_result::unwrap_err() on an `success` value: %1%)", boost::get<success<T>>(storage_).x);
+        }
+      }
+      else {
+        if ( is_err() ) {
+          return dangle_ref<err_type>{std::ref(boost::get<failure<E>>(storage_).x)};
+        }
+        else {
+          PANIC(R"(called `basic_result::unwrap_err() on an `success` value)");
+        }
+      }
+    }
+    else {
+      if constexpr (trait::formattable<T>::value) {
+        if ( is_err() ) {
+          return boost::get<failure<E>>(storage_).x;
+        }
+        else {
+          PANIC(R"(called `basic_result::unwrap_err() on an `success` value: %1%)", boost::get<success<T>>(storage_).x);
+        }
+      }
+      else {
+        if ( is_err() ) {
+          return boost::get<failure<E>>(storage_).x;
+        }
+        else {
+          PANIC(R"(called `basic_result::unwrap_err() on an `success` value)");
+        }
       }
     }
   }
