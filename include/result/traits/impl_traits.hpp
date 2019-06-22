@@ -4,9 +4,10 @@
 #include <type_traits>
 #include <utility>
 #include <iostream>
+#include <string>
+#include <string_view>
 
 namespace mitama {
-inline namespace result {
 namespace trait {
 
 // Trait Helpers
@@ -23,9 +24,20 @@ struct formattable
 {
 };
 
+template < >
+struct formattable<std::monostate>
+    : std::true_type
+{
+};
+template < >
+struct formattable<const std::monostate>
+    : std::true_type
+{
+};
+
 template <class T>
 struct formattable<T, std::void_t<
-                          decltype(std::declval<std::ostream &>() << std::declval<T const &>())>>
+                          decltype(std::declval<std::ostream &>() << std::declval<std::decay_t<T>>())>>
     : std::true_type
 {
 };
@@ -35,15 +47,15 @@ struct formattable_range : std::false_type
 {
 };
 
-template <>
-struct formattable_range<std::string> : std::false_type
+template <class Range>
+struct formattable_range<Range, std::void_t<decltype(std::declval<std::ostream&>() << *std::begin(std::declval<std::decay_t<Range>>()))>>
+    : std::conjunction<
+        std::negation<std::is_same<std::string, std::decay_t<Range>>>,
+        std::negation<std::is_same<std::string_view, std::decay_t<Range>>>
+    >
 {
 };
 
-template <class Range>
-struct formattable_range<Range, std::void_t<decltype(std::declval<std::ostream&>() << *std::begin(std::declval<Range const&>()))>>
-    : std::true_type
-{
-};
-}}}
+}}
+
 #endif

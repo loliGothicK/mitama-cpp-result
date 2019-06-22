@@ -427,11 +427,11 @@ class Case : mitamagic::is_constraints
         return true;
       }
       else if constexpr (std::conjunction_v<std::is_same<mitama::Ok<std::decay_t<ignore_t>>, std::decay_t<decltype(lhs)>>, 
-                                            mitama::result::is_result<std::decay_t<decltype(rhs)>>>) {
+                                            mitama::is_result<std::decay_t<decltype(rhs)>>>) {
         return rhs.is_ok();
       }
       else if constexpr (std::conjunction_v<std::is_same<mitama::Err<std::decay_t<ignore_t>>, std::decay_t<decltype(lhs)>>, 
-                                            mitama::result::is_result<std::decay_t<decltype(rhs)>>>) {
+                                            mitama::is_result<std::decay_t<decltype(rhs)>>>) {
         return rhs.is_err();
       }
       else {
@@ -470,13 +470,13 @@ public:
   Case(Case const &) = default;
   Case &operator=(Case const &) = default;
 
-  template < class U, class E >
+  template < mutability _mutability, class U, class E >
   constexpr 
   std::enable_if_t<
     std::is_same_v<std::decay_t<ignore_t>, std::decay_t<T>> ||
     mitamagic::is_comparable_with<T, U>::value,
   bool>
-  operator[](std::tuple<mitama::Result<U, E>> const& res) const {
+  operator[](std::tuple<basic_result<_mutability, U, E>> const& res) const {
     if constexpr (std::is_same_v<std::decay_t<ignore_t>, std::decay_t<T>>) {
       return std::get<0>(res).is_ok();
     }
@@ -500,13 +500,13 @@ public:
   Case(Case const &) = default;
   Case &operator=(Case const &) = default;
 
-  template < class T, class F >
+  template < mutability _mutability, class T, class F >
   constexpr 
   std::enable_if_t<
     std::is_same_v<std::decay_t<ignore_t>, std::decay_t<E>> ||
     mitamagic::is_comparable_with<E, F>::value,
   bool>
-  operator[](std::tuple<mitama::Result<T, F>> const& res) const {
+  operator[](std::tuple<basic_result<_mutability, T, F>> const& res) const {
     if constexpr (std::is_same_v<std::decay_t<ignore_t>, std::decay_t<E>>) {
       return std::get<0>(res).is_err();
     }
@@ -531,13 +531,13 @@ public:
   Constraints(Constraints const &) = default;
   Constraints &operator=(Constraints const &) = default;
 
-  template < class U, class E >
+  template < mutability _mutability, class U, class E >
   constexpr 
   std::enable_if_t<
     std::is_same_v<std::decay_t<ignore_t>, std::decay_t<T>> ||
     mitamagic::is_comparable_with<T, U>::value,
   bool>
-  operator[](std::tuple<mitama::Result<U, E>> const &actual) const
+  operator[](std::tuple<basic_result<_mutability, U, E>> const &actual) const
   {
     LogicalOperator::Apply(
       [&]{ return ok_case[std::get<0>(actual)]; },
@@ -559,13 +559,13 @@ public:
   Constraints(Constraints const &) = default;
   Constraints &operator=(Constraints const &) = default;
 
-  template < class T, class F >
+  template < mutability _mutability, class T, class F >
   constexpr 
   std::enable_if_t<
     std::is_same_v<std::decay_t<ignore_t>, std::decay_t<E>> ||
     mitamagic::is_comparable_with<E, F>::value,
   bool>
-  operator[](std::tuple<mitama::Result<T, F>> const &actual) const
+  operator[](std::tuple<basic_result<_mutability, T, F>> const &actual) const
   {
     LogicalOperator::Apply(
       [&]{ return err_case[std::get<0>(actual)]; },

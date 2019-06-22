@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <result/Result.hpp>
+#include <result/result.hpp>
 #include <match/match.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/hana/functional/overload.hpp>
@@ -27,7 +27,7 @@ TEST_CASE("match basic", "[match]") {
 
 TEST_CASE("match result", "[match],[result]") {
     namespace match = mitama::match;
-    using mitama::result::Result, mitama::result::Ok, mitama::result::Err;
+    using mitama::result, mitama::Ok, mitama::Err;
     using mitama::match::_;
     using namespace std::literals::string_literals;
 
@@ -35,7 +35,7 @@ TEST_CASE("match result", "[match],[result]") {
         match::Case(Ok(_)) <<= 1,
         match::Case(Err(_)) <<= 2
     );
-    auto even = [](int u) -> Result<int, std::string> {
+    auto even = [](int u) -> result<int, std::string> {
         if (u % 2 == 0)
             return Ok(u);
         else
@@ -47,7 +47,7 @@ TEST_CASE("match result", "[match],[result]") {
 
 TEST_CASE("match result action", "[match],[result],[action]") {
     namespace match = mitama::match;
-    using mitama::result::Result, mitama::result::Ok, mitama::result::Err;
+    using mitama::result, mitama::Ok, mitama::Err;
     using mitama::match::_;
     using namespace std::literals::string_literals;
 
@@ -56,7 +56,7 @@ TEST_CASE("match result action", "[match],[result],[action]") {
         match::Case(Ok(_)) >>= [&]{ calc = 1; },
         match::Case(Err(_)) >>= [&]{ calc = 2; }
     );
-    auto even = [](int u) -> Result<int, std::string> {
+    auto even = [](int u) -> result<int, std::string> {
         if (u % 2 == 0)
             return Ok(u);
         else
@@ -68,7 +68,7 @@ TEST_CASE("match result action", "[match],[result],[action]") {
 
 TEST_CASE("match result sequence A", "[match],[result]") {
     namespace match = mitama::match;
-    using mitama::result::Result, mitama::result::Ok, mitama::result::Err;
+    using mitama::result, mitama::Ok, mitama::Err;
     using mitama::match::_;
     using namespace std::literals::string_literals;
 
@@ -80,7 +80,7 @@ TEST_CASE("match result sequence A", "[match],[result]") {
         match::Case(Err(_)) >>= [](std::string s){ return s; }
     );
 
-    auto even = [](int u) -> Result<int, std::string> {
+    auto even = [](int u) -> result<int, std::string> {
         if (u % 2 == 0)
             return Ok(u);
         else
@@ -112,7 +112,7 @@ TEST_CASE("match result sequence A", "[match],[result]") {
 
 TEST_CASE("match result sequence B", "[match],[result]") {
     namespace match = mitama::match;
-    using mitama::result::Result, mitama::result::Ok, mitama::result::Err;
+    using mitama::result, mitama::Ok, mitama::Err;
     using mitama::match::_;
     using boost::lambda::_1;
 
@@ -123,7 +123,7 @@ TEST_CASE("match result sequence B", "[match],[result]") {
         match::Case(Ok(_)) >>= _1,
         match::Case(Err(_)) >>= [](auto v) { return v; }
     );
-    auto even = [](int u) -> Result<int, int> {
+    auto even = [](int u) -> result<int, int> {
         if (u % 2 == 0)
             return Ok(u);
         else

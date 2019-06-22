@@ -12,6 +12,12 @@ namespace mitama::dependent_bool {
 
 namespace mitama::detail
 {
+  template < class T >
+  struct remove_cvr: std::remove_cv<std::remove_reference_t<T>> {};
+
+  template < class T >
+  using remove_cvr_t = typename remove_cvr<T>::type;
+
   template <class T, class... Ts>
   struct Overload : T, Overload<Ts...>
   {
