@@ -49,96 +49,96 @@ template <class, class = std::nullptr_t>
 class printer_friend_injector {};
 
 template <class T>
-class printer_friend_injector<Ok<T>,
+class printer_friend_injector<success<T>,
                                trait::where<
                                    trait::formattable<T>>>
 {
   std::ostream& print(std::ostream &os) const
   {
-    return os << "Ok(" << static_cast<const Ok<T> *>(this)->x << ")";
+    return os << "success(" << static_cast<const success<T> *>(this)->x << ")";
   }
 public:
-  friend std::ostream &operator<<(std::ostream& os, const Ok<T> &ok) {
+  friend std::ostream &operator<<(std::ostream& os, const success<T> &ok) {
     return ok.print(os);
   }
 };
 
 template <class T>
-class printer_friend_injector<Ok<T>,
+class printer_friend_injector<success<T>,
                               trait::where<
                                   trait::formattable_range<T>>>
 {
   std::ostream &print(std::ostream &os) const
   {
-    auto iter = std::begin(static_cast<const Ok<T> *>(this)->x);
-    os << "Ok([" << *iter;
+    auto iter = std::begin(static_cast<const success<T> *>(this)->x);
+    os << "success([" << *iter;
     ++iter;
-    for (; iter != std::end(static_cast<const Ok<T> *>(this)->x); ++iter)
+    for (; iter != std::end(static_cast<const success<T> *>(this)->x); ++iter)
       os << "," << *iter;
     return os << "])";
   }
 
 public:
-  friend std::ostream &operator<<(std::ostream &os, const Ok<T> &ok)
+  friend std::ostream &operator<<(std::ostream &os, const success<T> &ok)
   {
     return ok.print(os);
   }
 };
 
 template < >
-class printer_friend_injector<Ok<std::monostate>>
+class printer_friend_injector<success<std::monostate>>
 {
 public:
-  friend std::ostream &operator<<(std::ostream &os, Ok<std::monostate> const&)
+  friend std::ostream &operator<<(std::ostream &os, success<std::monostate> const&)
   {
-    return os << "Ok(())";
+    return os << "success(())";
   }
 };
 
 
 template <class T>
-class printer_friend_injector<Err<T>,
+class printer_friend_injector<failure<T>,
                                trait::where<
                                    trait::formattable<T>>>
 {
   std::ostream& print(std::ostream &os) const
   {
-    return os << "Err(" << static_cast<const Err<T> *>(this)->x << ")";
+    return os << "failure(" << static_cast<const failure<T> *>(this)->x << ")";
   }
 public:
-  friend std::ostream &operator<<(std::ostream &os, const Err<T> &err)
+  friend std::ostream &operator<<(std::ostream &os, const failure<T> &err)
   {
     return err.print(os);
   }
 };
 
 template < >
-class printer_friend_injector<Err<std::monostate>>
+class printer_friend_injector<failure<std::monostate>>
 {
 public:
-  friend std::ostream &operator<<(std::ostream &os, Err<std::monostate> const&)
+  friend std::ostream &operator<<(std::ostream &os, failure<std::monostate> const&)
   {
-    return os << "Err(())";
+    return os << "failure(())";
   }
 };
 
 template <class T>
-class printer_friend_injector<Err<T>,
+class printer_friend_injector<failure<T>,
                               trait::where<
                                   trait::formattable_range<T>>>
 {
   std::ostream &print(std::ostream &os) const
   {
-    auto iter = std::begin(static_cast<const Err<T> *>(this)->x);
-    os << "Err([" << *iter;
+    auto iter = std::begin(static_cast<const failure<T> *>(this)->x);
+    os << "failure([" << *iter;
     ++iter;
-    for (; iter != std::end(static_cast<const Err<T> *>(this)->x); ++iter)
+    for (; iter != std::end(static_cast<const failure<T> *>(this)->x); ++iter)
       os << "," << *iter;
     return os << "])";
   }
 
 public:
-  friend std::ostream &operator<<(std::ostream &os, const Err<T> &err)
+  friend std::ostream &operator<<(std::ostream &os, const failure<T> &err)
   {
     return err.print(os);
   }
@@ -155,37 +155,37 @@ class printer_friend_injector<basic_result<_mutability, T, E>,
     if (static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok()){
       if constexpr (trait::formattable_range<T>::value)
       {
-        auto iter = std::begin(boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x);
-        os << "Ok([" << *iter;
+        auto iter = std::begin(boost::get<success<T>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x);
+        os << "success([" << *iter;
         ++iter;
-        for (; iter != std::end(boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x); ++iter)
+        for (; iter != std::end(boost::get<success<T>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x); ++iter)
           os << "," << *iter;
         return os << "])";
       }
       else if constexpr (std::is_same_v<std::decay_t<T>, std::monostate>) {
-        return os << "Ok(())";
+        return os << "success(())";
       }
       else {
-        return os << "Ok(" << boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x << ")";
+        return os << "success(" << boost::get<success<T>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x << ")";
       }
     }
     else
     {
       if constexpr (trait::formattable_range<E>::value)
       {
-        auto iter = std::begin(boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x);
-        os << "Err([" << *iter;
+        auto iter = std::begin(boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x);
+        os << "failure([" << *iter;
         ++iter;
-        for (; iter != std::end(boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x); ++iter)
+        for (; iter != std::end(boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x); ++iter)
           os << "," << *iter;
         return os << "])";
       }
       else if constexpr (std::is_same_v<std::decay_t<E>, std::monostate>) {
-        return os << "Err(())";
+        return os << "failure(())";
       }
       else
       {
-        return os << "Err(" << boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x << ")";
+        return os << "failure(" << boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x << ")";
       }
     }
   }
@@ -241,7 +241,7 @@ public:
   {
     if constexpr (detail::is_boost_optional<detail::remove_cvr_t<T>>::value) {
       if (static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok()) {
-        if (auto const& opt = boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E> const*>(this)->storage_).x; opt) {
+        if (auto const& opt = boost::get<success<T>>(static_cast<basic_result<_mutability, T, E> const*>(this)->storage_).x; opt) {
           return optional_type(boost::in_place(mitama::in_place_ok, opt.value()));
         }
         else {
@@ -249,12 +249,12 @@ public:
         }
       }
       else {
-          return optional_type(boost::in_place(mitama::in_place_err, boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E> const*>(this)->storage_).x));
+          return optional_type(boost::in_place(mitama::in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E> const*>(this)->storage_).x));
       }
     }
     else {
       if (static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok()) {
-        if (auto const& opt = std::get<Ok<T>>(static_cast<basic_result<_mutability, T, E> const*>(this)->storage_).x; opt) {
+        if (auto const& opt = std::get<success<T>>(static_cast<basic_result<_mutability, T, E> const*>(this)->storage_).x; opt) {
           return optional_type(std::in_place, mitama::in_place_ok, opt.value());
         }
         else {
@@ -262,7 +262,7 @@ public:
         }
       }
       else {
-          return optional_type(std::in_place, mitama::in_place_err, std::get<Err<E>>(static_cast<basic_result<_mutability, T, E> const*>(this)->storage_).x);
+          return optional_type(std::in_place, mitama::in_place_err, std::get<failure<E>>(static_cast<basic_result<_mutability, T, E> const*>(this)->storage_).x);
       }
     }
   }
@@ -299,26 +299,26 @@ class deref_friend_injector<basic_result<_mutability, T, E>,
 public:
   constexpr auto deref_ok() & -> deref_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return deref_ok_result{in_place_ok, *boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return deref_ok_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return deref_ok_result{in_place_err, boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return deref_ok_result{in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
   }
   constexpr auto deref_err() & -> deref_err_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return deref_err_result{in_place_ok, boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return deref_err_result{in_place_ok, boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return deref_err_result{in_place_err, *boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return deref_err_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
   }
   constexpr auto deref() & -> deref_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return deref_result{in_place_ok, *boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return deref_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return deref_result{in_place_err, *boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return deref_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
   }
 
@@ -326,26 +326,26 @@ public:
 
   constexpr auto deref_ok() const & -> const_deref_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return const_deref_ok_result{in_place_ok, *boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_deref_ok_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return const_deref_ok_result{in_place_err, boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_deref_ok_result{in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
   }
   constexpr auto deref_err() const & -> const_deref_err_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return const_deref_err_result{in_place_ok, boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_deref_err_result{in_place_ok, boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return const_deref_err_result{in_place_err, *boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_deref_err_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
   }
   constexpr auto deref() const & -> const_deref_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return const_deref_result{in_place_ok, *boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_deref_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return const_deref_result{in_place_err, *boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_deref_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
   }
 
@@ -353,26 +353,26 @@ public:
 
   constexpr auto deref_ok() && -> dangling_deref_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return dangling_deref_ok_result{in_place_ok, *boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_ok_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return dangling_deref_ok_result{in_place_err, boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_ok_result{in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
   }
   constexpr auto deref_err() && -> dangling_deref_err_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return dangling_deref_err_result{in_place_ok, boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_err_result{in_place_ok, boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return dangling_deref_err_result{in_place_err, *boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_err_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
   }
   constexpr auto deref() && -> dangling_deref_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return dangling_deref_result{in_place_ok, *boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return dangling_deref_result{in_place_err, *boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
   }
 
@@ -396,10 +396,10 @@ class deref_friend_injector<basic_result<_mutability, T, E>,
 public:
   constexpr auto deref_ok() & -> deref_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return deref_ok_result{in_place_ok, *boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return deref_ok_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return deref_ok_result{in_place_err, boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return deref_ok_result{in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
   }
   constexpr void deref_err() & = delete;
@@ -409,10 +409,10 @@ public:
 
   constexpr auto deref_ok() const & -> const_deref_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return const_deref_ok_result{in_place_ok, *boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_deref_ok_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return const_deref_ok_result{in_place_err, boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_deref_ok_result{in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
   }
   constexpr void deref_err() const & = delete;
@@ -422,10 +422,10 @@ public:
 
   constexpr auto deref_ok() && -> dangling_deref_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return dangling_deref_ok_result{in_place_ok, *boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_ok_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return dangling_deref_ok_result{in_place_err, boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_ok_result{in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
   }
   constexpr void deref_err() && = delete;
@@ -452,10 +452,10 @@ public:
   constexpr void deref_ok() & = delete;
   constexpr auto deref_err() & -> deref_err_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return deref_err_result{in_place_ok, boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return deref_err_result{in_place_ok, boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return deref_err_result{in_place_err, *boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return deref_err_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
   }
   constexpr void deref() & = delete;
@@ -465,10 +465,10 @@ public:
   constexpr void deref_ok() const & = delete;
   constexpr auto deref_err() const & -> const_deref_err_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return const_deref_err_result{in_place_ok, boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_deref_err_result{in_place_ok, boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return const_deref_err_result{in_place_err, *boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_deref_err_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
   }
   constexpr void deref() const & = delete;
@@ -478,10 +478,10 @@ public:
   constexpr void deref_ok() && = delete;
   constexpr auto deref_err() && -> dangling_deref_err_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return dangling_deref_err_result{in_place_ok, boost::get<Ok<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_err_result{in_place_ok, boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
     else {
-      return dangling_deref_err_result{in_place_err, *boost::get<Err<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_deref_err_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
     }
   }
   constexpr void deref() && = delete;

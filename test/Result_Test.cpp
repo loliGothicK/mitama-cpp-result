@@ -50,45 +50,45 @@ auto parse = [](str s) -> result<T, str> {
       sregex re1 = +range('0', '9');
       smatch what;
       if (!regex_match(s, what, re1))
-        return Err("parse error at string: "s + s);
+        return failure("parse error at string: "s + s);
       if constexpr (std::is_unsigned_v<T>) {
         sregex re2 = as_xpr("-") >> +range('0', '9');
         if (regex_match(s, what, re1))
-          return Err("negative value: "s + s);
+          return failure("negative value: "s + s);
       };
       if constexpr (std::is_same_v<T, int>)
       {
-        return Ok{std::stoi(s)};
+        return success{std::stoi(s)};
       }
       else if constexpr (std::is_same_v<T, long>)
       {
-        return Ok{std::stol(s)};
+        return success{std::stol(s)};
       }
       else if constexpr (std::is_same_v<T, unsigned long>)
       {
-        return Ok{std::stoul(s)};
+        return success{std::stoul(s)};
       }
       else if constexpr (std::is_same_v<T, long long>)
       {
-        return Ok{std::stoll(s)};
+        return success{std::stoll(s)};
       }
       else if constexpr (std::is_same_v<T, unsigned long long>)
       {
-        return Ok{std::stoull(s)};
+        return success{std::stoull(s)};
       }
     }
     else if constexpr (std::is_floating_point_v<T>){
       if constexpr (std::is_same_v<T, float>)
       {
-        return Ok{std::stof(s)};
+        return success{std::stof(s)};
       }
       else if constexpr (std::is_same_v<T, double>)
       {
-        return Ok{std::stod(s)};
+        return success{std::stod(s)};
       }
       else if constexpr (std::is_same_v<T, long double>)
       {
-        return Ok{std::stold(s)};
+        return success{std::stold(s)};
       }
     }
     else
@@ -98,40 +98,40 @@ auto parse = [](str s) -> result<T, str> {
   }
   catch (std::invalid_argument const &e)
   {
-    return Err{e.what()};
+    return failure{e.what()};
   }
 };
 
 TEST_CASE("is_ok() test", "[result][is_ok]"){
-  result<u32, str> x = Ok(-3);
+  result<u32, str> x = success(-3);
   REQUIRE(x.is_ok() == true);
 
-  result<u32, str> y = Err("Some error message"s);
+  result<u32, str> y = failure("some error message"s);
   REQUIRE(y.is_ok() == false);
 }
 
 TEST_CASE("is_err() test", "[result][is_err]"){
-  result<u32, str> x = Ok(-3);
+  result<u32, str> x = success(-3);
   REQUIRE(x.is_err() == false);
 
-  result<u32, str> y = Err("Some error message"s);
+  result<u32, str> y = failure("some error message"s);
   REQUIRE(y.is_err() == true);
 }
 
 TEST_CASE("ok() test", "[result][ok]"){
-  result<u32, str> x = Ok(2);
-  REQUIRE(x.err() == None);
+  result<u32, str> x = success(2);
+  REQUIRE(x.err() == none);
 
-  result<int, str> y = Err("Nothing here"s);
-  REQUIRE(y.err() == Some("Nothing here"s));
+  result<int, str> y = failure("Nothing here"s);
+  REQUIRE(y.err() == some("Nothing here"s));
 }
 
 TEST_CASE("err() test", "[result][err]"){
-  result<u32, str> x = Ok(2);
-  REQUIRE(x.err() == None);
+  result<u32, str> x = success(2);
+  REQUIRE(x.err() == none);
 
-  result<u32, str> y = Err("Nothing here"s);
-  REQUIRE(y.err() == Some("Nothing here"s));
+  result<u32, str> y = failure("Nothing here"s);
+  REQUIRE(y.err() == some("Nothing here"s));
 }
 
 TEST_CASE("map() test", "[result][map]"){
@@ -149,11 +149,11 @@ TEST_CASE("map() test", "[result][map]"){
 TEST_CASE("map_or_else(F, M) test", "[result][map_or_else]"){
   auto k = 21;
   {
-    result<str, str> x = Ok("foo"s);
+    result<str, str> x = success("foo"s);
     REQUIRE(x.map_or_else([k](auto){ return k * 2; }, [](auto v) { return v.length(); }) == 3);
   }
   {
-    result<str, str> x = Err("bar"s);
+    result<str, str> x = failure("bar"s);
     REQUIRE(x.map_or_else([k](auto){ return k * 2; }, [](auto v) { return v.length(); }) == 42);
   }
 }
@@ -164,54 +164,54 @@ TEST_CASE("map_err() test", "[result][map_err]"){
     return "error code: "s + std::to_string(x);
   };
 
-  result<u32, u32> x = Ok(2);
-  REQUIRE(x.map_err(stringify) == Ok(2u));
+  result<u32, u32> x = success(2);
+  REQUIRE(x.map_err(stringify) == success(2u));
 
-  result<u32, u32> y = Err(13);
-  REQUIRE(y.map_err(stringify) == Err("error code: 13"s));
+  result<u32, u32> y = failure(13);
+  REQUIRE(y.map_err(stringify) == failure("error code: 13"s));
 }
 
 TEST_CASE("operator&& test", "[result][and]"){
   {
-    result<u32, str> x = Ok(2);
-    result<str, str> y = Err("late error"s);
-    REQUIRE((x && y) == Err("late error"s));
+    result<u32, str> x = success(2);
+    result<str, str> y = failure("late error"s);
+    REQUIRE((x && y) == failure("late error"s));
   }
 
   {
-    result<u32, str> x = Err("early error"s);
-    result<str, str> y = Ok("foo"s);
-    REQUIRE((x && y) == Err("early error"s));
+    result<u32, str> x = failure("early error"s);
+    result<str, str> y = success("foo"s);
+    REQUIRE((x && y) == failure("early error"s));
   }
   {
-    result<u32, str> x = Err("not a 2"s);
-    result<str, str> y = Err("late error"s);
-    REQUIRE((x && y) == Err("not a 2"s));
+    result<u32, str> x = failure("not a 2"s);
+    result<str, str> y = failure("late error"s);
+    REQUIRE((x && y) == failure("not a 2"s));
   }
 
   {
-    result<u32, str> x = Ok(2);
-    result<str, str> y = Ok("different result type"s);
-    REQUIRE((x && y) == Ok("different result type"s));
+    result<u32, str> x = success(2);
+    result<str, str> y = success("different result type"s);
+    REQUIRE((x && y) == success("different result type"s));
   }
 }
 
 TEST_CASE("and_then() test", "[result][and_then]"){
-  auto sq = [](u32 x) -> result<u32, u32> { return Ok(x * x); };
-  auto err = [](u32 x) -> result<u32, u32> { return Err(x); };
+  auto sq = [](u32 x) -> result<u32, u32> { return success(x * x); };
+  auto err = [](u32 x) -> result<u32, u32> { return failure(x); };
 
-  REQUIRE(Ok(2u).and_then(sq).and_then(sq) == Ok(16u));
-  REQUIRE(Ok(2u).and_then(sq).and_then(err) == Err(4u));
-  REQUIRE(Ok(2u).and_then(err).and_then(sq) == Err(2u));
-  REQUIRE(Err(3u).and_then(sq).and_then(sq) == Err(3u));
-  REQUIRE(Err(3u).and_then(sq).and_then(sq) == Err(3u));
+  REQUIRE(success(2u).and_then(sq).and_then(sq) == success(16u));
+  REQUIRE(success(2u).and_then(sq).and_then(err) == failure(4u));
+  REQUIRE(success(2u).and_then(err).and_then(sq) == failure(2u));
+  REQUIRE(failure(3u).and_then(sq).and_then(sq) == failure(3u));
+  REQUIRE(failure(3u).and_then(sq).and_then(sq) == failure(3u));
 }
 
 TEMPLATE_TEST_CASE("is_result_with_v meta test", "[is_result_with_v][and_then][meta]",
                     int, unsigned, std::string, std::vector<int>)
 {
-  REQUIRE(is_result_with_v<mitama::result<int, TestType>, mitama::Err<TestType>>);
-  REQUIRE(!is_result_with_v<result<unsigned, std::vector<TestType>>, mitama::Err<TestType>>);
+  REQUIRE(is_result_with_v<mitama::result<int, TestType>, mitama::failure<TestType>>);
+  REQUIRE(!is_result_with_v<result<unsigned, std::vector<TestType>>, mitama::failure<TestType>>);
 }
 
 // TEMPLATE_TEST_CASE("and_then() meta test", "[result][and_then][meta]",
@@ -223,40 +223,40 @@ TEMPLATE_TEST_CASE("is_result_with_v meta test", "[is_result_with_v][and_then][m
 
 TEST_CASE("operator|| test", "[result][or]"){
   {
-    result<u32, str> x = Ok(2);
-    result<u32, str> y = Err("late error"s);
-    REQUIRE((x || y) ==  Ok(2u));
+    result<u32, str> x = success(2);
+    result<u32, str> y = failure("late error"s);
+    REQUIRE((x || y) ==  success(2u));
   }
   {
-    result<u32, str> x = Err("early error"s);
-    result<u32, str> y = Ok(2);
-    REQUIRE((x || y) ==  Ok(2u));
+    result<u32, str> x = failure("early error"s);
+    result<u32, str> y = success(2);
+    REQUIRE((x || y) ==  success(2u));
   }
   {
-    result<u32, str> x = Err("not a 2"s);
-    result<u32, str> y = Err("late error"s);
-    REQUIRE((x || y) ==  Err("late error"s));
+    result<u32, str> x = failure("not a 2"s);
+    result<u32, str> y = failure("late error"s);
+    REQUIRE((x || y) ==  failure("late error"s));
   }
   {
-    result<u32, str> x = Ok(2);
-    result<u32, str> y = Ok(100);
-    REQUIRE((x || y) ==  Ok(2u));
+    result<u32, str> x = success(2);
+    result<u32, str> y = success(100);
+    REQUIRE((x || y) ==  success(2u));
   }
 }
 
 TEST_CASE("or_else() test", "[result][or_else]"){
-  auto sq = [](u32 x) -> result<u32, u32> { return Ok(x * x); };
-  auto err = [](u32 x) -> result<u32, u32> { return Err(x); };
+  auto sq = [](u32 x) -> result<u32, u32> { return success(x * x); };
+  auto err = [](u32 x) -> result<u32, u32> { return failure(x); };
 
-  REQUIRE(Ok(2).or_else(sq).or_else(sq) ==  Ok(2));
-  REQUIRE(Ok(2).or_else(err).or_else(sq) ==  Ok(2));
-  REQUIRE(Err(3).or_else(sq).or_else(err) ==  Ok(9u));
-  REQUIRE(Err(3).or_else(err).or_else(err) ==  Err(3u));
+  REQUIRE(success(2).or_else(sq).or_else(sq) ==  success(2));
+  REQUIRE(success(2).or_else(err).or_else(sq) ==  success(2));
+  REQUIRE(failure(3).or_else(sq).or_else(err) ==  success(9u));
+  REQUIRE(failure(3).or_else(err).or_else(err) ==  failure(3u));
 }
 
 TEST_CASE("unwrap_or() test", "[result][unwrap_or]"){
-  result<u32, u32> err = Err(2);
-  result<u32, u32> ok = Ok(2);
+  result<u32, u32> err = failure(2);
+  result<u32, u32> ok = success(2);
 
   REQUIRE(ok.unwrap_or(1u) ==  2u);
   REQUIRE(err.unwrap_or(1u) ==  1u);
@@ -265,18 +265,18 @@ TEST_CASE("unwrap_or() test", "[result][unwrap_or]"){
 TEST_CASE("unwrap_or_else() test", "[result][unwrap_or_else]"){
   auto count = [](str x) -> size_t { return x.size(); };
 
-  REQUIRE(Ok(2).unwrap_or_else(count) ==  2);
-  REQUIRE(Err("foo"s).unwrap_or_else(count) ==  3ull);
-  REQUIRE(Err("foo"s).unwrap_or_else([]{ return 3ull; }) ==  3ull);
+  REQUIRE(success(2).unwrap_or_else(count) ==  2);
+  REQUIRE(failure("foo"s).unwrap_or_else(count) ==  3ull);
+  REQUIRE(failure("foo"s).unwrap_or_else([]{ return 3ull; }) ==  3ull);
 }
 
 TEST_CASE("unwrap() test", "[result][unwrap]"){
   {
-    result<u32, str> x = Ok(2);
+    result<u32, str> x = success(2);
     REQUIRE(x.unwrap() ==  2u);
   }
   try {
-    result<u32, str> x = Err("emergency failure"s);
+    result<u32, str> x = failure("emergency failure"s);
     x.unwrap(); // panics with `emergency failure`
   }
   catch (runtime_panic const &p)
@@ -284,7 +284,7 @@ TEST_CASE("unwrap() test", "[result][unwrap]"){
     using namespace boost::xpressive;
     sregex re =
         as_xpr(
-            R"(runtime panicked at 'called `basic_result::unwrap() on an `Err` value: emergency failure', )") >>
+            R"(runtime panicked at 'called `basic_result::unwrap() on an `failure` value: emergency failure', )") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
     std::cout << p.what() << std::endl;
@@ -294,7 +294,7 @@ TEST_CASE("unwrap() test", "[result][unwrap]"){
 
 TEST_CASE("unwrap_err() test", "[result][unwrap_err]"){
   try {
-    result<u32, str> x = Ok(2);
+    result<u32, str> x = success(2);
     x.unwrap_err(); // panics with `2`
   }
   catch (runtime_panic const &p)
@@ -302,7 +302,7 @@ TEST_CASE("unwrap_err() test", "[result][unwrap_err]"){
     using namespace boost::xpressive;
     sregex re =
         as_xpr(
-            R"(runtime panicked at 'called `basic_result::unwrap_err() on an `Ok` value: 2', )") >>
+            R"(runtime panicked at 'called `basic_result::unwrap_err() on an `success` value: 2', )") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
     std::cout << p.what() << std::endl;
@@ -310,7 +310,7 @@ TEST_CASE("unwrap_err() test", "[result][unwrap_err]"){
   }
 
   {
-    result<u32, str> x = Err("emergency failure"s);
+    result<u32, str> x = failure("emergency failure"s);
     REQUIRE(x.unwrap_err() ==  "emergency failure"s);
   }
 }
@@ -326,8 +326,8 @@ TEST_CASE("unwrap_or_default() test", "[result][unwrap_or_default]"){
 }
 
 TEST_CASE("transpose() test", "[result][transpose]"){
-  result<boost::optional<i32>, std::monostate> x = Ok(Some(5));
-  boost::optional<result<i32, std::monostate>> y = Some(result<i32, std::monostate>(Ok(5)));
+  result<boost::optional<i32>, std::monostate> x = success(some(5));
+  boost::optional<result<i32, std::monostate>> y = some(result<i32, std::monostate>(success(5)));
   
   REQUIRE(x.transpose() == y);
 }
@@ -335,104 +335,104 @@ TEST_CASE("transpose() test", "[result][transpose]"){
 TEST_CASE("basics test", "[result][basics]"){
   auto even = [](u32 u) -> result<u32, str> {
     if (u % 2 == 0)
-      return Ok(u);
+      return success(u);
     else
-      return Err("odd"s);
+      return failure("odd"s);
   };
-  auto func = [](auto u) -> result<u32, str> { if(u%3==0) return Ok(1u); else return Err("error"s); };
-  REQUIRE(even(2).and_then(func) ==  Err("error"s));
-  REQUIRE(even(2) ==  Ok(2u));
+  auto func = [](auto u) -> result<u32, str> { if(u%3==0) return success(1u); else return failure("error"s); };
+  REQUIRE(even(2).and_then(func) ==  failure("error"s));
+  REQUIRE(even(2) ==  success(2u));
 }
 
 TEST_CASE("constructors and assignments test", "[result][constructors][assignments]"){
-  auto res = result<int,int>{Ok(2)};
-  res = result<int, int>{Err(2)};
+  auto res = result<int,int>{success(2)};
+  res = result<int, int>{failure(2)};
   (void)result<std::string, double>{in_place_ok, "hoge"};
   (void)result<double, std::string>{in_place_err, "hoge"};
   (void)result<std::vector<int>, double>{in_place_ok, {1, 2, 3, 4}};
   (void)result<double, std::vector<double>>{in_place_err, {1., 2., 3., 4.}};
 
-  res = Ok(1);
-  res = Err(2);
+  res = success(1);
+  res = failure(2);
 }
 
 TEST_CASE("format test", "[result][format]"){
-  SECTION("Ok"){
+  SECTION("success"){
     using namespace std::literals;
     std::stringstream ss;
-    ss << Ok(1);
-    REQUIRE(ss.str() ==  "Ok(1)"s);
+    ss << success(1);
+    REQUIRE(ss.str() ==  "success(1)"s);
   }
-  SECTION("Err"){
+  SECTION("failure"){
     using namespace std::literals;
     std::stringstream ss;
-    ss << Err(1);
-    REQUIRE(ss.str() ==  "Err(1)"s);
+    ss << failure(1);
+    REQUIRE(ss.str() ==  "failure(1)"s);
   }
   SECTION("result ok"){
     using namespace std::literals;
     std::stringstream ss;
-    ss << result<int, std::string>{Ok(1)};
-    REQUIRE(ss.str() ==  "Ok(1)"s);
+    ss << result<int, std::string>{success(1)};
+    REQUIRE(ss.str() ==  "success(1)"s);
   }
   SECTION("result err"){
     using namespace std::literals;
     std::stringstream ss;
-    ss << result<int, std::string>{Err("hoge"s)};
-    REQUIRE(ss.str() ==  "Err(hoge)"s);
+    ss << result<int, std::string>{failure("hoge"s)};
+    REQUIRE(ss.str() ==  "failure(hoge)"s);
   }
   SECTION("result of range ok"){
     using namespace std::literals;
     std::stringstream ss;
-    ss << Ok(std::vector<std::string>{"foo"s, "bar"s});
-    REQUIRE(ss.str() == "Ok([foo,bar])"s);
+    ss << success(std::vector<std::string>{"foo"s, "bar"s});
+    REQUIRE(ss.str() == "success([foo,bar])"s);
   }
   SECTION("result of range err"){
     using namespace std::literals;
     std::stringstream ss;
-    ss << Err(std::vector<std::string>{"foo"s, "bar"s});
-    REQUIRE(ss.str() == "Err([foo,bar])"s);
+    ss << failure(std::vector<std::string>{"foo"s, "bar"s});
+    REQUIRE(ss.str() == "failure([foo,bar])"s);
   }
-  SECTION("Err"){
+  SECTION("failure"){
     using namespace std::literals;
     std::stringstream ss;
-    ss << Err("foo"s);
-    REQUIRE(ss.str() ==  "Err(foo)"s);
+    ss << failure("foo"s);
+    REQUIRE(ss.str() ==  "failure(foo)"s);
   }
   SECTION("replace"){
     using namespace std::literals;
     auto res = result<int, std::vector<int>>{in_place_err, {1,2,3}};
-    REQUIRE((boost::format("%1%") % res).str() == "Err([1,2,3])"s);
-    res = Ok(1);
-    REQUIRE((boost::format("%1%") % res).str() ==  "Ok(1)"s);
+    REQUIRE((boost::format("%1%") % res).str() == "failure([1,2,3])"s);
+    res = success(1);
+    REQUIRE((boost::format("%1%") % res).str() ==  "success(1)"s);
   }
 }
 
-TEST_CASE("monostate Ok test", "[result][monostate]"){
+TEST_CASE("monostate success test", "[result][monostate]"){
   auto func = []() -> result<std::monostate, std::string> {
-    if (false) return Err<std::string>("hoge"s);
-    return Ok<>{};
+    if (false) return failure<std::string>("hoge"s);
+    return success<>{};
   };
 
   REQUIRE(func().is_ok());
 }
 
-TEST_CASE("monostate Err test", "[result][monostate]"){
+TEST_CASE("monostate failure test", "[result][monostate]"){
   auto func = []() -> result</*defaulted monostate*/> {
-    if (false) return Ok<>{};
-    return Err<>();
+    if (false) return success<>{};
+    return failure<>();
   };
   REQUIRE(func().is_err());
 }
 
 TEST_CASE("contextually convertible to bool", "[result]"){
   auto err_func = []() -> result</*defaulted monostate*/> {
-    if (false) return Err<>{};
-    return Err<>();
+    if (false) return failure<>{};
+    return failure<>();
   };
   auto ok_func = []() -> result<std::monostate, std::string> {
-    if (false) return Err<std::string>("hoge"s);
-    return Ok<>{};
+    if (false) return failure<std::string>("hoge"s);
+    return success<>{};
   };
   REQUIRE(!err_func());
   REQUIRE(ok_func());
@@ -442,11 +442,10 @@ SCENARIO("test for reference type", "[result][ref]"){
   using namespace std::literals;
   GIVEN( "A result that refer to some string" ) {
     str hoge = "foo";
-    result<str&, str&> res(Ok{hoge});
+    result<str&, str&> res(success<str&>{hoge});
 
     REQUIRE( hoge == "foo"s );
     REQUIRE( res.unwrap() == "foo"s );
-    REQUIRE( &(res.unwrap()) == &hoge );
 
     WHEN( "the result is overwritten" ) {
       res.unwrap() = "bar";
@@ -462,20 +461,20 @@ SCENARIO("test for reference type", "[result][ref]"){
 SCENARIO("test for as_ref", "[result][as_ref]"){
   using namespace std::literals;
   GIVEN( "A new result, containing a reference into the original" ) {
-    result<str, str> res(Ok{"foo"s});
+    result<str, str> res(success<str>{"foo"s});
     auto ref /* result<str&, str&> */ = res.as_ref();
 
     REQUIRE( res == ref );
-    REQUIRE( res == Ok("foo"s) );
-    REQUIRE( ref == Ok("foo"s) );
+    REQUIRE( res == success("foo"s) );
+    REQUIRE( ref == success("foo"s) );
 
     WHEN( "The new result is overwritten" ) {
       ref.unwrap() = "bar"s;
 
       THEN( "the original result change" ) {
         REQUIRE( res == ref );
-        REQUIRE( res == Ok("bar"s) );
-        REQUIRE( ref == Ok("bar"s) );
+        REQUIRE( res == success("bar"s) );
+        REQUIRE( ref == success("bar"s) );
       }
     }
   }
@@ -485,18 +484,18 @@ SCENARIO("test for deref", "[result][deref]"){
   using namespace std::literals;
   GIVEN( "A new result, containing a indirect reference into the original" ) {
     auto ptr = std::make_shared<int>(42);
-    result<std::shared_ptr<int>, std::shared_ptr<int>> res(Ok{ptr});
+    mut_result<std::shared_ptr<int>, std::shared_ptr<int>> res(success<std::shared_ptr<int>&>{ptr});
     auto deref = res.deref();
 
     REQUIRE( *res.unwrap() == deref.unwrap() );
-    REQUIRE( deref == Ok(42) );
+    REQUIRE( deref == success(42) );
 
     WHEN( "The new result is overwritten" ) {
       deref.unwrap() = 57;
 
       THEN( "the original result change" ) {
         REQUIRE( *ptr == 57 );
-        REQUIRE( deref == Ok(57) );
+        REQUIRE( deref == success(57) );
       }
     }
   }
@@ -506,7 +505,7 @@ SCENARIO("test for dangling deref", "[result][deref][dangling]"){
   using namespace std::literals;
   using vec_iter = typename std::vector<int>::iterator;
   GIVEN( "A new result which is containing a dangling reference into the discarded vector" ) {
-    auto deref = result<vec_iter, vec_iter>(Ok{std::vector<int>{1,3}.begin()}).deref();
+    auto deref = result<vec_iter, vec_iter>(success{std::vector<int>{1,3}.begin()}).deref();
 
     REQUIRE( std::is_same_v<decltype(deref.unwrap()), dangling<int&>> );
     // deref.unwrap().transmute()
@@ -514,7 +513,7 @@ SCENARIO("test for dangling deref", "[result][deref][dangling]"){
   }
   GIVEN( "A new result which is containing a reference into the living vector" ) {
     std::vector<int> vec{1,3};
-    auto deref = result<vec_iter, vec_iter>(Ok{vec.begin()}).deref();
+    auto deref = result<vec_iter, vec_iter>(success{vec.begin()}).deref();
 
     REQUIRE( deref.unwrap().transmute() == 1 );
     //       ^~~~~~~~~~~~~~~~~~~~~~~~~~ OK! 

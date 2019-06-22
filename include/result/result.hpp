@@ -62,11 +62,11 @@ inline constexpr bool is_result_v = is_result<T>::value;
 template <class, class...>
 struct is_result_with : std::false_type {};
 template <mutability _mut, class T, class E>
-struct is_result_with<basic_result<_mut, T, E>, Ok<T>> : std::true_type {};
+struct is_result_with<basic_result<_mut, T, E>, success<T>> : std::true_type {};
 template <mutability _mut, class T, class E>
-struct is_result_with<basic_result<_mut, T, E>, Err<E>> : std::true_type {};
+struct is_result_with<basic_result<_mut, T, E>, failure<E>> : std::true_type {};
 template <mutability _mut, class T, class E>
-struct is_result_with<basic_result<_mut, T, E>, Ok<T>, Err<E>> : std::true_type {};
+struct is_result_with<basic_result<_mut, T, E>, success<T>, failure<E>> : std::true_type {};
 
 template <class T, class... Requires>
 inline constexpr bool is_result_with_v = is_result_with<detail::remove_cvr_t<T>, Requires...>::value;
@@ -74,11 +74,11 @@ inline constexpr bool is_result_with_v = is_result_with<detail::remove_cvr_t<T>,
 template <class>
 struct is_err_type : std::false_type {};
 template <class T>
-struct is_err_type<Err<T>> : std::true_type {};
+struct is_err_type<failure<T>> : std::true_type {};
 template <class>
 struct is_ok_type : std::false_type {};
 template <class T>
-struct is_ok_type<Ok<T>> : std::true_type {};
+struct is_ok_type<success<T>> : std::true_type {};
 
 } // !namespace mitama
 
@@ -87,17 +87,17 @@ struct is_ok_type<Ok<T>> : std::true_type {};
 namespace mitama {
 
 template <class T>
-class [[nodiscard]] Ok
+class [[nodiscard]] success
     : private ::mitamagic::perfect_trait_copy_move<
           std::is_copy_constructible_v<T>,
           std::conjunction_v<std::is_copy_constructible<T>, std::is_copy_assignable<T>>,
           std::is_move_constructible_v<T>,
           std::conjunction_v<std::is_move_constructible<T>, std::is_move_assignable<T>>,
-          Ok<T>>,
-      public printer_friend_injector<Ok<T>>
+          success<T>>,
+      public printer_friend_injector<success<T>>
 {
   template <class>
-  friend class Ok;
+  friend class success;
   T x;
   template <mutability, class, class, class>
   friend class basic_result;
@@ -114,59 +114,59 @@ class [[nodiscard]] Ok
   static constexpr std::nullptr_t required = nullptr;
 
   template <class U>
-  using not_self = std::negation<std::is_same<Ok, U>>;
+  using not_self = std::negation<std::is_same<success, U>>;
 public:
   using ok_type = T;
 
   template <class U = T>
-  constexpr Ok(std::enable_if_t<std::is_same_v<std::monostate, U>, std::nullptr_t> = nullptr)
+  constexpr success(std::enable_if_t<std::is_same_v<std::monostate, U>, std::nullptr_t> = nullptr)
   { /* whatever */ }
 
   template <class U,
             where<not_self<std::decay_t<U>>,
                   std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
-  constexpr Ok(U && u) noexcept(std::is_nothrow_constructible_v<T, U>)
+  constexpr success(U && u) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::forward<U>(u)) {}
 
   template <class U,
             where<not_self<std::decay_t<U>>,
                   std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  explicit constexpr Ok(U && u) noexcept(std::is_nothrow_constructible_v<T, U>)
+  explicit constexpr success(U && u) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::forward<U>(u)) {}
 
   template <typename U,
             where<std::negation<std::is_same<T, U>>,
                   std::is_constructible<T, const U &>,
                   std::is_convertible<const U &, T>> = required>
-  constexpr Ok(const Ok<U> &t) noexcept(std::is_nothrow_constructible_v<T, U>)
+  constexpr success(const success<U> &t) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(t.x) {}
 
   template <typename U,
             where<std::negation<std::is_same<T, U>>,
                   std::is_constructible<T, const U &>,
                   std::negation<std::is_convertible<const U &, T>>> = required>
-  explicit constexpr Ok(const Ok<U> &t) noexcept(std::is_nothrow_constructible_v<T, U>)
+  explicit constexpr success(const success<U> &t) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(t.x) {}
 
   template <typename U,
             where<std::negation<std::is_same<T, U>>,
                   std::is_constructible<T, U &&>,
                   std::is_convertible<U &&, T>> = required>
-  constexpr Ok(Ok<U> && t) noexcept(std::is_nothrow_constructible_v<T, U>)
+  constexpr success(success<U> && t) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::move(t.x)) {}
 
   template <typename U,
             where<std::negation<std::is_same<T, U>>,
                   std::is_constructible<T, U &&>,
                   std::negation<std::is_convertible<U &&, T>>> = required>
-  explicit constexpr Ok(Ok<U> && t) noexcept(std::is_nothrow_constructible_v<T, U>)
+  explicit constexpr success(success<U> && t) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::move(t.x)) {}
 
   template <class... Args,
             where<std::is_constructible<T, Args...>> = required>
-  explicit constexpr Ok(std::in_place_t, Args && ... args) noexcept(std::is_nothrow_constructible_v<T, Args...>)
+  explicit constexpr success(std::in_place_t, Args && ... args) noexcept(std::is_nothrow_constructible_v<T, Args...>)
       : x(std::forward<Args>(args)...) {}
 
   constexpr std::true_type is_ok() const noexcept { return {}; }
@@ -213,13 +213,13 @@ public:
   std::enable_if_t<
       is_comparable_with<T, T_>::value,
       bool>
-  constexpr operator==(Ok<T_> const &rhs) const
+  constexpr operator==(success<T_> const &rhs) const
   {
     return this->x == rhs.x;
   }
 
   template <class E_>
-  constexpr bool operator==(Err<E_> const &) const
+  constexpr bool operator==(failure<E_> const &) const
   {
     return false;
   }
@@ -227,20 +227,20 @@ public:
 };
 
 template <class T>
-Ok(T &&)->Ok<T>;
+success(T &&)->success<T>;
 
 template <class E>
-class [[nodiscard]] Err
+class [[nodiscard]] failure
     : private ::mitamagic::perfect_trait_copy_move<
           std::is_copy_constructible_v<E>,
           std::conjunction_v<std::is_copy_constructible<E>, std::is_copy_assignable<E>>,
           std::is_move_constructible_v<E>,
           std::conjunction_v<std::is_move_constructible<E>, std::is_move_assignable<E>>,
-          Err<E>>,
-      public printer_friend_injector<Err<E>>
+          failure<E>>,
+      public printer_friend_injector<failure<E>>
 {
   template <class>
-  friend class Err;
+  friend class failure;
   E x;
   template <mutability, class, class, class>
   friend class basic_result;
@@ -257,59 +257,59 @@ class [[nodiscard]] Err
   static constexpr std::nullptr_t required = nullptr;
 
   template <class U>
-  using not_self = std::negation<std::is_same<Err, U>>;
+  using not_self = std::negation<std::is_same<failure, U>>;
 public:
   using err_type = E;
 
   template <class F = E>
-  constexpr Err(std::enable_if_t<std::is_same_v<std::monostate, F>, std::nullptr_t> = nullptr)
+  constexpr failure(std::enable_if_t<std::is_same_v<std::monostate, F>, std::nullptr_t> = nullptr)
   { /* whatever */ }
 
   template <class U,
             where<not_self<std::decay_t<U>>,
                   std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
-  constexpr Err(U && u) noexcept(std::is_nothrow_constructible_v<E, U>)
+  constexpr failure(U && u) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(std::forward<U>(u)) {}
 
   template <class U,
             where<not_self<std::decay_t<U>>,
                   std::is_constructible<E, U>,
                   std::negation<std::is_convertible<U, E>>> = required>
-  explicit constexpr Err(U && u) noexcept(std::is_nothrow_constructible_v<E, U>)
+  explicit constexpr failure(U && u) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(std::forward<U>(u)) {}
 
   template <typename U,
             where<std::negation<std::is_same<E, U>>,
                   std::is_constructible<E, const U &>,
                   std::is_convertible<const U &, E>> = required>
-  constexpr Err(const Err<U> &t) noexcept(std::is_nothrow_constructible_v<E, U>)
+  constexpr failure(const failure<U> &t) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(t.x) {}
 
   template <typename U,
             where<std::negation<std::is_same<E, U>>,
                   std::is_constructible<E, const U &>,
                   std::negation<std::is_convertible<const U &, E>>> = required>
-  explicit constexpr Err(const Err<U> &t) noexcept(std::is_nothrow_constructible_v<E, U>)
+  explicit constexpr failure(const failure<U> &t) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(t.x) {}
 
   template <typename U,
             where<std::negation<std::is_same<E, U>>,
                   std::is_constructible<E, U &&>,
                   std::is_convertible<U &&, E>> = required>
-  constexpr Err(Err<U> && t) noexcept(std::is_nothrow_constructible_v<E, U>)
+  constexpr failure(failure<U> && t) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(std::move(t.x)) {}
 
   template <typename U,
             where<std::negation<std::is_same<E, U>>,
                   std::is_constructible<E, U &&>,
                   std::negation<std::is_convertible<U &&, E>>> = required>
-  explicit constexpr Err(Err<U> && t) noexcept(std::is_nothrow_constructible_v<E, U>)
+  explicit constexpr failure(failure<U> && t) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(std::move(t.x)) {}
 
   template <class... Args,
             where<std::is_constructible<E, Args...>> = required>
-  explicit constexpr Err(std::in_place_t, Args && ... args) noexcept(std::is_nothrow_constructible_v<E, Args...>)
+  explicit constexpr failure(std::in_place_t, Args && ... args) noexcept(std::is_nothrow_constructible_v<E, Args...>)
       : x(std::forward<Args>(args)...) {}
 
   constexpr std::false_type is_ok() const { return {}; }
@@ -359,27 +359,32 @@ public:
   std::enable_if_t<
       is_comparable_with<E, E_>::value,
       bool>
-  operator==(Err<E_> const &rhs) const
+  operator==(failure<E_> const &rhs) const
   {
     return this->x == rhs.x;
   }
 
   template <class T_>
-  constexpr bool operator==(Ok<T_> const &) const
+  constexpr bool operator==(success<T_> const &) const
   {
     return false;
   }
 };
 
 template <class E>
-Err(E &&)->Err<E>;
+failure(E &&)->failure<E>;
 
-inline auto None = boost::none;
+inline auto none = boost::none;
 
 template <class T>
-inline boost::optional<std::decay_t<T>> Some(T &&x)
+inline boost::optional<T> some(T &&x)
 {
   return {std::forward<T>(x)};
+}
+template <class T, class... Args>
+inline boost::optional<T> some(Args&&... args)
+{
+  return boost::optional<T>{boost::in_place(std::forward<Args>(args)...)};
 }
 
 template <class T = std::monostate, class E = std::monostate>
@@ -405,17 +410,17 @@ class [[nodiscard]] basic_result<_mutability, T, E,
     std::is_nothrow_destructible<detail::remove_cvr_t<E>>
   >>
   : private ::mitamagic::perfect_trait_copy_move<
-        std::conjunction_v<std::is_copy_constructible<boost::variant<Ok<T>, Err<E>>>,
-        std::conjunction_v<std::is_copy_constructible<boost::variant<Ok<T>, Err<E>>>, std::is_copy_assignable<boost::variant<Ok<T>, Err<E>>>>,
-        std::conjunction_v<std::is_move_constructible<boost::variant<Ok<T>, Err<E>>>,
-        std::conjunction_v<std::is_move_constructible<boost::variant<Ok<T>, Err<E>>>, std::is_move_assignable<boost::variant<Ok<T>, Err<E>>>>,
+        std::is_copy_constructible_v<boost::variant<success<T>, failure<E>>>,
+        std::conjunction_v<std::is_copy_constructible<boost::variant<success<T>, failure<E>>>, std::is_copy_assignable<boost::variant<success<T>, failure<E>>>>,
+        std::is_move_constructible_v<boost::variant<success<T>, failure<E>>>,
+        std::conjunction_v<std::is_move_constructible<boost::variant<success<T>, failure<E>>>, std::is_move_assignable<boost::variant<success<T>, failure<E>>>>,
         basic_result<_mutability, T, E>>,
     public printer_friend_injector<basic_result<_mutability, T, E>>,
     public unwrap_or_default_friend_injector<basic_result<_mutability, T, E>>,
     public transpose_friend_injector<basic_result<_mutability, T, E>>,
     public deref_friend_injector<basic_result<_mutability, T, E>>
 {
-  boost::variant<Ok<T>, Err<E>> storage_;
+  boost::variant<success<T>, failure<E>> storage_;
   template <class, class>
   friend class printer_friend_injector;
   template <class, class>
@@ -445,7 +450,7 @@ public:
   template <class U,
             where<std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
-  basic_result(Ok<U> const &ok)
+  basic_result(success<U> const &ok)
       : storage_{ok}
   {
   }
@@ -453,7 +458,7 @@ public:
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  explicit basic_result(Ok<U> const &ok)
+  explicit basic_result(success<U> const &ok)
       : storage_{ok}
   {
   }
@@ -461,7 +466,7 @@ public:
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  explicit basic_result(Ok<U> && ok)
+  explicit basic_result(success<U> && ok)
       : storage_{ok}
   {
   }
@@ -469,7 +474,7 @@ public:
   template <class U,
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
-  basic_result(Err<U> const &err)
+  basic_result(failure<U> const &err)
       : storage_{err}
   {
   }
@@ -477,7 +482,7 @@ public:
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  explicit basic_result(Err<U> const &err)
+  explicit basic_result(failure<U> const &err)
       : storage_{err}
   {
   }
@@ -485,7 +490,7 @@ public:
   template <class U,
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
-  basic_result(Err<U> && err)
+  basic_result(failure<U> && err)
       : storage_{err}
   {
   }
@@ -493,7 +498,7 @@ public:
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  explicit basic_result(Err<U> && err)
+  explicit basic_result(failure<U> && err)
       : storage_{err}
   {
   }
@@ -501,43 +506,43 @@ public:
   template <class... Args,
             where<std::is_constructible<T, Args...>> = required>
   explicit basic_result(in_place_ok_t, Args && ... args)
-      : storage_{Ok<T>{std::forward<Args>(args)...}}
+      : storage_{success<T>{std::forward<Args>(args)...}}
   {
   }
 
   template <class... Args,
             where<std::is_constructible<E, Args...>> = required>
   explicit basic_result(in_place_err_t, Args && ... args)
-      : storage_{Err<E>{std::forward<Args>(args)...}}
+      : storage_{failure<E>{std::forward<Args>(args)...}}
   {
   }
 
   template <class U, class... Args,
             where<std::is_constructible<T, std::initializer_list<U>, Args...>> = required>
   explicit basic_result(in_place_ok_t, std::initializer_list<U> il, Args && ... args)
-      : storage_{Ok<T>{il, std::forward<Args>(args)...}}
+      : storage_{success<T>{il, std::forward<Args>(args)...}}
   {
   }
 
   template <class U, class... Args,
             where<std::is_constructible<E, Args...>> = required>
   explicit basic_result(in_place_err_t, std::initializer_list<U> il, Args && ... args)
-      : storage_{Err<E>{il, std::forward<Args>(args)...}}
+      : storage_{failure<E>{il, std::forward<Args>(args)...}}
   {
   }
 
-  constexpr bool is_ok() const noexcept { return ::mitama::detail::holds_alternative<Ok<T>>(storage_); }
+  constexpr bool is_ok() const noexcept { return ::mitama::detail::holds_alternative<success<T>>(storage_); }
 
-  constexpr bool is_err() const noexcept { return ::mitama::detail::holds_alternative<Err<E>>(storage_); }
+  constexpr bool is_err() const noexcept { return ::mitama::detail::holds_alternative<failure<E>>(storage_); }
 
-  explicit constexpr operator bool() const noexcept { return ::mitama::detail::holds_alternative<Ok<T>>(storage_); }
-  constexpr bool operator !() const noexcept { return ::mitama::detail::holds_alternative<Err<E>>(storage_); }
+  explicit constexpr operator bool() const noexcept { return ::mitama::detail::holds_alternative<success<T>>(storage_); }
+  constexpr bool operator !() const noexcept { return ::mitama::detail::holds_alternative<failure<E>>(storage_); }
 
   template <class U = T>
   constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_copy_constructible_v<U>, boost::optional<T>>
   ok() const & {
     if (is_ok()) {
-      return boost::optional<T>{boost::get<Ok<T>>(storage_).x};
+      return boost::optional<T>{boost::get<success<T>>(storage_).x};
     }
     else {
       return boost::optional<T>{boost::none};
@@ -548,7 +553,7 @@ public:
   constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_move_constructible_v<U>, boost::optional<T>>
   ok() && {
     if (is_ok()) {
-      return boost::optional<T>{boost::get<Ok<T>>(std::move(storage_)).x};
+      return boost::optional<T>{boost::get<success<T>>(std::move(storage_)).x};
     }
     else {
       return boost::optional<T>{boost::none};
@@ -559,7 +564,7 @@ public:
   constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_copy_constructible_v<E>, boost::optional<E>>
   err() const & {
     if (is_err()) {
-      return boost::optional<E>{boost::get<Err<E>>(storage_).x};
+      return boost::optional<E>{boost::get<failure<E>>(storage_).x};
     }
     else {
       return boost::optional<E>{boost::none};
@@ -570,7 +575,7 @@ public:
   constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_move_constructible_v<E>, boost::optional<E>>
   err() && {
     if (is_err()) {
-      return boost::optional<E>{boost::get<Err<E>>(std::move(storage_)).x};
+      return boost::optional<E>{boost::get<failure<E>>(std::move(storage_)).x};
     }
     else {
       return boost::optional<E>{boost::none};
@@ -581,18 +586,18 @@ public:
     -> basic_result<_mutability, detail::remove_cvr_t<T> const&, detail::remove_cvr_t<E> const&>
   {
     if ( is_ok() )
-      return basic_result<_mutability, detail::remove_cvr_t<T> const&, detail::remove_cvr_t<E> const&>{in_place_ok, boost::get<Ok<T>>(storage_).x};
+      return basic_result<_mutability, detail::remove_cvr_t<T> const&, detail::remove_cvr_t<E> const&>{in_place_ok, boost::get<success<T>>(storage_).x};
     else
-      return basic_result<_mutability, detail::remove_cvr_t<T> const&, detail::remove_cvr_t<E> const&>{in_place_err, boost::get<Err<E>>(storage_).x};
+      return basic_result<_mutability, detail::remove_cvr_t<T> const&, detail::remove_cvr_t<E> const&>{in_place_err, boost::get<failure<E>>(storage_).x};
   }
 
   constexpr auto as_ref() &
     -> basic_result<_mutability, std::remove_reference_t<T>&, std::remove_reference_t<E>&>
   {
     if ( is_ok() )
-      return basic_result<_mutability, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_ok, boost::get<Ok<T>>(storage_).x};
+      return basic_result<_mutability, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_ok, boost::get<success<T>>(storage_).x};
     else
-      return basic_result<_mutability, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_err, boost::get<Err<E>>(storage_).x};
+      return basic_result<_mutability, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_err, boost::get<failure<E>>(storage_).x};
   }
 
   template <class O, class U = T, class F = E>
@@ -609,8 +614,8 @@ public:
   {
     using result_type = basic_result<_mutability, std::invoke_result_t<O, T>, E>;
     return is_ok()
-               ? static_cast<result_type>(Ok{std::invoke(std::forward<O>(op), boost::get<Ok<T>>(storage_).x)})
-               : static_cast<result_type>(Err{boost::get<Err<E>>(storage_).x});
+               ? static_cast<result_type>(success{std::invoke(std::forward<O>(op), boost::get<success<T>>(storage_).x)})
+               : static_cast<result_type>(failure{boost::get<failure<E>>(storage_).x});
   }
 
   template <class O, class U = T, class F = E>
@@ -619,8 +624,8 @@ public:
   {
     using result_type = basic_result<_mutability, std::invoke_result_t<O, T>, E>;
     return is_ok()
-               ? static_cast<result_type>(Ok{std::invoke(std::forward<O>(op), boost::get<Ok<T>>(std::move(storage_)).x)})
-               : static_cast<result_type>(Err{boost::get<Err<E>>(std::move(storage_)).x});
+               ? static_cast<result_type>(success{std::invoke(std::forward<O>(op), boost::get<success<T>>(std::move(storage_)).x)})
+               : static_cast<result_type>(failure{boost::get<failure<E>>(std::move(storage_)).x});
   }
 
   template <class Map, class Fallback, class U = T, class F = E>
@@ -639,8 +644,8 @@ public:
   {
     using result_type = std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
     return is_ok()
-               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), boost::get<Ok<T>>(storage_).x))
-               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), boost::get<Err<E>>(storage_).x));
+               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), boost::get<success<T>>(storage_).x))
+               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), boost::get<failure<E>>(storage_).x));
   }
 
   template <class Map, class Fallback, class U = T, class F = E>
@@ -659,8 +664,8 @@ public:
   {
     using result_type = std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
     return is_ok()
-               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), boost::get<Ok<T>>(std::move(storage_)).x))
-               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), boost::get<Err<E>>(std::move(storage_)).x));
+               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), boost::get<success<T>>(std::move(storage_)).x))
+               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), boost::get<failure<E>>(std::move(storage_)).x));
   }
 
   template <class O, class U = T, class F = E>
@@ -677,8 +682,8 @@ public:
   {
     using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E>>;
     return is_err()
-               ? static_cast<result_type>(Err{std::invoke(std::forward<O>(op), boost::get<Err<E>>(storage_).x)})
-               : static_cast<result_type>(Ok{boost::get<Ok<T>>(storage_).x});
+               ? static_cast<result_type>(failure{std::invoke(std::forward<O>(op), boost::get<failure<E>>(storage_).x)})
+               : static_cast<result_type>(success{boost::get<success<T>>(storage_).x});
   }
 
   template <class O, class U = T, class F = E>
@@ -695,15 +700,15 @@ public:
   {
     using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E>>;
     return is_err()
-               ? static_cast<result_type>(Err{std::invoke(std::forward<O>(op), boost::get<Err<E>>(std::move(storage_)).x)})
-               : static_cast<result_type>(Ok{boost::get<Ok<T>>(std::move(storage_)).x});
+               ? static_cast<result_type>(failure{std::invoke(std::forward<O>(op), boost::get<failure<E>>(std::move(storage_)).x)})
+               : static_cast<result_type>(success{boost::get<success<T>>(std::move(storage_)).x});
   }
 
   template <class O, class U = T, class F = E>
   constexpr auto and_then(O && op) const &
     -> std::enable_if_t<
         std::conjunction_v<
-          is_result_with<std::invoke_result_t<O, T>, Err<F>>,
+          is_result_with<std::invoke_result_t<O, T>, failure<F>>,
           std::is_same<U, T>,
           std::is_same<F, E>,
           std::is_copy_constructible<U>,
@@ -713,15 +718,15 @@ public:
   {
     using result_type = std::invoke_result_t<O, T>;
     return is_ok()
-               ? std::invoke(std::forward<O>(op), boost::get<Ok<T>>(storage_).x)
-               : static_cast<result_type>(Err{typename result_type::err_type(boost::get<Err<E>>(storage_).x)});
+               ? std::invoke(std::forward<O>(op), boost::get<success<T>>(storage_).x)
+               : static_cast<result_type>(failure{typename result_type::err_type(boost::get<failure<E>>(storage_).x)});
   }
 
   template <class O, class U = T, class F = E>
   constexpr auto and_then(O && op) &&
     -> std::enable_if_t<
         std::conjunction_v<
-          is_result_with<std::invoke_result_t<O, T>, Err<F>>,
+          is_result_with<std::invoke_result_t<O, T>, failure<F>>,
           std::is_same<U, T>,
           std::is_same<F, E>,
           std::is_move_constructible<U>,
@@ -731,15 +736,15 @@ public:
   {
     using result_type = std::invoke_result_t<O, T>;
     return is_ok()
-               ? std::invoke(std::forward<O>(op), boost::get<Ok<T>>(std::move(storage_)).x)
-               : static_cast<result_type>(Err{typename result_type::err_type(boost::get<Err<E>>(std::move(storage_)).x)});
+               ? std::invoke(std::forward<O>(op), boost::get<success<T>>(std::move(storage_)).x)
+               : static_cast<result_type>(failure{typename result_type::err_type(boost::get<failure<E>>(std::move(storage_)).x)});
   }
 
   template <class O, class U = T, class F = E>
   constexpr auto or_else(O && op) const &
     -> std::enable_if_t<
         std::conjunction_v<
-          is_result_with<std::invoke_result_t<O, T>, Ok<U>>,
+          is_result_with<std::invoke_result_t<O, T>, success<U>>,
           std::is_same<U, T>,
           std::is_same<F, E>,
           std::is_copy_constructible<U>,
@@ -749,15 +754,15 @@ public:
   {
     using result_type = std::invoke_result_t<O, E>;
     return is_err()
-               ? std::invoke(std::forward<O>(op), boost::get<Err<E>>(storage_).x)
-               : static_cast<result_type>(Ok{typename result_type::ok_type(boost::get<Ok<T>>(storage_).x)});
+               ? std::invoke(std::forward<O>(op), boost::get<failure<E>>(storage_).x)
+               : static_cast<result_type>(success{typename result_type::ok_type(boost::get<success<T>>(storage_).x)});
   }
 
   template <class O, class U = T, class F = E>
   constexpr auto or_else(O && op) &&
     -> std::enable_if_t<
         std::conjunction_v<
-          is_result_with<std::invoke_result_t<O, T>, Ok<U>>,
+          is_result_with<std::invoke_result_t<O, T>, success<U>>,
           std::is_same<U, T>,
           std::is_same<F, E>,
           std::is_move_constructible<U>,
@@ -767,8 +772,8 @@ public:
   {
     using result_type = std::invoke_result_t<O, E>;
     return is_err()
-               ? std::invoke(std::forward<O>(op), boost::get<Err<E>>(std::move(storage_)).x)
-               : static_cast<result_type>(Ok{typename result_type::ok_type(boost::get<Ok<T>>(std::move(storage_)).x)});
+               ? std::invoke(std::forward<O>(op), boost::get<failure<E>>(std::move(storage_)).x)
+               : static_cast<result_type>(success{typename result_type::ok_type(boost::get<success<T>>(std::move(storage_)).x)});
   }
 
   template <mutability _mut, class U>
@@ -776,9 +781,9 @@ public:
   {
     using result_type = basic_result<_mutability, U, E>;
     return this->is_err()
-               ? static_cast<result_type>(Err{boost::get<Err<E>>(storage_).x})
-               : res.is_err() ? static_cast<result_type>(Err{res.unwrap_err()})
-                              : static_cast<result_type>(Ok{res.unwrap()});
+               ? static_cast<result_type>(failure{boost::get<failure<E>>(storage_).x})
+               : res.is_err() ? static_cast<result_type>(failure{res.unwrap_err()})
+                              : static_cast<result_type>(success{res.unwrap()});
   }
 
   template <mutability _mut, class F>
@@ -786,14 +791,14 @@ public:
   {
     using result_type = basic_result<_mutability, T, F>;
     return this->is_ok()
-               ? static_cast<result_type>(Ok{boost::get<Ok<T>>(storage_).x})
-               : res.is_ok() ? static_cast<result_type>(Ok{res.unwrap()})
-                             : static_cast<result_type>(Err{res.unwrap_err()});
+               ? static_cast<result_type>(success{boost::get<success<T>>(storage_).x})
+               : res.is_ok() ? static_cast<result_type>(success{res.unwrap()})
+                             : static_cast<result_type>(failure{res.unwrap_err()});
   }
 
   decltype(auto) unwrap_or(T const &optb) const noexcept
   {
-    return is_ok() ? boost::get<Ok<T>>(storage_).x : optb;
+    return is_ok() ? boost::get<success<T>>(storage_).x : optb;
   }
 
   template <class O>
@@ -801,10 +806,10 @@ public:
     -> std::enable_if_t<std::is_invocable_r_v<T, O, E>, T>
   {
     if constexpr (std::is_invocable_r_v<T, O, E>) {
-      return is_ok() ? boost::get<Ok<T>>(storage_).x : std::invoke(std::forward<O>(op), boost::get<Err<E>>(storage_).x);
+      return is_ok() ? boost::get<success<T>>(storage_).x : std::invoke(std::forward<O>(op), boost::get<failure<E>>(storage_).x);
     }
     else if constexpr (std::is_invocable_r_v<T, O>) {
-      return is_ok() ? boost::get<Ok<T>>(storage_).x : std::invoke(std::forward<O>(op));
+      return is_ok() ? boost::get<success<T>>(storage_).x : std::invoke(std::forward<O>(op));
     }
     else {
       static_assert(::mitama::dependent_bool::always_false_v<O>, "invalid argument: designated function object is not invocable");
@@ -815,13 +820,13 @@ public:
   {
     if constexpr (trait::formattable<E>::value) {
       return is_ok()
-                 ? static_cast<T>(boost::get<Ok<T>>(storage_).x)
-                 : PANIC(R"(called `basic_result::unwrap() on an `Err` value: %1%)", boost::get<Err<E>>(storage_).x);
+                 ? static_cast<T>(boost::get<success<T>>(storage_).x)
+                 : PANIC(R"(called `basic_result::unwrap() on an `failure` value: %1%)", boost::get<failure<E>>(storage_).x);
     }
     else {
       return is_ok()
-                 ? static_cast<T>(boost::get<Ok<T>>(storage_).x)
-                 : PANIC(R"(called `basic_result::unwrap() on an `Err`)");
+                 ? static_cast<T>(boost::get<success<T>>(storage_).x)
+                 : PANIC(R"(called `basic_result::unwrap() on an `failure`)");
     }
   }
 
@@ -829,13 +834,13 @@ public:
   {
     if constexpr (trait::formattable<T>::value) {
       return is_err()
-                 ? static_cast<E>(boost::get<Err<E>>(storage_).x)
-                 : PANIC(R"(called `basic_result::unwrap_err() on an `Ok` value: %1%)", boost::get<Ok<T>>(storage_).x);
+                 ? static_cast<E>(boost::get<failure<E>>(storage_).x)
+                 : PANIC(R"(called `basic_result::unwrap_err() on an `success` value: %1%)", boost::get<success<T>>(storage_).x);
     }
     else {
       return is_err()
-                 ? static_cast<E>(boost::get<Err<E>>(storage_).x)
-                 : PANIC(R"(called `basic_result::unwrap_err() on an `Ok` value)");
+                 ? static_cast<E>(boost::get<failure<E>>(storage_).x)
+                 : PANIC(R"(called `basic_result::unwrap_err() on an `success` value)");
     }
   }
 
@@ -868,9 +873,9 @@ public:
   {
     return boost::apply_visitor(
       ::mitama::detail::overload(
-        [](Ok<T> const &l, Ok<T_> const &r) { return l.x == r.x; },
-        [](Err<E> const &l, Err<E_> const &r) { return l.x == r.x; },
-        [](auto &&...) { return false; }),
+        [](success<T> const& l, success<T_> const& r) { return l.x == r.x; },
+        [](failure<E> const& l, failure<E_> const& r) { return l.x == r.x; },
+        [](auto&&...) { return false; }),
       this->storage_, rhs.storage_);
   }
 
@@ -878,7 +883,7 @@ public:
   std::enable_if_t<
       is_comparable_with<T, T_>::value,
       bool>
-  operator==(Ok<T_> const &rhs) const
+  operator==(success<T_> const &rhs) const
   {
     return this->is_ok() ? this->unwrap() == rhs.x : false;
   }
@@ -887,7 +892,7 @@ public:
   std::enable_if_t<
       is_comparable_with<E, E_>::value,
       bool>
-  operator==(Err<E_> const &rhs) const
+  operator==(failure<E_> const &rhs) const
   {
     return this->is_err() ? this->unwrap_err() == rhs.x : false;
   }
@@ -898,10 +903,10 @@ public:
 
 #define TRY(target) \
   if (auto res = target; res.is_err()) \
-    return ::mitama::Err(res.unwrap_err());
+    return ::mitama::failure(res.unwrap_err());
 
 #define TRY_LET(var, target) \
   if (auto var = target; var.is_err()) \
-    return ::mitama::Err(var.unwrap_err());
+    return ::mitama::failure(var.unwrap_err());
   
 #endif

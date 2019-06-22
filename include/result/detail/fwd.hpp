@@ -9,16 +9,16 @@ enum class mutability: bool {
 };
 
 template <mutability,
-          class = std::monostate,   // Ok type
-          class = std::monostate,   // Err type
+          class = std::monostate,   // success type
+          class = std::monostate,   // failure type
           class = decltype(nullptr) // for detection idiom
 >
 class basic_result;
 
 template <class T = std::monostate>
-class Ok;
+class success;
 
 template <class = std::monostate>
-class Err;
+class failure;
 }
 #endif
