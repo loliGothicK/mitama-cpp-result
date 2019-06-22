@@ -592,27 +592,52 @@ public:
 
   void ok() const&& = delete;
 
-  template <class F = E>
-  constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_copy_constructible_v<E>, boost::optional<E>>
-  err() const & {
-    if (is_err()) {
-      return boost::optional<E>{boost::get<failure<E>>(storage_).x};
+  template <class U = T>
+  constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_copy_constructible_v<U>,
+  boost::optional<ok_type>>
+  ok() & {
+    if (is_ok()) {
+      return boost::optional<ok_type>{boost::get<success<T>>(storage_).x};
     }
     else {
-      return boost::optional<E>{boost::none};
+      return boost::optional<ok_type>{boost::none};
     }
   }
 
   template <class F = E>
-  constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_move_constructible_v<E>, boost::optional<E>>
-  err() && {
+  constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_copy_constructible_v<E>, boost::optional<E>>
+  boost::optional<force_add_const_t<err_type>>>
+  err() const & {
     if (is_err()) {
-      return boost::optional<E>{boost::get<failure<E>>(std::move(storage_)).x};
+      return boost::optional<force_add_const_t<err_type>>{boost::get<failure<E>>(std::move(storage_)).x};
     }
     else {
-      return boost::optional<E>{boost::none};
+      return boost::optional<force_add_const_t<err_type>>{boost::none};
     }
   }
+
+  template <class F = E>
+  constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_copy_constructible_v<E>, boost::optional<E>>
+  err() && {
+    if constexpr (std::is_lvalue_reference_v<err_type>) {
+      if (is_err()) {
+        return boost::optional<dangle_ref<err_type>>{boost::in_place(std::ref(boost::get<failure<E>>(storage_).x))};
+      }
+      else {
+        return boost::optional<dangle_ref<err_type>>{boost::none};
+      }
+    }
+    else {
+      if (is_err()) {
+        return boost::optional<err_type>{boost::get<failure<E>>(std::move(storage_)).x};
+      }
+      else {
+        return boost::optional<err_type>{boost::none};
+      }
+    }
+  }
+
+  void err() const&& = delete;
 
   constexpr auto as_ref() const&
     -> basic_result<detail::remove_cvr_t<T> const&, detail::remove_cvr_t<E> const&>
