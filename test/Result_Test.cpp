@@ -346,15 +346,19 @@ TEST_CASE("basics test", "[result][basics]"){
 }
 
 TEST_CASE("constructors and assignments test", "[result][constructors][assignments]"){
-  auto res = result<int,int>{success(2)};
-  res = result<int, int>{failure(2)};
-  (void)result<std::string, double>{in_place_ok, "hoge"};
-  (void)result<double, std::string>{in_place_err, "hoge"};
-  (void)result<std::vector<int>, double>{in_place_ok, {1, 2, 3, 4}};
-  (void)result<double, std::vector<double>>{in_place_err, {1., 2., 3., 4.}};
-
-  res = success(1);
-  res = failure(2);
+  {
+    auto res = result<int,int>{success(2)};
+    res = result<int, int>{failure(2)};
+    (void)result<std::string, double>{in_place_ok, "hoge"};
+    (void)result<double, std::string>{in_place_err, "hoge"};
+    (void)result<std::vector<int>, double>{in_place_ok, {1, 2, 3, 4}};
+    (void)result<double, std::vector<double>>{in_place_err, {1., 2., 3., 4.}};
+  }
+  {
+    auto res = mut_result<int,int>{success(2)};
+    res = success(1);
+    res = failure(2);
+  }
 }
 
 TEST_CASE("format test", "[result][format]"){
@@ -402,7 +406,7 @@ TEST_CASE("format test", "[result][format]"){
   }
   SECTION("replace"){
     using namespace std::literals;
-    auto res = result<int, std::vector<int>>{in_place_err, {1,2,3}};
+    auto res = mut_result<int, std::vector<int>>{in_place_err, {1,2,3}};
     REQUIRE((boost::format("%1%") % res).str() == "failure([1,2,3])"s);
     res = success(1);
     REQUIRE((boost::format("%1%") % res).str() ==  "success(1)"s);

@@ -1,19 +1,20 @@
 #ifndef MITAMA_RESULT_HPP
 #define MITAMA_RESULT_HPP
+#include <result/detail/fwd.hpp>
+#include <result/detail/detail.hpp>
+#include <result/traits/perfect_traits_special_members.hpp>
+
+#include <boost/variant.hpp>
+#include <boost/optional.hpp>
+#include <boost/hana/functional/overload.hpp>
 #include <boost/format.hpp>
+
 #include <functional>
 #include <optional>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
 #include <string_view>
-
-#include <boost/variant.hpp>
-#include <boost/optional.hpp>
-#include <boost/hana/functional/overload.hpp>
-#include <result/traits/perfect_traits_special_members.hpp>
-#include <result/detail/detail.hpp>
-#include <result/detail/fwd.hpp>
 
 #define PANIC(...) \
   throw ::mitama::runtime_panic { ::mitama::macro_use, __FILE__, __LINE__, __VA_ARGS__ }
@@ -421,14 +422,7 @@ class [[nodiscard]] basic_result<_mutability, T, E,
     std::is_nothrow_destructible<detail::remove_cvr_t<T>>,
     std::is_nothrow_destructible<detail::remove_cvr_t<E>>
   >>
-  /* copy move traits */ 
-  : private ::mitamagic::perfect_trait_copy_move<
-        std::is_copy_constructible_v<boost::variant<success<T>, failure<E>>>,
-        std::conjunction_v<std::is_copy_constructible<boost::variant<success<T>, failure<E>>>, std::is_copy_assignable<boost::variant<success<T>, failure<E>>>>,
-        std::is_move_constructible_v<boost::variant<success<T>, failure<E>>>,
-        std::conjunction_v<std::is_move_constructible<boost::variant<success<T>, failure<E>>>, std::is_move_assignable<boost::variant<success<T>, failure<E>>>>,
-        basic_result<_mutability, T, E>>,
-  /* method injection selectors */ 
+  : /* method injection selectors */ 
     public printer_friend_injector<basic_result<_mutability, T, E>>,
     public unwrap_or_default_friend_injector<basic_result<_mutability, T, E>>,
     public transpose_friend_injector<basic_result<_mutability, T, E>>,
@@ -459,115 +453,195 @@ public:
   using err_reference_type = std::remove_reference_t<E>&;
   using ok_const_reference_type = detail::remove_cvr_t<T> const&;
   using err_const_reference_type = detail::remove_cvr_t<E> const&;
+  /// mutability
+  static constexpr bool is_mut = !static_cast<bool>(_mutability);
 
   /* Constructors */
 
   /// default constructor = delete
   constexpr basic_result() noexcept = delete;
 
+  template <mutability _mu, class U, class F,
+            where<std::is_constructible<T, U>,
+                  std::is_constructible<E, F>,
+                  std::disjunction<
+                    std::negation<std::is_convertible<F, E>>,
+                    std::negation<std::is_convertible<U, T>>
+                  >
+            > = required>
+  explicit constexpr basic_result(basic_result<_mu, U, F> const& res)
+    : storage_(res.storage_)
+  {}
+
+  template <mutability _mu, class U, class F,
+            where<std::is_constructible<T, U>,
+                  std::is_constructible<E, F>,
+                  std::is_convertible<U, T>,
+                  std::is_convertible<F, E>
+            > = required>
+  constexpr basic_result(basic_result<_mu, U, F> const& res)
+    : storage_(res.storage_)
+  {}
+
+  template <mutability _mu, class U, class F,
+            where<std::is_constructible<T, U>,
+                  std::is_constructible<E, F>,
+                  std::disjunction<
+                    std::negation<std::is_convertible<F, E>>,
+                    std::negation<std::is_convertible<U, T>>
+                  >
+            > = required>
+  explicit constexpr basic_result(basic_result<_mu, U, F>&& res)
+    : storage_(std::move(res.storage_))
+  {}
+
+  template <mutability _mu, class U, class F,
+            where<std::is_constructible<T, U>,
+                  std::is_constructible<E, F>,
+                  std::is_convertible<U, T>,
+                  std::is_convertible<F, E>
+            > = required>
+  constexpr basic_result(basic_result<_mu, U, F>&& res)
+    : storage_(std::move(res.storage_))
+  {}
+
+  template <mutability _mu, class U, class F,
+            where<std::is_constructible<T, U>,
+                  std::is_constructible<E, F>
+            > = required>
+  constexpr basic_result& operator=(basic_result<_mu, U, F> const& res)
+  {
+    static_assert(is_mut_v<_mutability>, "Error: assignment to immutable result");
+    if (res.is_ok())
+      { this->storage_ = success<T>(res.unwrap()); }
+    else
+      { this->storage_ = failure<E>(res.unwrap_err()); }
+    return *this;
+  }
+
+  template <mutability _mu, class U, class F,
+            where<std::is_constructible<T, U>,
+                  std::is_constructible<E, F>
+            > = required>
+  constexpr basic_result& operator=(basic_result<_mu, U, F>&& res)
+  {
+    static_assert(is_mut_v<_mutability>, "Error: assignment to immutable result");
+    if (res.is_ok())
+      { this->storage_ = success<T>(res.unwrap()); }
+    else
+      { this->storage_ = failure<E>(res.unwrap_err()); }
+    return *this;
+  }
+
+  template <class U,
+            where<std::is_constructible<T, U>> = required>
+  constexpr basic_result& operator=(success<U> const& _ok)
+  {
+    static_assert(is_mut_v<_mutability>, "Error: assignment to immutable result");
+    this->storage_ = success<T>(_ok.x);
+    return *this;
+  }
+
+  template <class F,
+            where<std::is_constructible<E, F>> = required>
+  constexpr basic_result& operator=(failure<F> const& _err)
+  {
+    static_assert(is_mut_v<_mutability>, "Error: assignment to immutable result");
+    this->storage_ = failure<E>(_err.x);
+    return *this;
+  }
+
   /// non-explicit constructor for successful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
   constexpr basic_result(success<U> const &ok)
-      : storage_{ok}
-  {
-  }
+    : storage_{ok}
+  {}
 
   /// explicit constructor for successful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
   constexpr explicit basic_result(success<U> const &ok)
-      : storage_{ok}
-  {
-  }
+    : storage_{ok}
+  {}
 
   /// non-explicit constructor for successful rvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
   constexpr basic_result(success<U> && ok)
-      : storage_{std::move(ok)}
-  {
-  }
+    : storage_{std::move(ok)}
+  {}
 
   /// explicit constructor for successful rvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
   constexpr explicit basic_result(success<U> && ok)
-      : storage_{std::move(ok)}
-  {
-  }
+    : storage_{std::move(ok)}
+  {}
 
   /// non-explicit constructor for unsuccessful lvalue
   template <class U,
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
   constexpr basic_result(failure<U> const &err)
-      : storage_{err}
-  {
-  }
+    : storage_{err}
+  {}
 
   /// explicit constructor for unsuccessful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
   constexpr explicit basic_result(failure<U> const &err)
-      : storage_{err}
-  {
-  }
+    : storage_{err}
+  {}
 
   /// non-explicit constructor for unsuccessful rvalue
   template <class U,
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
   constexpr basic_result(failure<U> && err)
-      : storage_{err}
-  {
-  }
+    : storage_{err}
+  {}
 
   /// explicit constructor for unsuccessful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
   constexpr explicit basic_result(failure<U> && err)
-      : storage_{err}
-  {
-  }
+    : storage_{err}
+  {}
 
   /// in-place constructor for successful result
   template <class... Args,
             where<std::is_constructible<T, Args...>> = required>
   constexpr explicit basic_result(in_place_ok_t, Args && ... args)
-      : storage_{success<T>{std::forward<Args>(args)...}}
-  {
-  }
+    : storage_{success<T>{std::forward<Args>(args)...}}
+  {}
 
   /// in-place constructor for unsuccessful result
   template <class... Args,
             where<std::is_constructible<E, Args...>> = required>
   constexpr explicit basic_result(in_place_err_t, Args && ... args)
-      : storage_{failure<E>{std::forward<Args>(args)...}}
-  {
-  }
+    : storage_{failure<E>{std::forward<Args>(args)...}}
+  {}
 
   /// in-place constructor with initializer_list for successful result
   template <class U, class... Args,
             where<std::is_constructible<T, std::initializer_list<U>, Args...>> = required>
   constexpr explicit basic_result(in_place_ok_t, std::initializer_list<U> il, Args && ... args)
-      : storage_{success<T>{il, std::forward<Args>(args)...}}
-  {
-  }
+    : storage_{success<T>{il, std::forward<Args>(args)...}}
+  {}
 
   /// in-place constructor with initializer_list for unsuccessful result
   template <class U, class... Args,
             where<std::is_constructible<E, Args...>> = required>
   constexpr explicit basic_result(in_place_err_t, std::initializer_list<U> il, Args && ... args)
-      : storage_{failure<E>{il, std::forward<Args>(args)...}}
-  {
-  }
+    : storage_{failure<E>{il, std::forward<Args>(args)...}}
+  {}
 
   /// basic_result::is_ok()
   /// Returns true if the result is succsess.
