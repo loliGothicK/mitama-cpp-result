@@ -47,184 +47,6 @@ inline constexpr in_place_ok_t in_place_ok = {};
 class in_place_err_t {};
 inline constexpr in_place_err_t in_place_err = {};
 
-template <class, class = std::nullptr_t> 
-class printer_friend_injector {};
-
-template <class T>
-class printer_friend_injector<success<T>,
-                               trait::where<
-                                   trait::formattable<T>>>
-{
-  std::ostream& print(std::ostream &os) const
-  {
-    return os << "success(" << static_cast<const success<T> *>(this)->x << ")";
-  }
-public:
-  friend std::ostream &operator<<(std::ostream& os, const success<T> &ok) {
-    return ok.print(os);
-  }
-};
-
-template <class T>
-class printer_friend_injector<success<T>,
-                              trait::where<
-                                  trait::formattable_range<T>>>
-{
-  std::ostream &print(std::ostream &os) const
-  {
-    auto iter = std::begin(static_cast<const success<T> *>(this)->x);
-    os << "success([" << *iter;
-    ++iter;
-    for (; iter != std::end(static_cast<const success<T> *>(this)->x); ++iter)
-      os << "," << *iter;
-    return os << "])";
-  }
-
-public:
-  friend std::ostream &operator<<(std::ostream &os, const success<T> &ok)
-  {
-    return ok.print(os);
-  }
-};
-
-template < >
-class printer_friend_injector<success<std::monostate>>
-{
-public:
-  friend std::ostream &operator<<(std::ostream &os, success<std::monostate> const&)
-  {
-    return os << "success(())";
-  }
-};
-
-
-template <class T>
-class printer_friend_injector<failure<T>,
-                               trait::where<
-                                   trait::formattable<T>>>
-{
-  std::ostream& print(std::ostream &os) const
-  {
-    return os << "failure(" << static_cast<const failure<T> *>(this)->x << ")";
-  }
-public:
-  friend std::ostream &operator<<(std::ostream &os, const failure<T> &err)
-  {
-    return err.print(os);
-  }
-};
-
-template < >
-class printer_friend_injector<failure<std::monostate>>
-{
-public:
-  friend std::ostream &operator<<(std::ostream &os, failure<std::monostate> const&)
-  {
-    return os << "failure(())";
-  }
-};
-
-template <class T>
-class printer_friend_injector<failure<T>,
-                              trait::where<
-                                  trait::formattable_range<T>>>
-{
-  std::ostream &print(std::ostream &os) const
-  {
-    auto iter = std::begin(static_cast<const failure<T> *>(this)->x);
-    os << "failure([" << *iter;
-    ++iter;
-    for (; iter != std::end(static_cast<const failure<T> *>(this)->x); ++iter)
-      os << "," << *iter;
-    return os << "])";
-  }
-
-public:
-  friend std::ostream &operator<<(std::ostream &os, const failure<T> &err)
-  {
-    return err.print(os);
-  }
-};
-
-template <mutability _mutability, class T, class E>
-class printer_friend_injector<basic_result<_mutability, T, E>,
-                              trait::where<
-                                  std::disjunction<trait::formattable<T>, trait::formattable_range<T>>,
-                                  std::disjunction<trait::formattable<E>, trait::formattable_range<E>>>>
-{
-  std::ostream &print(std::ostream &os) const
-  {
-    if (static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok()){
-      if constexpr (trait::formattable_range<T>::value)
-      {
-        auto iter = std::begin(boost::get<success<T>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x);
-        os << "success([" << *iter;
-        ++iter;
-        for (; iter != std::end(boost::get<success<T>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x); ++iter)
-          os << "," << *iter;
-        return os << "])";
-      }
-      else if constexpr (std::is_same_v<std::decay_t<T>, std::monostate>) {
-        return os << "success(())";
-      }
-      else {
-        return os << "success(" << boost::get<success<T>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x << ")";
-      }
-    }
-    else
-    {
-      if constexpr (trait::formattable_range<E>::value)
-      {
-        auto iter = std::begin(boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x);
-        os << "failure([" << *iter;
-        ++iter;
-        for (; iter != std::end(boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x); ++iter)
-          os << "," << *iter;
-        return os << "])";
-      }
-      else if constexpr (std::is_same_v<std::decay_t<E>, std::monostate>) {
-        return os << "failure(())";
-      }
-      else
-      {
-        return os << "failure(" << boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E> const *>(this)->storage_).x << ")";
-      }
-    }
-  }
-public:
-  friend std::ostream &operator<<(std::ostream &os, const basic_result<_mutability, T, E> &res)
-  {
-    return res.print(os);
-  }
-};
-
-template <class, class = void>
-class unwrap_or_default_friend_injector
-{
-public:
-  void unwrap_or_default() const = delete;
-};
-
-template <mutability _mutability, class T, class E>
-class unwrap_or_default_friend_injector<basic_result<_mutability, T, E>,
-                                        std::enable_if_t<std::disjunction_v<std::is_default_constructible<T>, std::is_aggregate<T>>>>
-{
-public:
-  T unwrap_or_default() const
-  {
-    if constexpr (std::is_aggregate_v<T>){
-      return static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok()
-        ? static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap()
-        : T{};
-    }
-    else {
-      return static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok()
-        ? static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap()
-        : T();
-    }
-  }
-};
-
 template <class, class = void>
 class transpose_friend_injector
 {
@@ -232,7 +54,8 @@ public:
   void transpose() const = delete;
 };
 
-
+/// @brief
+///   impl<_mutability, T, E> basic_result<_mutability, Option<T>, E>
 template <mutability _mutability, class T, class E>
 class transpose_friend_injector<basic_result<_mutability, T, E>,
                                 std::enable_if_t<is_optional<std::decay_t<T>>::value>>
@@ -389,6 +212,10 @@ public:
 
 };
 
+/// @brief
+/// impl<_mutability, T, E> basic_result<_mutability, T, E>
+/// where
+///   T: Deref
 template <mutability _mutability, class T, class E>
 class deref_friend_injector<basic_result<_mutability, T, E>, 
                             std::enable_if_t<
@@ -444,6 +271,10 @@ public:
 
 };
 
+/// @brief
+/// impl<_mutability, T, E> basic_result<_mutability, T, E>
+/// where
+///   E: Deref
 template <mutability _mutability, class T, class E>
 class deref_friend_injector<basic_result<_mutability, T, E>, 
                             std::enable_if_t<

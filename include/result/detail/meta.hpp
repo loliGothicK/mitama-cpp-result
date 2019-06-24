@@ -46,12 +46,36 @@ namespace detail {
   struct has_common_type<std::enable_if_t<::mitama::meta::has_type<std::common_type<Types...>>::value>, Types...>: std::true_type {};
 }}}
 
-namespace mitama{
+namespace mitama {
 inline namespace meta {
   template <class... Types>
   struct has_common_type: detail::has_common_type<void, Types...> {};
 }
 }
 
+namespace mitama {
+inline namespace meta {
+namespace detail {
+template < class, class, class = void > struct is_tuple_like_detail: std::false_type {};
+
+template < class T, std::size_t... I >
+struct is_tuple_like_detail<T, std::index_sequence<I...>, std::void_t<decltype(std::get<I>(std::declval<T>()))...>>
+  : std::conjunction<has_type<std::tuple_element<I, T>>...>
+{};
+
+template < class TupleLike >
+struct is_tuple_like_impl: is_tuple_like_detail<TupleLike, std::make_index_sequence<std::tuple_size_v<TupleLike>>> {};
+}}}
+
+namespace mitama {
+inline namespace meta {
+template < class T >
+struct is_tuple_like
+  : std::conjunction<
+      has_value<std::tuple_size<T>>,
+      detail::is_tuple_like_impl<T>
+    >
+{};
+}}
 
 #endif

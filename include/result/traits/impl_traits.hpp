@@ -1,14 +1,14 @@
 #ifndef MITAMA_RESULT_TRAIT
 #define MITAMA_RESULT_TRAIT
 
+#include <result/detail/meta.hpp>
 #include <type_traits>
 #include <utility>
 #include <iostream>
 #include <string>
 #include <string_view>
 
-namespace mitama {
-namespace trait {
+namespace mitama::trait {
 
 // Trait Helpers
 
@@ -56,6 +56,28 @@ struct formattable_range<Range, std::void_t<decltype(std::declval<std::ostream&>
 {
 };
 
-}}
+}
+
+namespace mitama {
+inline namespace meta {
+namespace detail {
+    template <class, class>
+    struct is_formattable_tuple_detail;
+
+    template <class Tuple, std::size_t... I>
+    struct is_formattable_tuple_detail<Tuple, std::index_sequence<I...>>
+        : std::conjunction<trait::formattable<std::tuple_element_t<I, Tuple>>...>
+    {};
+}}}
+
+namespace mitama::trait {
+template <class, class = void> struct formattable_tuple;
+
+template <class Tuple>
+struct formattable_tuple<Tuple, std::enable_if_t<meta::is_tuple_like<Tuple>::value>>
+    : meta::detail::is_formattable_tuple_detail<Tuple, std::make_index_sequence<std::tuple_size_v<Tuple>>>
+{};
+
+}
 
 #endif

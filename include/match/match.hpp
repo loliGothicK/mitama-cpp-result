@@ -117,24 +117,6 @@ struct is_invocable_constrait : _detail::is_invocable_constrait<void, F, ArgType
 template <class F, class... ArgTypes>
 inline constexpr bool is_invocable_constrait_v = is_invocable_constrait<F, ArgTypes...>::value;
 
-template < class, class > struct is_tuple_like_detail;
-
-template < class T, std::size_t... I >
-struct is_tuple_like_detail<T, std::index_sequence<I...>>
-  : std::conjunction<has_type<std::tuple_element<I, T>>...>
-{};
-
-template < class TupleLike >
-struct is_tuple_like_impl: is_tuple_like_detail<TupleLike, std::make_index_sequence<std::tuple_size_v<TupleLike>>> {};
-
-template < class T >
-struct is_tuple_like
-  : std::conjunction<
-      has_value<std::tuple_size<T>>,
-      is_tuple_like_impl<T>
-    >
-{};
-
 struct conjunction
 {
   template < class F, class G >

@@ -7,6 +7,7 @@
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
 #include <boost/hana/functional/overload.hpp>
+#include <boost/hana/functional/overload_linearly.hpp>
 #include <boost/format.hpp>
 
 #include <functional>
@@ -100,8 +101,7 @@ class [[nodiscard]] success
           std::conjunction_v<std::is_copy_constructible<T>, std::is_copy_assignable<T>>,
           std::is_move_constructible_v<T>,
           std::conjunction_v<std::is_move_constructible<T>, std::is_move_assignable<T>>,
-          success<T>>,
-      public printer_friend_injector<success<T>>
+          success<T>>
 {
   template <class>
   friend class success;
@@ -231,6 +231,60 @@ public:
     return false;
   }
 
+  template <class U = T>
+  friend
+  std::enable_if_t<
+    std::disjunction_v<
+        trait::formattable<U>,
+        trait::formattable_range<U>,
+        trait::formattable_tuple<U>
+    >,
+  std::ostream&>
+  operator<<(std::ostream& os, success const& ok) {
+    using namespace std::literals::string_literals;
+
+    auto elem_format = boost::hana::overload_linearly(
+      [](std::monostate) {
+        return "()"s;
+      },
+      [](std::string_view x) {
+        return (boost::format("\"%1%\"") % x).str();
+      },
+      [](auto const& x) {
+        return (boost::format("%1%") % x).str();
+      });
+
+    auto inner_format = boost::hana::overload_linearly(
+      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable_range<std::decay_t<decltype(x)>>::value, std::string> {
+        if (x.empty()) return "[]"s;
+        using std::begin, std::end;
+        std::string str = "["s;
+        auto iter = begin(x);
+        str += elem_format(*iter);
+        ++iter;
+        for (;iter != end(x); ++iter) {
+          str += (boost::format(",%1%") % elem_format(*iter)).str();
+        }
+        return str += "]";
+      },
+      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable_tuple<std::decay_t<decltype(x)>>::value, std::string> {
+        if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0) {
+          return "()"s;
+        }
+        else {
+          return std::apply(
+            [elem_format](auto const& head, auto const&... tail) {
+              std::string fmt = "("s + elem_format(head);
+              return fmt + ((("," + elem_format(tail))) + ...) + ")"s;
+            }, x);
+        }
+      },
+      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable<std::decay_t<decltype(x)>>::value, std::string> {
+        return elem_format(x);
+      });
+
+    return os << boost::format("success(%1%)") % inner_format(ok.x);
+  }
 };
 
 /// Deduction guide for `success`
@@ -246,8 +300,7 @@ class [[nodiscard]] failure
           std::conjunction_v<std::is_copy_constructible<E>, std::is_copy_assignable<E>>,
           std::is_move_constructible_v<E>,
           std::conjunction_v<std::is_move_constructible<E>, std::is_move_assignable<E>>,
-          failure<E>>,
-      public printer_friend_injector<failure<E>>
+          failure<E>>
 {
   template <class>
   friend class failure;
@@ -379,6 +432,61 @@ public:
   {
     return false;
   }
+
+  template <class F = E>
+  friend
+  std::enable_if_t<
+    std::disjunction_v<
+        trait::formattable<F>,
+        trait::formattable_range<F>,
+        trait::formattable_tuple<F>
+    >,
+  std::ostream&>
+  operator<<(std::ostream& os, failure const& err) {
+    using namespace std::literals::string_literals;
+
+    auto elem_format = boost::hana::overload_linearly(
+      [](std::monostate) {
+        return "()"s;
+      },
+      [](std::string_view x) {
+        return (boost::format("\"%1%\"") % x).str();
+      },
+      [](auto const& x) {
+        return (boost::format("%1%") % x).str();
+      });
+
+    auto inner_format = boost::hana::overload_linearly(
+      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable_range<std::decay_t<decltype(x)>>::value, std::string> {
+        if (x.empty()) return "[]"s;
+        using std::begin, std::end;
+        std::string str = "["s;
+        auto iter = begin(x);
+        str += elem_format(*iter);
+        ++iter;
+        for (;iter != end(x); ++iter) {
+          str += (boost::format(",%1%") % elem_format(*iter)).str();
+        }
+        return str += "]";
+      },
+      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable_tuple<std::decay_t<decltype(x)>>::value, std::string> {
+        if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0) {
+          return "()"s;
+        }
+        else {
+          return std::apply(
+            [elem_format](auto const& head, auto const&... tail) {
+              std::string fmt = "("s + elem_format(head);
+              return fmt + ((("," + elem_format(tail))) + ...) + ")"s;
+            }, x);
+        }
+      },
+      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable<std::decay_t<decltype(x)>>::value, std::string> {
+        return elem_format(x);
+      });
+
+    return os << boost::format("failure(%1%)") % inner_format(err.x);
+  }
 };
 
 /// Deduction guide for `failure`
@@ -428,8 +536,6 @@ class [[nodiscard]] basic_result<_mutability, T, E,
     std::is_nothrow_destructible<meta::remove_cvr_t<E>>
   >>
   : /* method injection selectors */ 
-    public printer_friend_injector<basic_result<_mutability, T, E>>,
-    public unwrap_or_default_friend_injector<basic_result<_mutability, T, E>>,
     public transpose_friend_injector<basic_result<_mutability, T, E>>,
     public deref_friend_injector<basic_result<_mutability, T, E>>
 {
@@ -1425,6 +1531,72 @@ public:
     return this->is_err() ? this->unwrap_err() == rhs.x : false;
   }
 
+  template <class U = T, class F = E>
+  friend
+  std::enable_if_t<
+    std::disjunction_v<
+        trait::formattable<U>,
+        trait::formattable<F>,
+        trait::formattable_range<U>,
+        trait::formattable_range<F>,
+        trait::formattable_tuple<U>,
+        trait::formattable_tuple<F>
+    >,
+  std::ostream&>
+  operator<<(std::ostream& os, basic_result const& res) {
+    using namespace std::literals::string_literals;
+
+    auto elem_format = boost::hana::overload_linearly(
+      [](std::monostate) {
+        return "()"s;
+      },
+      [](std::string_view x) {
+        return (boost::format("\"%1%\"") % x).str();
+      },
+      [](auto const& x) {
+        return (boost::format("%1%") % x).str();
+      });
+
+    auto inner_format = boost::hana::overload_linearly(
+      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable_range<std::decay_t<decltype(x)>>::value, std::string> {
+        if (x.empty()) return "[]"s;
+        using std::begin, std::end;
+        std::string str = "["s;
+        auto iter = begin(x);
+        str += elem_format(*iter);
+        ++iter;
+        for (;iter != end(x); ++iter) {
+          str += (boost::format(",%1%") % elem_format(*iter)).str();
+        }
+        return str += "]";
+      },
+      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable_tuple<std::decay_t<decltype(x)>>::value, std::string> {
+        if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0) {
+          return "()"s;
+        }
+        else {
+          return std::apply(
+            [elem_format](auto const& head, auto const&... tail) {
+              std::string fmt = "("s + elem_format(head);
+              return fmt + ((("," + elem_format(tail))) + ...) + ")"s;
+            }, x);
+        }
+      },
+      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable<std::decay_t<decltype(x)>>::value, std::string> {
+        return elem_format(x);
+      });
+
+    return os << boost::apply_visitor(
+      boost::hana::overload(
+        [inner_format](success<T> const& ok){
+          return boost::format("success(%1%)") % inner_format(ok.x);
+        },
+        [inner_format](failure<E> const& err){
+          return boost::format("failure(%1%)") % inner_format(err.x);
+        }
+      ),
+      res.storage_);
+  }
 };
 
 } // namespace mitama

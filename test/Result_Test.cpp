@@ -384,25 +384,25 @@ TEST_CASE("format test", "[result][format]"){
     using namespace std::literals;
     std::stringstream ss;
     ss << result<int, std::string>{failure("hoge"s)};
-    REQUIRE(ss.str() ==  "failure(hoge)"s);
+    REQUIRE(ss.str() ==  "failure(\"hoge\")"s);
   }
   SECTION("result of range ok"){
     using namespace std::literals;
     std::stringstream ss;
     ss << success(std::vector<std::string>{"foo"s, "bar"s});
-    REQUIRE(ss.str() == "success([foo,bar])"s);
+    REQUIRE(ss.str() == "success([\"foo\",\"bar\"])"s);
   }
   SECTION("result of range err"){
     using namespace std::literals;
     std::stringstream ss;
     ss << failure(std::vector<std::string>{"foo"s, "bar"s});
-    REQUIRE(ss.str() == "failure([foo,bar])"s);
+    REQUIRE(ss.str() == "failure([\"foo\",\"bar\"])"s);
   }
   SECTION("failure"){
     using namespace std::literals;
     std::stringstream ss;
     ss << failure("foo"s);
-    REQUIRE(ss.str() ==  "failure(foo)"s);
+    REQUIRE(ss.str() ==  "failure(\"foo\")"s);
   }
   SECTION("replace"){
     using namespace std::literals;
