@@ -232,7 +232,6 @@ public:
   }
 
   template <class U = T>
-  friend
   std::enable_if_t<
     std::disjunction_v<
         trait::formattable<U>,
@@ -240,7 +239,7 @@ public:
         trait::formattable_tuple<U>
     >,
   std::ostream&>
-  operator<<(std::ostream& os, success const& ok) {
+  print(std::ostream& os) const {
     using namespace std::literals::string_literals;
 
     auto elem_format = boost::hana::overload_linearly(
@@ -283,13 +282,25 @@ public:
         return elem_format(x);
       });
 
-    return os << boost::format("success(%1%)") % inner_format(ok.x);
+    return os << boost::format("success(%1%)") % inner_format(x);
   }
 };
 
 /// Deduction guide for `success`
 template <class T>
 success(T&&)->success<T>;
+
+template <class T>
+std::enable_if_t<
+  std::disjunction_v<
+      trait::formattable<T>,
+      trait::formattable_range<T>,
+      trait::formattable_tuple<T>
+  >,
+std::ostream&>
+operator<<(std::ostream& os, success<T> const& ok) {
+  return ok.print(os);
+}
 
 /// class failure:
 /// The main use of this class is to propagate unsuccessful results to the constructor of the result class.
@@ -434,7 +445,6 @@ public:
   }
 
   template <class F = E>
-  friend
   std::enable_if_t<
     std::disjunction_v<
         trait::formattable<F>,
@@ -442,7 +452,7 @@ public:
         trait::formattable_tuple<F>
     >,
   std::ostream&>
-  operator<<(std::ostream& os, failure const& err) {
+  print(std::ostream& os) const {
     using namespace std::literals::string_literals;
 
     auto elem_format = boost::hana::overload_linearly(
@@ -485,13 +495,25 @@ public:
         return elem_format(x);
       });
 
-    return os << boost::format("failure(%1%)") % inner_format(err.x);
+    return os << boost::format("failure(%1%)") % inner_format(x);
   }
 };
 
 /// Deduction guide for `failure`
 template <class E>
 failure(E&&)->failure<E>;
+
+template <class E>
+std::enable_if_t<
+  std::disjunction_v<
+      trait::formattable<E>,
+      trait::formattable_range<E>,
+      trait::formattable_tuple<E>
+  >,
+std::ostream&>
+operator<<(std::ostream& os, failure<E> const& err) {
+  return err.print(os);
+}
 
 /// Optional aliases (for migration)
 inline auto none = boost::none;
@@ -1532,18 +1554,21 @@ public:
   }
 
   template <class U = T, class F = E>
-  friend
   std::enable_if_t<
-    std::disjunction_v<
+    std::conjunction_v<
+      std::disjunction<
         trait::formattable<U>,
-        trait::formattable<F>,
         trait::formattable_range<U>,
+        trait::formattable_tuple<U>
+      >,
+      std::disjunction<
+        trait::formattable<F>,
         trait::formattable_range<F>,
-        trait::formattable_tuple<U>,
         trait::formattable_tuple<F>
+      >
     >,
   std::ostream&>
-  operator<<(std::ostream& os, basic_result const& res) {
+  print(std::ostream& os) const {
     using namespace std::literals::string_literals;
 
     auto elem_format = boost::hana::overload_linearly(
@@ -1595,9 +1620,28 @@ public:
           return boost::format("failure(%1%)") % inner_format(err.x);
         }
       ),
-      res.storage_);
+      storage_);
   }
 };
+
+template <mutability _, class T, class E>
+std::enable_if_t<
+  std::conjunction_v<
+    std::disjunction<
+      trait::formattable<T>,
+      trait::formattable_range<T>,
+      trait::formattable_tuple<T>
+    >,
+    std::disjunction<
+      trait::formattable<E>,
+      trait::formattable_range<E>,
+      trait::formattable_tuple<E>
+    >
+  >,
+std::ostream&>
+operator<<(std::ostream& os, basic_result<_, T, E> const& res) {
+  return res.print(os);
+}
 
 } // namespace mitama
 
