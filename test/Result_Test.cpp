@@ -497,43 +497,43 @@ SCENARIO("test for as_mut", "[result][as_mut]"){
   }
 }
 
-SCENARIO("test for deref", "[result][deref]"){
+SCENARIO("test for indirect", "[result][indirect]"){
   using namespace std::literals;
   GIVEN( "A new result, containing a indirect reference into the original" ) {
     auto ptr = std::make_shared<int>(42);
     mut_result<std::shared_ptr<int>, std::shared_ptr<int>> res(success<std::shared_ptr<int>>{ptr});
-    auto deref = res.deref();
+    auto indirect = res.indirect();
 
-    REQUIRE( *res.unwrap() == deref.unwrap() );
-    REQUIRE( deref == success(42) );
+    REQUIRE( *res.unwrap() == indirect.unwrap() );
+    REQUIRE( indirect == success(42) );
 
     WHEN( "The new result is overwritten" ) {
-      auto& ref = deref.unwrap();
+      auto& ref = indirect.unwrap();
       ref = 57;
 
       THEN( "the original result change" ) {
         REQUIRE( *ptr == 57 );
-        REQUIRE( deref == success(57) );
+        REQUIRE( indirect == success(57) );
       }
     }
   }
 }
 
-SCENARIO("test for dangling deref", "[result][deref][dangling]"){
+SCENARIO("test for dangling indirect", "[result][indirect][dangling]"){
   using namespace std::literals;
   using vec_iter = typename std::vector<int>::iterator;
   GIVEN( "A new result which is containing a dangling reference into the discarded vector" ) {
-    auto deref = result<vec_iter, vec_iter>(success{std::vector<int>{1,3}.begin()}).deref();
+    auto indirect = result<vec_iter, vec_iter>(success{std::vector<int>{1,3}.begin()}).indirect();
 
-    REQUIRE( std::is_same_v<decltype(deref.unwrap()), dangling<std::reference_wrapper<int>>> );
-    // deref.unwrap().transmute()
+    REQUIRE( std::is_same_v<decltype(indirect.unwrap()), dangling<std::reference_wrapper<int>>> );
+    // indirect.unwrap().transmute()
     // ^~~~~~~~~~~~~~~~~~~~~~~~~~ Undefined Behavior!
   }
   GIVEN( "A new result which is containing a reference into the living vector" ) {
     std::vector<int> vec{1,3};
-    auto deref = result<vec_iter, vec_iter>(success{vec.begin()}).deref();
+    auto indirect = result<vec_iter, vec_iter>(success{vec.begin()}).indirect();
 
-    REQUIRE( deref.unwrap().transmute() == 1 );
+    REQUIRE( indirect.unwrap().transmute() == 1 );
     //       ^~~~~~~~~~~~~~~~~~~~~~~~~~ OK! 
   }
 }

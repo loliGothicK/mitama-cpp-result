@@ -137,7 +137,7 @@ class [[nodiscard]] success
   template <class, class>
   friend class transpose_friend_injector;
   template <class, class>
-  friend class deref_friend_injector;
+  friend class indirect_friend_injector;
 
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
@@ -337,7 +337,7 @@ class [[nodiscard]] failure
   template <class, class>
   friend class transpose_friend_injector;
   template <class, class>
-  friend class deref_friend_injector;
+  friend class indirect_friend_injector;
 
   template <class... Requiers>
   using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
@@ -563,7 +563,7 @@ class [[nodiscard]] basic_result<_mutability, T, E,
   : /* method injection selectors */ 
   public unwrap_or_default_friend_injector<basic_result<_mutability, T, E>>,
   public transpose_friend_injector<basic_result<_mutability, T, E>>,
-  public deref_friend_injector<basic_result<_mutability, T, E>>
+  public indirect_friend_injector<basic_result<_mutability, T, E>>
 {
   /// result storage
   boost::variant<success<T>, failure<E>> storage_;
@@ -573,7 +573,7 @@ class [[nodiscard]] basic_result<_mutability, T, E,
   template <class, class>
   friend class transpose_friend_injector;
   template <class, class>
-  friend class deref_friend_injector;
+  friend class indirect_friend_injector;
   template <mutability, class, class, class>
   friend class basic_result;
   /// private aliases
