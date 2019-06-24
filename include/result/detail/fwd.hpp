@@ -29,5 +29,12 @@ class success;
 
 template <class = std::monostate>
 class failure;
+
+class in_place_ok_t {};
+inline constexpr in_place_ok_t in_place_ok = {};
+
+class in_place_err_t {};
+inline constexpr in_place_err_t in_place_err = {};
+
 }
 #endif

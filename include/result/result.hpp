@@ -27,6 +27,32 @@ namespace mitama::workaround {
   }
 }
 
+namespace boost {
+template < class T, class U >
+std::enable_if_t<std::conjunction_v<std::negation<std::is_same<T, U>>, mitama::is_comparable_with<T, U>>,
+bool>
+operator==(optional<T> const& lhs, optional<U> const& rhs) {
+  if (!bool(lhs) || !bool(rhs)) {
+    return false;
+  }
+  else {
+    return lhs.value() == rhs.value();
+  }
+}
+template < class T, class U >
+std::enable_if_t<std::conjunction_v<std::negation<std::is_same<T, U>>, mitama::is_comparable_with<T, U>>,
+bool>
+operator!=(optional<T> const& lhs, optional<U> const& rhs) {
+  if (!bool(lhs) || !bool(rhs)) {
+    return true;
+  }
+  else {
+    return !(lhs.value() == rhs.value());
+  }
+}
+
+}
+
 namespace mitama {
 
 class macro_use_tag_t{};
@@ -558,8 +584,9 @@ class [[nodiscard]] basic_result<_mutability, T, E,
     std::is_nothrow_destructible<meta::remove_cvr_t<E>>
   >>
   : /* method injection selectors */ 
-    public transpose_friend_injector<basic_result<_mutability, T, E>>,
-    public deref_friend_injector<basic_result<_mutability, T, E>>
+  public unwrap_or_default_friend_injector<basic_result<_mutability, T, E>>,
+  public transpose_friend_injector<basic_result<_mutability, T, E>>,
+  public deref_friend_injector<basic_result<_mutability, T, E>>
 {
   /// result storage
   boost::variant<success<T>, failure<E>> storage_;
@@ -862,9 +889,11 @@ public:
   ///   If self is
   ///   - immutable: returns boost::optional<const T>
   ///   -  mutable : returns boost::optional<T>
-  template <class U = T>
-  constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_copy_constructible_v<U>,
-  std::conditional_t<is_mut_v<_mutability>, boost::optional<ok_type>, boost::optional<force_add_const_t<ok_type>>>>
+  constexpr
+  std::conditional_t<is_mut_v<_mutability>,
+    boost::optional<ok_type>,
+    boost::optional<force_add_const_t<ok_type>>
+  >
   ok() & noexcept {
     using ret = std::conditional_t<is_mut_v<_mutability>, boost::optional<ok_type>, boost::optional<force_add_const_t<ok_type>>>;
     if (is_ok()) {
@@ -880,9 +909,8 @@ public:
   ///
   /// @note
   ///   Converts from basic_result to boost::optional<const T>.
-  template <class U = T>
-  constexpr std::enable_if_t<std::is_same_v<U, T> && std::is_copy_constructible_v<U>,
-  boost::optional<force_add_const_t<ok_type>>>
+  constexpr
+  boost::optional<force_add_const_t<ok_type>>
   ok() const & noexcept {
     if (is_ok()) {
       return boost::optional<force_add_const_t<ok_type>>{boost::get<success<T>>(std::move(storage_)).x};
@@ -903,7 +931,6 @@ public:
   ///   T is not lvalue reference and self is
   ///     - immutable: returns boost::optional<const T>
   ///     -  mutable : returns boost::optional<T>
-  template <class U = T, std::enable_if_t<std::is_same_v<U, T> && std::is_move_constructible_v<U>, bool> = false>
   constexpr auto
   ok() && noexcept {
     using ret = std::conditional_t<is_mut_v<_mutability>, boost::optional<ok_type>, boost::optional<force_add_const_t<ok_type>>>;
@@ -940,8 +967,8 @@ public:
   ///   If self is
   ///   - immutable: returns boost::optional<const E>
   ///   -  mutable : returns boost::optional<E>
-  template <class F = E>
-  constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_copy_constructible_v<E>, boost::optional<E>>
+  constexpr
+  boost::optional<force_add_const_t<err_type>>
   err() const & noexcept {
     if (is_err()) {
       return boost::optional<E>{boost::get<failure<E>>(storage_).x};
@@ -956,14 +983,18 @@ public:
   ///
   /// @note
   ///   Converts from basic_result to boost::optional<const E>.
-  template <class F = E>
-  constexpr std::enable_if_t<std::is_same_v<F, E> && std::is_move_constructible_v<E>, boost::optional<E>>
-  err() && noexcept {
+  constexpr
+  std::conditional_t<is_mut_v<_mutability>,
+    boost::optional<err_type>,
+    boost::optional<force_add_const_t<err_type>>
+  >
+  err() & noexcept {
+    using ret = std::conditional_t<is_mut_v<_mutability>, boost::optional<err_type>, boost::optional<force_add_const_t<err_type>>>;
     if (is_err()) {
-      return boost::optional<E>{boost::get<failure<E>>(std::move(storage_)).x};
+      return ret{boost::get<failure<E>>(std::move(storage_)).x};
     }
     else {
-      return boost::optional<E>{boost::none};
+      return ret{boost::none};
     }
   }
 
@@ -978,8 +1009,7 @@ public:
   ///   E is not lvalue reference and self is
   ///     - immutable: returns boost::optional<const E>
   ///     -  mutable : returns boost::optional<E>
-  template <class F = E, std::enable_if_t<std::is_same_v<F, E> && std::is_move_constructible_v<F>, bool> = false>
-  constexpr decltype(auto)
+  constexpr auto
   err() && noexcept {
     using ret = std::conditional_t<is_mut_v<_mutability>, boost::optional<err_type>, boost::optional<force_add_const_t<err_type>>>;
     if constexpr (std::is_lvalue_reference_v<ok_type>) {
@@ -1057,18 +1087,11 @@ public:
   ///   Maps a basic_result<T, E> to basic_result<U, E> by applying a function to a contained success value,
   ///   leaving an failure value untouched.
   ///   This function can be used to compose the results of two functions.
-  template <class O, class U = T, class F = E>
+  template <class O>
   constexpr auto map(O && op) const &
     noexcept(std::is_nothrow_invocable_v<O, T>)
-    -> std::enable_if_t<
-        std::conjunction_v<
-          std::is_invocable<O, T>,
-          std::is_same<U, T>,
-          std::is_same<F, E>,
-          std::is_copy_constructible<U>,
-          std::is_copy_constructible<F>
-        >,
-        basic_result<_mutability, std::invoke_result_t<O, T>, E>>
+    -> std::enable_if_t<std::is_invocable_v<O, T>,
+    basic_result<_mutability, std::invoke_result_t<O, T>, E>>
   {
     using result_type = basic_result<_mutability, std::invoke_result_t<O, T>, E>;
     return is_ok()
@@ -1086,18 +1109,11 @@ public:
   ///   Maps a basic_result<T, E> to basic_result<U, E> by applying a function to a contained success value,
   ///   leaving an failure value untouched.
   ///   This function can be used to compose the results of two functions.
-  template <class O, class U = T, class F = E>
+  template <class O>
   constexpr auto map(O && op) &&
     noexcept(std::is_nothrow_invocable_v<O, T>)
-    -> std::enable_if_t<
-        std::conjunction_v<
-          std::is_invocable<O, T>,
-          std::is_same<U, T>,
-          std::is_same<F, E>,
-          std::is_move_constructible<U>,
-          std::is_move_constructible<F>
-        >,
-        basic_result<_mutability, std::invoke_result_t<O, T>, E>>
+    -> std::enable_if_t<std::is_invocable_v<O, T>,
+    basic_result<_mutability, std::invoke_result_t<O, T>, E>>
   {
     using result_type = basic_result<_mutability, std::invoke_result_t<O, T>, E>;
     return is_ok()
@@ -1117,18 +1133,16 @@ public:
   ///   Maps a basic_result<T, E> to U by applying a function to a contained success value,
   ///   or a fallback function to a contained failure value.
   ///   This function can be used to unpack a successful result while handling an error.
-  template <class Map, class Fallback, class U = T, class F = E>
+  template <class Map, class Fallback>
   constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) const&
     noexcept(std::is_nothrow_invocable_v<Fallback, E> && std::is_nothrow_invocable_v<Map, T>)
     -> std::enable_if_t<
           std::conjunction_v<std::is_invocable<Map, T>,
             std::is_invocable<Fallback, E>,
             std::is_convertible<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>,
-            std::is_convertible<std::invoke_result_t<Fallback, E>, std::invoke_result_t<Map, T>>,
-            std::is_same<U, T>,
-            std::is_same<F, E>
+            std::is_convertible<std::invoke_result_t<Fallback, E>, std::invoke_result_t<Map, T>>
           >,
-          std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>>
+    std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>>
   {
     using result_type = std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
     return is_ok()
@@ -1148,18 +1162,16 @@ public:
   ///   Maps a basic_result<T, E> to U by applying a function to a contained success value,
   ///   or a fallback function to a contained failure value.
   ///   This function can be used to unpack a successful result while handling an error.
-  template <class Map, class Fallback, class U = T, class F = E>
+  template <class Map, class Fallback>
   constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) && 
     noexcept(std::is_nothrow_invocable_v<Fallback, E> && std::is_nothrow_invocable_v<Map, T>)
     -> std::enable_if_t<
           std::conjunction_v<std::is_invocable<Map, T>,
             std::is_invocable<Fallback, E>,
             std::is_convertible<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>,
-            std::is_convertible<std::invoke_result_t<Fallback, E>, std::invoke_result_t<Map, T>>,
-            std::is_same<U, T>,
-            std::is_same<F, E>
+            std::is_convertible<std::invoke_result_t<Fallback, E>, std::invoke_result_t<Map, T>>
           >,
-          std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>>
+    std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>>
   {
     using result_type = std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
     return is_ok()
@@ -1176,16 +1188,11 @@ public:
   /// @note
   ///   Maps a basic_result<T, E> to basic_result<T, F> by applying a function to a contained failure value, leaving an success value untouched.
   ///   This function can be used to pass through a successful result while handling an error.
-  template <class O, class U = T, class F = E>
+  template <class O>
   constexpr auto map_err(O && op) const &
     noexcept(std::is_nothrow_invocable_v<O, E>)
-    -> std::enable_if_t<
-        std::conjunction_v<
-          std::is_invocable<O, E>,
-          std::is_same<U, T>,
-          std::is_same<F, E>
-        >,
-        basic_result<_mutability, T, std::invoke_result_t<O, E>>>
+    -> std::enable_if_t<std::is_invocable_v<O, E>,
+    basic_result<_mutability, T, std::invoke_result_t<O, E>>>
   {
     using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E>>;
     return is_err()
@@ -1202,16 +1209,11 @@ public:
   /// @note
   ///   Maps a basic_result<T, E> to basic_result<T, F> by applying a function to a contained failure value, leaving an success value untouched.
   ///   This function can be used to pass through a successful result while handling an error.
-  template <class O, class U = T, class F = E>
+  template <class O>
   constexpr auto map_err(O && op) &&
     noexcept(std::is_nothrow_invocable_v<O, E>)
-    -> std::enable_if_t<
-        std::conjunction_v<
-          std::is_invocable<O, E>,
-          std::is_same<U, T>,
-          std::is_same<F, E>
-        >,
-        basic_result<_mutability, T, std::invoke_result_t<O, E>>>
+    -> std::enable_if_t<std::is_invocable_v<O, E>,
+    basic_result<_mutability, T, std::invoke_result_t<O, E>>>
   {
     using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E>>;
     return is_err()
@@ -1228,16 +1230,11 @@ public:
   /// @note
   ///   Calls `op` if the result is success, otherwise; returns the failure value of self.
   ///   This function can be used for control flow based on result values.
-  template <class O, class U = T, class F = E>
+  template <class O>
   constexpr auto and_then(O && op) const &
     noexcept(std::is_nothrow_invocable_v<O, T>)
-    -> std::enable_if_t<
-        std::conjunction_v<
-          is_convertible_result_with<std::invoke_result_t<O, T>, failure<F>>,
-          std::is_same<U, T>,
-          std::is_same<F, E>
-        >,
-        std::invoke_result_t<O, T>>
+    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T>, failure<E>>,
+    std::invoke_result_t<O, T>>
   {
     using result_type = std::invoke_result_t<O, T>;
     return is_ok()
@@ -1254,16 +1251,11 @@ public:
   /// @note
   ///   Calls `op` if the result is success, otherwise; returns the failure value of self.
   ///   This function can be used for control flow based on result values.
-  template <class O, class U = T, class F = E>
+  template <class O>
   constexpr auto and_then(O && op) &&
     noexcept(std::is_nothrow_invocable_v<O, T>)
-    -> std::enable_if_t<
-        std::conjunction_v<
-          is_convertible_result_with<std::invoke_result_t<O, T>, failure<F>>,
-          std::is_same<U, T>,
-          std::is_same<F, E>
-        >,
-        std::invoke_result_t<O, T>>
+    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T>, failure<E>>,
+    std::invoke_result_t<O, T>>
   {
     using result_type = std::invoke_result_t<O, T>;
     return is_ok()
@@ -1280,16 +1272,11 @@ public:
   /// @note
   ///   Calls `op` if the result is failure, otherwise; returns the success value of self.
   ///   This function can be used for control flow based on result values.
-  template <class O, class U = T, class F = E>
+  template <class O>
   constexpr auto or_else(O && op) const &
     noexcept(std::is_nothrow_invocable_v<O, E>)
-    -> std::enable_if_t<
-        std::conjunction_v<
-          is_convertible_result_with<std::invoke_result_t<O, T>, success<T>>,
-          std::is_same<U, T>,
-          std::is_same<F, E>
-        >,
-        std::invoke_result_t<O, E>>
+    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T>, success<T>>,
+    std::invoke_result_t<O, E>>
   {
     using result_type = std::invoke_result_t<O, E>;
     return is_err()
@@ -1306,16 +1293,11 @@ public:
   /// @note
   ///   Calls `op` if the result is failure, otherwise; returns the success value of self.
   ///   This function can be used for control flow based on result values.
-  template <class O, class U = T, class F = E>
+  template <class O>
   constexpr auto or_else(O && op) &&
     noexcept(std::is_nothrow_invocable_v<O, E>)
-    -> std::enable_if_t<
-        std::conjunction_v<
-          is_convertible_result_with<std::invoke_result_t<O, T>, success<U>>,
-          std::is_same<U, T>,
-          std::is_same<F, E>
-        >,
-        std::invoke_result_t<O, E>>
+    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T>, success<T>>,
+    std::invoke_result_t<O, E>>
   {
     using result_type = std::invoke_result_t<O, E>;
     return is_err()
@@ -1492,24 +1474,6 @@ public:
   ///
   /// @note
   ///   Returns the contained value, otherwise; if failure, returns the default value for that type.
-  template <class U = T>
-  constexpr
-  std::enable_if_t<
-    std::conjunction_v<
-      std::is_same<T, U>,
-      std::disjunction<
-        std::is_default_constructible<U>,
-        std::is_aggregate<U>>>,
-    meta::remove_cvr_t<T>>
-  unwrap_or_default() const
-  {
-    if constexpr (std::is_aggregate_v<T>){
-      return is_ok() ? unwrap() : T{};
-    }
-    else {
-      return is_ok() ? unwrap() : T();
-    }
-  }
 
   void expect(std::string_view msg) const {
     if ( is_err() )

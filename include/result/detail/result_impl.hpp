@@ -12,40 +12,33 @@
 #include <boost/utility/in_place_factory.hpp>
 
 namespace mitama {
-inline namespace meta {
-template < class >
-struct is_std_optional: std::false_type {};
-template < class >
-struct is_boost_optional: std::false_type {};
-template < class T >
-struct is_std_optional<std::optional<T>>: std::true_type {};
-template < class T >
-struct is_boost_optional<boost::optional<T>>: std::true_type {};
 
-template < class > struct repack;
-
-template < template < class > class Opt, class T >
-struct repack<Opt<T>> {
-  template < class U >
-  using type = Opt<U>;
+template <class, class = void>
+class unwrap_or_default_friend_injector
+{
+public:
+  void unwrap_or_default() const = delete;
 };
-}}
 
-namespace mitama {
-
-template < class T >
-struct is_optional
-  : std::disjunction<
-      meta::is_std_optional<meta::remove_cvr_t<T>>,
-      meta::is_boost_optional<meta::remove_cvr_t<T>>
-    >
-{};
-
-class in_place_ok_t {};
-inline constexpr in_place_ok_t in_place_ok = {};
-
-class in_place_err_t {};
-inline constexpr in_place_err_t in_place_err = {};
+template <mutability _mu, class T, class E>
+class unwrap_or_default_friend_injector<basic_result<_mu, T, E>,
+                                        std::enable_if_t<std::disjunction_v<std::is_default_constructible<T>, std::is_aggregate<T>>>>
+{
+public:
+  T unwrap_or_default() const
+  {
+    if constexpr (std::is_aggregate_v<T>){
+      return static_cast<basic_result<_mu, T, E> const *>(this)->is_ok()
+        ? static_cast<basic_result<_mu, T, E> const *>(this)->unwrap()
+        : T{};
+    }
+    else {
+      return static_cast<basic_result<_mu, T, E> const *>(this)->is_ok()
+        ? static_cast<basic_result<_mu, T, E> const *>(this)->unwrap()
+        : T();
+    }
+  }
+};
 
 template <class, class = void>
 class transpose_friend_injector
@@ -58,7 +51,7 @@ public:
 ///   impl<_mutability, T, E> basic_result<_mutability, Option<T>, E>
 template <mutability _mutability, class T, class E>
 class transpose_friend_injector<basic_result<_mutability, T, E>,
-                                std::enable_if_t<is_optional<std::decay_t<T>>::value>>
+                                std::enable_if_t<meta::is_optional<std::decay_t<T>>::value>>
 {
   using optional_type = meta::remove_cvr_t<typename meta::repack<T>::template type<basic_result<_mutability, typename meta::remove_cvr_t<T>::value_type, E>>>;
 public:

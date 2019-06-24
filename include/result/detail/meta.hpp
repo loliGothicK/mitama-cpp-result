@@ -1,6 +1,8 @@
 #ifndef MITAMA_RESULT_DETAIL_META_HPP
 #define MITAMA_RESULT_DETAIL_META_HPP
 #include <type_traits>
+#include <optional>
+#include <boost/optional/optional_fwd.hpp>
 
 namespace mitama {
 inline namespace meta {
@@ -76,6 +78,35 @@ struct is_tuple_like
       detail::is_tuple_like_impl<T>
     >
 {};
+}}
+
+namespace mitama {
+inline namespace meta {
+template < class >
+struct is_std_optional: std::false_type {};
+template < class >
+struct is_boost_optional: std::false_type {};
+
+template < class T >
+struct is_std_optional<std::optional<T>>: std::true_type {};
+template < class T >
+struct is_boost_optional<boost::optional<T>>: std::true_type {};
+
+template < class T >
+struct is_optional
+  : std::disjunction<
+      meta::is_std_optional<meta::remove_cvr_t<T>>,
+      meta::is_boost_optional<meta::remove_cvr_t<T>>
+    >
+{};
+
+template < class > struct repack;
+
+template < template < class > class Opt, class T >
+struct repack<Opt<T>> {
+  template < class U >
+  using type = Opt<U>;
+};
 }}
 
 #endif
