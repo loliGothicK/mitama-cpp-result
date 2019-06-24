@@ -1,7 +1,7 @@
 #ifndef MITAMA_RESULT_IMPL
 #define MITAMA_RESULT_IMPL
 
-#include "detail.hpp"
+#include <result/detail/meta.hpp>
 #include <result/traits/impl_traits.hpp>
 #include <result/traits/Deref.hpp>
 #include <result/detail/dangling.hpp>
@@ -11,7 +11,8 @@
 #include <boost/optional/optional_io.hpp>
 #include <boost/utility/in_place_factory.hpp>
 
-namespace mitama::detail {
+namespace mitama {
+inline namespace meta {
 template < class >
 struct is_std_optional: std::false_type {};
 template < class >
@@ -28,15 +29,15 @@ struct repack<Opt<T>> {
   template < class U >
   using type = Opt<U>;
 };
-}
+}}
 
 namespace mitama {
 
 template < class T >
 struct is_optional
   : std::disjunction<
-      detail::is_std_optional<detail::remove_cvr_t<T>>,
-      detail::is_boost_optional<detail::remove_cvr_t<T>>
+      meta::is_std_optional<meta::remove_cvr_t<T>>,
+      meta::is_boost_optional<meta::remove_cvr_t<T>>
     >
 {};
 
@@ -236,11 +237,11 @@ template <mutability _mutability, class T, class E>
 class transpose_friend_injector<basic_result<_mutability, T, E>,
                                 std::enable_if_t<is_optional<std::decay_t<T>>::value>>
 {
-  using optional_type = detail::remove_cvr_t<typename detail::repack<T>::template type<basic_result<_mutability, typename detail::remove_cvr_t<T>::value_type, E>>>;
+  using optional_type = meta::remove_cvr_t<typename meta::repack<T>::template type<basic_result<_mutability, typename meta::remove_cvr_t<T>::value_type, E>>>;
 public:
   optional_type transpose() const &
   {
-    if constexpr (detail::is_boost_optional<detail::remove_cvr_t<T>>::value) {
+    if constexpr (meta::is_boost_optional<meta::remove_cvr_t<T>>::value) {
       if (static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok()) {
         if (auto const& opt = boost::get<success<T>>(static_cast<basic_result<_mutability, T, E> const*>(this)->storage_).x; opt) {
           return optional_type(boost::in_place(mitama::in_place_ok, opt.value()));
@@ -279,7 +280,11 @@ public:
   void deref_err() const = delete;
 };
 
-
+/// @brief
+/// impl<_mutability, T, E> basic_result<_mutability, T, E>
+/// where
+///   T: Deref
+///   E: Deref
 template <mutability _mutability, class T, class E>
 class deref_friend_injector<basic_result<_mutability, T, E>, 
                             std::enable_if_t<
@@ -291,13 +296,14 @@ class deref_friend_injector<basic_result<_mutability, T, E>,
   using deref_ok_result = basic_result<_mutability, std::remove_reference_t<typename traits::Deref<T>::Target>&, std::remove_reference_t<E>&>;
   using deref_err_result = basic_result<_mutability, std::remove_reference_t<T>&, std::remove_reference_t<typename traits::Deref<E>::Target>&>;
   using deref_result = basic_result<_mutability, std::remove_reference_t<typename traits::Deref<T>::Target>&, std::remove_reference_t<typename traits::Deref<E>::Target>&>;
-  using const_deref_ok_result = basic_result<_mutability, detail::remove_cvr_t<typename traits::Deref<T>::Target> const&, detail::remove_cvr_t<E> const&>;
-  using const_deref_err_result = basic_result<_mutability, detail::remove_cvr_t<T> const&, detail::remove_cvr_t<typename traits::Deref<E>::Target> const&>;
-  using const_deref_result = basic_result<_mutability, detail::remove_cvr_t<typename traits::Deref<T>::Target> const&, detail::remove_cvr_t<typename traits::Deref<E>::Target> const&>;
+  using const_deref_ok_result = basic_result<_mutability, meta::remove_cvr_t<typename traits::Deref<T>::Target> const&, meta::remove_cvr_t<E> const&>;
+  using const_deref_err_result = basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<typename traits::Deref<E>::Target> const&>;
+  using const_deref_result = basic_result<_mutability, meta::remove_cvr_t<typename traits::Deref<T>::Target> const&, meta::remove_cvr_t<typename traits::Deref<E>::Target> const&>;
   using dangling_deref_ok_result = basic_result<_mutability, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::Deref<T>::Target>>>, dangling<std::reference_wrapper<std::remove_reference_t<E>>>>;
   using dangling_deref_err_result = basic_result<_mutability, dangling<std::remove_reference_t<T>&>, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::Deref<E>::Target>>>>;
   using dangling_deref_result = basic_result<_mutability, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::Deref<T>::Target>>>, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::Deref<E>::Target>>>>;
 public:
+
   constexpr auto deref_ok() & -> deref_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
       return deref_ok_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
@@ -392,7 +398,7 @@ class deref_friend_injector<basic_result<_mutability, T, E>,
                             >>>
 {
   using deref_ok_result = basic_result<_mutability, std::remove_reference_t<typename traits::Deref<T>::Target>&, std::remove_reference_t<E>&>;
-  using const_deref_ok_result = basic_result<_mutability, detail::remove_cvr_t<typename traits::Deref<T>::Target> const&, detail::remove_cvr_t<E> const&>;
+  using const_deref_ok_result = basic_result<_mutability, meta::remove_cvr_t<typename traits::Deref<T>::Target> const&, meta::remove_cvr_t<E> const&>;
   using dangling_deref_ok_result = basic_result<_mutability, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::Deref<T>::Target>>>, dangling<std::reference_wrapper<std::remove_reference_t<E>>>>;
 public:
   constexpr auto deref_ok() & -> deref_ok_result {
@@ -447,7 +453,7 @@ class deref_friend_injector<basic_result<_mutability, T, E>,
                             >>>
 {
   using deref_err_result = basic_result<_mutability, std::remove_reference_t<T>&, std::remove_reference_t<typename traits::Deref<E>::Target>&>;
-  using const_deref_err_result = basic_result<_mutability, detail::remove_cvr_t<T> const&, detail::remove_cvr_t<typename traits::Deref<E>::Target> const&>;
+  using const_deref_err_result = basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<typename traits::Deref<E>::Target> const&>;
   using dangling_deref_err_result = basic_result<_mutability, dangling<std::remove_reference_t<T>&>, dangling<std::remove_reference_t<typename traits::Deref<E>::Target>&>>;
 public:
   constexpr void deref_ok() & = delete;

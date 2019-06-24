@@ -1,11 +1,14 @@
 #ifndef MITAMA_RESULT_MATCH
 #define MITAMA_RESULT_MATCH
 
+
+#include <result/detail/fwd.hpp>
+#include <result/detail/meta.hpp>
+
 #include <tuple>
 #include <type_traits>
 #include <utility>
 #include <functional>
-#include <result/detail/fwd.hpp>
 
 namespace mitama::match
 {
@@ -113,18 +116,6 @@ struct is_invocable_constrait : _detail::is_invocable_constrait<void, F, ArgType
 
 template <class F, class... ArgTypes>
 inline constexpr bool is_invocable_constrait_v = is_invocable_constrait<F, ArgTypes...>::value;
-
-template < class T, class = void >
-struct has_type: std::false_type {};
-
-template < class T >
-struct has_type<T, std::void_t<typename std::decay_t<T>::type>>: std::true_type {};
-
-template < class T, class = void >
-struct has_value: std::false_type {};
-
-template < class T >
-struct has_value<T, std::void_t<decltype(std::decay_t<T>::value)>>: std::true_type {};
 
 template < class, class > struct is_tuple_like_detail;
 
@@ -347,7 +338,7 @@ public:
   {
     static_assert(
       std::conjunction_v<is_invocable_constrait<MatchSequence, Args...>...>,
-      "failureor: non-invocable match arm(s) exist.");
+      "Error: non-invocable match arm(s) exist.");
     return std::apply(fix{[&, args...]([[maybe_unused]] auto f, auto first, auto... rest)
           -> std::conditional_t<
                !std::is_same_v<R, _default_result>,

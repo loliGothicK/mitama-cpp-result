@@ -217,11 +217,11 @@ TEST_CASE("and_then() test", "[result][and_then]"){
   REQUIRE(failure(3u).and_then(sq).and_then(sq) == failure(3u));
 }
 
-TEMPLATE_TEST_CASE("is_result_with_v meta test", "[is_result_with_v][and_then][meta]",
+TEMPLATE_TEST_CASE("is_convertible_result_with meta test", "[is_convertible_result_with][meta]",
                     int, unsigned, std::string, std::vector<int>)
 {
-  REQUIRE(is_result_with_v<mitama::result<int, TestType>, mitama::failure<TestType>>);
-  REQUIRE(!is_result_with_v<result<unsigned, std::vector<TestType>>, mitama::failure<TestType>>);
+  REQUIRE(is_convertible_result_with_v<mitama::result<int, TestType>, mitama::failure<TestType>>);
+  REQUIRE(!is_convertible_result_with_v<result<unsigned, std::vector<TestType>>, mitama::failure<TestType>>);
 }
 
 TEST_CASE("operator|| test", "[result][or]"){

@@ -23,15 +23,13 @@ namespace mitama {
     public:
         constexpr dangling(std::reference_wrapper<T> ref): ref_(ref) {}
 
-        std::remove_reference_t<T>& transmute() const & {
+        T& transmute() const & {
             return ref_.get();
         }
     };
 
     template < class T >
     using dangle_ref = dangling<std::reference_wrapper<std::remove_reference_t<T>>>;
-
-
 }
 
 #endif
