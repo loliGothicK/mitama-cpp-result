@@ -1,5 +1,5 @@
-#ifndef MITAMA_RESULT_IMPL
-#define MITAMA_RESULT_IMPL
+#ifndef MITAMA_RESULT_IMPL_HPP
+#define MITAMA_RESULT_IMPL_HPP
 
 #include <result/detail/meta.hpp>
 #include <result/traits/impl_traits.hpp>

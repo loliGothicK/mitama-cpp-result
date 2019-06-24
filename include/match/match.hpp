@@ -1,5 +1,5 @@
-#ifndef MITAMA_RESULT_MATCH
-#define MITAMA_RESULT_MATCH
+#ifndef MITAMA_RESULT_MATCH_HPP
+#define MITAMA_RESULT_MATCH_HPP
 
 
 #include <result/detail/fwd.hpp>

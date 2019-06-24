@@ -1,5 +1,5 @@
-#ifndef MITAMA_RESULT_TRAIT
-#define MITAMA_RESULT_TRAIT
+#ifndef MITAMA_RESULT_TRAIT_HPP
+#define MITAMA_RESULT_TRAIT_HPP
 
 #include <result/detail/meta.hpp>
 #include <type_traits>
@@ -62,7 +62,7 @@ namespace mitama {
 inline namespace meta {
 namespace detail {
     template <class, class>
-    struct is_formattable_tuple_detail;
+    struct is_formattable_tuple_detail: std::false_type {};
 
     template <class Tuple, std::size_t... I>
     struct is_formattable_tuple_detail<Tuple, std::index_sequence<I...>>
@@ -71,7 +71,7 @@ namespace detail {
 }}}
 
 namespace mitama::trait {
-template <class, class = void> struct formattable_tuple;
+template <class, class = void> struct formattable_tuple: std::false_type {};
 
 template <class Tuple>
 struct formattable_tuple<Tuple, std::enable_if_t<meta::is_tuple_like<Tuple>::value>>
