@@ -1554,10 +1554,10 @@ public:
       });
 
     if ( res.is_ok() ) {
-      return os << inner_format( res.unwrap() );
+      return os << boost::format("success(%1%)") % inner_format( res.unwrap() );
     }
     else {
-      return os << inner_format( res.unwrap_err() );
+      return os << boost::format("failure(%1%)") % inner_format( res.unwrap_err() );
     }
   }
 };
