@@ -324,5 +324,5 @@ public:
 };
 
 
-} // namespace rust_std::result
+} // !namespace mitama
 #endif

@@ -8,6 +8,7 @@
 #include <boost/optional.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
+#include <boost/hana/functional/fix.hpp>
 #include <boost/format.hpp>
 
 #include <functional>
@@ -266,47 +267,45 @@ public:
   std::ostream&>
   operator<<(std::ostream& os, success const& ok) {
     using namespace std::literals::string_literals;
-
-    auto elem_format = boost::hana::overload_linearly(
-      [](std::monostate) {
-        return "()"s;
-      },
-      [](std::string_view x) {
-        return (boost::format("\"%1%\"") % x).str();
-      },
-      [](auto const& x) {
-        return (boost::format("%1%") % x).str();
-      });
-
-    auto inner_format = boost::hana::overload_linearly(
-      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable_range<std::decay_t<decltype(x)>>::value, std::string> {
-        if (x.empty()) return "[]"s;
-        using std::begin, std::end;
-        std::string str = "["s;
-        auto iter = begin(x);
-        str += elem_format(*iter);
-        ++iter;
-        for (;iter != end(x); ++iter) {
-          str += (boost::format(",%1%") % elem_format(*iter)).str();
-        }
-        return str += "]";
-      },
-      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable_tuple<std::decay_t<decltype(x)>>::value, std::string> {
-        if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0) {
-          return "()"s;
-        }
-        else {
-          return std::apply(
-            [elem_format](auto const& head, auto const&... tail) {
-              std::string fmt = "("s + elem_format(head);
-              return fmt + ((("," + elem_format(tail))) + ...) + ")"s;
-            }, x);
-        }
-      },
-      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable<std::decay_t<decltype(x)>>::value, std::string> {
-        return elem_format(x);
-      });
-
+    auto inner_format = boost::hana::fix(boost::hana::overload_linearly(
+        [](auto, auto const& x) -> std::enable_if_t<trait::formattable_element<std::decay_t<decltype(x)>>::value, std::string> {
+          return boost::hana::overload_linearly(
+            [](std::monostate) { return "()"s; },
+            [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
+            [](auto const& x) { return (boost::format("%1%") % x).str(); })
+          (x);        
+        },
+        [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_dictionary<std::decay_t<decltype(x)>>::value, std::string> {
+          if (x.empty()) return "{}"s;
+          using std::begin, std::end;
+          auto iter = begin(x);
+          std::string str = "{"s + (boost::format("%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
+          while (++iter != end(x)) {
+            str += (boost::format(",%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
+          }
+          return str += "}";
+        },
+        [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_range<std::decay_t<decltype(x)>>::value, std::string> {
+          if (x.empty()) return "[]"s;
+          using std::begin, std::end;
+          auto iter = begin(x);
+          std::string str = "["s + _fmt(*iter);
+          while (++iter != end(x)) {
+            str += (boost::format(",%1%") % _fmt(*iter)).str();
+          }
+          return str += "]";
+        },
+        [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_tuple<std::decay_t<decltype(x)>>::value, std::string> {
+          if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0) {
+            return "()"s;
+          }
+          else {
+            return std::apply(
+              [_fmt](auto const& head, auto const&... tail) {
+                return "("s + _fmt(head) + ((("," + _fmt(tail))) + ...) + ")"s;
+              }, x);
+          }
+        }));
     return os << boost::format("success(%1%)") % inner_format(ok.x);
   }
 };
@@ -469,47 +468,45 @@ public:
   std::ostream&>
   operator<<(std::ostream& os, failure const& err) {
     using namespace std::literals::string_literals;
-
-    auto elem_format = boost::hana::overload_linearly(
-      [](std::monostate) {
-        return "()"s;
-      },
-      [](std::string_view x) {
-        return (boost::format("\"%1%\"") % x).str();
-      },
-      [](auto const& x) {
-        return (boost::format("%1%") % x).str();
-      });
-
-    auto inner_format = boost::hana::overload_linearly(
-      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable_range<std::decay_t<decltype(x)>>::value, std::string> {
-        if (x.empty()) return "[]"s;
-        using std::begin, std::end;
-        std::string str = "["s;
-        auto iter = begin(x);
-        str += elem_format(*iter);
-        ++iter;
-        for (;iter != end(x); ++iter) {
-          str += (boost::format(",%1%") % elem_format(*iter)).str();
-        }
-        return str += "]";
-      },
-      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable_tuple<std::decay_t<decltype(x)>>::value, std::string> {
-        if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0) {
-          return "()"s;
-        }
-        else {
-          return std::apply(
-            [elem_format](auto const& head, auto const&... tail) {
-              std::string fmt = "("s + elem_format(head);
-              return fmt + ((("," + elem_format(tail))) + ...) + ")"s;
-            }, x);
-        }
-      },
-      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable<std::decay_t<decltype(x)>>::value, std::string> {
-        return elem_format(x);
-      });
-
+    auto inner_format = boost::hana::fix(boost::hana::overload_linearly(
+        [](auto, auto const& x) -> std::enable_if_t<trait::formattable_element<std::decay_t<decltype(x)>>::value, std::string> {
+          return boost::hana::overload_linearly(
+            [](std::monostate) { return "()"s; },
+            [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
+            [](auto const& x) { return (boost::format("%1%") % x).str(); })
+          (x);        
+        },
+        [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_dictionary<std::decay_t<decltype(x)>>::value, std::string> {
+          if (x.empty()) return "{}"s;
+          using std::begin, std::end;
+          auto iter = begin(x);
+          std::string str = "{"s + (boost::format("%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
+          while (++iter != end(x)) {
+            str += (boost::format(",%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
+          }
+          return str += "}";
+        },
+        [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_range<std::decay_t<decltype(x)>>::value, std::string> {
+          if (x.empty()) return "[]"s;
+          using std::begin, std::end;
+          auto iter = begin(x);
+          std::string str = "["s + _fmt(*iter);
+          while (++iter != end(x)) {
+            str += (boost::format(",%1%") % _fmt(*iter)).str();
+          }
+          return str += "]";
+        },
+        [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_tuple<std::decay_t<decltype(x)>>::value, std::string> {
+          if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0) {
+            return "()"s;
+          }
+          else {
+            return std::apply(
+              [_fmt](auto const& head, auto const&... tail) {
+                return "("s + _fmt(head) + ((("," + _fmt(tail))) + ...) + ")"s;
+              }, x);
+          }
+        }));
     return os << boost::format("failure(%1%)") % inner_format(err.x);
   }
 };
@@ -1356,8 +1353,7 @@ public:
   ///   which is lazily evaluated.
   template <class U,
             where<meta::has_common_type<std::remove_reference_t<T>&&, U&&>> = required>
-  decltype(auto) unwrap_or(U&& optb) && noexcept
-  {
+  decltype(auto) unwrap_or(U&& optb) && noexcept {
     return is_ok() ? std::move(boost::get<success<T>>(storage_).x)
                    : std::forward<U>(optb);
   }
@@ -1372,12 +1368,28 @@ public:
   /// @note
   ///   Unwraps a result, yielding the content of an success.
   ///   If the value is an failure then;
-  ///     - `std::is_invocable_r_v<T, O, E>` is true then it invoke `op` with its value or,
-  ///     - `std::is_invocable_r_v<T, O>` is true then it invoke `op` without value,
-  ///     - otherwise; static_assert fail.
+  ///     - `std::is_invocable_r_v<T, O, E>` is true then; it invoke `op` with its value or,
+  ///     - `std::is_invocable_r_v<T, O>` is true then; it invoke `op` without value,
+  ///     - otherwise; static_assert.
   template <class O>
-  auto unwrap_or_else(O && op) const
-    -> std::enable_if_t<std::is_invocable_r_v<T, O, E>, T>
+  std::enable_if_t<
+    std::disjunction_v<
+      std::is_invocable_r<T, O, E>,
+      std::is_invocable_r<T, O>>,
+  T>
+  unwrap_or_else(O && op) const
+    noexcept(
+      std::disjunction_v<
+        std::conjunction<
+          std::is_invocable_r<T, O, E>,
+          std::is_nothrow_invocable_r<T, O, E>
+        >,
+        std::conjunction<
+          std::is_invocable_r<T, O, E>,
+          std::is_nothrow_invocable_r<T, O, E>
+        >
+      >
+    )
   {
     if constexpr (std::is_invocable_r_v<T, O, E>) {
       return is_ok() ? boost::get<success<T>>(storage_).x : std::invoke(std::forward<O>(op), boost::get<failure<E>>(storage_).x);
@@ -1398,14 +1410,13 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an failure, with a panic message provided by the failure's value.
-  T unwrap() const
-  {
-    if constexpr (trait::formattable<E>::value) {
+  T unwrap() const {
+    if constexpr (trait::formattable_element<E>::value) {
       if ( is_ok() ) {
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap() on an `failure` value: %1%)", boost::get<failure<E>>(storage_).x);
+        PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", *this);
       }      
     }
     else {
@@ -1413,7 +1424,7 @@ public:
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap() on an `failure`)");
+        PANIC(R"(called `basic_result::unwrap()` on a value `failure(???)`)");
       }
     }
   }
@@ -1426,14 +1437,13 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an success, with a panic message provided by the success's value.
-  E unwrap_err() const
-  {
+  E unwrap_err() const {
     if constexpr (trait::formattable<T>::value) {
       if ( is_err() ) {
         return boost::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap_err() on an `success` value: %1%)", boost::get<success<T>>(storage_).x);
+        PANIC(R"(called `basic_result::unwrap_err()` on a value: %1%)", *this);
       }
     }
     else {
@@ -1441,7 +1451,7 @@ public:
         return boost::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap_err() on an `success` value)");
+        PANIC(R"(called `basic_result::unwrap_err()` on a value `success(???)`)");
       }
     }
   }
@@ -1451,7 +1461,6 @@ public:
   ///
   /// @note
   ///   Returns the contained value, otherwise; if failure, returns the default value for that type.
-
   void expect(std::string_view msg) const {
     if ( is_err() )
       PANIC("%1%: %2%", msg, unwrap_err());
@@ -1465,9 +1474,8 @@ public:
   template <mutability _mut, class T_, class E_>
   std::enable_if_t<
     std::conjunction_v<is_comparable_with<T, T_>, is_comparable_with<E, E_>>,
-    bool>
-  operator==(basic_result<_mut, T_, E_> const &rhs) const &
-  {
+  bool>
+  operator==(basic_result<_mut, T_, E_> const &rhs) const & {
     return boost::apply_visitor(
       boost::hana::overload(
         [](success<T> const& l, success<T_> const& r) { return l.x == r.x; },
@@ -1479,86 +1487,66 @@ public:
   template <class T_>
   std::enable_if_t<
     is_comparable_with<T, T_>::value,
-    bool>
-  operator==(success<T_> const &rhs) const
-  {
+  bool>
+  operator==(success<T_> const &rhs) const {
     return this->is_ok() ? this->unwrap() == rhs.x : false;
   }
 
   template <class E_>
   std::enable_if_t<
     is_comparable_with<E, E_>::value,
-    bool>
-  operator==(failure<E_> const &rhs) const
-  {
+  bool>
+  operator==(failure<E_> const &rhs) const {
     return this->is_err() ? this->unwrap_err() == rhs.x : false;
   }
 
   template <class U = T, class F = E>
   friend
-  std::enable_if_t<
-    std::conjunction_v<
-      std::disjunction<
-        trait::formattable<U>,
-        trait::formattable_range<U>,
-        trait::formattable_tuple<U>
-      >,
-      std::disjunction<
-        trait::formattable<F>,
-        trait::formattable_range<F>,
-        trait::formattable_tuple<F>
-      >
-    >,
+  std::enable_if_t<std::conjunction_v<trait::formattable<U>, trait::formattable<F>>,
   std::ostream&>
   operator<<(std::ostream& os, basic_result const& res) {
     using namespace std::literals::string_literals;
-
-    auto elem_format = boost::hana::overload_linearly(
-      [](std::monostate) {
-        return "()"s;
-      },
-      [](std::string_view x) {
-        return (boost::format("\"%1%\"") % x).str();
-      },
-      [](auto const& x) {
-        return (boost::format("%1%") % x).str();
-      });
-
-    auto inner_format = boost::hana::overload_linearly(
-      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable_range<std::decay_t<decltype(x)>>::value, std::string> {
-        if (x.empty()) return "[]"s;
-        using std::begin, std::end;
-        std::string str = "["s;
-        auto iter = begin(x);
-        str += elem_format(*iter);
-        ++iter;
-        for (;iter != end(x); ++iter) {
-          str += (boost::format(",%1%") % elem_format(*iter)).str();
-        }
-        return str += "]";
-      },
-      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable_tuple<std::decay_t<decltype(x)>>::value, std::string> {
-        if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0) {
-          return "()"s;
-        }
-        else {
-          return std::apply(
-            [elem_format](auto const& head, auto const&... tail) {
-              std::string fmt = "("s + elem_format(head);
-              return fmt + ((("," + elem_format(tail))) + ...) + ")"s;
-            }, x);
-        }
-      },
-      [elem_format](auto const& x) -> std::enable_if_t<trait::formattable<std::decay_t<decltype(x)>>::value, std::string> {
-        return elem_format(x);
-      });
-
-    if ( res.is_ok() ) {
-      return os << boost::format("success(%1%)") % inner_format( res.unwrap() );
-    }
-    else {
-      return os << boost::format("failure(%1%)") % inner_format( res.unwrap_err() );
-    }
+    auto inner_format = boost::hana::fix(boost::hana::overload_linearly(
+        [](auto, auto const& x) -> std::enable_if_t<trait::formattable_element<std::decay_t<decltype(x)>>::value, std::string> {
+          return boost::hana::overload_linearly(
+            [](std::monostate) { return "()"s; },
+            [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
+            [](auto const& x) { return (boost::format("%1%") % x).str(); })
+          (x);        
+        },
+        [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_dictionary<std::decay_t<decltype(x)>>::value, std::string> {
+          if (x.empty()) return "{}"s;
+          using std::begin, std::end;
+          auto iter = begin(x);
+          std::string str = "{"s + (boost::format("%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
+          while (++iter != end(x)) {
+            str += (boost::format(",%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
+          }
+          return str += "}";
+        },
+        [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_range<std::decay_t<decltype(x)>>::value, std::string> {
+          if (x.empty()) return "[]"s;
+          using std::begin, std::end;
+          auto iter = begin(x);
+          std::string str = "["s + _fmt(*iter);
+          while (++iter != end(x)) {
+            str += (boost::format(",%1%") % _fmt(*iter)).str();
+          }
+          return str += "]";
+        },
+        [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_tuple<std::decay_t<decltype(x)>>::value, std::string> {
+          if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0) {
+            return "()"s;
+          }
+          else {
+            return std::apply(
+              [_fmt](auto const& head, auto const&... tail) {
+                return "("s + _fmt(head) + ((("," + _fmt(tail))) + ...) + ")"s;
+              }, x);
+          }
+        }));
+    return res.is_ok() ? os << boost::format("success(%1%)") % inner_format( res.unwrap() )
+                       : os << boost::format("failure(%1%)") % inner_format( res.unwrap_err() );
   }
 };
 

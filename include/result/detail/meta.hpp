@@ -2,6 +2,7 @@
 #define MITAMA_RESULT_DETAIL_META_HPP
 #include <type_traits>
 #include <optional>
+#include <utility>
 #include <boost/optional/optional_fwd.hpp>
 
 namespace mitama {
@@ -71,6 +72,11 @@ struct is_tuple_like_impl: is_tuple_like_detail<TupleLike, std::make_index_seque
 
 namespace mitama {
 inline namespace meta {
+/// is_tuple_like
+/// requires
+///   std::tuple_element<0, T>
+///   std::tuple_size_v<T>
+///   (T t) { std::get<0>(t) }
 template < class T >
 struct is_tuple_like
   : std::conjunction<
@@ -82,6 +88,8 @@ struct is_tuple_like
 
 namespace mitama {
 inline namespace meta {
+
+/// is_optional family
 template < class >
 struct is_std_optional: std::false_type {};
 template < class >
@@ -99,6 +107,18 @@ struct is_optional
       meta::is_boost_optional<meta::remove_cvr_t<T>>
     >
 {};
+
+/// is_range
+template <class, class = void> struct is_range: std::false_type {};
+template <class Range>
+struct is_range<Range, std::void_t<decltype(*std::begin(std::declval<std::decay_t<Range>>()), std::begin(std::declval<std::decay_t<Range>>()) != std::end(std::declval<std::decay_t<Range>>()))>>
+  : std::true_type {};
+
+/// is_dictionary
+template <class, class = void> struct is_dictionary: std::false_type {};
+template <class Dict>
+struct is_dictionary<Dict, std::void_t<typename meta::remove_cvr_t<Dict>::key_type, typename meta::remove_cvr_t<Dict>::mapped_type>>
+  : is_range<Dict> {};
 
 template < class > struct repack;
 

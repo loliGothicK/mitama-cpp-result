@@ -17,6 +17,7 @@
 #include <cassert>
 #include <memory>
 #include <array>
+#include <map>
 
 using namespace boost::xpressive;
 using namespace mitama;
@@ -287,7 +288,7 @@ TEST_CASE("unwrap() test", "[result][unwrap]"){
     using namespace boost::xpressive;
     sregex re =
         as_xpr(
-            R"(runtime panicked at 'called `basic_result::unwrap() on an `failure` value: emergency failure', )") >>
+            "runtime panicked at 'called `basic_result::unwrap()` on a value: failure(\"emergency failure\")', ") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
     REQUIRE(regex_match(std::string{p.what()}, what, re));
@@ -304,7 +305,7 @@ TEST_CASE("unwrap_err() test", "[result][unwrap_err]"){
     using namespace boost::xpressive;
     sregex re =
         as_xpr(
-            R"(runtime panicked at 'called `basic_result::unwrap_err() on an `success` value: 2', )") >>
+            R"(runtime panicked at 'called `basic_result::unwrap_err()` on a value: success(2)', )") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
     REQUIRE(regex_match(std::string{p.what()}, what, re));
@@ -397,6 +398,47 @@ TEST_CASE("format test", "[result][format]"){
     std::stringstream ss;
     ss << failure(std::vector<std::string>{"foo"s, "bar"s});
     REQUIRE(ss.str() == "failure([\"foo\",\"bar\"])"s);
+  }
+  SECTION("success of tuple"){
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << success(std::tuple{"foo"s, 1});
+    REQUIRE(ss.str() == "success((\"foo\",1))"s);
+  }
+  SECTION("failure of tuple"){
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << failure(std::tuple{"foo"s, 1});
+    REQUIRE(ss.str() == "failure((\"foo\",1))"s);
+  }
+  SECTION("result of tuple"){
+    using namespace std::literals;
+    {
+      std::stringstream ss;
+      ss << result<std::tuple<str, int>, int>(success(std::tuple{"foo"s, 1}));
+      REQUIRE(ss.str() == "success((\"foo\",1))"s);
+    }
+    {
+      std::stringstream ss;
+      ss << result<int, std::tuple<str, int>>(failure(std::tuple{"foo"s, 1}));
+      REQUIRE(ss.str() == "failure((\"foo\",1))"s);
+    }
+  }
+  SECTION("result of dictionary"){
+    using namespace std::literals;
+    {
+      std::stringstream ss;
+      ss << result<std::map<str, int>, int>(success(std::map<str, int>{{"foo"s, 1}}));
+      REQUIRE(ss.str() == "success({\"foo\": 1})"s);
+    }
+  }
+  SECTION("result of tuple of tuple"){
+    using namespace std::literals;
+    {
+      std::stringstream ss;
+      ss << result<std::tuple<std::tuple<int, int>, int>, int>(success(std::tuple{std::tuple{1, 1}, 1}));
+      REQUIRE(ss.str() == "success(((1,1),1))"s);
+    }
   }
   SECTION("failure"){
     using namespace std::literals;

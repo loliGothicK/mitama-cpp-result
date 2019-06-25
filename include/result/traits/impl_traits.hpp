@@ -17,45 +17,48 @@ using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
 
 inline constexpr std::nullptr_t required = nullptr;
 
-// Formattable Trait
-template <class T, class = void>
-struct formattable
-    : std::false_type
-{
-};
 
-template < >
-struct formattable<std::monostate>
-    : std::true_type
-{
-};
-template < >
-struct formattable<const std::monostate>
-    : std::true_type
-{
-};
+/// Atomic Constraint
+template <class T, class = void>
+struct formattable_element: std::false_type {};
+/// Higher Kind Constraint
+template <class, class = void>
+struct formattable_range : std::false_type {};
+/// Higher Kind Constraint
+template <class, class = void>
+struct formattable_dictionary: std::false_type {};
+/// Higher Kind Constraint
+template <class, class = void>
+struct formattable_tuple: std::false_type {};
+/// Constraits Facade
+template <class T, class = void>
+struct formattable: std::false_type {};
 
 template <class T>
-struct formattable<T, std::void_t<
-                          decltype(std::declval<std::ostream &>() << std::declval<std::decay_t<T>>())>>
-    : std::true_type
-{
-};
+struct formattable<T, std::enable_if_t<
+    std::disjunction_v<
+        formattable_element<T>,
+        formattable_range<T>,
+        formattable_dictionary<T>,
+        formattable_tuple<T>
+>>>: std::true_type {}; 
 
-template <class, class=void>
-struct formattable_range : std::false_type
-{
-};
+
+template < >
+struct formattable_element<std::monostate>
+    : std::true_type {};
+
+template < >
+struct formattable_element<const std::monostate>
+    : std::true_type {};
+
+template <class T>
+struct formattable_element<T, std::void_t<decltype(std::declval<std::ostream &>() << std::declval<std::decay_t<T>>())>>
+    : std::true_type {};
 
 template <class Range>
-struct formattable_range<Range, std::void_t<decltype(std::declval<std::ostream&>() << *std::begin(std::declval<std::decay_t<Range>>()))>>
-    : std::conjunction<
-        std::negation<std::is_same<std::string, std::decay_t<Range>>>,
-        std::negation<std::is_same<std::string_view, std::decay_t<Range>>>
-    >
-{
-};
-
+struct formattable_range<Range, std::enable_if_t<meta::is_range<Range>::value>>
+    : formattable<typename meta::remove_cvr_t<Range>::value_type> {};
 }
 
 namespace mitama {
@@ -71,12 +74,15 @@ namespace detail {
 }}}
 
 namespace mitama::trait {
-template <class, class = void> struct formattable_tuple: std::false_type {};
 
 template <class Tuple>
 struct formattable_tuple<Tuple, std::enable_if_t<meta::is_tuple_like<Tuple>::value>>
     : meta::detail::is_formattable_tuple_detail<Tuple, std::make_index_sequence<std::tuple_size_v<Tuple>>>
 {};
+
+template <class Dict>
+struct formattable_dictionary<Dict, std::void_t<typename meta::remove_cvr_t<Dict>::key_type, typename meta::remove_cvr_t<Dict>::mapped_type>>
+    : std::conjunction<formattable<typename meta::remove_cvr_t<Dict>::key_type>, formattable<typename meta::remove_cvr_t<Dict>::mapped_type>> {};
 
 }
 
