@@ -564,8 +564,11 @@ SCENARIO("test for indirect", "[result][indirect]"){
 SCENARIO("test for dangling indirect", "[result][indirect][dangling]"){
   using namespace std::literals;
   using vec_iter = typename std::vector<int>::iterator;
-  GIVEN( "A new result which is containing a dangling reference into the discarded vector" ) {
-    auto indirect = result<vec_iter, vec_iter>(success{std::vector<int>{1,3}.begin()}).indirect();
+  GIVEN( "A new result which is containing a dangling reference into the discarded unique_ptr" ) {
+    auto indirect
+      = mut_result<std::unique_ptr<int>, std::unique_ptr<int>>(success{std::make_unique<int>(1)})
+        .as_ref()
+        .indirect();
 
     REQUIRE( std::is_same_v<decltype(indirect.unwrap()), dangling<std::reference_wrapper<int>>> );
     // indirect.unwrap().transmute()
