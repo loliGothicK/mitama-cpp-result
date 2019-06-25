@@ -1471,33 +1471,112 @@ public:
       PANIC("%1%: %2%", msg, unwrap());
   }
 
-  template <mutability _mut, class T_, class E_>
+  /// @brief
+  ///   equal compare
+  ///
+  /// @requires
+  ///   (T a, U b) { a == b } -> Same<bool>;
+  ///   (E a, F b) { a == b } -> Same<bool>
+  ///
+  /// @note
+  ///   This method tests for self and other values to be equal, and is used by `==` found by ADL.
+  template <mutability _mut, class U, class F>
   std::enable_if_t<
-    std::conjunction_v<is_comparable_with<T, T_>, is_comparable_with<E, E_>>,
+    std::conjunction_v<is_comparable_with<T, U>, is_comparable_with<E, F>>,
   bool>
-  operator==(basic_result<_mut, T_, E_> const &rhs) const & {
+  operator==(basic_result<_mut, U, F> const &rhs) const & {
     return boost::apply_visitor(
       boost::hana::overload(
-        [](success<T> const& l, success<T_> const& r) { return l.x == r.x; },
-        [](failure<E> const& l, failure<E_> const& r) { return l.x == r.x; },
+        [](success<T> const& l, success<U> const& r) { return l.x == r.x; },
+        [](failure<E> const& l, failure<F> const& r) { return l.x == r.x; },
         [](auto&&...) { return false; }),
       this->storage_, rhs.storage_);
   }
 
-  template <class T_>
+  /// @brief
+  ///   not equal compare
+  ///
+  /// @requires
+  ///   (T a, U b) { a == b } -> Same<bool>;
+  ///   (E a, F b) { a == b } -> Same<bool>
+  ///
+  /// @note
+  ///   This method tests for self and other values to be not equal, and is used by `==` found by ADL.
+  template <mutability _mut, class U, class F>
   std::enable_if_t<
-    is_comparable_with<T, T_>::value,
+    std::conjunction_v<is_comparable_with<T, U>, is_comparable_with<E, F>>,
   bool>
-  operator==(success<T_> const &rhs) const {
+  operator!=(basic_result<_mut, U, F> const &rhs) const & {
+    return boost::apply_visitor(
+      boost::hana::overload(
+        [](success<T> const& l, success<U> const& r) { return !(l.x == r.x); },
+        [](failure<E> const& l, failure<F> const& r) { return !(l.x == r.x); },
+        [](auto&&...) { return true; }),
+      this->storage_, rhs.storage_);
+  }
+
+  /// @brief
+  ///   equal compare
+  ///
+  /// @requires
+  ///   (T a, U b) { a == b } -> Same<bool>
+  ///
+  /// @note
+  ///   This method tests for self and other values to be equal, and is used by `==` found by ADL.
+  template <class U>
+  std::enable_if_t<
+    is_comparable_with<T, U>::value,
+  bool>
+  operator==(success<U> const &rhs) const {
     return this->is_ok() ? this->unwrap() == rhs.x : false;
   }
 
-  template <class E_>
+  /// @brief
+  ///   not equal compare
+  ///
+  /// @requires
+  ///   (T a, U b) { a == b } -> Same<bool>
+  ///
+  /// @note
+  ///   This method tests for self and other values to be not equal, and is used by `==` found by ADL.
+  template <class U>
   std::enable_if_t<
-    is_comparable_with<E, E_>::value,
+    is_comparable_with<T, U>::value,
   bool>
-  operator==(failure<E_> const &rhs) const {
+  operator!=(success<U> const &rhs) const {
+    return this->is_ok() ? !(this->unwrap() == rhs.x) : true;
+  }
+
+  /// @brief
+  ///   equal compare
+  ///
+  /// @requires
+  ///   (E a, F b) { a == b } -> Same<bool>
+  ///
+  /// @note
+  ///   This method tests for self and other values to be equal, and is used by `==` found by ADL.
+  template <class F>
+  std::enable_if_t<
+    is_comparable_with<E, F>::value,
+  bool>
+  operator==(failure<F> const &rhs) const {
     return this->is_err() ? this->unwrap_err() == rhs.x : false;
+  }
+
+  /// @brief
+  ///   not equal compare
+  ///
+  /// @requires
+  ///   (E a, F b) { a == b } -> Same<bool>
+  ///
+  /// @note
+  ///   This method tests for self and other values to be equal, and is used by `==` found by ADL.
+  template <class F>
+  std::enable_if_t<
+    is_comparable_with<E, F>::value,
+  bool>
+  operator!=(failure<F> const &rhs) const {
+    return this->is_err() ? !(this->unwrap_err() == rhs.x) : true;
   }
 
   template <class U = T, class F = E>
