@@ -211,11 +211,11 @@ TEST_CASE("and_then() test", "[result][and_then]"){
   auto sq = [](u32 x) -> result<u32, u32> { return success(x * x); };
   auto err = [](u32 x) -> result<u32, u32> { return failure(x); };
 
-  REQUIRE(success(2u).and_then(sq).and_then(sq) == success(16u));
-  REQUIRE(success(2u).and_then(sq).and_then(err) == failure(4u));
-  REQUIRE(success(2u).and_then(err).and_then(sq) == failure(2u));
-  REQUIRE(failure(3u).and_then(sq).and_then(sq) == failure(3u));
-  REQUIRE(failure(3u).and_then(sq).and_then(sq) == failure(3u));
+  REQUIRE(result<u32, u32>{success(2u)}.and_then(sq).and_then(sq) == success(16u));
+  REQUIRE(result<u32, u32>{success(2u)}.and_then(sq).and_then(err) == failure(4u));
+  REQUIRE(result<u32, u32>{success(2u)}.and_then(err).and_then(sq) == failure(2u));
+  REQUIRE(result<u32, u32>{failure(3u)}.and_then(sq).and_then(sq) == failure(3u));
+  REQUIRE(result<u32, u32>{failure(3u)}.and_then(sq).and_then(sq) == failure(3u));
 }
 
 TEMPLATE_TEST_CASE("is_convertible_result_with meta test", "[is_convertible_result_with][meta]",
@@ -252,10 +252,10 @@ TEST_CASE("or_else() test", "[result][or_else]"){
   auto sq = [](u32 x) -> result<u32, u32> { return success(x * x); };
   auto err = [](u32 x) -> result<u32, u32> { return failure(x); };
 
-  REQUIRE(success(2).or_else(sq).or_else(sq) ==  success(2));
-  REQUIRE(success(2).or_else(err).or_else(sq) ==  success(2));
-  REQUIRE(failure(3).or_else(sq).or_else(err) ==  success(9u));
-  REQUIRE(failure(3).or_else(err).or_else(err) ==  failure(3u));
+  REQUIRE(result<u32, u32>{success(2)}.or_else(sq).or_else(sq) ==  success(2u));
+  REQUIRE(result<u32, u32>{success(2)}.or_else(err).or_else(sq) ==  success(2u));
+  REQUIRE(result<u32, u32>{failure(3)}.or_else(sq).or_else(err) ==  success(9u));
+  REQUIRE(result<u32, u32>{failure(3)}.or_else(err).or_else(err) ==  failure(3u));
 }
 
 TEST_CASE("unwrap_or() test", "[result][unwrap_or]"){
@@ -269,9 +269,9 @@ TEST_CASE("unwrap_or() test", "[result][unwrap_or]"){
 TEST_CASE("unwrap_or_else() test", "[result][unwrap_or_else]"){
   auto count = [](str x) -> size_t { return x.size(); };
 
-  REQUIRE(success(2).unwrap_or_else(count) ==  2);
-  REQUIRE(failure("foo"s).unwrap_or_else(count) ==  3ull);
-  REQUIRE(failure("foo"s).unwrap_or_else([]{ return 3ull; }) ==  3ull);
+  REQUIRE(result<u32, str>{success(2)}.unwrap_or_else(count) ==  2);
+  REQUIRE(result<u32, str>{failure("foo"s)}.unwrap_or_else(count) ==  3ull);
+  REQUIRE(result<u32, str>{failure("foo"s)}.unwrap_or_else([]{ return 3ull; }) ==  3ull);
 }
 
 TEST_CASE("unwrap() test", "[result][unwrap]"){

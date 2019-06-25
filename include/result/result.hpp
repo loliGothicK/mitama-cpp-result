@@ -201,37 +201,6 @@ public:
   explicit constexpr success(std::in_place_t, Args && ... args) noexcept(std::is_nothrow_constructible_v<T, Args...>)
       : x(std::forward<Args>(args)...) {}
 
-  constexpr std::true_type is_ok() const noexcept { return {}; }
-
-  constexpr std::false_type is_err() const noexcept { return {}; }
-
-  template <class Op>
-  constexpr auto and_then(Op && op) noexcept(noexcept(std::declval<Op>()(std::declval<T &>())))
-      ->std::enable_if_t<is_result_v<std::invoke_result_t<Op, T>>,
-                         std::invoke_result_t<Op, T>>
-  {
-    return std::forward<Op>(op)(this->x);
-  }
-
-  template <class Op>
-  constexpr decltype(auto) or_else(Op &&) noexcept
-  {
-    return *this;
-  }
-
-  template < class U = T >
-  constexpr std::enable_if_t<std::is_copy_constructible_v<U>, T>
-  unwrap_or_default() noexcept
-  {
-    return std::forward<T>(x);
-  }
-
-  template <class O>
-  constexpr decltype(auto) unwrap_or_else(O &&) const noexcept
-  {
-    return x;
-  }
-
   template <mutability _mut, class T_, class E_>
   std::enable_if_t<
       is_comparable_with<T, T_>::value,
@@ -398,38 +367,6 @@ public:
             where<std::is_constructible<E, Args...>> = required>
   explicit constexpr failure(std::in_place_t, Args && ... args) noexcept(std::is_nothrow_constructible_v<E, Args...>)
       : x(std::forward<Args>(args)...) {}
-
-  constexpr std::false_type is_ok() const { return {}; }
-
-  constexpr std::true_type is_err() const { return {}; }
-
-  template <class Op>
-  constexpr decltype(auto) and_then(Op &&)
-  {
-    return *this;
-  }
-
-  template <class Op>
-  constexpr auto or_else(Op && op)
-      ->std::enable_if_t<is_result_v<std::invoke_result_t<Op, E>>,
-                         std::invoke_result_t<Op, E>>
-  {
-    return std::forward<Op>(op)(this->x);
-  }
-
-  template <class O>
-  constexpr decltype(auto) unwrap_or_else(O && op) const noexcept
-  {
-    if constexpr (std::is_invocable_v<O, E>) {
-      return std::invoke(std::forward<O>(op), x);
-    }
-    else if constexpr (std::is_invocable_v<O>) {
-      return std::invoke(std::forward<O>(op));
-    }
-    else {
-      static_assert([]{ return false; }(), "invalid argument: designated function object is not invocable");
-    }
-  }
 
   template <mutability _mut, class T_, class E_>
   constexpr
@@ -828,41 +765,40 @@ public:
   {}
 
   /// @brief
-  ///   basic_result::is_ok()
+  ///   Checks if self has a success value.
   ///
   /// @note
   ///   Returns true if the result is succsess.
   constexpr bool is_ok() const noexcept { return ::mitama::workaround::holds_alternative<success<T>>(storage_); }
 
   /// @brief
-  ///   basic_result::is_err()
+  ///   Checks if self has a failure value.
   ///
   /// @note
   ///   Returns true if the result is failure.
   constexpr bool is_err() const noexcept { return ::mitama::workaround::holds_alternative<failure<E>>(storage_); }
 
   /// @brief
-  ///   explicit basic_result::operator bool()
+  ///   Converts from basic_result to bool.
   ///
   /// @note
   ///   Covert result to bool and returns true if the result is succsess.
   explicit constexpr operator bool() const noexcept { return ::mitama::workaround::holds_alternative<success<T>>(storage_); }
 
   /// @brief
-  ///   explicit basic_result::operator bool()
+  ///   Converts from basic_result to bool.
   ///
   /// @note
   ///   Covert result to bool and returns true if the result is failure.
   constexpr bool operator !() const noexcept { return ::mitama::workaround::holds_alternative<failure<E>>(storage_); }
 
   /// @brief
-  ///   basic_result::ok() &
+  ///   Converts from basic_result to boost::optional.
   ///
   /// @note
-  ///   Converts from basic_result to boost::optional.
   ///   If self is
-  ///   - immutable: returns boost::optional<const T>
-  ///   -  mutable : returns boost::optional<T>
+  ///   - immutable: returns `boost::optional<const T>`
+  ///   -  mutable : returns `boost::optional<T>`
   constexpr
   std::conditional_t<is_mut_v<_mutability>,
     boost::optional<ok_type>,
@@ -879,10 +815,10 @@ public:
   }
 
   /// @brief
-  ///   basic_result::ok() const&
+  ///   Converts from basic_result to `boost::optional<const T>`.
   ///
   /// @note
-  ///   Converts from basic_result to boost::optional<const T>.
+  ///   Converts self into a `boost::optional<const T>`, and discarding the failure, if any.
   constexpr
   boost::optional<force_add_const_t<ok_type>>
   ok() const & noexcept {
@@ -895,16 +831,15 @@ public:
   }
 
   /// @brief
-  ///   basic_result::ok() &&
+  ///   Converts from basic_result to `boost::optional`.
   ///
   /// @note
-  ///   Converts from basic_result to boost::optional.
   ///   If T is lvalue reference and self is
-  ///     - immutable: returns boost::optional<dangling<std::reference_wrapper<const T>>>
-  ///     -  mutable : returns boost::optional<dangling<std::reference_wrapper<T>>>
+  ///     - immutable: returns `boost::optional<dangling<std::reference_wrapper<const T>>>`
+  ///     -  mutable : returns `boost::optional<dangling<std::reference_wrapper<T>>>`
   ///   T is not lvalue reference and self is
-  ///     - immutable: returns boost::optional<const T>
-  ///     -  mutable : returns boost::optional<T>
+  ///     - immutable: returns `oost::optional<const T>`
+  ///     -  mutable : returns `boost::optional<T>`
   constexpr auto
   ok() && noexcept {
     using ret = std::conditional_t<is_mut_v<_mutability>, boost::optional<ok_type>, boost::optional<force_add_const_t<ok_type>>>;
@@ -934,13 +869,10 @@ public:
   void ok() const&& = delete;
 
   /// @brief
-  ///   basic_result::err() &
+  ///   Converts from basic_result to `boost::optional`.
   ///
   /// @note
-  ///   Converts from basic_result to boost::optional.
-  ///   If self is
-  ///   - immutable: returns boost::optional<const E>
-  ///   -  mutable : returns boost::optional<E>
+  ///   Converts self into a `boost::optional<const E>`, and discarding the success, if any.
   constexpr
   boost::optional<force_add_const_t<err_type>>
   err() const & noexcept {
@@ -953,10 +885,12 @@ public:
   }
 
   /// @brief
-  ///   basic_result::err() const&
+  ///   Converts from basic_result to `boost::optional<const E>`.
   ///
   /// @note
-  ///   Converts from basic_result to boost::optional<const E>.
+  ///   If self is
+  ///   - immutable: returns `boost::optional<const E>`
+  ///   -  mutable : returns `boost::optional<E>`
   constexpr
   std::conditional_t<is_mut_v<_mutability>,
     boost::optional<err_type>,
@@ -973,10 +907,9 @@ public:
   }
 
   /// @brief
-  /// basic_result::err() &&
+  ///   Converts from basic_result to `boost::optional`.
   ///
   /// @note
-  ///   Converts from basic_result to boost::optional.
   ///   If E is lvalue reference and self is
   ///     - immutable: returns boost::optional<dangling<std::reference_wrapper<const E>>>
   ///     -  mutable : returns boost::optional<dangling<std::reference_wrapper<E>>>
@@ -1010,10 +943,6 @@ public:
   }
   
   /// @brief
-  ///   basic_result::as_ref() const&
-  ///
-  /// @note
-  ///   Converts from `basic_result<T, E> const&` to `basic_result<T const&, E const&>`.
   ///   Produces a new basic_result, containing a reference into the original, leaving the original in place.
   constexpr auto as_ref() const&
     noexcept
@@ -1026,9 +955,6 @@ public:
   }
 
   /// @brief
-  ///   basic_result::as_mut() &
-  ///
-  /// @note
   ///   Converts from `basic_result<mutability::mut, T, E>&` to `basic_result<mutability::immut, T&, E&>`.
   constexpr
   auto as_mut() &
@@ -1052,14 +978,13 @@ public:
   }
 
   /// @brief
-  ///   basic_result::map(O&& op) const&
+  ///   Maps a basic_result<T, E> to basic_result<U, E> by applying a function to a contained success value,
+  ///   leaving an failure value untouched.
   ///
   /// @requires
   ///   { std::invoke(op, unwrap()) }
   ///
   /// @note
-  ///   Maps a basic_result<T, E> to basic_result<U, E> by applying a function to a contained success value,
-  ///   leaving an failure value untouched.
   ///   This function can be used to compose the results of two functions.
   template <class O>
   constexpr auto map(O && op) const &
@@ -1074,14 +999,13 @@ public:
   }
 
   /// @brief
-  ///   basic_result::map(O&& op) &&
+  ///   Maps a basic_result<T, E> to basic_result<U, E> by applying a function to a contained success value,
+  ///   leaving an failure value untouched.
   ///
   /// @requires
   ///   { std::invoke(op, unwrap()) }
   ///
   /// @note
-  ///   Maps a basic_result<T, E> to basic_result<U, E> by applying a function to a contained success value,
-  ///   leaving an failure value untouched.
   ///   This function can be used to compose the results of two functions.
   template <class O>
   constexpr auto map(O && op) &&
@@ -1096,7 +1020,8 @@ public:
   }
 
   /// @brief
-  /// basic_result::map_or_else(Fallback _fallback, Map _map) &&
+  ///   Maps a basic_result<T, E> to U by applying a function to a contained success value,
+  ///   or a fallback function to a contained failure value.
   ///
   /// @requires
   ///   { std::invoke(_fallback, unwrap_err()) };
@@ -1104,8 +1029,6 @@ public:
   ///   Common< decltype(std::invoke(_fallback, unwrap_err())), decltype(std::invoke(_map, unwrap())) >;
   ///
   /// @note
-  ///   Maps a basic_result<T, E> to U by applying a function to a contained success value,
-  ///   or a fallback function to a contained failure value.
   ///   This function can be used to unpack a successful result while handling an error.
   template <class Map, class Fallback>
   constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) const&
@@ -1125,7 +1048,8 @@ public:
   }
 
   /// @brief
-  /// basic_result::map_or_else(Fallback _fallback, Map _map) &&
+  ///   Maps a basic_result<T, E> to U by applying a function to a contained success value,
+  ///   or a fallback function to a contained failure value.
   ///
   /// @requires
   ///   { std::invoke(_fallback, unwrap_err()) };
@@ -1133,8 +1057,6 @@ public:
   ///   Common< decltype(std::invoke(_fallback, unwrap_err())), decltype(std::invoke(_map, unwrap())) >;
   ///
   /// @note
-  ///   Maps a basic_result<T, E> to U by applying a function to a contained success value,
-  ///   or a fallback function to a contained failure value.
   ///   This function can be used to unpack a successful result while handling an error.
   template <class Map, class Fallback>
   constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) && 
@@ -1154,13 +1076,13 @@ public:
   }
 
   /// @brief
-  ///   basic_result::map_err(O op) const&
+  ///   Maps a basic_result<T, E> to basic_result<T, F> by applying a function to a contained failure value,
+  ///   leaving an success value untouched.
   ///
   /// @requires
   ///   { std::invoke(op, unwrap_err()) }
   ///
   /// @note
-  ///   Maps a basic_result<T, E> to basic_result<T, F> by applying a function to a contained failure value, leaving an success value untouched.
   ///   This function can be used to pass through a successful result while handling an error.
   template <class O>
   constexpr auto map_err(O && op) const &
@@ -1175,13 +1097,13 @@ public:
   }
 
   /// @brief
-  ///   basic_result::map_err(O op) &&
+  ///   Maps a basic_result<T, E> to basic_result<T, F> by applying a function to a contained failure value,
+  ///   leaving an success value untouched.
   ///
   /// @requires
   ///   { std::invoke(op, unwrap_err()) }
   ///
   /// @note
-  ///   Maps a basic_result<T, E> to basic_result<T, F> by applying a function to a contained failure value, leaving an success value untouched.
   ///   This function can be used to pass through a successful result while handling an error.
   template <class O>
   constexpr auto map_err(O && op) &&
@@ -1196,13 +1118,12 @@ public:
   }
 
   /// @brief
-  ///   basic_result::and_then(O&& op) const&
+  ///   Calls `op` if the result is success, otherwise; returns the failure value of self.
   ///
   /// @requires
   ///   requires requires is_convertible_result_with<std::invoke_result_t<O, T>, failure<F>>
   ///
   /// @note
-  ///   Calls `op` if the result is success, otherwise; returns the failure value of self.
   ///   This function can be used for control flow based on result values.
   template <class O>
   constexpr auto and_then(O && op) const &
@@ -1217,13 +1138,12 @@ public:
   }
 
   /// @brief
-  ///   basic_result::and_then(O&& op) &&
+  ///   Calls `op` if the result is success, otherwise; returns the failure value of self.
   ///
   /// @requires
   ///   requires requires is_convertible_result_with<std::invoke_result_t<O, T>, success<T>>
   ///
   /// @note
-  ///   Calls `op` if the result is success, otherwise; returns the failure value of self.
   ///   This function can be used for control flow based on result values.
   template <class O>
   constexpr auto and_then(O && op) &&
@@ -1238,13 +1158,12 @@ public:
   }
 
   /// @brief
-  ///   basic_result::or_else(O&& op) const&
+  ///   Calls `op` if the result is failure, otherwise; returns the success value of self.
   ///
   /// @requires
   ///   requires requires is_convertible_result_with<std::invoke_result_t<O, T>, success<T>>
   ///
   /// @note
-  ///   Calls `op` if the result is failure, otherwise; returns the success value of self.
   ///   This function can be used for control flow based on result values.
   template <class O>
   constexpr auto or_else(O && op) const &
@@ -1259,13 +1178,12 @@ public:
   }
 
   /// @brief
-  ///   basic_result<T, E>::or_else(O&& op) &&
+  ///   Calls `op` if the result is failure, otherwise; returns the success value of self.
   ///
   /// @requires
   ///   { std::invoke(op, unwrap_err()) } -> ConvertibleTo<basic_result<T, U>>
   ///
   /// @note
-  ///   Calls `op` if the result is failure, otherwise; returns the success value of self.
   ///   This function can be used for control flow based on result values.
   template <class O>
   constexpr auto or_else(O && op) &&
@@ -1280,10 +1198,6 @@ public:
   }
 
   /// @brief
-  ///   basic_result<T, E>::operator&&(basic_result<U, E> const &res) const&
-  ///   -> basic_result<U, E>
-  ///
-  /// @note
   ///   Returns `res` if the result is success, otherwise; returns the failure value of self.
   template <mutability _mu, class U>
   constexpr decltype(auto) operator&&(basic_result<_mu, U, E> const &res) const & noexcept
@@ -1296,11 +1210,9 @@ public:
   }
 
   /// @brief
-  ///   basic_result<T, E>::operator&&(basic_result<U, E> const &res) const&
-  ///   -> basic_result<T, F>
+  ///   Returns res if the result is failure, otherwise returns the success value of self.
   ///
   /// @note
-  ///   Returns res if the result is failure, otherwise returns the success value of self.
   ///   Arguments passed to or are eagerly evaluated;
   ///   if you are passing the result of a function call,
   ///   it is recommended to use `or_else`,
@@ -1316,15 +1228,13 @@ public:
   }
 
   /// @brief
-  ///   basic_result::unwrap_or(U&& optb) const&
-  ///   -> std::common_type<T, U&&>
+  ///   Unwraps a result, yielding the content of an success.
+  ///   Else, it returns optb.
   ///
   /// @requires
   ///   { is_ok() ? unwrap() : optb }
   ///
   /// @note
-  ///   Unwraps a result, yielding the content of an success.
-  ///   Else, it returns optb.
   ///   Arguments passed to `unwrap_or` are eagerly evaluated;
   ///   if you are passing the result of a function call,
   ///   it is recommended to use `unwrap_or_else`,
@@ -1338,15 +1248,13 @@ public:
   }
 
   /// @brief
-  ///   basic_result::unwrap_or(U&& optb) &&
-  ///   -> std::common_type<std::remove_reference_t<T>&&, U&&>
+  ///   Unwraps a result, yielding the content of an success.
+  ///   Else, it returns optb.
   ///
   /// @requires
   ///   { is_ok() ? unwrap() : optb }
   ///
   /// @note
-  ///   Unwraps a result, yielding the content of an success.
-  ///   Else, it returns optb.
   ///   Arguments passed to `unwrap_or` are eagerly evaluated;
   ///   if you are passing the result of a function call,
   ///   it is recommended to use `unwrap_or_else`,
@@ -1359,14 +1267,13 @@ public:
   }
 
   /// @brief
-  ///   basic_result::unwrap_or_else(O&& op) -> T
+  ///   Unwraps a result, yielding the content of an success.
   ///
   /// @requires
   ///   { std::invoke(op, unwrap_err()) } -> ConvertibleTo<T> ||
   ///   { std::invoke(op) } -> ConvertibleTo<T>
   ///
   /// @note
-  ///   Unwraps a result, yielding the content of an success.
   ///   If the value is an failure then;
   ///     - `std::is_invocable_r_v<T, O, E>` is true then; it invoke `op` with its value or,
   ///     - `std::is_invocable_r_v<T, O>` is true then; it invoke `op` without value,
@@ -1403,9 +1310,6 @@ public:
   }
 
   /// @brief
-  ///   basic_result::unwrap() const -> T
-  ///
-  /// @note
   ///   Unwraps a result, yielding the content of an success.
   ///
   /// @panics
@@ -1430,9 +1334,6 @@ public:
   }
 
   /// @brief
-  ///   basic_result::unwrap_err() const -> E
-  ///
-  /// @note
   ///   Unwraps a result, yielding the content of an failure.
   ///
   /// @panics
@@ -1457,15 +1358,22 @@ public:
   }
 
   /// @brief
-  ///   basic_result::unwrap_err() const -> std::remove_cvr_t<T>
+  ///   Unwraps a result, yielding the content of an success.
   ///
-  /// @note
-  ///   Returns the contained value, otherwise; if failure, returns the default value for that type.
-  void expect(std::string_view msg) const {
+  /// @panics
+  ///   Panics if the value is an failure, with a panic message including the passed message, and the content of the failure.
+  T expect(std::string_view msg) const {
     if ( is_err() )
       PANIC("%1%: %2%", msg, unwrap_err());
+    else
+      return unwrap();
   }
 
+  /// @brief
+  ///   Unwraps a result, yielding the content of an failure.
+  ///
+  /// @panics
+  ///   Panics if the value is an success, with a panic message including the passed message, and the content of the success.
   void expect_err(std::string_view msg) const {
     if ( is_ok() )
       PANIC("%1%: %2%", msg, unwrap());
