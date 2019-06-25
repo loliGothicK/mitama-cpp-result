@@ -1579,6 +1579,15 @@ public:
     return this->is_err() ? !(this->unwrap_err() == rhs.x) : true;
   }
 
+  /// @brief
+  ///   ostream output operator
+  ///
+  /// @requires
+  ///   Format<T>;
+  ///   Format<E>
+  ///
+  /// @note
+  ///   Output its contained value with pretty format, and is used by `operator<<` found by ADL.
   template <class U = T, class F = E>
   friend
   std::enable_if_t<std::conjunction_v<trait::formattable<U>, trait::formattable<F>>,
