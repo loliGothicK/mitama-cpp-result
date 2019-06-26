@@ -489,7 +489,7 @@ SCENARIO("test for reference type", "[result][ref]"){
   using namespace std::literals;
   GIVEN( "A result that refer to some string" ) {
     str hoge = "foo";
-    result<str&, str&> res(success<str&>{hoge});
+    mut_result<str&, str&> res(success<str&>{hoge});
 
     REQUIRE( hoge == "foo"s );
     REQUIRE( res.unwrap() == "foo"s );
