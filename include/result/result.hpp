@@ -480,7 +480,7 @@ template <mutability _mutability, class T, class E>
 class [[nodiscard]] basic_result<_mutability, T, E,
   /* bounded types requirements (see the document below) */
   /* https://www.boost.org/doc/libs/1_64_0/doc/html/variant/reference.html#variant.concepts */
-  trait::where< 
+  trait::where<
     std::disjunction<
       std::conjunction<
         std::is_copy_constructible<meta::remove_cvr_t<T>>, 
@@ -1630,12 +1630,12 @@ public:
 
 } // namespace mitama
 
-#define TRY(target) \
-  if (auto res = target; res.is_err()) \
+#ifndef MITAMA_WITH_MACROS
+
+#define MITAMA_TRY(res) \
+  if (res.is_err()) \
     return ::mitama::failure(res.unwrap_err());
 
-#define TRY_LET(var, target) \
-  if (auto var = target; var.is_err()) \
-    return ::mitama::failure(var.unwrap_err());
-  
+#endif
+
 #endif
