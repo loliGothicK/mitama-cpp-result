@@ -541,21 +541,23 @@ SCENARIO("test for as_mut", "[result][as_mut]"){
 
 SCENARIO("test for indirect", "[result][indirect]"){
   using namespace std::literals;
+  using vec_iter = typename std::vector<int>::iterator;
+
   GIVEN( "A new result, containing a indirect reference into the original" ) {
-    auto ptr = std::make_shared<int>(42);
-    mut_result<std::shared_ptr<int>, std::shared_ptr<int>> res(success<std::shared_ptr<int>>{ptr});
+    std::vector<int> vec{1, 2, 3};
+    mut_result<vec_iter, vec_iter> res(success<vec_iter>{vec.begin()});
     auto indirect = res.indirect();
 
     REQUIRE( *res.unwrap() == indirect.unwrap() );
-    REQUIRE( indirect == success(42) );
+    REQUIRE( indirect == success(1) );
 
     WHEN( "The new result is overwritten" ) {
       auto& ref = indirect.unwrap();
-      ref = 57;
+      ref = 42;
 
       THEN( "the original result change" ) {
-        REQUIRE( *ptr == 57 );
-        REQUIRE( indirect == success(57) );
+        REQUIRE( vec[0] == 42 );
+        REQUIRE( indirect == success(42) );
       }
     }
   }
