@@ -1414,7 +1414,21 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an failure, with a panic message including the passed message, and the content of the failure.
-  T expect(std::string_view msg) const {
+  force_add_const_t<T>
+  expect(std::string_view msg) const& {
+    if ( is_err() )
+      PANIC("%1%: %2%", msg, unwrap_err());
+    else
+      return unwrap();
+  }
+
+  /// @brief
+  ///   Unwraps a result, yielding the content of an success.
+  ///
+  /// @panics
+  ///   Panics if the value is an failure, with a panic message including the passed message, and the content of the failure.
+  decltype(auto)
+  expect(std::string_view msg) & {
     if ( is_err() )
       PANIC("%1%: %2%", msg, unwrap_err());
     else
@@ -1426,9 +1440,25 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an success, with a panic message including the passed message, and the content of the success.
-  void expect_err(std::string_view msg) const {
+  force_add_const_t<E>
+  expect_err(std::string_view msg) const& {
     if ( is_ok() )
       PANIC("%1%: %2%", msg, unwrap());
+    else
+      return unwrap_err();
+  }
+
+  /// @brief
+  ///   Unwraps a result, yielding the content of an failure.
+  ///
+  /// @panics
+  ///   Panics if the value is an success, with a panic message including the passed message, and the content of the success.
+  decltype(auto)
+  expect_err(std::string_view msg) & {
+    if ( is_ok() )
+      PANIC("%1%: %2%", msg, unwrap());
+    else
+      return unwrap_err();
   }
 
   /// @brief
