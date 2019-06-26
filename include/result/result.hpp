@@ -1341,40 +1341,20 @@ public:
   ///   Panics if the value is an failure, with a panic message provided by the failure's value.
   std::conditional_t<is_mut_v<_mutability>, T, force_add_const_t<T>>
   unwrap() & {
-    if constexpr (is_mut_v<_mutability>) {
-      if constexpr (trait::formattable_element<E>::value) {
-        if ( is_ok() ) {
-          return boost::get<success<T>>(storage_).x;
-        }
-        else {
-          PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", *this);
-        }      
+    if constexpr (trait::formattable_element<E>::value) {
+      if ( is_ok() ) {
+        return boost::get<success<T>>(storage_).x;
       }
       else {
-        if ( is_ok() ) {
-          return boost::get<success<T>>(storage_).x;
-        }
-        else {
-          PANIC(R"(called `basic_result::unwrap()` on a value `failure(???)`)");
-        }
-      }
+        PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", *this);
+      }      
     }
     else {
-      if constexpr (trait::formattable_element<E>::value) {
-        if ( is_ok() ) {
-          return boost::get<success<T>>(storage_).x;
-        }
-        else {
-          PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", *this);
-        }      
+      if ( is_ok() ) {
+        return boost::get<success<T>>(storage_).x;
       }
       else {
-        if ( is_ok() ) {
-          return boost::get<success<T>>(storage_).x;
-        }
-        else {
-          PANIC(R"(called `basic_result::unwrap()` on a value `failure(???)`)");
-        }
+        PANIC(R"(called `basic_result::unwrap()` on a value `failure(???)`)");
       }
     }
   }
@@ -1384,7 +1364,33 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an success, with a panic message provided by the success's value.
-  E unwrap_err() const {
+  force_add_const_t<E>
+  unwrap_err() const& {
+    if constexpr (trait::formattable<T>::value) {
+      if ( is_err() ) {
+        return boost::get<failure<E>>(storage_).x;
+      }
+      else {
+        PANIC(R"(called `basic_result::unwrap_err()` on a value: %1%)", *this);
+      }
+    }
+    else {
+      if ( is_err() ) {
+        return boost::get<failure<E>>(storage_).x;
+      }
+      else {
+        PANIC(R"(called `basic_result::unwrap_err()` on a value `success(???)`)");
+      }
+    }
+  }
+
+  /// @brief
+  ///   Unwraps a result, yielding the content of an failure.
+  ///
+  /// @panics
+  ///   Panics if the value is an success, with a panic message provided by the success's value.
+  std::conditional_t<is_mut_v<_mutability>, E, force_add_const_t<E>>
+  unwrap_err() & {
     if constexpr (trait::formattable<T>::value) {
       if ( is_err() ) {
         return boost::get<failure<E>>(storage_).x;
