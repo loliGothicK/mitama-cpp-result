@@ -771,10 +771,10 @@ public:
   boost::optional<force_add_const_t<err_type>>
   err() const & noexcept {
     if (is_err()) {
-      return boost::optional<E>{boost::get<failure<E>>(storage_).x};
+      return boost::optional<force_add_const_t<err_type>>{boost::get<failure<E>>(storage_).x};
     }
     else {
-      return boost::optional<E>{boost::none};
+      return boost::optional<force_add_const_t<err_type>>{boost::none};
     }
   }
 
