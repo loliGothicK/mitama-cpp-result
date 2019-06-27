@@ -1215,7 +1215,7 @@ public:
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", *this);
+        PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", failure<E>(unwrap_err()));
       }      
     }
     else {
@@ -1240,7 +1240,7 @@ public:
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", *this);
+        PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", failure<E>(unwrap_err()));
       }      
     }
     else {
