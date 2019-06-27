@@ -1215,7 +1215,7 @@ public:
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", failure<E>(unwrap_err()));
+        PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", failure(unwrap_err()));
       }      
     }
     else {
@@ -1240,7 +1240,7 @@ public:
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", failure<E>(unwrap_err()));
+        PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", failure(unwrap_err()));
       }      
     }
     else {
@@ -1265,7 +1265,7 @@ public:
         return boost::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap_err()` on a value: %1%)", success<T>(unwrap()));
+        PANIC(R"(called `basic_result::unwrap_err()` on a value: %1%)", success(unwrap()));
       }
     }
     else {
@@ -1290,7 +1290,7 @@ public:
         return boost::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap_err()` on a value: %1%)", success<T>(unwrap()));
+        PANIC(R"(called `basic_result::unwrap_err()` on a value: %1%)", success(unwrap()));
       }
     }
     else {
