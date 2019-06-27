@@ -10,7 +10,11 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -pedantic-errors")
 ## Set our project name
 project(mitama-cpp-result)
 
+# Find Boost
+find_package(Boost 1.62.0 REQUIRED)
+
 include_directories(
+  PUBLIC ${Boost_INCLUDE_DIRS}
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/tests
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Catch2/single_include

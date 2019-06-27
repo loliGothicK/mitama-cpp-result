@@ -1,6 +1,6 @@
 #ifndef MITAMA_RESULT_TRAITS_DEREF_HPP
 #define MITAMA_RESULT_TRAITS_DEREF_HPP
-#include <result/detail/dangling.hpp>
+#include <mitama/result/detail/dangling.hpp>
 #include <type_traits>
 
 namespace mitama::traits {

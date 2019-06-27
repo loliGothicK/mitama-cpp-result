@@ -1,7 +1,7 @@
 #ifndef MITAMA_RESULT_TRAIT_HPP
 #define MITAMA_RESULT_TRAIT_HPP
 
-#include <result/detail/meta.hpp>
+#include <mitama/result/detail/meta.hpp>
 #include <type_traits>
 #include <utility>
 #include <iostream>
