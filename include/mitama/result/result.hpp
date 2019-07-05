@@ -140,8 +140,8 @@ class [[nodiscard]] success
   template <class, class>
   friend class indirect_friend_injector;
 
-  template <class... Requiers>
-  using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
+  template <class... Requires>
+  using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
 
   static constexpr std::nullptr_t required = nullptr;
 
@@ -248,14 +248,12 @@ class [[nodiscard]] failure
   template <mutability, class, class, class>
   friend class basic_result;
   template <class, class>
-  friend class printer_friend_injector;
-  template <class, class>
   friend class transpose_friend_injector;
   template <class, class>
   friend class indirect_friend_injector;
 
-  template <class... Requiers>
-  using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
+  template <class... Requires>
+  using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
 
   static constexpr std::nullptr_t required = nullptr;
 
@@ -1540,7 +1538,7 @@ operator<<(std::ostream& os, basic_result<_, T, E> const& res) {
 
 } // namespace mitama
 
-#ifndef MITAMA_WITH_MACROS
+#ifdef MITAMA_WITH_MACROS
 
 #define MITAMA_TRY(res) \
   if (res.is_err()) \

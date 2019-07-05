@@ -34,7 +34,7 @@ public:
   ///
   /// @note
   ///   Consumes the self argument then,
-  ///   if Ok, returns the contained value,
+  ///   if success, returns the contained value,
   ///   otherwise; if Err, returns the default value for that type.
   T unwrap_or_default() const
   {
@@ -71,8 +71,8 @@ public:
   ///
   /// @note
   ///   Consumes the self argument then,
-  ///   if Ok, returns the contained value,
-  ///   otherwise; if Err, returns the default value for that type.
+  ///   if success, returns the contained value,
+  ///   otherwise; if failure, returns the default value for that type.
   optional_type transpose() const &
   {
     if constexpr (meta::is_boost_optional<meta::remove_cvr_t<T>>::value) {
