@@ -219,22 +219,12 @@
 
       
         
-  <li class="md-tabs__item">
-    
-      <a href="Result101/" title="Result 101" class="md-tabs__link md-tabs__link--active">
-        Result 101
-      </a>
-    
-  </li>
-
-      
-        
   
   
     <li class="md-tabs__item">
       
-        <a href="Result101/Ok/" title="Class Reference" class="md-tabs__link">
-          Class Reference
+        <a href="Result101/intro/" title="Result 101" class="md-tabs__link">
+          Result 101
         </a>
       
     </li>
@@ -372,28 +362,16 @@
       
 
 
-  <li class="md-nav__item">
-    <a href="Result101/" title="Result 101" class="md-nav__link">
-      Result 101
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
   <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
     
-    <label class="md-nav__link" for="nav-3">
-      Class Reference
+    <label class="md-nav__link" for="nav-2">
+      Result 101
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-3">
-        Class Reference
+      <label class="md-nav__title" for="nav-2">
+        Result 101
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
         
@@ -404,8 +382,8 @@
 
 
   <li class="md-nav__item">
-    <a href="Result101/Ok/" title="Ok" class="md-nav__link">
-      Ok
+    <a href="Result101/intro/" title="Introduction" class="md-nav__link">
+      Introduction
     </a>
   </li>
 
@@ -416,80 +394,8 @@
 
 
   <li class="md-nav__item">
-    <a href="Result101/Ok/constructors/" title="constructors" class="md-nav__link">
-      constructors
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="Result101/Ok/deduction_guides/" title="deduction guides" class="md-nav__link">
-      deduction guides
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="Result101/Err/" title="Err" class="md-nav__link">
-      Err
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="Result101/Err/constructors/" title="constructors" class="md-nav__link">
-      constructors
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="Result101/Err/deduction_guides/" title="deduction guides" class="md-nav__link">
-      deduction guides
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="Result101/Result/" title="Result" class="md-nav__link">
-      Result
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="Result101/Result/constructors/" title="constructors" class="md-nav__link">
-      constructors
+    <a href="Result101/special_members/" title="Special Members" class="md-nav__link">
+      Special Members
     </a>
   </li>
 
@@ -506,13 +412,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
     
-    <label class="md-nav__link" for="nav-4">
+    <label class="md-nav__link" for="nav-3">
       API Reference
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-4">
+      <label class="md-nav__title" for="nav-3">
         API Reference
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -758,13 +664,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
     
-    <label class="md-nav__link" for="nav-5">
+    <label class="md-nav__link" for="nav-4">
       Meta Function Reference
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-5">
+      <label class="md-nav__title" for="nav-4">
         Meta Function Reference
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -851,7 +757,7 @@
                 
                 
                 <h1 id="introduction">Introduction</h1>
-<p>Result is a header only C++17 library for error handling.</p>
+<p>result is a header only C++17 library for error handling.</p>
 <h2 id="prerequisites-and-installation">Prerequisites and installation</h2>
 <table>
 <thead>
@@ -862,23 +768,37 @@
 </thead>
 <tbody>
 <tr>
-<td align="center">clang &gt;= 5.0.0</td>
-<td align="center">Testing on Wandbox; tested on each push to GitHub</td>
+<td align="center">clang &gt;= 7.0.0</td>
+<td align="center">Testing on CircleCI; tested on each push to GitHub</td>
 </tr>
 <tr>
-<td align="center">gcc &gt;= 7.1.0</td>
-<td align="center">Testing on Wandbox; tested on each push to GitHub</td>
+<td align="center">gcc &gt;= 8.3.0</td>
+<td align="center">Testing on CircleCI; tested on each push to GitHub</td>
+</tr>
+<tr>
+<td align="center">boost &gt;= 1.67.0</td>
+<td align="center">Testing on CircleCI; tested on each push to GitHub</td>
 </tr>
 </tbody>
 </table>
-<p>More specifically, Mitama.Result requires a compiler/standard library supporting the following C++17 features:</p>
+<p>More specifically, Mitama.result requires a compiler/standard library supporting the following C++17 features:</p>
 <ul>
 <li>constexpr if</li>
+<li>constexpr lambda</li>
 <li>inline variables</li>
+<li>fold expressions</li>
 <li>class template deduction and deduction guide</li>
-<li>All the C++17 type traits from the <type_traits> header</li>
-<li>std::optional from the <optional> header</li>
-<li>std::variant from the <variant> header</li>
+<li>All the C++17 type traits from the <code class="codehilite">&lt;type_traits&gt;</code> header</li>
+<li><code class="codehilite">std::{invoke, apply}</code> from the <code class="codehilite">&lt;functional&gt;</code> header</li>
+<li><code class="codehilite">std::string_view</code> from the <code class="codehilite">&lt;string_view&gt;</code> header</li>
+<li><code class="codehilite">std::monostate</code> from the <code class="codehilite">&lt;variant&gt;</code> header</li>
+</ul>
+<p>Mitama.result requires a Boost supporting the following libraries:</p>
+<ul>
+<li><code class="codehilite">boost::optional</code> from the <code class="codehilite">&lt;boost/optional.hpp&gt;</code> header</li>
+<li><code class="codehilite">boost::variant</code> from the <code class="codehilite">&lt;boost/variant.hpp&gt;</code> header</li>
+<li><code class="codehilite">boost::format</code> from the <code class="codehilite">&lt;boost/format.hpp&gt;</code> header</li>
+<li><code class="codehilite">boost::hana::{fix, overload, overload_linearly}</code> from the <code class="codehilite">&lt;boost/hana/functional/{fix, overload, overload_linearly}.hpp&gt;</code> header</li>
 </ul>
 <h2 id="basic-usage">Basic Usage</h2>
 <p>Here is a bad code, see below.</p>
@@ -897,22 +817,22 @@
 <span class="n">assert</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
 </pre></div>
 
-<p>Here is a code using Result.</p>
+<p>Here is a code using result.</p>
 <p>Even if this program fail to assert, you can get the reason for the error.</p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="nf">func</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mitama</span><span class="o">::</span><span class="n">Result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="p">{</span>
+<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="nf">func</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mitama</span><span class="o">::</span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span> <span class="n">first</span> <span class="n">check</span> <span class="p">)</span>
-    <span class="k">return</span> <span class="n">mitama</span><span class="o">::</span><span class="n">Err</span><span class="p">(</span><span class="s">&quot;first check failed&quot;</span><span class="p">);</span> <span class="c1">// early return</span>
+    <span class="k">return</span> <span class="n">mitama</span><span class="o">::</span><span class="n">failure</span><span class="p">(</span><span class="s">&quot;first check failed&quot;</span><span class="p">);</span> <span class="c1">// early return</span>
   <span class="k">if</span> <span class="p">(</span> <span class="n">second</span> <span class="n">check</span> <span class="p">)</span>
-    <span class="k">return</span> <span class="n">mitama</span><span class="o">::</span><span class="n">Err</span><span class="p">(</span><span class="s">&quot;second check failed&quot;</span><span class="p">);</span> <span class="c1">// early return</span>
+    <span class="k">return</span> <span class="n">mitama</span><span class="o">::</span><span class="n">failure</span><span class="p">(</span><span class="s">&quot;second check failed&quot;</span><span class="p">);</span> <span class="c1">// early return</span>
   <span class="k">if</span> <span class="p">(</span> <span class="n">third</span> <span class="n">check</span> <span class="p">)</span>
-    <span class="k">return</span> <span class="n">mitama</span><span class="o">::</span><span class="n">Err</span><span class="p">(</span><span class="s">&quot;third check failed&quot;</span><span class="p">);</span> <span class="c1">// early return</span>
+    <span class="k">return</span> <span class="n">mitama</span><span class="o">::</span><span class="n">failure</span><span class="p">(</span><span class="s">&quot;third check failed&quot;</span><span class="p">);</span> <span class="c1">// early return</span>
   <span class="c1">// function body...</span>
-  <span class="k">return</span> <span class="n">mitama</span><span class="o">::</span><span class="n">Ok</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+  <span class="k">return</span> <span class="n">mitama</span><span class="o">::</span><span class="n">success</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
 <span class="p">}</span>
 <span class="c1">// ...</span>
 <span class="kt">int</span> <span class="n">value</span> <span class="nf">func</span><span class="p">(</span><span class="mi">42</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span>
 <span class="c1">// even if fail to unwrap,</span>
-<span class="c1">// raise runtime_panic</span>
+<span class="c1">// raise an exception</span>
 <span class="c1">// and you get reason for the error.</span>
 </pre></div>
                 
@@ -936,13 +856,13 @@
       <nav class="md-footer-nav__inner md-grid">
         
         
-          <a href="Result101/" title="Result 101" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="Result101/intro/" title="Introduction" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Result 101
+                Introduction
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">

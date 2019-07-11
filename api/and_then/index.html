@@ -221,22 +221,12 @@
 
       
         
-  <li class="md-tabs__item">
-    
-      <a href="../../Result101/" title="Result 101" class="md-tabs__link">
-        Result 101
-      </a>
-    
-  </li>
-
-      
-        
   
   
     <li class="md-tabs__item">
       
-        <a href="../../Result101/Ok/" title="Class Reference" class="md-tabs__link">
-          Class Reference
+        <a href="../../Result101/intro/" title="Result 101" class="md-tabs__link">
+          Result 101
         </a>
       
     </li>
@@ -329,28 +319,16 @@
       
 
 
-  <li class="md-nav__item">
-    <a href="../../Result101/" title="Result 101" class="md-nav__link">
-      Result 101
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
   <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
     
-    <label class="md-nav__link" for="nav-3">
-      Class Reference
+    <label class="md-nav__link" for="nav-2">
+      Result 101
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-3">
-        Class Reference
+      <label class="md-nav__title" for="nav-2">
+        Result 101
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
         
@@ -361,8 +339,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../../Result101/Ok/" title="Ok" class="md-nav__link">
-      Ok
+    <a href="../../Result101/intro/" title="Introduction" class="md-nav__link">
+      Introduction
     </a>
   </li>
 
@@ -373,80 +351,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../../Result101/Ok/constructors/" title="constructors" class="md-nav__link">
-      constructors
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../Result101/Ok/deduction_guides/" title="deduction guides" class="md-nav__link">
-      deduction guides
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../Result101/Err/" title="Err" class="md-nav__link">
-      Err
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../Result101/Err/constructors/" title="constructors" class="md-nav__link">
-      constructors
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../Result101/Err/deduction_guides/" title="deduction guides" class="md-nav__link">
-      deduction guides
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../Result101/Result/" title="Result" class="md-nav__link">
-      Result
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../Result101/Result/constructors/" title="constructors" class="md-nav__link">
-      constructors
+    <a href="../../Result101/special_members/" title="Special Members" class="md-nav__link">
+      Special Members
     </a>
   </li>
 
@@ -465,13 +371,13 @@
 
   <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4" checked>
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
     
-    <label class="md-nav__link" for="nav-4">
+    <label class="md-nav__link" for="nav-3">
       API Reference
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-4">
+      <label class="md-nav__title" for="nav-3">
         API Reference
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -751,13 +657,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
     
-    <label class="md-nav__link" for="nav-5">
+    <label class="md-nav__link" for="nav-4">
       Meta Function Reference
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-5">
+      <label class="md-nav__title" for="nav-4">
         Meta Function Reference
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -837,27 +743,22 @@
                   <h1>and_then</h1>
                 
                 <h2 id="and_then">and_then()</h2>
-<div class="codehilite"><pre><span></span><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
-<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">O</span> <span class="o">&gt;</span>
-<span class="k">constexpr</span> <span class="k">auto</span> <span class="n">mitama</span><span class="o">::</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">and_then</span><span class="p">(</span><span class="n">O</span> <span class="o">&amp;&amp;</span> <span class="n">op</span><span class="p">)</span> <span class="k">const</span> <span class="o">&amp;</span>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">O</span><span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">and_then</span><span class="p">(</span><span class="n">O</span><span class="o">&amp;&amp;</span> <span class="n">op</span><span class="p">)</span>
+  <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result</span><span class="o">&lt;</span><span class="n">O</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="p">;</span>
 </pre></div>
 
-<p>Calls op if the result is Ok, otherwise returns the Err value of self.</p>
-<p>This function can be used for control flow based on Result values.</p>
-<p><strong>Condition</strong></p>
-<div class="codehilite"><pre><span></span><span class="c1">// for all type U:</span>
-<span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">O</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="o">=&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span>
-</pre></div>
-
+<p>Calls <code class="codehilite">op</code> if the result is success, otherwise returns the failure value of self.</p>
+<p>This function can be used for control flow based on result values.</p>
 <p><strong>Remarks</strong></p>
-<p>This constructor shall not participate in overload resolution unless <code class="codehilite">is_result_with_v&lt;std::invoke_result_t&lt;O, T&gt;, Err&lt;E&gt;&gt;</code> is true.</p>
+<p>This constructor shall not participate in overload resolution unless <code class="codehilite">is_result_with_v&lt;std::invoke_result_t&lt;O, T&gt;, failure&lt;E&gt;&gt;</code> is true.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">sq</span> <span class="o">=</span> <span class="p">[](</span><span class="kt">unsigned</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="kt">unsigned</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">return</span> <span class="n">Ok</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">);</span> <span class="p">};</span>
-<span class="k">auto</span> <span class="n">err</span> <span class="o">=</span> <span class="p">[](</span><span class="kt">unsigned</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="kt">unsigned</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">return</span> <span class="n">Err</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="p">};</span>
-<span class="n">assert_eq</span><span class="p">(</span><span class="n">Ok</span><span class="p">(</span><span class="mi">2u</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">),</span> <span class="n">Ok</span><span class="p">(</span><span class="mi">16u</span><span class="p">));</span>
-<span class="n">assert_eq</span><span class="p">(</span><span class="n">Ok</span><span class="p">(</span><span class="mi">2u</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">err</span><span class="p">),</span> <span class="n">Err</span><span class="p">(</span><span class="mi">4u</span><span class="p">));</span>
-<span class="n">assert_eq</span><span class="p">(</span><span class="n">Ok</span><span class="p">(</span><span class="mi">2u</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">err</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">),</span> <span class="n">Err</span><span class="p">(</span><span class="mi">2u</span><span class="p">));</span>
-<span class="n">assert_eq</span><span class="p">(</span><span class="n">Err</span><span class="p">(</span><span class="mi">3u</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">),</span> <span class="n">Err</span><span class="p">(</span><span class="mi">3u</span><span class="p">));</span>
+<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">sq</span> <span class="o">=</span> <span class="p">[](</span><span class="kt">unsigned</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="kt">unsigned</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">return</span> <span class="n">success</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">);</span> <span class="p">};</span>
+<span class="k">auto</span> <span class="n">err</span> <span class="o">=</span> <span class="p">[](</span><span class="kt">unsigned</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="kt">unsigned</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">return</span> <span class="n">failure</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="p">};</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">success</span><span class="p">(</span><span class="mi">2u</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">)</span> <span class="o">==</span> <span class="n">success</span><span class="p">(</span><span class="mi">16u</span><span class="p">));</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">success</span><span class="p">(</span><span class="mi">2u</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">err</span><span class="p">)</span> <span class="o">==</span> <span class="n">failure</span><span class="p">(</span><span class="mi">4u</span><span class="p">));</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">success</span><span class="p">(</span><span class="mi">2u</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">err</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">)</span> <span class="o">==</span> <span class="n">failure</span><span class="p">(</span><span class="mi">2u</span><span class="p">));</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">failure</span><span class="p">(</span><span class="mi">3u</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">)</span> <span class="o">==</span> <span class="n">failure</span><span class="p">(</span><span class="mi">3u</span><span class="p">));</span>
 </pre></div>
                 
                   

@@ -13,7 +13,7 @@
         <meta name="description" content="Mitama.Result C++17 Library">
       
       
-        <link rel="canonical" href="https://loligothick.github.io/mitama-cpp-result/Result101/Result/">
+        <link rel="canonical" href="https://loligothick.github.io/mitama-cpp-result/Result101/intro/">
       
       
         <meta name="author" content="mitama">
@@ -42,7 +42,7 @@
     
     
       
-        <title>Result - Mitama.Result | User Manual</title>
+        <title>Introduction - Mitama.Result | User Manual</title>
       
     
     
@@ -112,7 +112,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#class-result" tabindex="1" class="md-skip">
+      <a href="#introduction" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -137,7 +137,7 @@
               Mitama.Result | User Manual
             </span>
             <span class="md-header-nav__topic">
-              Result
+              Introduction
             </span>
           
         </div>
@@ -221,22 +221,12 @@
 
       
         
-  <li class="md-tabs__item">
-    
-      <a href="../" title="Result 101" class="md-tabs__link">
-        Result 101
-      </a>
-    
-  </li>
-
-      
-        
   
   
     <li class="md-tabs__item">
       
-        <a href="../Ok/" title="Class Reference" class="md-tabs__link md-tabs__link--active">
-          Class Reference
+        <a href="./" title="Result 101" class="md-tabs__link md-tabs__link--active">
+          Result 101
         </a>
       
     </li>
@@ -328,106 +318,22 @@
       
       
 
-
-  <li class="md-nav__item">
-    <a href="../" title="Result 101" class="md-nav__link">
-      Result 101
-    </a>
-  </li>
-
-    
-      
-      
-      
-
   
 
 
   <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
     
-    <label class="md-nav__link" for="nav-3">
-      Class Reference
+    <label class="md-nav__link" for="nav-2">
+      Result 101
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-3">
-        Class Reference
+      <label class="md-nav__title" for="nav-2">
+        Result 101
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
         
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../Ok/" title="Ok" class="md-nav__link">
-      Ok
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../Ok/constructors/" title="constructors" class="md-nav__link">
-      constructors
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../Ok/deduction_guides/" title="deduction guides" class="md-nav__link">
-      deduction guides
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../Err/" title="Err" class="md-nav__link">
-      Err
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../Err/constructors/" title="constructors" class="md-nav__link">
-      constructors
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../Err/deduction_guides/" title="deduction guides" class="md-nav__link">
-      deduction guides
-    </a>
-  </li>
-
         
           
           
@@ -440,26 +346,58 @@
     
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     
+      
+    
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
-        Result
+        Introduction
       </label>
     
-    <a href="./" title="Result" class="md-nav__link md-nav__link--active">
-      Result
+    <a href="./" title="Introduction" class="md-nav__link md-nav__link--active">
+      Introduction
     </a>
     
       
 <nav class="md-nav md-nav--secondary">
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#class-result" title="class Result" class="md-nav__link">
-    class Result
+  <a href="#definition-of-class-basic_result" title="Definition of class basic_result" class="md-nav__link">
+    Definition of class basic_result
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concepts" title="Concepts" class="md-nav__link">
+    Concepts
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resultmut_result-the-alias-templates" title="result/mut_result the alias templates" class="md-nav__link">
+    result/mut_result the alias templates
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#successfailure-the-in-place-factory-classes" title="success/failure the in-place factory classes" class="md-nav__link">
+    success/failure the in-place factory classes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#result-of-reference-types" title="Result of reference types" class="md-nav__link">
+    Result of reference types
   </a>
   
 </li>
@@ -481,8 +419,8 @@
 
 
   <li class="md-nav__item">
-    <a href="constructors/" title="constructors" class="md-nav__link">
-      constructors
+    <a href="../special_members/" title="Special Members" class="md-nav__link">
+      Special Members
     </a>
   </li>
 
@@ -499,13 +437,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
     
-    <label class="md-nav__link" for="nav-4">
+    <label class="md-nav__link" for="nav-3">
       API Reference
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-4">
+      <label class="md-nav__title" for="nav-3">
         API Reference
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -751,13 +689,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-5" type="checkbox" id="nav-5">
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-4" type="checkbox" id="nav-4">
     
-    <label class="md-nav__link" for="nav-5">
+    <label class="md-nav__link" for="nav-4">
       Meta Function Reference
     </label>
     <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-5">
+      <label class="md-nav__title" for="nav-4">
         Meta Function Reference
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
@@ -806,13 +744,43 @@
 <nav class="md-nav md-nav--secondary">
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">Table of contents</label>
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#class-result" title="class Result" class="md-nav__link">
-    class Result
+  <a href="#definition-of-class-basic_result" title="Definition of class basic_result" class="md-nav__link">
+    Definition of class basic_result
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concepts" title="Concepts" class="md-nav__link">
+    Concepts
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resultmut_result-the-alias-templates" title="result/mut_result the alias templates" class="md-nav__link">
+    result/mut_result the alias templates
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#successfailure-the-in-place-factory-classes" title="success/failure the in-place factory classes" class="md-nav__link">
+    success/failure the in-place factory classes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#result-of-reference-types" title="Result of reference types" class="md-nav__link">
+    Result of reference types
   </a>
   
 </li>
@@ -834,11 +802,55 @@
               
                 
                 
-                  <h1>Result</h1>
-                
-                <h2 id="class-result">class Result</h2>
-<p><code class="codehilite">Result &lt;T, E&gt;</code> is a class template that  has Ok value type of <code class="codehilite">T</code> and Err value type of <code class="codehilite">E</code>.</p>
-<p>Actually, it is a wrapper class of  <code class="codehilite">std::variant&lt;Ok&lt;T&gt;, Err&lt;E&gt;&gt;</code> that has a useful API.</p>
+                <h1 id="introduction">Introduction</h1>
+<h2 id="definition-of-class-basic_result">Definition of class basic_result</h2>
+<div class="codehilite"><pre><span></span><span class="k">enum</span> <span class="k">class</span> <span class="nc">mutability</span><span class="o">:</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="n">mut</span> <span class="o">=</span> <span class="nb">false</span><span class="p">,</span>
+    <span class="n">immut</span> <span class="o">=</span> <span class="nb">true</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="k">template</span> <span class="o">&lt;</span> <span class="n">mutability</span> <span class="n">Mut</span> <span class="o">&gt;</span>
+<span class="kr">inline</span> <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">is_mut_v</span> <span class="o">=</span> <span class="o">!</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">(</span><span class="n">Mut</span><span class="p">);</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span><span class="p">,</span>
+          <span class="k">class</span> <span class="err">= </span><span class="nc">std</span><span class="o">::</span><span class="n">monostate</span><span class="p">,</span>   <span class="c1">// success type</span>
+          <span class="k">class</span> <span class="err">= </span><span class="nc">std</span><span class="o">::</span><span class="n">monostate</span><span class="p">,</span>   <span class="c1">// failure type</span>
+          <span class="k">class</span> <span class="err">= </span><span class="nc">decltype</span><span class="p">(</span><span class="k">nullptr</span><span class="p">)</span> <span class="c1">// for detection idiom</span>
+<span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">basic_result</span><span class="p">;</span>
+</pre></div>
+
+<h2 id="concepts">Concepts</h2>
+<p><code class="codehilite">basic_result&lt;_, T, E&gt;</code> is a class that holds either a success value type <code class="codehilite">T</code> or a failure value type <code class="codehilite">E</code>.
+<code class="codehilite">basic_result&lt;_, T, E&gt;</code> holds values like <code class="codehilite">boost::variant&lt;T, E&gt;</code>.
+Therefore, <code class="codehilite">T</code> and <code class="codehilite">E</code> must satisfy the following requirements for bounded types:</p>
+<ul>
+<li>CopyConstructible or MoveConstructible.</li>
+<li>Destructor upholds the no-throw exception-safety guarantee.</li>
+<li>Complete at the point of variant template instantiation.</li>
+</ul>
+<p>In more detail, see <a href="https://www.boost.org/doc/libs/1_70_0/doc/html/variant/reference.html#variant.concepts">the document</a>.</p>
+<h2 id="resultmut_result-the-alias-templates">result/mut_result the alias templates</h2>
+<p>First (non-type) template parameter of <code class="codehilite">basic_result</code> is a value of enum class <code class="codehilite">mutability</code> for mutability control.</p>
+<p>The library provides two type synonyms of <code class="codehilite">basic_result</code> as follows:</p>
+<ul>
+<li><code class="codehilite">mut_result&lt;T, E&gt;</code> stands for <code class="codehilite">basic_result&lt;mutability::mut, T, E&gt;</code></li>
+<li><code class="codehilite">result&lt;T, E&gt;</code> stands for <code class="codehilite">basic_result&lt;mutability::immut, T, E&gt;</code></li>
+</ul>
+<p>You should use <code class="codehilite">mut_result&lt;T, E&gt;</code> if you want to resubstitute,
+<code class="codehilite">result&lt;T, E&gt;</code> do not provides assignment operators or mutable accessors.</p>
+<h2 id="successfailure-the-in-place-factory-classes">success/failure the in-place factory classes</h2>
+<p><code class="codehilite">success</code> and <code class="codehilite">failure</code> are in-place factory classes for <code class="codehilite">basic_result</code>.</p>
+<p>If you want to initialize <code class="codehilite">result&lt;T, E&gt;</code> with successful value of <code class="codehilite">T</code>, initialize with <code class="codehilite">success&lt;T&gt;</code>.</p>
+<div class="codehilite"><pre><span></span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">res</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+</pre></div>
+
+<p>Similarly, if you want to initialize <code class="codehilite">result&lt;T, E&gt;</code> with unsuccessful value of <code class="codehilite">E</code>, initialize with <code class="codehilite">failure&lt;E&gt;</code>.</p>
+<div class="codehilite"><pre><span></span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">res</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;error&quot;</span><span class="n">s</span><span class="p">);</span>
+</pre></div>
+
+<h2 id="result-of-reference-types">Result of reference types</h2>
+<p>(In Progress...)</p>
                 
                   
                 
@@ -859,7 +871,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
-          <a href="../Err/deduction_guides/" title="deduction guides" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../.." title="Home" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-flex__cell md-flex__cell--shrink">
               <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
             </div>
@@ -868,19 +880,19 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                deduction guides
+                Home
               </span>
             </div>
           </a>
         
         
-          <a href="constructors/" title="constructors" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../special_members/" title="Special Members" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                constructors
+                Special Members
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
