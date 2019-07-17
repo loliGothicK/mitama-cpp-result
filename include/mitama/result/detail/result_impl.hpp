@@ -1,10 +1,10 @@
 #ifndef MITAMA_RESULT_IMPL_HPP
 #define MITAMA_RESULT_IMPL_HPP
 
-#include <result/detail/meta.hpp>
-#include <result/traits/impl_traits.hpp>
-#include <result/traits/Deref.hpp>
-#include <result/detail/dangling.hpp>
+#include <mitama/result/detail/meta.hpp>
+#include <mitama/result/traits/impl_traits.hpp>
+#include <mitama/result/traits/Deref.hpp>
+#include <mitama/result/detail/dangling.hpp>
 #include <optional>
 #include <functional>
 #include <boost/optional.hpp>

@@ -1,8 +1,8 @@
 #ifndef MITAMA_RESULT_HPP
 #define MITAMA_RESULT_HPP
-#include <result/detail/fwd.hpp>
-#include <result/detail/meta.hpp>
-#include <result/traits/perfect_traits_special_members.hpp>
+#include <mitama/result/detail/fwd.hpp>
+#include <mitama/result/detail/meta.hpp>
+#include <mitama/result/traits/perfect_traits_special_members.hpp>
 
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
@@ -115,7 +115,7 @@ struct is_ok_type<success<T>> : std::true_type {};
 
 } // !namespace mitama
 
-#include <result/detail/result_impl.hpp>
+#include <mitama/result/detail/result_impl.hpp>
 
 namespace mitama {
 

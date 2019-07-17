@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <result/result.hpp>
-#include <match/match.hpp>
+#include <mitama/result/result.hpp>
+#include <mitama/match/match.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/type_index.hpp>
