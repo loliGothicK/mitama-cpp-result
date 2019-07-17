@@ -2,122 +2,122 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/Result101/intro/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/Result101/special_members/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/is_ok/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/is_err/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/ok/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/err/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/map/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/map_or_else/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/map_err/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/and/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/and_then/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/or/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/or_else/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/unwrap_or/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/unwrap_or_else/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/unwrap/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/unwrap_err/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/unwrap_or_default/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/transpose/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/api/equality/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/meta/is_result/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/meta/is_result_with/</loc>
-     <lastmod>2019-07-11</lastmod>
+     <lastmod>2019-07-17</lastmod>
      <changefreq>daily</changefreq>
     </url>
 </urlset>

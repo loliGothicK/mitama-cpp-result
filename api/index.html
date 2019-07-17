@@ -920,17 +920,29 @@
 <h2 id="v500-breaking-change">v5.0.0 (breaking change!)</h2>
 <h3 id="types">Types</h3>
 <ul>
-<li><code class="codehilite">basic_result</code></li>
+<li>
+<p><code class="codehilite">basic_result</code></p>
+<ul>
 <li>{<code class="codehilite">Result&lt;T, E&gt;</code> =&gt; <code class="codehilite">basic_result&lt;mutability, T, E&gt;</code>}</li>
-<li>Enabled lvalue reference types for both of <code class="codehilite">T</code> and <code class="codehilite">E</code>.</li>
-<li><code class="codehilite">result&lt;T, E&gt;</code> the alias template for immutable <code class="codehilite">basic_result</code>.</li>
-<li><code class="codehilite">mut_result&lt;T, E&gt;</code> the alias template for mutable <code class="codehilite">basic_result</code>.</li>
-<li><code class="codehilite">success</code></li>
+<li>Enabled lvalue reference types for both of <code class="codehilite">T</code> and <code class="codehilite">E</code></li>
+<li><code class="codehilite">result&lt;T, E&gt;</code> the alias template for immutable <code class="codehilite">basic_result</code></li>
+<li><code class="codehilite">mut_result&lt;T, E&gt;</code> the alias template for mutable <code class="codehilite">basic_result</code></li>
+</ul>
+</li>
+<li>
+<p><code class="codehilite">success</code></p>
+<ul>
 <li>{<code class="codehilite">Ok&lt;T&gt;</code> =&gt; <code class="codehilite">success&lt;T&gt;</code>}</li>
 <li>Enabled lvalue reference types for <code class="codehilite">T</code>.</li>
-<li><code class="codehilite">failure</code></li>
+</ul>
+</li>
+<li>
+<p><code class="codehilite">failure</code></p>
+<ul>
 <li>{<code class="codehilite">Err&lt;E&gt;</code> =&gt; <code class="codehilite">failure&lt;E&gt;</code>}</li>
 <li>Enabled lvalue reference types for <code class="codehilite">E</code>.</li>
+</ul>
+</li>
 </ul>
 <h3 id="new-apis">New APIs</h3>
 <ul>
