@@ -24,6 +24,14 @@ template <mutability,
 >
 class basic_result;
 
+/// alias template for immutable result
+template <class T = std::monostate, class E = std::monostate>
+using result = basic_result<mutability::immut, T, E>;
+
+/// alias template for mutable result
+template <class T = std::monostate, class E = std::monostate>
+using mut_result = basic_result<mutability::mut, T, E>;
+
 template <class T = std::monostate>
 class success;
 

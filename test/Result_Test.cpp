@@ -328,9 +328,9 @@ TEST_CASE("unwrap_or_default() test", "[result][unwrap_or_default]"){
 }
 
 TEST_CASE("transpose() test", "[result][transpose]"){
-  result<boost::optional<i32>, std::monostate> x = success(some(5));
-  boost::optional<result<i32, std::monostate>> y = some(result<i32, std::monostate>(success(5)));
-  
+  result<maybe<i32>, std::monostate> x = success(just(5));
+  maybe<result<i32, std::monostate>> y = success(5);
+
   REQUIRE(x.transpose() == y);
 }
 

@@ -5,6 +5,7 @@
 #include <mitama/result/traits/impl_traits.hpp>
 #include <mitama/result/traits/Deref.hpp>
 #include <mitama/result/detail/dangling.hpp>
+#include <mitama/maybe/maybe.hpp>
 #include <optional>
 #include <functional>
 #include <boost/optional.hpp>
@@ -51,7 +52,7 @@ public:
   }
 };
 
-template <class, class = void>
+template <class>
 class transpose_friend_injector
 {
 public:
@@ -61,10 +62,8 @@ public:
 /// @impl
 ///   impl<_mutability, T, E> basic_result<_mutability, Option<T>, E>
 template <mutability _mutability, class T, class E>
-class transpose_friend_injector<basic_result<_mutability, T, E>,
-                                std::enable_if_t<meta::is_optional<std::decay_t<T>>::value>>
+class transpose_friend_injector<basic_result<_mutability, maybe<T>, E>>
 {
-  using optional_type = meta::remove_cvr_t<typename meta::repack<T>::template type<basic_result<_mutability, typename meta::remove_cvr_t<T>::value_type, E>>>;
 public:
   /// @brief
   ///   Returns the contained value or a default.
@@ -73,33 +72,18 @@ public:
   ///   Consumes the self argument then,
   ///   if success, returns the contained value,
   ///   otherwise; if failure, returns the default value for that type.
-  optional_type transpose() const &
+  maybe<basic_result<_mutability ,T, E>> transpose() const &
   {
-    if constexpr (meta::is_boost_optional<meta::remove_cvr_t<T>>::value) {
-      if (static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok()) {
-        if (auto const& opt = boost::get<success<T>>(static_cast<basic_result<_mutability, T, E> const*>(this)->storage_).x; opt) {
-          return optional_type(boost::in_place(mitama::in_place_ok, opt.value()));
-        }
-        else {
-          return boost::none;
-        }
+    if (static_cast<basic_result<_mutability, maybe<T>, E>const*>(this)->is_ok()) {
+      if (auto const& may = static_cast<basic_result<_mutability, maybe<T>, E>const*>(this)->unwrap()) {
+        return success(may.unwrap());
       }
       else {
-          return optional_type(boost::in_place(mitama::in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E> const*>(this)->storage_).x));
+        return mitama::nothing;
       }
     }
     else {
-      if (static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok()) {
-        if (auto const& opt = std::get<success<T>>(static_cast<basic_result<_mutability, T, E> const*>(this)->storage_).x; opt) {
-          return optional_type(std::in_place, mitama::in_place_ok, opt.value());
-        }
-        else {
-          return std::nullopt;
-        }
-      }
-      else {
-          return optional_type(std::in_place, mitama::in_place_err, std::get<failure<E>>(static_cast<basic_result<_mutability, T, E> const*>(this)->storage_).x);
-      }
+        return failure(static_cast<basic_result<_mutability, maybe<T>, E>const*>(this)->unwrap_err());
     }
   }
 };
@@ -148,11 +132,11 @@ public:
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the success arm of the basic_result via `operator*`.
   constexpr auto indirect_ok() & -> indirect_ok_result {
-    if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return indirect_ok_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+    if ( static_cast<basic_result<_mutability, T, E>*>(this)->is_ok() ) {
+      return indirect_ok_result{in_place_ok, *static_cast<basic_result<_mutability, T, E>*>(this)->unwrap()};
     }
     else {
-      return indirect_ok_result{in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return indirect_ok_result{in_place_err, static_cast<basic_result<_mutability, T, E>*>(this)->unwrap_err()};
     }
   }
 
@@ -167,11 +151,11 @@ public:
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the failure arm of the basic_result via `operator*`.
   constexpr auto indirect_err() & -> indirect_err_result {
-    if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return indirect_err_result{in_place_ok, boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+    if ( static_cast<basic_result<_mutability, T, E>*>(this)->is_ok() ) {
+      return indirect_err_result{in_place_ok, static_cast<basic_result<_mutability, T, E>*>(this)->unwrap()};
     }
     else {
-      return indirect_err_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return indirect_err_result{in_place_err, *static_cast<basic_result<_mutability, T, E>*>(this)->unwrap_err()};
     }
   }
 
@@ -187,11 +171,11 @@ public:
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the success and failure arm of the basic_result via `operator*`.
   constexpr auto indirect() & -> indirect_result {
-    if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return indirect_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+    if ( static_cast<basic_result<_mutability, T, E>*>(this)->is_ok() ) {
+      return indirect_result{in_place_ok, *static_cast<basic_result<_mutability, T, E>*>(this)->unwrap()};
     }
     else {
-      return indirect_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return indirect_result{in_place_err, *static_cast<basic_result<_mutability, T, E>*>(this)->unwrap_err()};
     }
   }
 
@@ -208,10 +192,10 @@ public:
   ///   additionally coercing the success arm of the basic_result via `operator*`.
   constexpr auto indirect_ok() const & -> const_indirect_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return const_indirect_ok_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_indirect_ok_result{in_place_ok, *static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap()};
     }
     else {
-      return const_indirect_ok_result{in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_indirect_ok_result{in_place_err, static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap_err()};
     }
   }
 
@@ -227,10 +211,10 @@ public:
   ///   additionally coercing the failure arm of the basic_result via `operator*`.
   constexpr auto indirect_err() const & -> const_indirect_err_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return const_indirect_err_result{in_place_ok, boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_indirect_err_result{in_place_ok, static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap()};
     }
     else {
-      return const_indirect_err_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_indirect_err_result{in_place_err, *static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap_err()};
     }
   }
 
@@ -247,10 +231,10 @@ public:
   ///   additionally coercing the success and failure arm of the basic_result via `operator*`.
   constexpr auto indirect() const & -> const_indirect_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return const_indirect_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_indirect_result{in_place_ok, *static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap()};
     }
     else {
-      return const_indirect_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_indirect_result{in_place_err, *static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap_err()};
     }
   }
 
@@ -270,10 +254,10 @@ public:
   ///   Contained reference may be exhausted because of original result is rvalue.
   constexpr auto indirect_ok() && -> dangling_indirect_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return dangling_indirect_ok_result{in_place_ok, std::ref(*boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x)};
+      return dangling_indirect_ok_result{in_place_ok, std::ref(*static_cast<basic_result<_mutability, T, E>*>(this)->unwrap())};
     }
     else {
-      return dangling_indirect_ok_result{in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_indirect_ok_result{in_place_err, static_cast<basic_result<_mutability, T, E>*>(this)->unwrap_err()};
     }
   }
 
@@ -292,10 +276,10 @@ public:
   ///   Contained reference may be exhausted because of original result is rvalue.
   constexpr auto indirect_err() && -> dangling_indirect_err_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return dangling_indirect_err_result{in_place_ok, boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_indirect_err_result{in_place_ok, static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap()};
     }
     else {
-      return dangling_indirect_err_result{in_place_err, std::ref(*boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x)};
+      return dangling_indirect_err_result{in_place_err, std::ref(*static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap_err())};
     }
   }
 
@@ -314,11 +298,11 @@ public:
   /// @warning
   ///   Contained reference may be exhausted because of original result is rvalue.
   constexpr auto indirect() && -> dangling_indirect_result {
-    if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return dangling_indirect_result{in_place_ok, std::ref(*boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x)};
+    if ( static_cast<basic_result<_mutability, T, E>*>(this)->is_ok() ) {
+      return dangling_indirect_result{in_place_ok, std::ref(*static_cast<basic_result<_mutability, T, E>*>(this)->unwrap())};
     }
     else {
-      return dangling_indirect_result{in_place_err, std::ref(*boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x)};
+      return dangling_indirect_result{in_place_err, std::ref(*static_cast<basic_result<_mutability, T, E>*>(this)->unwrap_err())};
     }
   }
 
@@ -355,11 +339,11 @@ public:
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the success arm of the basic_result via `operator*`.
   constexpr auto indirect_ok() & -> indirect_ok_result {
-    if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return indirect_ok_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+    if ( static_cast<basic_result<_mutability, T, E>*>(this)->is_ok() ) {
+      return indirect_ok_result{in_place_ok, *static_cast<basic_result<_mutability, T, E>*>(this)->unwrap()};
     }
     else {
-      return indirect_ok_result{in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return indirect_ok_result{in_place_err, static_cast<basic_result<_mutability, T, E>*>(this)->unwrap_err()};
     }
   }
   constexpr void indirect_err() & = delete;
@@ -379,10 +363,10 @@ public:
   ///   additionally coercing the success arm of the basic_result via `operator*`.
   constexpr auto indirect_ok() const & -> const_indirect_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return const_indirect_ok_result{in_place_ok, *boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_indirect_ok_result{in_place_ok, *static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap()};
     }
     else {
-      return const_indirect_ok_result{in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_indirect_ok_result{in_place_err, static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap_err()};
     }
   }
   constexpr void indirect_err() const & = delete;
@@ -404,11 +388,11 @@ public:
   /// @warning
   ///   Contained reference may be exhausted because of original result is rvalue.
   constexpr auto indirect_ok() && -> dangling_indirect_ok_result {
-    if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return dangling_indirect_ok_result{in_place_ok, std::ref(*boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x)};
+    if ( static_cast<basic_result<_mutability, T, E>*>(this)->is_ok() ) {
+      return dangling_indirect_ok_result{in_place_ok, std::ref(*static_cast<basic_result<_mutability, T, E>*>(this)->unwrap())};
     }
     else {
-      return dangling_indirect_ok_result{in_place_err, boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return dangling_indirect_ok_result{in_place_err, static_cast<basic_result<_mutability, T, E>*>(this)->unwrap_err()};
     }
   }
   constexpr void indirect_err() && = delete;
@@ -449,10 +433,10 @@ public:
   ///   additionally coercing the failure arm of the basic_result via `operator*`.
   constexpr auto indirect_err() & -> indirect_err_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return indirect_err_result{in_place_ok, boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return indirect_err_result{in_place_ok, static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap()};
     }
     else {
-      return indirect_err_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return indirect_err_result{in_place_err, *static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap_err()};
     }
   }
   constexpr void indirect() & = delete;
@@ -472,10 +456,10 @@ public:
   ///   additionally coercing the failure arm of the basic_result via `operator*`.
   constexpr auto indirect_err() const & -> const_indirect_err_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return const_indirect_err_result{in_place_ok, boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_indirect_err_result{in_place_ok, static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap()};
     }
     else {
-      return const_indirect_err_result{in_place_err, *boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+      return const_indirect_err_result{in_place_err, *static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap_err()};
     }
   }
   constexpr void indirect() const & = delete;
@@ -497,11 +481,11 @@ public:
   /// @warning
   ///   Contained reference may be exhausted because of original result is rvalue.
   constexpr auto indirect_err() && -> dangling_indirect_err_result {
-    if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
-      return dangling_indirect_err_result{in_place_ok, boost::get<success<T>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x};
+    if ( static_cast<basic_result<_mutability, T, E>*>(this)->is_ok() ) {
+      return dangling_indirect_err_result{in_place_ok, static_cast<basic_result<_mutability, T, E>*>(this)->unwrap()};
     }
     else {
-      return dangling_indirect_err_result{in_place_err, std::ref(*boost::get<failure<E>>(static_cast<basic_result<_mutability, T, E>*>(this)->storage_).x)};
+      return dangling_indirect_err_result{in_place_err, std::ref(*static_cast<basic_result<_mutability, T, E>*>(this)->unwrap_err())};
     }
   }
   constexpr void indirect() && = delete;
