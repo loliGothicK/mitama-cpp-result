@@ -3,6 +3,7 @@
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
 #include <mitama/result/traits/perfect_traits_special_members.hpp>
+#include <mitama/panic.hpp>
 
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
@@ -13,13 +14,9 @@
 
 #include <functional>
 #include <optional>
-#include <stdexcept>
 #include <type_traits>
 #include <utility>
 #include <string_view>
-
-#define PANIC(...) \
-  throw ::mitama::runtime_panic { ::mitama::macro_use, __FILE__, __LINE__, __VA_ARGS__ }
 
 namespace mitama::workaround {
   template < class T, class... Ts >
@@ -55,31 +52,6 @@ operator!=(optional<T> const& lhs, optional<U> const& rhs) {
 }
 
 namespace mitama {
-
-class macro_use_tag_t{};
-inline static constexpr macro_use_tag_t macro_use{};
-
-class runtime_panic : public std::runtime_error
-{
-public:
-  template <class... Args>
-  runtime_panic(boost::format fmt, Args &&... args) noexcept
-      : std::runtime_error((fmt % ... % args).str()) {}
-
-  template <class... Args>
-  explicit runtime_panic(macro_use_tag_t, const char *func, int line, std::string fmt, Args &&... args) noexcept
-      : std::runtime_error(
-            std::string{"runtime panicked at '"} + (boost::format(fmt) % ... % [](auto&& arg [[maybe_unused]]){
-              using namespace std::literals::string_view_literals;
-              if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, std::monostate>) {
-                return "()"sv;
-              }
-              else {
-                return std::forward<decltype(arg)>(arg);
-              }
-            }(args)).str() +
-            (boost::format("', %1%:%2%") % std::string{func} % line).str()) {}
-};
 
 template <class>
 struct is_result : std::false_type {};
@@ -135,13 +107,9 @@ class [[nodiscard]] success
   T x;
   template <mutability, class, class, class>
   friend class basic_result;
-  template <class, class>
-  friend class transpose_friend_injector;
-  template <class, class>
-  friend class indirect_friend_injector;
 
-  template <class... Requiers>
-  using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
+  template <class... Requires>
+  using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
 
   static constexpr std::nullptr_t required = nullptr;
 
@@ -247,15 +215,9 @@ class [[nodiscard]] failure
   E x;
   template <mutability, class, class, class>
   friend class basic_result;
-  template <class, class>
-  friend class printer_friend_injector;
-  template <class, class>
-  friend class transpose_friend_injector;
-  template <class, class>
-  friend class indirect_friend_injector;
 
-  template <class... Requiers>
-  using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
+  template <class... Requires>
+  using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
 
   static constexpr std::nullptr_t required = nullptr;
 
@@ -358,14 +320,6 @@ inline boost::optional<T> some(Args&&... args) {
   return boost::optional<T>{boost::in_place(std::forward<Args>(args)...)};
 }
 
-/// alias template for immutable result
-template <class T = std::monostate, class E = std::monostate>
-using result = basic_result<mutability::immut, T, E>;
-
-/// alias template for mutable result
-template <class T = std::monostate, class E = std::monostate>
-using mut_result = basic_result<mutability::mut, T, E>;
-
 /// @brief class basic_result
 /// @param _mutability: enum class value for mutability control
 /// @param T: Type of successful value
@@ -396,12 +350,6 @@ class [[nodiscard]] basic_result<_mutability, T, E,
   /// result storage
   boost::variant<success<T>, failure<E>> storage_;
   /// friend accessors
-  template <class, class>
-  friend class printer_friend_injector;
-  template <class, class>
-  friend class transpose_friend_injector;
-  template <class, class>
-  friend class indirect_friend_injector;
   template <mutability, class, class, class>
   friend class basic_result;
   /// private aliases
@@ -1540,7 +1488,7 @@ operator<<(std::ostream& os, basic_result<_, T, E> const& res) {
 
 } // namespace mitama
 
-#ifndef MITAMA_WITH_MACROS
+#ifdef MITAMA_WITH_MACROS
 
 #define MITAMA_TRY(res) \
   if (res.is_err()) \

@@ -23,7 +23,9 @@ include_directories(
 
 add_executable(result-tests test/Result_Test.cpp)
 add_executable(match-tests test/Match_Test.cpp)
+add_executable(maybe-tests test/Maybe_Test.cpp)
 
 add_test(result-tests "${EXECUTABLE_OUTPUT_PATH}/result-tests")
 add_test(match-tests "${EXECUTABLE_OUTPUT_PATH}/match-tests")
+add_test(maybe-tests "${EXECUTABLE_OUTPUT_PATH}/maybe-tests")
 enable_testing()
