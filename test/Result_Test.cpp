@@ -334,6 +334,36 @@ TEST_CASE("transpose() test", "[result][transpose]"){
   REQUIRE(x.transpose() == y);
 }
 
+TEST_CASE("and_finally() test", "[result][and_finally]"){
+  int hook = 0;
+  result<int, std::string> x = failure("error"s);
+  x.and_finally([&hook](int v){
+    hook = v;
+  });
+  REQUIRE(hook == 0);
+
+  result<int, std::string> y = success(1);
+  y.and_finally([&hook](int v){
+    hook = v;
+  });
+  REQUIRE(hook == 1);
+}
+
+TEST_CASE("or_finally() test", "[result][or_finally]"){
+  std::string hook = "default";
+  result<int, std::string> x = success(42);
+  x.or_finally([&hook](std::string v){
+    hook = v;
+  });
+  REQUIRE(hook == "default"s);
+
+  result<int, std::string> y = failure("error");
+  y.or_finally([&hook](std::string v){
+    hook = v;
+  });
+  REQUIRE(hook == "error"s);
+}
+
 TEST_CASE("basics test", "[result][basics]"){
   auto even = [](u32 u) -> result<u32, str> {
     if (u % 2 == 0)

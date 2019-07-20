@@ -223,3 +223,20 @@ TEST_CASE("flatten()", "[maybe][flatten]"){
   REQUIRE(just(6) == nest.flatten().flatten());
 
 }
+
+TEST_CASE("and_finally()", "[maybe][and_finally]"){
+
+  std::string hook = "default";
+  maybe<std::string> x = nothing;
+  x.and_finally([&hook](std::string v){
+    hook = v;
+  });
+  REQUIRE(hook == "default"s);
+
+  auto y = just("error"s);
+  y.and_finally([&hook](std::string v){
+    hook = v;
+  });
+  REQUIRE(hook == "error"s);
+
+}

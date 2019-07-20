@@ -1303,6 +1303,20 @@ public:
       return unwrap_err();
   }
 
+  template <class F>
+  std::enable_if_t<std::is_invocable_v<F&&, T>>
+  and_finally(F&& f) const& {
+    if (this->is_ok())
+      std::invoke(std::forward<F>(f), unwrap());
+  }
+
+  template <class F>
+  std::enable_if_t<std::is_invocable_v<F&&, E>>
+  or_finally(F&& f) const& {
+    if (this->is_err())
+      std::invoke(std::forward<F>(f), unwrap_err());
+  }
+
   /// @brief
   ///   equal compare
   ///

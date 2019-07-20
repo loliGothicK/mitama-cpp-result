@@ -448,6 +448,12 @@ class maybe
             : std::invoke(std::forward<F>(f));
     }
 
+    template <class F>
+    std::enable_if_t<std::is_invocable_v<F&&, T&>>
+    and_finally(F&& f) const& {
+        if (this->is_just())
+            std::invoke(std::forward<F>(f), storage_->deref());
+    }
 
 };
 
