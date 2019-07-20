@@ -407,11 +407,11 @@ class maybe
             : maybe(boost::optional<T>{boost::none});
     }
 
-    template <class E>
-    auto ok_or(E&& err) const {
+    template <class E = std::monostate>
+    auto ok_or(E const& err = std::monostate{}) const {
         return this->is_just()
             ? result<T, E>{success{storage_->deref()}}
-            : result<T, E>{failure{std::forward<E>(err)}};
+            : result<T, E>{failure{err}};
     }
 
     template <class F>

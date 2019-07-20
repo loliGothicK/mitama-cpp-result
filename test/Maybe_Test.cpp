@@ -99,6 +99,8 @@ TEST_CASE("ok_or()", "[maybe][ok_or]"){
   maybe<std::string> y = nothing;
   REQUIRE(y.ok_or(0) == failure(0));
 
+  REQUIRE(y.ok_or() == failure<>());
+
 }
 
 TEST_CASE("ok_or_else()", "[maybe][ok_or_else]"){
