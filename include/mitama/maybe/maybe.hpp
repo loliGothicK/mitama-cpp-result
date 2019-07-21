@@ -7,6 +7,7 @@
 #include <mitama/result/detail/meta.hpp>
 
 #include <boost/optional.hpp>
+#include <boost/utility/in_place_factory.hpp>
 #include <boost/format.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
@@ -114,12 +115,55 @@ template <class T>
 struct is_maybe<maybe<T>>: std::true_type {};
 
 class nothing_t {};
-inline constexpr nothing_t nothing{}; 
 
 template <class T>
-inline maybe<std::remove_reference_t<T>>
-just(T&& x) {
-    return maybe<std::remove_reference_t<T>>(boost::optional<T>(std::forward<T>(x)));
+inline maybe<T> nothing{};
+
+template <>
+inline constexpr nothing_t nothing{};
+
+template <class T, class=void>
+struct just_factory {
+    template <class... Args>
+    static invoke(Args&&... args) {
+        return maybe<std::remove_reference_t<T>>(std::in_place, std::forward<Args>(args)...);
+    }
+};
+
+template <class T>
+struct just_factory<T,
+    std::enable_if_t<
+        std::disjunction_v<
+            mitamagic::is_pointer_like<std::remove_reference_t<T>>,
+            std::is_pointer<std::remove_reference_t<T>>>>>
+{
+    template <class U>
+    static invoke(U&& u) {
+        return maybe(maybe(std::forward<U>(u)));
+    }
+};
+
+template <class T>
+struct just_factory<std::in_place_type_t<T>>
+{
+    template <class... Args>
+    static invoke(Args&&... args) {
+        return maybe<T>(std::in_place, std::forward<Args>(args)...);
+    }
+};
+
+template <class Target=void, class... Ini>
+inline auto just(Ini&&... ini) {
+    if constexpr (!std::is_void_v<Target>) {
+        return just_factory<std::in_place_type_t<T>>::invoke(std::forward<Ini>(ini)...);
+    }
+    else if constexpr (sizeof...(Ini) == 1) {
+        return just_factory<std::tuple_element_t<0, std::tuple<Ini...>>>::invoke(std::forward<Ini>(ini)...);
+    }
+    else {
+        static_assert([]{ return false; }(),
+            "Error: Multi initializer given without Target. Please try `just<Target>(args...)`.");
+    }
 }
 
 template <class> class maybe_transpose_injector {
@@ -247,8 +291,23 @@ class maybe
             std::is_constructible_v<T, U&&>
          && !std::disjunction_v<
                 mitamagic::is_pointer_like<std::remove_reference_t<U>>,
-                std::is_pointer<std::remove_reference_t<U>>>, bool> = false> 
+                std::is_pointer<std::remove_reference_t<U>>>,
+        bool> = false> 
     maybe(U&& u) : storage_(std::make_shared<mitamagic::maybe_view<boost::optional<T>>>(boost::optional<T>{std::forward<U>(u)})) {}
+
+    template <class... Args,
+        std::enable_if_t<
+            std::is_constructible_v<T, Args&&...>,
+        bool> = false>
+    explicit maybe(std::in_place_t, Args&&... args)
+        : storage_(std::make_shared<mitamagic::maybe_view<boost::optional<T>>>(boost::optional<T>{boost::in_place_factory(std::forward<Args>(args)...))) {}
+
+    template <class U, class... Args,
+        std::enable_if_t<
+            std::is_constructible_v<T, std::initializer_list<U>, Args&&...>,
+        bool> = false>
+    explicit maybe(std::in_place_t, std::initializer_list<U> il, Args&&... args)
+        : storage_(std::make_shared<mitamagic::maybe_view<boost::optional<T>>>(boost::optional<T>{boost::in_place_factory(il, std::forward<Args>(args)...))) {}
 
     template <class F,
         std::enable_if_t<
