@@ -1425,6 +1425,50 @@ public:
     return this->is_err() ? !(this->unwrap_err() == rhs.x) : true;
   }
 
+  template <mutability _, class U, class F>
+  bool operator<(basic_result<_, U, F> const& rhs) const {
+    return boost::apply_visitor(
+      boost::hana::overload(
+        [](success<T> const& l, success<U> const& r) { return l.x < r.x; },
+        [](failure<E> const& l, failure<F> const& r) { return l.x < r.x; },
+        [](failure<E> const&, success<U> const&) { return true; },
+        [](success<T> const&, failure<F> const&) { return false; }),
+      this->storage_, rhs.storage_);
+  }
+
+  template <mutability _, class U, class F>
+  bool operator>(basic_result<_, U, F> const& rhs) const {
+    return boost::apply_visitor(
+      boost::hana::overload(
+        [](success<T> const& l, success<U> const& r) { return r.x < l.x; },
+        [](failure<E> const& l, failure<F> const& r) { return r.x < l.x; },
+        [](failure<E> const&, success<U> const&) { return false; },
+        [](success<T> const&, failure<F> const&) { return true; }),
+      this->storage_, rhs.storage_);
+  }
+
+  template <mutability _, class U, class F>
+  bool operator<=(basic_result<_, U, F> const& rhs) const {
+    return boost::apply_visitor(
+      boost::hana::overload(
+        [](success<T> const& l, success<U> const& r) { return l.x <= r.x; },
+        [](failure<E> const& l, failure<F> const& r) { return l.x <= r.x; },
+        [](failure<E> const&, success<U> const&) { return true; },
+        [](success<T> const&, failure<F> const&) { return false; }),
+      this->storage_, rhs.storage_);
+  }
+
+  template <mutability _, class U, class F>
+  bool operator>=(basic_result<_, U, F> const& rhs) const {
+    return boost::apply_visitor(
+      boost::hana::overload(
+        [](success<T> const& l, success<U> const& r) { return r.x <= l.x; },
+        [](failure<E> const& l, failure<F> const& r) { return r.x <= l.x; },
+        [](failure<E> const&, success<U> const&) { return false; },
+        [](success<T> const&, failure<F> const&) { return true; }),
+      this->storage_, rhs.storage_);
+  }
+
 };
 
 template <class T>

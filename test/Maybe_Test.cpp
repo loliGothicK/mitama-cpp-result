@@ -242,3 +242,115 @@ TEST_CASE("and_finally()", "[maybe][and_finally]"){
   REQUIRE(hook == "error"s);
 
 }
+
+TEST_CASE("less compare", "[maybe][less]"){
+  maybe<int> just1 = just(1);
+  maybe<int> just2 = just(2);
+  maybe<int> none1 = nothing;
+  maybe<int> none2 = nothing;
+
+  REQUIRE(just1 < just2);
+  REQUIRE_FALSE(just2 < just1);
+  REQUIRE_FALSE(just1 < just1);
+  REQUIRE_FALSE(just2 < just2);
+
+  REQUIRE_FALSE(none1 < none2);
+  REQUIRE_FALSE(none2 < none1);
+  REQUIRE_FALSE(none1 < none1);
+  REQUIRE_FALSE(none2 < none2);
+
+  REQUIRE(none1 < just1);
+  REQUIRE(none1 < just2);
+  REQUIRE(none2 < just1);
+  REQUIRE(none2 < just2);
+
+  REQUIRE_FALSE(just1 < none1);
+  REQUIRE_FALSE(just1 < none2);
+  REQUIRE_FALSE(just2 < none1);
+  REQUIRE_FALSE(just2 < none2);
+
+}
+
+TEST_CASE("less_or_equal compare", "[maybe][less_or_equal]"){
+  maybe<int> just1 = just(1);
+  maybe<int> just2 = just(2);
+  maybe<int> none1 = nothing;
+  maybe<int> none2 = nothing;
+
+  REQUIRE(just1 <= just2);
+  REQUIRE_FALSE(just2 <= just1);
+  REQUIRE(just1 <= just1);
+  REQUIRE(just2 <= just2);
+
+  REQUIRE(none1 <= none2);
+  REQUIRE(none2 <= none1);
+  REQUIRE(none1 <= none1);
+  REQUIRE(none2 <= none2);
+
+  REQUIRE(none1 <= just1);
+  REQUIRE(none1 <= just2);
+  REQUIRE(none2 <= just1);
+  REQUIRE(none2 <= just2);
+
+  REQUIRE_FALSE(just1 <= none1);
+  REQUIRE_FALSE(just1 <= none2);
+  REQUIRE_FALSE(just2 <= none1);
+  REQUIRE_FALSE(just2 <= none2);
+
+}
+
+TEST_CASE("greater compare", "[maybe][greater]"){
+  maybe<int> just1 = just(1);
+  maybe<int> just2 = just(2);
+  maybe<int> none1 = nothing;
+  maybe<int> none2 = nothing;
+
+  REQUIRE_FALSE(just1 > just2);
+  REQUIRE(just2 > just1);
+  REQUIRE_FALSE(just1 > just1);
+  REQUIRE_FALSE(just2 > just2);
+
+  REQUIRE_FALSE(none1 > none2);
+  REQUIRE_FALSE(none2 > none1);
+  REQUIRE_FALSE(none1 > none1);
+  REQUIRE_FALSE(none2 > none2);
+
+  REQUIRE_FALSE(none1 > just1);
+  REQUIRE_FALSE(none1 > just2);
+  REQUIRE_FALSE(none2 > just1);
+  REQUIRE_FALSE(none2 > just2);
+
+  REQUIRE(just1 > none1);
+  REQUIRE(just1 > none2);
+  REQUIRE(just2 > none1);
+  REQUIRE(just2 > none2);
+
+}
+
+TEST_CASE("greater_or_equal compare", "[maybe][greater_or_equal]"){
+  maybe<int> just1 = just(1);
+  maybe<int> just2 = just(2);
+  maybe<int> none1 = nothing;
+  maybe<int> none2 = nothing;
+
+  REQUIRE_FALSE(just1 >= just2);
+  REQUIRE(just2 >= just1);
+  REQUIRE(just1 >= just1);
+  REQUIRE(just2 >= just2);
+
+  REQUIRE(none1 >= none2);
+  REQUIRE(none2 >= none1);
+  REQUIRE(none1 >= none1);
+  REQUIRE(none2 >= none2);
+
+  REQUIRE_FALSE(none1 >= just1);
+  REQUIRE_FALSE(none1 >= just2);
+  REQUIRE_FALSE(none2 >= just1);
+  REQUIRE_FALSE(none2 >= just2);
+
+  REQUIRE(just1 >= none1);
+  REQUIRE(just1 >= none2);
+  REQUIRE(just2 >= none1);
+  REQUIRE(just2 >= none2);
+
+}

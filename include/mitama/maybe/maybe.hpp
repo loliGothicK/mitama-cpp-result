@@ -491,6 +491,26 @@ bool operator!=(const nothing_t, maybe<T> const& rhs) {
     return rhs.is_just();
 }
 
+template <class T, class U>
+bool operator<(maybe<T> const& lhs, maybe<U> const& rhs) {
+    return lhs.ok_or() < rhs.ok_or();
+}
+
+template <class T, class U>
+bool operator<=(maybe<T> const& lhs, maybe<U> const& rhs) {
+    return lhs.ok_or() <= rhs.ok_or();
+}
+
+template <class T, class U>
+bool operator>(maybe<T> const& lhs, maybe<U> const& rhs) {
+    return lhs.ok_or() > rhs.ok_or();
+}
+
+template <class T, class U>
+bool operator>=(maybe<T> const& lhs, maybe<U> const& rhs) {
+    return lhs.ok_or() >= rhs.ok_or();
+}
+
 /// @brief
 ///   ostream output operator for maybe<T>
 ///

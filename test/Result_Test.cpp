@@ -614,3 +614,115 @@ SCENARIO("test for dangling indirect", "[result][indirect][dangling]"){
     //       ^~~~~~~~~~~~~~~~~~~~~~~~~~ OK! 
   }
 }
+
+TEST_CASE("less compare", "[result][less]"){
+  result<int, int> ok1 = success(1);
+  result<int, int> ok2 = success(2);
+  result<int, int> err1 = failure(1);
+  result<int, int> err2 = failure(2);
+
+  REQUIRE(ok1 < ok2);
+  REQUIRE_FALSE(ok2 < ok1);
+  REQUIRE_FALSE(ok1 < ok1);
+  REQUIRE_FALSE(ok2 < ok2);
+
+  REQUIRE(err1 < err2);
+  REQUIRE_FALSE(err2 < err1);
+  REQUIRE_FALSE(err1 < err1);
+  REQUIRE_FALSE(err2 < err2);
+
+  REQUIRE(err1 < ok1);
+  REQUIRE(err1 < ok2);
+  REQUIRE(err2 < ok1);
+  REQUIRE(err2 < ok2);
+
+  REQUIRE_FALSE(ok1 < err1);
+  REQUIRE_FALSE(ok1 < err2);
+  REQUIRE_FALSE(ok2 < err1);
+  REQUIRE_FALSE(ok2 < err2);
+
+}
+
+TEST_CASE("less_or_equal compare", "[result][less_or_equal]"){
+  result<int, int> ok1 = success(1);
+  result<int, int> ok2 = success(2);
+  result<int, int> err1 = failure(1);
+  result<int, int> err2 = failure(2);
+
+  REQUIRE(ok1 <= ok2);
+  REQUIRE_FALSE(ok2 <= ok1);
+  REQUIRE(ok1 <= ok1);
+  REQUIRE(ok2 <= ok2);
+
+  REQUIRE(err1 <= err2);
+  REQUIRE_FALSE(err2 <= err1);
+  REQUIRE(err1 <= err1);
+  REQUIRE(err2 <= err2);
+
+  REQUIRE(err1 <= ok1);
+  REQUIRE(err1 <= ok2);
+  REQUIRE(err2 <= ok1);
+  REQUIRE(err2 <= ok2);
+
+  REQUIRE_FALSE(ok1 <= err1);
+  REQUIRE_FALSE(ok1 <= err2);
+  REQUIRE_FALSE(ok2 <= err1);
+  REQUIRE_FALSE(ok2 <= err2);
+
+}
+
+TEST_CASE("greater compare", "[result][greater]"){
+  result<int, int> ok1 = success(1);
+  result<int, int> ok2 = success(2);
+  result<int, int> err1 = failure(1);
+  result<int, int> err2 = failure(2);
+
+  REQUIRE_FALSE(ok1 > ok2);
+  REQUIRE(ok2 > ok1);
+  REQUIRE_FALSE(ok1 > ok1);
+  REQUIRE_FALSE(ok2 > ok2);
+
+  REQUIRE_FALSE(err1 > err2);
+  REQUIRE(err2 > err1);
+  REQUIRE_FALSE(err1 > err1);
+  REQUIRE_FALSE(err2 > err2);
+
+  REQUIRE_FALSE(err1 > ok1);
+  REQUIRE_FALSE(err1 > ok2);
+  REQUIRE_FALSE(err2 > ok1);
+  REQUIRE_FALSE(err2 > ok2);
+
+  REQUIRE(ok1 > err1);
+  REQUIRE(ok1 > err2);
+  REQUIRE(ok2 > err1);
+  REQUIRE(ok2 > err2);
+
+}
+
+TEST_CASE("greater_or_equal compare", "[result][greater_or_equal]"){
+  result<int, int> ok1 = success(1);
+  result<int, int> ok2 = success(2);
+  result<int, int> err1 = failure(1);
+  result<int, int> err2 = failure(2);
+
+  REQUIRE_FALSE(ok1 >= ok2);
+  REQUIRE(ok2 >= ok1);
+  REQUIRE(ok1 >= ok1);
+  REQUIRE(ok2 >= ok2);
+
+  REQUIRE_FALSE(err1 >= err2);
+  REQUIRE(err2 >= err1);
+  REQUIRE(err1 >= err1);
+  REQUIRE(err2 >= err2);
+
+  REQUIRE_FALSE(err1 >= ok1);
+  REQUIRE_FALSE(err1 >= ok2);
+  REQUIRE_FALSE(err2 >= ok1);
+  REQUIRE_FALSE(err2 >= ok2);
+
+  REQUIRE(ok1 >= err1);
+  REQUIRE(ok1 >= err2);
+  REQUIRE(ok2 >= err1);
+  REQUIRE(ok2 >= err2);
+
+}
