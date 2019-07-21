@@ -55,10 +55,4 @@ workflows:
       - full-test:
           compiler: gcc-9.1
       - full-test:
-          compiler: gcc-9.1
-      - full-test:
           compiler: gcc-8.3
-      - full-test:
-          compiler: gcc-8.2
-      - full-test:
-          compiler: gcc-8.1

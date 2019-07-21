@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <result/Result.hpp>
-#include <match/match.hpp>
+#include <mitama/result/result.hpp>
+#include <mitama/match/match.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/type_index.hpp>
@@ -27,19 +27,19 @@ TEST_CASE("match basic", "[match]") {
 
 TEST_CASE("match result", "[match],[result]") {
     namespace match = mitama::match;
-    using mitama::result::Result, mitama::result::Ok, mitama::result::Err;
+    using mitama::result, mitama::success, mitama::failure;
     using mitama::match::_;
     using namespace std::literals::string_literals;
 
     auto match_ = match::match(
-        match::Case(Ok(_)) <<= 1,
-        match::Case(Err(_)) <<= 2
+        match::Case(success(_)) <<= 1,
+        match::Case(failure(_)) <<= 2
     );
-    auto even = [](int u) -> Result<int, std::string> {
+    auto even = [](int u) -> result<int, std::string> {
         if (u % 2 == 0)
-            return Ok(u);
+            return success(u);
         else
-            return Err("odd"s);
+            return failure("odd"s);
     };
     REQUIRE(match_(even(2)) == 1);
     REQUIRE(match_(even(3)) == 2);
@@ -47,20 +47,20 @@ TEST_CASE("match result", "[match],[result]") {
 
 TEST_CASE("match result action", "[match],[result],[action]") {
     namespace match = mitama::match;
-    using mitama::result::Result, mitama::result::Ok, mitama::result::Err;
+    using mitama::result, mitama::success, mitama::failure;
     using mitama::match::_;
     using namespace std::literals::string_literals;
 
     int calc;
     auto match_ = match::match(
-        match::Case(Ok(_)) >>= [&]{ calc = 1; },
-        match::Case(Err(_)) >>= [&]{ calc = 2; }
+        match::Case(success(_)) >>= [&]{ calc = 1; },
+        match::Case(failure(_)) >>= [&]{ calc = 2; }
     );
-    auto even = [](int u) -> Result<int, std::string> {
+    auto even = [](int u) -> result<int, std::string> {
         if (u % 2 == 0)
-            return Ok(u);
+            return success(u);
         else
-            return Err("odd"s);
+            return failure("odd"s);
     };
     REQUIRE((match_(even(2)), calc) == 1);
     REQUIRE((match_(even(3)), calc) == 2);
@@ -68,23 +68,23 @@ TEST_CASE("match result action", "[match],[result],[action]") {
 
 TEST_CASE("match result sequence A", "[match],[result]") {
     namespace match = mitama::match;
-    using mitama::result::Result, mitama::result::Ok, mitama::result::Err;
+    using mitama::result, mitama::success, mitama::failure;
     using mitama::match::_;
     using namespace std::literals::string_literals;
 
     auto match_ = match::match(
-        match::Case(Ok(2))  >>= []{ return "2"s; },
-        match::Case(Ok(4))  >>= []{ return "4"s; },
-        match::Case(Ok(6))  >>= []{ return "6"s; },
-        match::Case(Ok(_))  >>= [](int a){ return std::to_string(a); },
-        match::Case(Err(_)) >>= [](std::string s){ return s; }
+        match::Case(success(2))  >>= []{ return "2"s; },
+        match::Case(success(4))  >>= []{ return "4"s; },
+        match::Case(success(6))  >>= []{ return "6"s; },
+        match::Case(success(_))  >>= [](int a){ return std::to_string(a); },
+        match::Case(failure(_)) >>= [](std::string s){ return s; }
     );
 
-    auto even = [](int u) -> Result<int, std::string> {
+    auto even = [](int u) -> result<int, std::string> {
         if (u % 2 == 0)
-            return Ok(u);
+            return success(u);
         else
-            return Err("odds"s);
+            return failure("odds"s);
     };
 
     {
@@ -112,22 +112,22 @@ TEST_CASE("match result sequence A", "[match],[result]") {
 
 TEST_CASE("match result sequence B", "[match],[result]") {
     namespace match = mitama::match;
-    using mitama::result::Result, mitama::result::Ok, mitama::result::Err;
+    using mitama::result, mitama::success, mitama::failure;
     using mitama::match::_;
     using boost::lambda::_1;
 
     auto match_ = match::match<double>(
-        match::Case(Ok(2)) <<= 1,
-        match::Case(Ok(4)) <<= 1,
-        match::Case(Ok(6)) <<= 1,
-        match::Case(Ok(_)) >>= _1,
-        match::Case(Err(_)) >>= [](auto v) { return v; }
+        match::Case(success(2)) <<= 1,
+        match::Case(success(4)) <<= 1,
+        match::Case(success(6)) <<= 1,
+        match::Case(success(_)) >>= _1,
+        match::Case(failure(_)) >>= [](auto v) { return v; }
     );
-    auto even = [](int u) -> Result<int, int> {
+    auto even = [](int u) -> result<int, int> {
         if (u % 2 == 0)
-            return Ok(u);
+            return success(u);
         else
-            return Err(u+1);
+            return failure(u+1);
     };
     REQUIRE(match_(even(2)) == 1);
     REQUIRE(match_(even(4)) == 1);
