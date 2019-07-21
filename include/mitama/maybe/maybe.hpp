@@ -1,10 +1,12 @@
 #ifndef MITAMA_MAYBE_HPP
 #define MITAMA_MAYBE_HPP
 
-#include <mitama/maybe/fwd/maybe_fwd.hpp>
 #include <mitama/panic.hpp>
+#include <mitama/result/factory/success.hpp>
+#include <mitama/result/factory/failure.hpp>
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
+#include <mitama/maybe/fwd/maybe_fwd.hpp>
 
 #include <boost/format.hpp>
 #include <boost/hana/functional/fix.hpp>
@@ -139,7 +141,7 @@ struct is_maybe_with: std::false_type {};
 template <class T>
 struct is_maybe_with<maybe<T>, T>: std::true_type {};
 
-class nothing_t {};
+struct nothing_t {};
 
 template <class T=void>
 inline maybe<T> nothing{};
@@ -238,9 +240,9 @@ class maybe_transpose_injector<maybe<basic_result<_, T, E>>>
 public:
     basic_result<_, maybe<std::remove_reference_t<T>>, E>
     transpose() const& {
-        return 
+        return
             static_cast<maybe<basic_result<_, T, E>>const*>(this)->is_nothing()
-                ? basic_result<_, maybe<std::remove_reference_t<T>>, E>{success{maybe<std::remove_reference_t<T>>{}}}
+                ? basic_result<_, maybe<std::remove_reference_t<T>>, E>{success{nothing<>}}
                 : static_cast<maybe<basic_result<_, T, E>>const*>(this)->unwrap().is_ok()
                     ? basic_result<_, maybe<std::remove_reference_t<T>>, E>{success{just(static_cast<maybe<basic_result<_, T, E>>const*>(this)->unwrap().unwrap())}}
                     : basic_result<_, maybe<std::remove_reference_t<T>>, E>{failure{static_cast<maybe<basic_result<_, T, E>>const*>(this)->unwrap().unwrap_err()}};
