@@ -407,11 +407,11 @@ class maybe
             : maybe(boost::optional<T>{boost::none});
     }
 
-    template <class E>
-    auto ok_or(E&& err) const {
+    template <class E = std::monostate>
+    auto ok_or(E const& err = std::monostate{}) const {
         return this->is_just()
             ? result<T, E>{success{storage_->deref()}}
-            : result<T, E>{failure{std::forward<E>(err)}};
+            : result<T, E>{failure{err}};
     }
 
     template <class F>
@@ -448,6 +448,12 @@ class maybe
             : std::invoke(std::forward<F>(f));
     }
 
+    template <class F>
+    std::enable_if_t<std::is_invocable_v<F&&, T&>>
+    and_finally(F&& f) const& {
+        if (this->is_just())
+            std::invoke(std::forward<F>(f), storage_->deref());
+    }
 
 };
 
@@ -483,6 +489,26 @@ bool operator!=(maybe<T> const& lhs, const nothing_t) {
 template <class T>
 bool operator!=(const nothing_t, maybe<T> const& rhs) {
     return rhs.is_just();
+}
+
+template <class T, class U>
+bool operator<(maybe<T> const& lhs, maybe<U> const& rhs) {
+    return lhs.ok_or() < rhs.ok_or();
+}
+
+template <class T, class U>
+bool operator<=(maybe<T> const& lhs, maybe<U> const& rhs) {
+    return lhs.ok_or() <= rhs.ok_or();
+}
+
+template <class T, class U>
+bool operator>(maybe<T> const& lhs, maybe<U> const& rhs) {
+    return lhs.ok_or() > rhs.ok_or();
+}
+
+template <class T, class U>
+bool operator>=(maybe<T> const& lhs, maybe<U> const& rhs) {
+    return lhs.ok_or() >= rhs.ok_or();
 }
 
 /// @brief

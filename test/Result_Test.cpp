@@ -334,6 +334,36 @@ TEST_CASE("transpose() test", "[result][transpose]"){
   REQUIRE(x.transpose() == y);
 }
 
+TEST_CASE("and_finally() test", "[result][and_finally]"){
+  int hook = 0;
+  result<int, std::string> x = failure("error"s);
+  x.and_finally([&hook](int v){
+    hook = v;
+  });
+  REQUIRE(hook == 0);
+
+  result<int, std::string> y = success(1);
+  y.and_finally([&hook](int v){
+    hook = v;
+  });
+  REQUIRE(hook == 1);
+}
+
+TEST_CASE("or_finally() test", "[result][or_finally]"){
+  std::string hook = "default";
+  result<int, std::string> x = success(42);
+  x.or_finally([&hook](std::string v){
+    hook = v;
+  });
+  REQUIRE(hook == "default"s);
+
+  result<int, std::string> y = failure("error");
+  y.or_finally([&hook](std::string v){
+    hook = v;
+  });
+  REQUIRE(hook == "error"s);
+}
+
 TEST_CASE("basics test", "[result][basics]"){
   auto even = [](u32 u) -> result<u32, str> {
     if (u % 2 == 0)
@@ -583,4 +613,116 @@ SCENARIO("test for dangling indirect", "[result][indirect][dangling]"){
     REQUIRE( indirect.unwrap().transmute() == 1 );
     //       ^~~~~~~~~~~~~~~~~~~~~~~~~~ OK! 
   }
+}
+
+TEST_CASE("less compare", "[result][less]"){
+  result<int, int> ok1 = success(1);
+  result<int, int> ok2 = success(2);
+  result<int, int> err1 = failure(1);
+  result<int, int> err2 = failure(2);
+
+  REQUIRE(ok1 < ok2);
+  REQUIRE_FALSE(ok2 < ok1);
+  REQUIRE_FALSE(ok1 < ok1);
+  REQUIRE_FALSE(ok2 < ok2);
+
+  REQUIRE(err1 < err2);
+  REQUIRE_FALSE(err2 < err1);
+  REQUIRE_FALSE(err1 < err1);
+  REQUIRE_FALSE(err2 < err2);
+
+  REQUIRE(err1 < ok1);
+  REQUIRE(err1 < ok2);
+  REQUIRE(err2 < ok1);
+  REQUIRE(err2 < ok2);
+
+  REQUIRE_FALSE(ok1 < err1);
+  REQUIRE_FALSE(ok1 < err2);
+  REQUIRE_FALSE(ok2 < err1);
+  REQUIRE_FALSE(ok2 < err2);
+
+}
+
+TEST_CASE("less_or_equal compare", "[result][less_or_equal]"){
+  result<int, int> ok1 = success(1);
+  result<int, int> ok2 = success(2);
+  result<int, int> err1 = failure(1);
+  result<int, int> err2 = failure(2);
+
+  REQUIRE(ok1 <= ok2);
+  REQUIRE_FALSE(ok2 <= ok1);
+  REQUIRE(ok1 <= ok1);
+  REQUIRE(ok2 <= ok2);
+
+  REQUIRE(err1 <= err2);
+  REQUIRE_FALSE(err2 <= err1);
+  REQUIRE(err1 <= err1);
+  REQUIRE(err2 <= err2);
+
+  REQUIRE(err1 <= ok1);
+  REQUIRE(err1 <= ok2);
+  REQUIRE(err2 <= ok1);
+  REQUIRE(err2 <= ok2);
+
+  REQUIRE_FALSE(ok1 <= err1);
+  REQUIRE_FALSE(ok1 <= err2);
+  REQUIRE_FALSE(ok2 <= err1);
+  REQUIRE_FALSE(ok2 <= err2);
+
+}
+
+TEST_CASE("greater compare", "[result][greater]"){
+  result<int, int> ok1 = success(1);
+  result<int, int> ok2 = success(2);
+  result<int, int> err1 = failure(1);
+  result<int, int> err2 = failure(2);
+
+  REQUIRE_FALSE(ok1 > ok2);
+  REQUIRE(ok2 > ok1);
+  REQUIRE_FALSE(ok1 > ok1);
+  REQUIRE_FALSE(ok2 > ok2);
+
+  REQUIRE_FALSE(err1 > err2);
+  REQUIRE(err2 > err1);
+  REQUIRE_FALSE(err1 > err1);
+  REQUIRE_FALSE(err2 > err2);
+
+  REQUIRE_FALSE(err1 > ok1);
+  REQUIRE_FALSE(err1 > ok2);
+  REQUIRE_FALSE(err2 > ok1);
+  REQUIRE_FALSE(err2 > ok2);
+
+  REQUIRE(ok1 > err1);
+  REQUIRE(ok1 > err2);
+  REQUIRE(ok2 > err1);
+  REQUIRE(ok2 > err2);
+
+}
+
+TEST_CASE("greater_or_equal compare", "[result][greater_or_equal]"){
+  result<int, int> ok1 = success(1);
+  result<int, int> ok2 = success(2);
+  result<int, int> err1 = failure(1);
+  result<int, int> err2 = failure(2);
+
+  REQUIRE_FALSE(ok1 >= ok2);
+  REQUIRE(ok2 >= ok1);
+  REQUIRE(ok1 >= ok1);
+  REQUIRE(ok2 >= ok2);
+
+  REQUIRE_FALSE(err1 >= err2);
+  REQUIRE(err2 >= err1);
+  REQUIRE(err1 >= err1);
+  REQUIRE(err2 >= err2);
+
+  REQUIRE_FALSE(err1 >= ok1);
+  REQUIRE_FALSE(err1 >= ok2);
+  REQUIRE_FALSE(err2 >= ok1);
+  REQUIRE_FALSE(err2 >= ok2);
+
+  REQUIRE(ok1 >= err1);
+  REQUIRE(ok1 >= err2);
+  REQUIRE(ok2 >= err1);
+  REQUIRE(ok2 >= err2);
+
 }
