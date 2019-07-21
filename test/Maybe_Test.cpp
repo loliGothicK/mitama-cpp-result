@@ -40,7 +40,7 @@ TEST_CASE("unwrap()", "[maybe][unwrap]"){
     using namespace boost::xpressive;
     sregex re =
         as_xpr(
-            "runtime panicked at 'called `maybe::unwrap()` on a `nothing<>` value', ") >>
+            "runtime panicked at 'called `maybe::unwrap()` on a `nothing` value', ") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
     REQUIRE(regex_match(std::string{p.what()}, what, re));
@@ -49,13 +49,13 @@ TEST_CASE("unwrap()", "[maybe][unwrap]"){
 
 TEST_CASE("unwrap_or()", "[maybe][unwrap_or]"){
   REQUIRE(just("car"s).unwrap_or("bike"s) == "car"s);
-  REQUIRE(maybe<std::string>{nothing<>}.unwrap_or("bike"s) == "bike"s);
+  REQUIRE(nothing<std::string>.unwrap_or("bike"s) == "bike"s);
 }
 
 TEST_CASE("unwrap_or_else()", "[maybe][unwrap_or_else]"){
   int k = 10;
   REQUIRE(just(4).unwrap_or_else([k]{ return 2 * k; }) == 4);
-  REQUIRE(maybe<int>{nothing<>}.unwrap_or_else([k]{ return 2 * k; }) == 20);
+  REQUIRE(nothing<int>.unwrap_or_else([k]{ return 2 * k; }) == 20);
 }
 
 TEST_CASE("map()", "[maybe][map]"){
@@ -197,7 +197,7 @@ TEST_CASE("replace()", "[maybe][replace]"){
 TEST_CASE("transpose()", "[maybe][transpose]"){
 
   result<maybe<int>, std::string> x = success(just(5));
-  maybe<result<int, std::string>> y{ success(5) };
+  maybe<result<int, std::string>> y = just(mitama::in_place(success(5)));
   REQUIRE(x == y.transpose());
 
 }
@@ -213,7 +213,7 @@ TEST_CASE("flatten()", "[maybe][flatten]"){
   auto x = just(just(6));
   REQUIRE(just(6) == x.flatten());
 
-  maybe<maybe<int>> y = just(maybe<int>{});
+  maybe<maybe<int>> y = just(nothing<int>);
   REQUIRE(nothing<> == y.flatten());
 
   maybe<maybe<int>> z = nothing<>;
