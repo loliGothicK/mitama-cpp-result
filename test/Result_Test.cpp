@@ -329,7 +329,7 @@ TEST_CASE("unwrap_or_default() test", "[result][unwrap_or_default]"){
 
 TEST_CASE("transpose() test", "[result][transpose]"){
   result<maybe<i32>, std::monostate> x = success(just(5));
-  maybe<result<i32, std::monostate>> y = success(5);
+  maybe<result<i32, std::monostate>> y = just(mitama::in_place(success(5)));
 
   REQUIRE(x.transpose() == y);
 }

@@ -574,6 +574,14 @@ public:
     : storage_{err}
   {}
 
+  constexpr basic_result(success<> ok)
+    : storage_{ok}
+  {}
+
+  constexpr basic_result(failure<> err)
+    : storage_{err}
+  {}
+
   /// @brief
   ///   in-place constructor for successful result
   template <class... Args,
