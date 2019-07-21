@@ -643,80 +643,20 @@ public:
   constexpr bool operator !() const noexcept { return ::mitama::workaround::holds_alternative<failure<E>>(storage_); }
 
   /// @brief
-  ///   Converts from basic_result to boost::optional.
-  ///
-  /// @note
-  ///   If self is
-  ///   - immutable: returns `boost::optional<const T>`
-  ///   -  mutable : returns `boost::optional<T>`
-  constexpr
-  std::conditional_t<is_mut_v<_mutability>,
-    boost::optional<ok_type>,
-    boost::optional<force_add_const_t<ok_type>>
-  >
-  ok() & noexcept {
-    using ret = std::conditional_t<is_mut_v<_mutability>, boost::optional<ok_type>, boost::optional<force_add_const_t<ok_type>>>;
-    if (is_ok()) {
-      return ret{boost::get<success<T>>(storage_).x};
-    }
-    else {
-      return ret{boost::none};
-    }
-  }
-
-  /// @brief
   ///   Converts from basic_result to `boost::optional<const T>`.
   ///
   /// @note
   ///   Converts self into a `boost::optional<const T>`, and discarding the failure, if any.
   constexpr
-  boost::optional<force_add_const_t<ok_type>>
+  maybe<std::remove_reference_t<ok_type>>
   ok() const & noexcept {
     if (is_ok()) {
-      return boost::optional<force_add_const_t<ok_type>>{boost::get<success<T>>(std::move(storage_)).x};
+      return mitama::in_place(unwrap());
     }
     else {
-      return boost::optional<force_add_const_t<ok_type>>{boost::none};
+      return nothing<>;
     }
   }
-
-  /// @brief
-  ///   Converts from basic_result to `boost::optional`.
-  ///
-  /// @note
-  ///   If T is lvalue reference and self is
-  ///     - immutable: returns `boost::optional<dangling<std::reference_wrapper<const T>>>`
-  ///     -  mutable : returns `boost::optional<dangling<std::reference_wrapper<T>>>`
-  ///   T is not lvalue reference and self is
-  ///     - immutable: returns `oost::optional<const T>`
-  ///     -  mutable : returns `boost::optional<T>`
-  constexpr auto
-  ok() && noexcept {
-    using ret = std::conditional_t<is_mut_v<_mutability>, boost::optional<ok_type>, boost::optional<force_add_const_t<ok_type>>>;
-    if constexpr (std::is_lvalue_reference_v<ok_type>) {
-      if (is_ok()) {
-        if constexpr (is_mut_v<_mutability>) {
-          return boost::optional<dangle_ref<std::remove_reference_t<ok_type>>>{boost::in_place(std::ref(boost::get<success<T>>(storage_).x))};
-        }
-        else {
-          return boost::optional<dangle_ref<std::add_const_t<std::remove_reference_t<ok_type>>>>{boost::in_place(std::cref(boost::get<success<T>>(storage_).x))};
-        }
-      }
-      else {
-        return boost::optional<dangle_ref<std::conditional_t<is_mut_v<_mutability>, std::remove_reference_t<ok_type>, force_add_const_t<std::remove_reference_t<ok_type>>>>>{boost::none};
-      }
-    }
-    else {
-      if (is_ok()) {
-        return ret{boost::get<success<T>>(std::move(storage_)).x};
-      }
-      else {
-        return ret{boost::none};
-      }
-    }
-  }
-
-  void ok() const&& = delete;
 
   /// @brief
   ///   Converts from basic_result to `boost::optional`.
@@ -724,74 +664,16 @@ public:
   /// @note
   ///   Converts self into a `boost::optional<const E>`, and discarding the success, if any.
   constexpr
-  boost::optional<force_add_const_t<err_type>>
+  maybe<std::remove_reference_t<err_type>>
   err() const & noexcept {
     if (is_err()) {
-      return boost::optional<force_add_const_t<err_type>>{boost::get<failure<E>>(storage_).x};
+      return mitama::in_place(unwrap_err());
     }
     else {
-      return boost::optional<force_add_const_t<err_type>>{boost::none};
+      return nothing<>;
     }
   }
 
-  /// @brief
-  ///   Converts from basic_result to `boost::optional<const E>`.
-  ///
-  /// @note
-  ///   If self is
-  ///   - immutable: returns `boost::optional<const E>`
-  ///   -  mutable : returns `boost::optional<E>`
-  constexpr
-  std::conditional_t<is_mut_v<_mutability>,
-    boost::optional<err_type>,
-    boost::optional<force_add_const_t<err_type>>
-  >
-  err() & noexcept {
-    using ret = std::conditional_t<is_mut_v<_mutability>, boost::optional<err_type>, boost::optional<force_add_const_t<err_type>>>;
-    if (is_err()) {
-      return ret{boost::get<failure<E>>(std::move(storage_)).x};
-    }
-    else {
-      return ret{boost::none};
-    }
-  }
-
-  /// @brief
-  ///   Converts from basic_result to `boost::optional`.
-  ///
-  /// @note
-  ///   If E is lvalue reference and self is
-  ///     - immutable: returns boost::optional<dangling<std::reference_wrapper<const E>>>
-  ///     -  mutable : returns boost::optional<dangling<std::reference_wrapper<E>>>
-  ///   E is not lvalue reference and self is
-  ///     - immutable: returns boost::optional<const E>
-  ///     -  mutable : returns boost::optional<E>
-  constexpr auto
-  err() && noexcept {
-    using ret = std::conditional_t<is_mut_v<_mutability>, boost::optional<err_type>, boost::optional<force_add_const_t<err_type>>>;
-    if constexpr (std::is_lvalue_reference_v<ok_type>) {
-      if (is_err()) {
-        if constexpr (is_mut_v<_mutability>) {
-          return boost::optional<dangle_ref<std::remove_reference_t<err_type>>>{boost::in_place(std::ref(boost::get<failure<E>>(storage_).x))};
-        }
-        else {
-          return boost::optional<dangle_ref<std::add_const_t<std::remove_reference_t<err_type>>>>{boost::in_place(std::cref(boost::get<failure<E>>(storage_).x))};
-        }
-      }
-      else {
-        return boost::optional<dangle_ref<std::conditional_t<is_mut_v<_mutability>, std::remove_reference_t<err_type>, force_add_const_t<std::remove_reference_t<err_type>>>>>{boost::none};
-      }
-    }
-    else {
-      if (is_err()) {
-        return ret{boost::get<failure<E>>(std::move(storage_)).x};
-      }
-      else {
-        return ret{boost::none};
-      }
-    }
-  }
-  
   /// @brief
   ///   Produces a new basic_result, containing a reference into the original, leaving the original in place.
   constexpr auto as_ref() const&
