@@ -123,26 +123,18 @@ TEST_CASE("is_err() test", "[result][is_err]"){
 
 TEST_CASE("ok() test", "[result][ok]"){
   result<u32, str> x = success(2);
-  REQUIRE(x.err() == none);
+  REQUIRE(x.ok() == just(2u));
 
   result<int, str> y = failure("Nothing here"s);
-  REQUIRE(y.err() == some("Nothing here"s));
-
-  REQUIRE(std::is_same_v<int&, typename result<int&, str&>::ok_type>);
-  REQUIRE(std::is_same_v<boost::optional<const int&>, decltype(std::declval<result<int&, str&>&>().ok())>);
-  REQUIRE(std::is_same_v<boost::optional<const int&>, decltype(std::declval<result<int&, str&> const&>().ok())>);
-  REQUIRE(std::is_same_v<boost::optional<dangle_ref<const int>>, decltype(std::declval<result<int&, str&>&&>().ok())>);
-  REQUIRE(std::is_same_v<boost::optional<int&>, decltype(std::declval<mut_result<int&, str&>&>().ok())>);
-  REQUIRE(std::is_same_v<boost::optional<const int&>, decltype(std::declval<mut_result<int&, str&> const&>().ok())>);
-  REQUIRE(std::is_same_v<boost::optional<dangle_ref<int>>, decltype(std::declval<mut_result<int&, str&>&&>().ok())>);
+  REQUIRE(y.ok() == nothing<>);
 }
 
 TEST_CASE("err() test", "[result][err]"){
-  result<u32, str> x = success(2);
-  REQUIRE(x.err() == none);
+  result<u32, str> x = success(2u);
+  REQUIRE(x.err() == nothing<>);
 
   result<u32, str> y = failure("Nothing here"s);
-  REQUIRE(y.err() == some("Nothing here"s));
+  REQUIRE(y.err() == just("Nothing here"s));
 }
 
 TEST_CASE("map() test", "[result][map]"){
@@ -152,7 +144,7 @@ TEST_CASE("map() test", "[result][map]"){
   {
     if (auto res = parse<i32>(num).map(_1 * 2); res.is_ok())
     {
-      REQUIRE(res.ok().value() % 2 == 0);
+      REQUIRE(res.ok().unwrap() % 2 == 0);
     }
   }
 }
