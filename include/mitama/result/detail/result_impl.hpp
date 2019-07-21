@@ -76,18 +76,17 @@ public:
   {
     if (static_cast<basic_result<_mutability, maybe<T>, E>const*>(this)->is_ok()) {
       if (auto const& may = static_cast<basic_result<_mutability, maybe<T>, E>const*>(this)->unwrap()) {
-        return success(may.unwrap());
+        return just(::mitama::in_place(success(may.unwrap())));
       }
       else {
-        return mitama::nothing;
+        return mitama::nothing<>;
       }
     }
     else {
-        return failure(static_cast<basic_result<_mutability, maybe<T>, E>const*>(this)->unwrap_err());
+        return just(::mitama::in_place(failure(static_cast<basic_result<_mutability, maybe<T>, E>const*>(this)->unwrap_err())));
     }
   }
 };
-
 
 template <class, class = void>
 class indirect_friend_injector

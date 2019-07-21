@@ -2,21 +2,22 @@
 #define MITAMA_MAYBE_HPP
 
 #include <mitama/maybe/fwd/maybe_fwd.hpp>
-#include <mitama/result/detail/fwd.hpp>
 #include <mitama/panic.hpp>
+#include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
 
-#include <boost/optional.hpp>
 #include <boost/format.hpp>
+#include <boost/hana/functional/fix.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
-#include <boost/hana/functional/fix.hpp>
+#include <boost/optional.hpp>
+#include <boost/utility/in_place_factory.hpp>
 
-#include <type_traits>
-#include <optional>
-#include <utility>
-#include <memory>
 #include <functional>
+#include <memory>
+#include <optional>
+#include <type_traits>
+#include <utility>
 
 namespace mitama::mitamagic {
 template <class, class=void> struct is_pointer_like: std::false_type {};
@@ -78,6 +79,18 @@ class maybe_view<T,
     template <typename U, std::enable_if_t<std::is_convertible_v<U,T>, bool> = false>
     maybe_view(U&& u) : storage_{std::forward<U>(u)} {}
 
+    template <class... Args>
+    maybe_view(std::in_place_t, Args&&... args) : storage_{std::forward<Args>(args)...} {}
+
+    template <class U, class... Args>
+    maybe_view(std::in_place_type_t<boost::optional<U>>, Args&&... args) : storage_(boost::in_place(std::forward<Args>(args)...)) {}
+
+    template <class U, class... Args>
+    maybe_view(std::in_place_type_t<std::shared_ptr<U>>, Args&&... args) : storage_{std::make_shared<U>(std::forward<Args>(args)...)} {}
+
+    template <class U, class... Args>
+    maybe_view(std::in_place_type_t<std::unique_ptr<U>>, Args&&... args) : storage_{std::make_unique<U>(std::forward<Args>(args)...)} {}
+
     bool is_just() const override final {
         return bool(storage_);
     }
@@ -103,6 +116,13 @@ class maybe_view<T,
 };
 
 template <class T> maybe_view(T&&) -> maybe_view<T>;
+template <class T, class... Args> maybe_view(std::in_place_type_t<T>, Args&&...) -> maybe_view<T>;
+
+template <class T, class... Args>
+inline auto default_maybe_view(Args&&... args) {
+    return std::make_shared<maybe_view<boost::optional<T>>>(std::in_place_type<boost::optional<T>>, std::forward<Args>(args)...);
+}
+
 }
 
 namespace mitama {
@@ -114,12 +134,91 @@ template <class T>
 struct is_maybe<maybe<T>>: std::true_type {};
 
 class nothing_t {};
-inline constexpr nothing_t nothing{}; 
+
+template <class T=void>
+inline maybe<T> nothing{};
+
+template <>
+inline constexpr auto nothing<void> = nothing_t{};
+
+namespace mitamagic {
+template <class T, class=void>
+struct just_factory {
+    template <class... Args>
+    static auto invoke(Args&&... args) {
+        return maybe<std::remove_reference_t<T>>(std::in_place, std::forward<Args>(args)...);
+    }
+};
 
 template <class T>
-inline maybe<std::remove_reference_t<T>>
-just(T&& x) {
-    return maybe<std::remove_reference_t<T>>(boost::optional<T>(std::forward<T>(x)));
+struct just_factory<T,
+    std::enable_if_t<
+        std::disjunction_v<
+            mitamagic::is_pointer_like<std::remove_reference_t<T>>,
+            std::is_pointer<std::remove_reference_t<T>>>>>
+{
+    template <class U>
+    static auto invoke(U&& u) {
+        return maybe(maybe(std::forward<U>(u)));
+    }
+};
+
+template <class T>
+struct just_factory<std::in_place_type_t<T>>
+{
+    template <class... Args>
+    static auto invoke(Args&&... args) {
+        return maybe<T>(std::in_place, std::forward<Args>(args)...);
+    }
+};
+}
+
+class in_place_factory_base {};
+
+template <class... Args>
+class in_place_factory: in_place_factory_base {
+    std::tuple<Args...> pack;
+public:
+    constexpr explicit in_place_factory(Args... args): pack(std::forward<Args>(args)...) {}
+
+    template <class T>
+    decltype(auto) apply(std::in_place_type_t<T>) const {
+        return std::apply([](auto&&... args){ return T(std::forward<decltype(args)>(args)...); }, pack);
+    }
+
+    template <class T>
+    void* apply(std::in_place_type_t<T>, void* address) const {
+        return std::apply([address](auto&&... args) -> void* { return new(address) T(std::forward<decltype(args)>(args)...); }, pack);
+    }
+
+    template <class F>
+    decltype(auto) apply(F&& supplier) const {
+        return std::apply(std::forward<F>(supplier), pack);
+    }
+};
+
+template <class... Args>
+constexpr auto in_place(Args&&... args) {
+    return ::mitama::in_place_factory<Args&&...>{std::forward<Args>(args)...};
+}
+
+template <class Target=void, class... Ini>
+inline auto just(Ini&&... ini) {
+    if constexpr (!std::is_void_v<Target>) {
+        return mitamagic::just_factory<std::in_place_type_t<Target>>::invoke(std::forward<Ini>(ini)...);
+    }
+    else if constexpr (sizeof...(Ini) == 1 && std::is_base_of_v<::mitama::in_place_factory_base, std::decay_t<std::tuple_element_t<0, std::tuple<Ini...>>>>) {
+        return [](auto&& factory, auto&&...){
+            return std::forward<decltype(factory)>(factory);
+        }(std::forward<Ini>(ini)...);
+    }
+    else if constexpr (sizeof...(Ini) == 1) {
+        return mitamagic::just_factory<std::tuple_element_t<0, std::tuple<Ini...>>>::invoke(std::forward<Ini>(ini)...);
+    }
+    else {
+        static_assert([]{ return false; }(),
+            "Error: Multi initializer given without Target. Please try `just<Target>(args...)`.");
+    }
 }
 
 template <class> class maybe_transpose_injector {
@@ -185,7 +284,7 @@ public:
         return static_cast<maybe<maybe<T>>const*>(this)->is_just()
             && static_cast<maybe<maybe<T>>const*>(this)->unwrap().is_just()
                 ? just(static_cast<maybe<maybe<T>>const*>(this)->unwrap().unwrap())
-                : nothing;
+                : nothing<>;
     }
 };
 
@@ -200,8 +299,8 @@ class maybe_copy_injector<maybe<T>, std::enable_if_t<std::is_copy_constructible_
 public:
     maybe<T> copied() const& {
         return static_cast<maybe<T>const*>(this)->is_just()
-            ? maybe<T>(static_cast<maybe<T>const*>(this)->unwrap())
-            : nothing;
+            ? just<T>([](auto&& some) -> std::decay_t<decltype(some)> { return std::forward<decltype(some)>(some); }(static_cast<maybe<T>const*>(this)->unwrap()))
+            : nothing<>;
     }
 
     maybe<T> replace(T value) & {
@@ -237,6 +336,7 @@ class maybe
 
     template <typename U,
         std::enable_if_t<
+            !std::is_base_of_v<mitama::in_place_factory_base, std::decay_t<U>> &&
             std::disjunction_v<
                 mitamagic::is_pointer_like<std::remove_reference_t<U>>,
                 std::is_pointer<std::remove_reference_t<U>>>, bool> = false> 
@@ -244,11 +344,38 @@ class maybe
 
     template <typename U,
         std::enable_if_t<
-            std::is_constructible_v<T, U&&>
-         && !std::disjunction_v<
-                mitamagic::is_pointer_like<std::remove_reference_t<U>>,
-                std::is_pointer<std::remove_reference_t<U>>>, bool> = false> 
-    maybe(U&& u) : storage_(std::make_shared<mitamagic::maybe_view<boost::optional<T>>>(boost::optional<T>{std::forward<U>(u)})) {}
+            std::conjunction_v<
+                std::is_constructible<T, U&&>,
+                std::negation<std::is_base_of<mitama::in_place_factory_base, std::decay_t<U>>>,
+                std::disjunction<
+                    mitamagic::is_pointer_like<std::remove_reference_t<U>>,
+                    std::is_pointer<std::remove_reference_t<U>>>>,
+        bool> = false> 
+    maybe(U&& u) : storage_(mitamagic::default_maybe_view<T>(std::forward<U>(u))) {}
+
+    template <class... Args,
+        std::enable_if_t<
+            std::is_constructible_v<T, Args&&...>,
+        bool> = false>
+    explicit maybe(std::in_place_t, Args&&... args)
+        : storage_(mitamagic::default_maybe_view<T>(std::forward<Args>(args)...)) {}
+
+    template <class U, class... Args,
+        std::enable_if_t<
+            std::is_constructible_v<T, std::initializer_list<U>, Args&&...>,
+        bool> = false>
+    explicit maybe(std::in_place_t, std::initializer_list<U> il, Args&&... args)
+        : storage_(mitamagic::default_maybe_view<T>(il, std::forward<Args>(args)...)) {}
+
+    template <class InplaceFactory,
+        std::enable_if_t<
+            std::is_base_of_v<mitama::in_place_factory_base, std::decay_t<InplaceFactory>>,
+        bool> = false>
+    maybe(InplaceFactory&& factory)
+        : storage_(std::forward<InplaceFactory>(factory).apply([](auto&&... args){
+            return mitamagic::default_maybe_view<T>(std::forward<decltype(args)>(args)...);
+        }))
+    {}
 
     template <class F,
         std::enable_if_t<
@@ -433,7 +560,7 @@ class maybe
     and_then(F&& f) const {
         return this->is_just()
             ? std::invoke(std::forward<F>(f),storage_->deref())
-            : nothing;
+            : nothing<>;
     }
 
     template <class F>
