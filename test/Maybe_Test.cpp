@@ -47,6 +47,27 @@ TEST_CASE("unwrap()", "[maybe][unwrap]"){
   }
 }
 
+TEST_CASE("expect()", "[maybe][expect]"){
+  {
+    auto x = just("air"s);
+    REQUIRE(x.expect("the world is ending") == "air"s);
+  }
+  try {
+    maybe<int> x = nothing<>;
+    x.expect("the world is ending"); // panics
+  }
+  catch (runtime_panic const &p)
+  {
+    using namespace boost::xpressive;
+    sregex re =
+        as_xpr(
+            "runtime panicked at 'the world is ending`, ") >>
+        *_ >> as_xpr(":") >> +range('0', '9');
+    smatch what;
+    REQUIRE(regex_match(std::string{p.what()}, what, re));
+  }
+}
+
 TEST_CASE("unwrap_or()", "[maybe][unwrap_or]"){
   REQUIRE(just("car"s).unwrap_or("bike"s) == "car"s);
   REQUIRE(nothing<std::string>.unwrap_or("bike"s) == "bike"s);
@@ -148,7 +169,7 @@ TEST_CASE("or_else()", "[maybe][or_else]"){
 }
 
 TEST_CASE("get_or_insert()", "[maybe][get_or_insert]"){
-  GIVEN("a nothing<> type of maybe<int>.") {
+  GIVEN("a nothing type of maybe<int>.") {
     maybe<int> x = nothing<>;
     WHEN("call get_or_insert with value `5` and bind to `y`."){
       auto& y = x.get_or_insert(5);
@@ -164,7 +185,7 @@ TEST_CASE("get_or_insert()", "[maybe][get_or_insert]"){
 }
 
 TEST_CASE("get_or_insert_with()", "[maybe][get_or_insert_with]"){
-  GIVEN("a nothing<> type of maybe<int>.") {
+  GIVEN("a nothing type of maybe<int>.") {
     maybe<int> x = nothing<>;
     WHEN("call get_or_insert_with and bind to `y`."){
       auto& y = x.get_or_insert_with([]{ return 5; });
