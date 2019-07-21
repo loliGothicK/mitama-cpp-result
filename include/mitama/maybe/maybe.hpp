@@ -133,6 +133,12 @@ struct is_maybe: std::false_type {};
 template <class T>
 struct is_maybe<maybe<T>>: std::true_type {};
 
+template <class, class>
+struct is_maybe_with: std::false_type {};
+
+template <class T>
+struct is_maybe_with<maybe<T>, T>: std::true_type {};
+
 class nothing_t {};
 
 template <class T=void>
@@ -326,6 +332,7 @@ class maybe
     template<class, class>
     friend class maybe_copy_injector;
   public:
+    using value_type = T;
     ~maybe() = default;
     maybe() = default;
     maybe(maybe const&) = default;
@@ -419,7 +426,7 @@ class maybe
             }
         }
     }
-    
+
     explicit operator bool() const {
         return this->is_just();
     }
@@ -579,8 +586,8 @@ class maybe
     std::enable_if_t<
         std::conjunction_v<
             std::is_invocable<F&&>,
-            is_maybe<std::decay_t<std::invoke_result_t<F&&>>>>,
-    maybe >
+            is_maybe_with<std::decay_t<std::invoke_result_t<F&&>>, T>>,
+    maybe>
     or_else(F&& f) const {
         return this->is_just()
             ? just(unwrap())
@@ -593,7 +600,6 @@ class maybe
         if (this->is_just())
             std::invoke(std::forward<F>(f), storage_->deref());
     }
-
 };
 
 template <class T, class U>
@@ -706,7 +712,6 @@ operator<<(std::ostream& os, maybe<T> const& may) {
   return may.is_just() ? os << boost::format("just(%1%)") % inner_format( may.unwrap() )
                        : os << "nothing"sv;
 }
-
 
 template <class T> maybe(T&&) -> maybe<typename mitamagic::element_type<std::decay_t<T>>::type>;
 
