@@ -21,6 +21,7 @@
 #include <optional>
 #include <type_traits>
 #include <utility>
+#include <string_view>
 
 namespace mitama::mitamagic {
 template <class, class=void> struct is_pointer_like: std::false_type {};
@@ -525,7 +526,7 @@ class maybe
             return unwrap();
         }
         else {
-            PANIC("%1%: %2%", msg);
+            PANIC("%1%", msg);
         }
     }
 
