@@ -416,7 +416,7 @@ class maybe
                 return maybe<typename mitamagic::element_type<std::decay_t<result_type>>::type>{std::invoke(std::forward<F>(f), storage_->deref())};
             }
             else {
-                return maybe<typename mitamagic::element_type<std::decay_t<result_type>>::type>{std::nullopt};
+                return maybe<typename mitamagic::element_type<std::decay_t<result_type>>::type>{boost::none};
             }
         }
         else {
