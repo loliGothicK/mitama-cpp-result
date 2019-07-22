@@ -399,20 +399,15 @@ class maybe
             std::is_constructible<std::invoke_result_t<F&&, T&>, decltype(nullptr)>,
             std::is_constructible<std::invoke_result_t<F&&, T&>, std::nullopt_t>,
             std::is_constructible<std::invoke_result_t<F&&, T&>, boost::none_t>>) {
-            if ( this->is_just() ) {
-                return maybe<typename mitamagic::element_type<std::decay_t<result_type>>::type>{std::invoke(std::forward<F>(f), storage_->deref())};
-            }
-            else {
-                return nothing<typename mitamagic::element_type<std::decay_t<result_type>>::type>;
-            }
+
+            return this->is_just()
+                ? maybe<typename mitamagic::element_type<std::decay_t<result_type>>::type>{std::invoke(std::forward<F>(f), storage_->deref())}
+                : nothing<>;
         }
         else {
-            if ( this->is_just() ) {
-                return maybe<result_type>{boost::optional<result_type>(std::invoke(std::forward<F>(f), storage_->deref()))};
-            }
-            else {
-                return nothing<result_type>;
-            }
+            return this->is_just()
+                ? maybe<result_type>{boost::optional<result_type>(std::invoke(std::forward<F>(f), storage_->deref()))}
+                : nothing<>;
         }
     }
 
