@@ -217,7 +217,7 @@ inline auto just(Ini&&... ini) {
     }
     else {
         static_assert([]{ return false; }(),
-            "Error: Multi initializer given without Target. Please try `just<Target>(args...)`.");
+            "Error: Given variadic initializers without Target. Please try `just<Target>(args...)`.");
     }
 }
 
@@ -505,7 +505,9 @@ class maybe
 
     template <class U, class F>
     std::enable_if_t<
-        std::is_invocable_v<F&&, T&>,
+        std::conjunction_v<
+            std::is_invocable<F&&, T&>,
+            meta::has_type<std::common_type<U&&, std::invoke_result_t<F&&, T&>>>>,
     std::common_type_t<U&&, std::invoke_result_t<F&&, T&>>>
     map_or(U&& def, F&& f) const {
         return is_just()
@@ -517,12 +519,22 @@ class maybe
     std::enable_if_t<
         std::conjunction_v<
             std::is_invocable<D&&>,
-            std::is_invocable<F&&, T&>>,
+            std::is_invocable<F&&, T&>,
+            meta::has_type<std::common_type<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, T&>>>>,
     std::common_type_t<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, T&>>>
     map_or_else(D&& def, F&& f) const {
         return is_just()
             ? std::invoke(std::forward<F>(f), storage_->deref())
             : std::invoke(std::forward<D>(def));
+    }
+
+    T& expect(std::string_view msg) {
+        if (this->is_just()) {
+            return this->unwrap();
+        }
+        else {
+            PANIC("%1%: %2%", msg);
+        }
     }
 
     template <class Pred,
