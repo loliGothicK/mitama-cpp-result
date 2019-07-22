@@ -6,6 +6,7 @@
 #include <mitama/result/factory/failure.hpp>
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
+#include <mitama/result/traits/impl_traits.hpp>
 #include <mitama/maybe/fwd/maybe_fwd.hpp>
 
 #include <boost/format.hpp>
