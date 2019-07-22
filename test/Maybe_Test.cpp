@@ -61,7 +61,7 @@ TEST_CASE("expect()", "[maybe][expect]"){
     using namespace boost::xpressive;
     sregex re =
         as_xpr(
-            "runtime panicked at 'the world is ending`, ") >>
+            "runtime panicked at 'the world is ending', ") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
     REQUIRE(regex_match(std::string{p.what()}, what, re));

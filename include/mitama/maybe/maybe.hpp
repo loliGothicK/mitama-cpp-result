@@ -6,6 +6,7 @@
 #include <mitama/result/factory/failure.hpp>
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
+#include <mitama/result/traits/impl_traits.hpp>
 #include <mitama/maybe/fwd/maybe_fwd.hpp>
 
 #include <boost/format.hpp>
@@ -20,6 +21,7 @@
 #include <optional>
 #include <type_traits>
 #include <utility>
+#include <string_view>
 
 namespace mitama::mitamagic {
 template <class, class=void> struct is_pointer_like: std::false_type {};
@@ -524,7 +526,7 @@ class maybe
             return unwrap();
         }
         else {
-            PANIC("%1%: %2%", msg);
+            PANIC("%1%", msg);
         }
     }
 
