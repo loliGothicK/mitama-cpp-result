@@ -348,7 +348,7 @@ class maybe
             !std::is_base_of_v<mitama::in_place_factory_base, std::decay_t<U>> &&
             std::disjunction_v<
                 mitamagic::is_pointer_like<std::remove_reference_t<U>>,
-                std::is_pointer<std::remove_reference_t<U>>>, bool> = false> 
+                std::is_pointer<std::remove_reference_t<U>>>, bool> = false>
     maybe(U&& u) : storage_(std::make_shared<mitamagic::maybe_view<U>>(std::forward<U>(u))) {}
 
     template <typename U,
@@ -359,7 +359,7 @@ class maybe
                 std::disjunction<
                     mitamagic::is_pointer_like<std::remove_reference_t<U>>,
                     std::is_pointer<std::remove_reference_t<U>>>>,
-        bool> = false> 
+        bool> = false>
     maybe(U&& u) : storage_(mitamagic::default_maybe_view<T>(std::forward<U>(u))) {}
 
     template <class... Args,
@@ -678,7 +678,7 @@ operator<<(std::ostream& os, maybe<T> const& may) {
           [](std::monostate) { return "()"s; },
           [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
           [](auto const& x) { return (boost::format("%1%") % x).str(); })
-        (x);        
+        (x);
       },
       [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_dictionary<std::decay_t<decltype(x)>>::value, std::string> {
         if (x.empty()) return "{}"s;
