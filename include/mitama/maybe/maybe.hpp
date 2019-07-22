@@ -424,7 +424,7 @@ class maybe
                 return maybe<result_type>{boost::optional<result_type>(std::invoke(std::forward<F>(f), storage_->deref()))};
             }
             else {
-                return maybe<result_type>{boost::optional<result_type>{boost::none}};
+                return maybe<result_type>{boost::optional<result_type>{}};
             }
         }
     }
