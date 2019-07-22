@@ -400,19 +400,19 @@ class maybe
             std::is_constructible<std::invoke_result_t<F&&, T&>, std::nullopt_t>,
             std::is_constructible<std::invoke_result_t<F&&, T&>, boost::none_t>>) {
 
-            return this->is_just()
+            return is_just()
                 ? maybe<typename mitamagic::element_type<std::decay_t<result_type>>::type>{std::invoke(std::forward<F>(f), storage_->deref())}
                 : nothing<>;
         }
         else {
-            return this->is_just()
+            return is_just()
                 ? maybe<result_type>{boost::optional<result_type>(std::invoke(std::forward<F>(f), storage_->deref()))}
                 : nothing<>;
         }
     }
 
     explicit operator bool() const {
-        return this->is_just();
+        return is_just();
     }
 
     decltype(auto) operator->() & {
@@ -428,7 +428,7 @@ class maybe
     }
 
     bool is_nothing() const {
-        return !this->is_just();
+        return !is_just();
     }
 
     decltype(auto) unwrap() & {
@@ -451,7 +451,7 @@ class maybe
             return storage_->deref();
         }
         else {
-            return this->is_just()
+            return is_just()
                 ? storage_->deref()
                 : (*storage_->get_pointer() = v);
         }
@@ -469,7 +469,7 @@ class maybe
             return storage_->deref();
         }
         else {
-            return this->is_just()
+            return is_just()
                 ? storage_->deref()
                 : (*storage_->get_pointer() = std::invoke(std::forward<F>(f)));
         }
@@ -520,8 +520,8 @@ class maybe
     }
 
     T& expect(std::string_view msg) {
-        if (this->is_just()) {
-            return this->unwrap();
+        if (is_just()) {
+            return unwrap();
         }
         else {
             PANIC("%1%: %2%", msg);
@@ -532,14 +532,14 @@ class maybe
         std::enable_if_t<
             std::is_invocable_r_v<bool, Pred&&, T&>, bool> = false>
     maybe filter(Pred&& predicate) const {
-        return this->is_just() && std::invoke(std::forward<Pred>(predicate), storage_->deref())
+        return is_just() && std::invoke(std::forward<Pred>(predicate), storage_->deref())
             ? maybe(boost::optional<T>{storage_->deref()})
             : maybe(boost::optional<T>{boost::none});
     }
 
     template <class E = std::monostate>
     auto ok_or(E const& err = std::monostate{}) const {
-        return this->is_just()
+        return is_just()
             ? result<T, E>{success{storage_->deref()}}
             : result<T, E>{failure{err}};
     }
@@ -549,7 +549,7 @@ class maybe
         std::is_invocable_v<F&&>,
     result<T, std::invoke_result_t<F&&>>>
     ok_or_else(F&& err) const {
-        return this->is_just()
+        return is_just()
             ? result<T, std::invoke_result_t<F&&>>{success{storage_->deref()}}
             : result<T, std::invoke_result_t<F&&>>{failure{std::invoke(std::forward<F>(err))}};
     }
@@ -561,7 +561,7 @@ class maybe
             is_maybe<std::decay_t<std::invoke_result_t<F&&, T&>>>>,
     std::invoke_result_t<F&&, T&> >
     and_then(F&& f) const {
-        return this->is_just()
+        return is_just()
             ? std::invoke(std::forward<F>(f),storage_->deref())
             : nothing<>;
     }
@@ -573,7 +573,7 @@ class maybe
             is_maybe_with<std::decay_t<std::invoke_result_t<F&&>>, T>>,
     maybe>
     or_else(F&& f) const {
-        return this->is_just()
+        return is_just()
             ? just(unwrap())
             : std::invoke(std::forward<F>(f));
     }
@@ -581,7 +581,7 @@ class maybe
     template <class F>
     std::enable_if_t<std::is_invocable_v<F&&, T&>>
     and_finally(F&& f) const& {
-        if (this->is_just())
+        if (is_just())
             std::invoke(std::forward<F>(f), storage_->deref());
     }
 };
