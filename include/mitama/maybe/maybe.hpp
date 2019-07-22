@@ -395,37 +395,19 @@ class maybe
             "specified functor is not invocable.");
         using result_type = std::remove_reference_t<std::invoke_result_t<F&&, T&>>;
 
-        if constexpr (std::is_constructible_v<std::invoke_result_t<F&&, T&>, decltype(nullptr)>) {
-            if ( this->is_just() ) {
-                return maybe<typename mitamagic::element_type<std::decay_t<result_type>>::type>{std::invoke(std::forward<F>(f), storage_->deref())};
-            }
-            else {
-                return maybe<typename mitamagic::element_type<std::decay_t<result_type>>::type>{result_type{nullptr}};
-            }
-        }
-        else if constexpr (std::is_constructible_v<std::invoke_result_t<F&&, T&>, std::nullopt_t>) {
-            if ( this->is_just() ) {
-                return maybe<typename mitamagic::element_type<std::decay_t<result_type>>::type>{std::invoke(std::forward<F>(f), storage_->deref())};
-            }
-            else {
-                return maybe<typename mitamagic::element_type<std::decay_t<result_type>>::type>{std::nullopt};
-            }
-        }
-        else if constexpr (std::is_constructible_v<std::invoke_result_t<F&&, T&>, boost::none_t>) {
-            if ( this->is_just() ) {
-                return maybe<typename mitamagic::element_type<std::decay_t<result_type>>::type>{std::invoke(std::forward<F>(f), storage_->deref())};
-            }
-            else {
-                return maybe<typename mitamagic::element_type<std::decay_t<result_type>>::type>{boost::none};
-            }
+        if constexpr (std::disjunction_v<
+            std::is_constructible<std::invoke_result_t<F&&, T&>, decltype(nullptr)>,
+            std::is_constructible<std::invoke_result_t<F&&, T&>, std::nullopt_t>,
+            std::is_constructible<std::invoke_result_t<F&&, T&>, boost::none_t>>) {
+
+            return this->is_just()
+                ? maybe<typename mitamagic::element_type<std::decay_t<result_type>>::type>{std::invoke(std::forward<F>(f), storage_->deref())}
+                : nothing<>;
         }
         else {
-            if ( this->is_just() ) {
-                return maybe<result_type>{boost::optional<result_type>(std::invoke(std::forward<F>(f), storage_->deref()))};
-            }
-            else {
-                return maybe<result_type>{boost::optional<result_type>{boost::none}};
-            }
+            return this->is_just()
+                ? maybe<result_type>{boost::optional<result_type>(std::invoke(std::forward<F>(f), storage_->deref()))}
+                : nothing<>;
         }
     }
 
