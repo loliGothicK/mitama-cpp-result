@@ -28,9 +28,8 @@ jobs:
       - run: apt upgrade -y && apt update -y && apt install -y git
       - run: git submodule update --init --recursive
       - run: |
-          mkdir build && cd build && cmake .. &&  make
-          ./result-tests
-          ./match-tests
+          mkdir build && cd build && cmake .. && cmake --build .
+          find -type f -name "*-tests" | bash
           # if [[ $CXX =~ ^clang.*$ ]]
           # then
           #   mkdir build && cd build && cmake .. &&  make
