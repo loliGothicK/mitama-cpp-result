@@ -49,14 +49,14 @@ public:
             where<not_self<std::decay_t<U>>,
                   std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
-  constexpr failure(U && u) noexcept(std::is_nothrow_constructible_v<E, U>)
+  constexpr failure(U&& u) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(std::forward<U>(u)) {}
 
   template <class U,
             where<not_self<std::decay_t<U>>,
                   std::is_constructible<E, U>,
                   std::negation<std::is_convertible<U, E>>> = required>
-  explicit constexpr failure(U && u) noexcept(std::is_nothrow_constructible_v<E, U>)
+  explicit constexpr failure(U&& u) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(std::forward<U>(u)) {}
 
   template <typename U,
@@ -75,15 +75,15 @@ public:
 
   template <typename U,
             where<std::negation<std::is_same<E, U>>,
-                  std::is_constructible<E, U &&>,
-                  std::is_convertible<U &&, E>> = required>
+                  std::is_constructible<E, U&&>,
+                  std::is_convertible<U&&, E>> = required>
   constexpr failure(failure<U> && t) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(std::move(t.x)) {}
 
   template <typename U,
             where<std::negation<std::is_same<E, U>>,
-                  std::is_constructible<E, U &&>,
-                  std::negation<std::is_convertible<U &&, E>>> = required>
+                  std::is_constructible<E, U&&>,
+                  std::negation<std::is_convertible<U&&, E>>> = required>
   explicit constexpr failure(failure<U> && t) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(std::move(t.x)) {}
 
@@ -92,12 +92,10 @@ public:
   explicit constexpr failure(std::in_place_t, Args && ... args) noexcept(std::is_nothrow_constructible_v<E, Args...>)
       : x(std::forward<Args>(args)...) {}
 
-  template <mutability _mut, class T_, class E_>
-  constexpr
   std::enable_if_t<
       is_comparable_with<E, E_>::value,
       bool>
-  operator==(basic_result<_mut, T_, E_> const &rhs) const
+  operator==(basic_result<_mut, T_, E_> const& rhs) const
   {
     return rhs.is_err() ? rhs.unwrap_err() == this->x : false;
   }
@@ -107,13 +105,13 @@ public:
   std::enable_if_t<
       is_comparable_with<E, E_>::value,
       bool>
-  operator==(failure<E_> const &rhs) const
+  operator==(failure<E_> const& rhs) const
   {
     return this->x == rhs.x;
   }
 
   template <class T_>
-  constexpr bool operator==(success<T_> const &) const
+  constexpr bool operator==(success<T_> const& ) const
   {
     return false;
   }

@@ -127,23 +127,25 @@ public:
     }
 };
 
+
 template <class, class=void> class maybe_copy_injector {
 public:
-    void copied() = delete;
+    void cloned() = delete;
     void replace() = delete;
 };
 
 template <class T>
 class maybe_copy_injector<maybe<T>, std::enable_if_t<std::is_copy_constructible_v<T>>> {
 public:
-    maybe<T> copied() const& {
+    maybe<std::remove_reference_t<T>> cloned() const& {
+        auto decay_copy = [](auto&& some) -> std::decay_t<decltype(some)> { return std::forward<decltype(some)>(some); };
         return static_cast<maybe<T>const*>(this)->is_just()
-            ? maybe<T>{just([](auto&& some) -> std::decay_t<decltype(some)> { return std::forward<decltype(some)>(some); }(static_cast<maybe<T>const*>(this)->unwrap()))}
+            ? maybe<std::remove_reference_t<T>>{just(decay_copy(static_cast<maybe<T>const*>(this)->unwrap()))}
             : nothing;
     }
 
     maybe<T> replace(T value) & {
-        auto old = static_cast<maybe<T>*>(this)->copied();
+        auto old = static_cast<maybe<T>*>(this)->cloned();
         static_cast<maybe<T>*>(this)->storage_ = value;
         return old;
     }
@@ -248,32 +250,38 @@ class maybe
         return std::move(storage_.value());
     }
 
-    auto cloned() const {
+    auto as_ref() & {
         return is_just()
-            ? maybe<const T>(boost::optional<const T&>(unwrap()))
+            ? maybe<T&>(boost::optional<T&>(unwrap()))
             : nothing;
     }
 
-    template <class U>
-    std::enable_if_t<
-        std::is_assignable_v<T&, U&&>,
-    T&>
-    get_or_insert(U&& v) & {
+    auto as_ref() const& {
         return is_just()
-            ? storage_.value()
-            : (storage_ = std::forward<U>(v)).value();
+            ? maybe<const T&>(boost::optional<const T&>(unwrap()))
+            : nothing;
     }
 
-    template <class F>
+    template <class... Args>
     std::enable_if_t<
-        std::conjunction_v<
-            std::is_invocable<F&&>,
-            std::is_assignable<T&, std::invoke_result_t<F&&>>>,
+        std::is_constructible_v<T, Args&&...>,
     T&>
-    get_or_insert_with(F&& f) & {
+    get_or_emplace(Args&&... args) & {
         return is_just()
             ? storage_.value()
-            : (storage_ = std::invoke(std::forward<F>(f))).value();
+            : (storage_.emplace(std::forward<Args>(args)...), storage_.value());
+    }
+
+    template <class F, class... Args>
+    std::enable_if_t<
+        std::conjunction_v<
+            std::is_invocable<F&&, Args&&...>,
+            std::is_constructible<T, std::invoke_result_t<F&&, Args&&...>>>,
+    T&>
+    get_or_emplace_with(F&& f, Args&&... args) & {
+        return is_just()
+            ? storage_.value()
+            : (storage_.emplace(std::invoke(std::forward<F>(f), std::forward<Args>(args)...)), storage_.value());
     }
 
     template <class U>

@@ -1,6 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 #include <mitama/result/result.hpp>
+#include <mitama/result/result_io.hpp>
 #include <mitama/maybe/maybe.hpp>
 
 #include <boost/xpressive/xpressive.hpp>
@@ -168,11 +169,26 @@ TEST_CASE("or_else()", "[maybe][or_else]"){
 
 }
 
-TEST_CASE("get_or_insert()", "[maybe][get_or_insert]"){
+struct noncopyable {
+  noncopyable() = default;
+  noncopyable(noncopyable const&) = delete;
+  noncopyable& operator=(noncopyable const&) = delete;
+  noncopyable(noncopyable&&) = default;
+  noncopyable& operator=(noncopyable&&) = default;
+};
+
+TEST_CASE("get_or_emplace()", "[maybe][get_or_emplace]"){
+    maybe<noncopyable> x = nothing;
+    std::ignore = x.get_or_emplace(noncopyable{});
+}
+
+TEST_CASE("get_or_emplace_with()", "[maybe][get_or_emplace_with]"){
   GIVEN("a nothing type of maybe<int>.") {
     maybe<int> x = nothing;
-    WHEN("call get_or_insert with value `5` and bind to `y`."){
-      auto& y = x.get_or_insert(5);
+    WHEN("call get_or_emplace_with and bind to `y`."){
+      std::ignore = x.get_or_emplace_with([]{ return 5; });
+      std::ignore = x.get_or_emplace_with([](auto x){ return x; }, 5);
+      auto& y = x.get_or_emplace_with(&std::string::size , "12345"s);
       REQUIRE(y == 5);
       WHEN("assign 7 to `y`") {
         y = 7;
@@ -184,21 +200,16 @@ TEST_CASE("get_or_insert()", "[maybe][get_or_insert]"){
   }
 }
 
-TEST_CASE("get_or_insert_with()", "[maybe][get_or_insert_with]"){
-  GIVEN("a nothing type of maybe<int>.") {
-    maybe<int> x = nothing;
-    WHEN("call get_or_insert_with and bind to `y`."){
-      auto& y = x.get_or_insert_with([]{ return 5; });
-      REQUIRE(y == 5);
-      WHEN("assign 7 to `y`") {
-        y = 7;
-        THEN("changed x to just(7)"){
-          REQUIRE(x == just(7));
-        }
-      }
-    }
+TEST_CASE("as_ref()", "[maybe][as_ref]"){
+  {
+    maybe x = just(5);
+    auto ref = x.as_ref();
+    REQUIRE(x == just(5));
+    ref.unwrap() = 2;
+    REQUIRE(x == just(2));
   }
 }
+
 
 TEST_CASE("replace()", "[maybe][replace]"){
   {

@@ -12,6 +12,11 @@ struct [[nodiscard]] nothing_t {};
 
 inline constexpr nothing_t nothing{};
 
+std::ostream& operator<<(std::ostream& os, nothing_t) {
+    return os << "nothing";
+}
+
+
 /// class just:
 /// The main use of this class is to propagate some value to the constructor of the maybe class.
 template <class T>
@@ -47,14 +52,14 @@ public:
         where<not_self<std::decay_t<U>>,
                 std::is_constructible<T, U>,
                 std::is_convertible<U, T>> = required>
-    constexpr just_t(U && u) noexcept(std::is_nothrow_constructible_v<T, U>)
+    constexpr just_t(U&& u) noexcept(std::is_nothrow_constructible_v<T, U>)
         : x(std::forward<U>(u)) {}
 
     template <class U,
         where<not_self<std::decay_t<U>>,
                 std::is_constructible<T, U>,
                 std::negation<std::is_convertible<U, T>>> = required>
-    explicit constexpr just_t(U && u) noexcept(std::is_nothrow_constructible_v<T, U>)
+    explicit constexpr just_t(U&& u) noexcept(std::is_nothrow_constructible_v<T, U>)
         : x(std::forward<U>(u)) {}
 
     template <typename U,
@@ -73,15 +78,15 @@ public:
 
     template <typename U,
         where<std::negation<std::is_same<T, U>>,
-                std::is_constructible<T, U &&>,
-                std::is_convertible<U &&, T>> = required>
+                std::is_constructible<T, U&&>,
+                std::is_convertible<U&&, T>> = required>
     constexpr just_t(just_t<U> && t) noexcept(std::is_nothrow_constructible_v<T, U>)
         : x(std::move(t.x)) {}
 
     template <typename U,
         where<std::negation<std::is_same<T, U>>,
-                std::is_constructible<T, U &&>,
-                std::negation<std::is_convertible<U &&, T>>> = required>
+                std::is_constructible<T, U&&>,
+                std::negation<std::is_convertible<U&&, T>>> = required>
     explicit constexpr just_t(just_t<U> && t) noexcept(std::is_nothrow_constructible_v<T, U>)
         : x(std::move(t.x)) {}
 
@@ -122,6 +127,13 @@ public:
         return !(lhs == rhs);
     }
 
+    friend std::ostream& operator<<(std::ostream& os, just_t const& j) {
+        return os << boost::hana::overload_linearly(
+          [](std::monostate) { return boost::format("just()"); },
+          [](std::string_view x) { return boost::format("just(\"%1%\")") % x; },
+          [](auto const& x) { return boost::format("just(%1%)") % x; })
+        (j.x);
+    }
 };
 
 template <class T>

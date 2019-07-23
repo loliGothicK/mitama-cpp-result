@@ -34,10 +34,10 @@ template <bool B, class Tag = void>
 struct perfect_trait_default_ctor
 {
   constexpr perfect_trait_default_ctor() noexcept = default;
-  constexpr perfect_trait_default_ctor(perfect_trait_default_ctor const &) noexcept = default;
+  constexpr perfect_trait_default_ctor(perfect_trait_default_ctor const& ) noexcept = default;
   constexpr perfect_trait_default_ctor(perfect_trait_default_ctor &&) noexcept = default;
   perfect_trait_default_ctor &
-  operator=(perfect_trait_default_ctor const &) noexcept = default;
+  operator=(perfect_trait_default_ctor const& ) noexcept = default;
   perfect_trait_default_ctor &
   operator=(perfect_trait_default_ctor &&) noexcept = default;
 
@@ -52,10 +52,10 @@ template <class Tag>
 struct perfect_trait_default_ctor<false, Tag>
 {
   constexpr perfect_trait_default_ctor() noexcept = delete;
-  constexpr perfect_trait_default_ctor(perfect_trait_default_ctor const &) noexcept = default;
+  constexpr perfect_trait_default_ctor(perfect_trait_default_ctor const& ) noexcept = default;
   constexpr perfect_trait_default_ctor(perfect_trait_default_ctor &&) noexcept = default;
   perfect_trait_default_ctor &
-  operator=(perfect_trait_default_ctor const &) noexcept = default;
+  operator=(perfect_trait_default_ctor const& ) noexcept = default;
   perfect_trait_default_ctor &
   operator=(perfect_trait_default_ctor &&) noexcept = default;
 
@@ -81,10 +81,10 @@ template <class Tag>
 struct perfect_trait_copy_move<false, true, true, true, Tag>
 {
   constexpr perfect_trait_copy_move() noexcept = default;
-  constexpr perfect_trait_copy_move(perfect_trait_copy_move const &) noexcept = delete;
+  constexpr perfect_trait_copy_move(perfect_trait_copy_move const& ) noexcept = delete;
   constexpr perfect_trait_copy_move(perfect_trait_copy_move &&) noexcept = default;
   perfect_trait_copy_move &
-  operator=(perfect_trait_copy_move const &) noexcept = default;
+  operator=(perfect_trait_copy_move const& ) noexcept = default;
   perfect_trait_copy_move &
   operator=(perfect_trait_copy_move &&) noexcept = default;
 };
@@ -93,10 +93,10 @@ template <class Tag>
 struct perfect_trait_copy_move<true, false, true, true, Tag>
 {
   constexpr perfect_trait_copy_move() noexcept = default;
-  constexpr perfect_trait_copy_move(perfect_trait_copy_move const &) noexcept = default;
+  constexpr perfect_trait_copy_move(perfect_trait_copy_move const& ) noexcept = default;
   constexpr perfect_trait_copy_move(perfect_trait_copy_move &&) noexcept = default;
   perfect_trait_copy_move &
-  operator=(perfect_trait_copy_move const &) noexcept = delete;
+  operator=(perfect_trait_copy_move const& ) noexcept = delete;
   perfect_trait_copy_move &
   operator=(perfect_trait_copy_move &&) noexcept = default;
 };
@@ -105,10 +105,10 @@ template <class Tag>
 struct perfect_trait_copy_move<false, false, true, true, Tag>
 {
   constexpr perfect_trait_copy_move() noexcept = default;
-  constexpr perfect_trait_copy_move(perfect_trait_copy_move const &) noexcept = delete;
+  constexpr perfect_trait_copy_move(perfect_trait_copy_move const& ) noexcept = delete;
   constexpr perfect_trait_copy_move(perfect_trait_copy_move &&) noexcept = default;
   perfect_trait_copy_move &
-  operator=(perfect_trait_copy_move const &) noexcept = delete;
+  operator=(perfect_trait_copy_move const& ) noexcept = delete;
   perfect_trait_copy_move &
   operator=(perfect_trait_copy_move &&) noexcept = default;
 };
@@ -117,10 +117,10 @@ template <class Tag>
 struct perfect_trait_copy_move<true, true, false, true, Tag>
 {
   constexpr perfect_trait_copy_move() noexcept = default;
-  constexpr perfect_trait_copy_move(perfect_trait_copy_move const &) noexcept = default;
+  constexpr perfect_trait_copy_move(perfect_trait_copy_move const& ) noexcept = default;
   constexpr perfect_trait_copy_move(perfect_trait_copy_move &&) noexcept = delete;
   perfect_trait_copy_move &
-  operator=(perfect_trait_copy_move const &) noexcept = default;
+  operator=(perfect_trait_copy_move const& ) noexcept = default;
   perfect_trait_copy_move &
   operator=(perfect_trait_copy_move &&) noexcept = default;
 };
@@ -129,10 +129,10 @@ template <class Tag>
 struct perfect_trait_copy_move<false, true, false, true, Tag>
 {
   constexpr perfect_trait_copy_move() noexcept = default;
-  constexpr perfect_trait_copy_move(perfect_trait_copy_move const &) noexcept = delete;
+  constexpr perfect_trait_copy_move(perfect_trait_copy_move const& ) noexcept = delete;
   constexpr perfect_trait_copy_move(perfect_trait_copy_move &&) noexcept = delete;
   perfect_trait_copy_move &
-  operator=(perfect_trait_copy_move const &) noexcept = default;
+  operator=(perfect_trait_copy_move const& ) noexcept = default;
   perfect_trait_copy_move &
   operator=(perfect_trait_copy_move &&) noexcept = default;
 };
@@ -141,10 +141,10 @@ template <class Tag>
 struct perfect_trait_copy_move<true, false, false, true, Tag>
 {
   constexpr perfect_trait_copy_move() noexcept = default;
-  constexpr perfect_trait_copy_move(perfect_trait_copy_move const &) noexcept = default;
+  constexpr perfect_trait_copy_move(perfect_trait_copy_move const& ) noexcept = default;
   constexpr perfect_trait_copy_move(perfect_trait_copy_move &&) noexcept = delete;
   perfect_trait_copy_move &
-  operator=(perfect_trait_copy_move const &) noexcept = delete;
+  operator=(perfect_trait_copy_move const& ) noexcept = delete;
   perfect_trait_copy_move &
   operator=(perfect_trait_copy_move &&) noexcept = default;
 };
@@ -153,10 +153,10 @@ template <class Tag>
 struct perfect_trait_copy_move<false, false, false, true, Tag>
 {
   constexpr perfect_trait_copy_move() noexcept = default;
-  constexpr perfect_trait_copy_move(perfect_trait_copy_move const &) noexcept = delete;
+  constexpr perfect_trait_copy_move(perfect_trait_copy_move const& ) noexcept = delete;
   constexpr perfect_trait_copy_move(perfect_trait_copy_move &&) noexcept = delete;
   perfect_trait_copy_move &
-  operator=(perfect_trait_copy_move const &) noexcept = delete;
+  operator=(perfect_trait_copy_move const& ) noexcept = delete;
   perfect_trait_copy_move &
   operator=(perfect_trait_copy_move &&) noexcept = default;
 };
@@ -165,10 +165,10 @@ template <class Tag>
 struct perfect_trait_copy_move<true, true, true, false, Tag>
 {
   constexpr perfect_trait_copy_move() noexcept = default;
-  constexpr perfect_trait_copy_move(perfect_trait_copy_move const &) noexcept = default;
+  constexpr perfect_trait_copy_move(perfect_trait_copy_move const& ) noexcept = default;
   constexpr perfect_trait_copy_move(perfect_trait_copy_move &&) noexcept = default;
   perfect_trait_copy_move &
-  operator=(perfect_trait_copy_move const &) noexcept = default;
+  operator=(perfect_trait_copy_move const& ) noexcept = default;
   perfect_trait_copy_move &
   operator=(perfect_trait_copy_move &&) noexcept = delete;
 };
@@ -177,10 +177,10 @@ template <class Tag>
 struct perfect_trait_copy_move<false, true, true, false, Tag>
 {
   constexpr perfect_trait_copy_move() noexcept = default;
-  constexpr perfect_trait_copy_move(perfect_trait_copy_move const &) noexcept = delete;
+  constexpr perfect_trait_copy_move(perfect_trait_copy_move const& ) noexcept = delete;
   constexpr perfect_trait_copy_move(perfect_trait_copy_move &&) noexcept = default;
   perfect_trait_copy_move &
-  operator=(perfect_trait_copy_move const &) noexcept = default;
+  operator=(perfect_trait_copy_move const& ) noexcept = default;
   perfect_trait_copy_move &
   operator=(perfect_trait_copy_move &&) noexcept = delete;
 };
@@ -189,10 +189,10 @@ template <class Tag>
 struct perfect_trait_copy_move<true, false, true, false, Tag>
 {
   constexpr perfect_trait_copy_move() noexcept = default;
-  constexpr perfect_trait_copy_move(perfect_trait_copy_move const &) noexcept = default;
+  constexpr perfect_trait_copy_move(perfect_trait_copy_move const& ) noexcept = default;
   constexpr perfect_trait_copy_move(perfect_trait_copy_move &&) noexcept = default;
   perfect_trait_copy_move &
-  operator=(perfect_trait_copy_move const &) noexcept = delete;
+  operator=(perfect_trait_copy_move const& ) noexcept = delete;
   perfect_trait_copy_move &
   operator=(perfect_trait_copy_move &&) noexcept = delete;
 };
@@ -201,10 +201,10 @@ template <class Tag>
 struct perfect_trait_copy_move<false, false, true, false, Tag>
 {
   constexpr perfect_trait_copy_move() noexcept = default;
-  constexpr perfect_trait_copy_move(perfect_trait_copy_move const &) noexcept = delete;
+  constexpr perfect_trait_copy_move(perfect_trait_copy_move const& ) noexcept = delete;
   constexpr perfect_trait_copy_move(perfect_trait_copy_move &&) noexcept = default;
   perfect_trait_copy_move &
-  operator=(perfect_trait_copy_move const &) noexcept = delete;
+  operator=(perfect_trait_copy_move const& ) noexcept = delete;
   perfect_trait_copy_move &
   operator=(perfect_trait_copy_move &&) noexcept = delete;
 };
@@ -213,10 +213,10 @@ template <class Tag>
 struct perfect_trait_copy_move<true, true, false, false, Tag>
 {
   constexpr perfect_trait_copy_move() noexcept = default;
-  constexpr perfect_trait_copy_move(perfect_trait_copy_move const &) noexcept = default;
+  constexpr perfect_trait_copy_move(perfect_trait_copy_move const& ) noexcept = default;
   constexpr perfect_trait_copy_move(perfect_trait_copy_move &&) noexcept = delete;
   perfect_trait_copy_move &
-  operator=(perfect_trait_copy_move const &) noexcept = default;
+  operator=(perfect_trait_copy_move const& ) noexcept = default;
   perfect_trait_copy_move &
   operator=(perfect_trait_copy_move &&) noexcept = delete;
 };
@@ -225,10 +225,10 @@ template <class Tag>
 struct perfect_trait_copy_move<false, true, false, false, Tag>
 {
   constexpr perfect_trait_copy_move() noexcept = default;
-  constexpr perfect_trait_copy_move(perfect_trait_copy_move const &) noexcept = delete;
+  constexpr perfect_trait_copy_move(perfect_trait_copy_move const& ) noexcept = delete;
   constexpr perfect_trait_copy_move(perfect_trait_copy_move &&) noexcept = delete;
   perfect_trait_copy_move &
-  operator=(perfect_trait_copy_move const &) noexcept = default;
+  operator=(perfect_trait_copy_move const& ) noexcept = default;
   perfect_trait_copy_move &
   operator=(perfect_trait_copy_move &&) noexcept = delete;
 };
@@ -237,10 +237,10 @@ template <class Tag>
 struct perfect_trait_copy_move<true, false, false, false, Tag>
 {
   constexpr perfect_trait_copy_move() noexcept = default;
-  constexpr perfect_trait_copy_move(perfect_trait_copy_move const &) noexcept = default;
+  constexpr perfect_trait_copy_move(perfect_trait_copy_move const& ) noexcept = default;
   constexpr perfect_trait_copy_move(perfect_trait_copy_move &&) noexcept = delete;
   perfect_trait_copy_move &
-  operator=(perfect_trait_copy_move const &) noexcept = delete;
+  operator=(perfect_trait_copy_move const& ) noexcept = delete;
   perfect_trait_copy_move &
   operator=(perfect_trait_copy_move &&) noexcept = delete;
 };
@@ -249,10 +249,10 @@ template <class Tag>
 struct perfect_trait_copy_move<false, false, false, false, Tag>
 {
   constexpr perfect_trait_copy_move() noexcept = default;
-  constexpr perfect_trait_copy_move(perfect_trait_copy_move const &) noexcept = delete;
+  constexpr perfect_trait_copy_move(perfect_trait_copy_move const& ) noexcept = delete;
   constexpr perfect_trait_copy_move(perfect_trait_copy_move &&) noexcept = delete;
   perfect_trait_copy_move &
-  operator=(perfect_trait_copy_move const &) noexcept = delete;
+  operator=(perfect_trait_copy_move const& ) noexcept = delete;
   perfect_trait_copy_move &
   operator=(perfect_trait_copy_move &&) noexcept = delete;
 };

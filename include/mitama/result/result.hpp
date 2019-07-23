@@ -97,7 +97,7 @@ namespace mitama {
 inline auto none = boost::none;
 
 template <class T>
-inline boost::optional<T> some(T &&x) {
+inline boost::optional<T> some(T&& x) {
   return {std::forward<T>(x)};
 }
 
@@ -293,7 +293,7 @@ public:
   template <class U,
             where<std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
-  constexpr basic_result(success<U> const &ok)
+  constexpr basic_result(success<U> const& ok)
     : storage_{ok}
   {}
 
@@ -302,7 +302,7 @@ public:
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  constexpr explicit basic_result(success<U> const &ok)
+  constexpr explicit basic_result(success<U> const& ok)
     : storage_{ok}
   {}
 
@@ -329,7 +329,7 @@ public:
   template <class U,
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
-  constexpr basic_result(failure<U> const &err)
+  constexpr basic_result(failure<U> const& err)
     : storage_{err}
   {}
 
@@ -338,7 +338,7 @@ public:
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  constexpr explicit basic_result(failure<U> const &err)
+  constexpr explicit basic_result(failure<U> const& err)
     : storage_{err}
   {}
 
@@ -435,7 +435,7 @@ public:
   ///   Converts self into a `boost::optional<const T>`, and discarding the failure, if any.
   constexpr
   maybe<std::remove_reference_t<ok_type>>
-  ok() const & noexcept {
+  ok() const&  noexcept {
     if (is_ok()) {
       return maybe<std::remove_reference_t<ok_type>>(std::in_place, unwrap());
     }
@@ -451,7 +451,7 @@ public:
   ///   Converts self into a `boost::optional<const E>`, and discarding the success, if any.
   constexpr
   maybe<std::remove_reference_t<err_type>>
-  err() const & noexcept {
+  err() const&  noexcept {
     if (is_err()) {
       return maybe<std::remove_reference_t<err_type>>(std::in_place, unwrap_err());
     }
@@ -718,7 +718,7 @@ public:
   /// @brief
   ///   Returns `res` if the result is success, otherwise; returns the failure value of self.
   template <mutability _mu, class U>
-  constexpr decltype(auto) operator&&(basic_result<_mu, U, E> const &res) const & noexcept
+  constexpr decltype(auto) operator&&(basic_result<_mu, U, E> const& res) const& noexcept
   {
     using result_type = basic_result<_mutability && _mu, U, E>;
     return this->is_err()
@@ -736,7 +736,7 @@ public:
   ///   it is recommended to use `or_else`,
   ///   which is lazily evaluated.
   template <mutability _mut, class F>
-  constexpr decltype(auto) operator||(basic_result<_mut, T, F> const &res) const & noexcept
+  constexpr decltype(auto) operator||(basic_result<_mut, T, F> const& res) const& noexcept
   {
     using result_type = basic_result<_mutability, T, F>;
     return this->is_ok()
@@ -1006,7 +1006,7 @@ public:
   std::enable_if_t<
     std::conjunction_v<is_comparable_with<T, U>, is_comparable_with<E, F>>,
   bool>
-  operator==(basic_result<_mut, U, F> const &rhs) const & {
+  operator==(basic_result<_mut, U, F> const& rhs) const& {
     return boost::apply_visitor(
       boost::hana::overload(
         [](success<T> const& l, success<U> const& r) { return l.x == r.x; },
@@ -1028,7 +1028,7 @@ public:
   std::enable_if_t<
     std::conjunction_v<is_comparable_with<T, U>, is_comparable_with<E, F>>,
   bool>
-  operator!=(basic_result<_mut, U, F> const &rhs) const & {
+  operator!=(basic_result<_mut, U, F> const& rhs) const& {
     return boost::apply_visitor(
       boost::hana::overload(
         [](success<T> const& l, success<U> const& r) { return !(l.x == r.x); },
@@ -1049,7 +1049,7 @@ public:
   std::enable_if_t<
     is_comparable_with<T, U>::value,
   bool>
-  operator==(success<U> const &rhs) const {
+  operator==(success<U> const& rhs) const {
     return this->is_ok() ? this->unwrap() == rhs.x : false;
   }
 
@@ -1065,7 +1065,7 @@ public:
   std::enable_if_t<
     is_comparable_with<T, U>::value,
   bool>
-  operator!=(success<U> const &rhs) const {
+  operator!=(success<U> const& rhs) const {
     return this->is_ok() ? !(this->unwrap() == rhs.x) : true;
   }
 
@@ -1081,7 +1081,7 @@ public:
   std::enable_if_t<
     is_comparable_with<E, F>::value,
   bool>
-  operator==(failure<F> const &rhs) const {
+  operator==(failure<F> const& rhs) const {
     return this->is_err() ? this->unwrap_err() == rhs.x : false;
   }
 
@@ -1097,7 +1097,7 @@ public:
   std::enable_if_t<
     is_comparable_with<E, F>::value,
   bool>
-  operator!=(failure<F> const &rhs) const {
+  operator!=(failure<F> const& rhs) const {
     return this->is_err() ? !(this->unwrap_err() == rhs.x) : true;
   }
 
