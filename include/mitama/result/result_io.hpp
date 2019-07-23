@@ -67,22 +67,6 @@ operator<<(std::ostream& os, basic_result<_, T, E> const& res) {
                      : os << boost::format("failure(%1%)") % inner_format( res.unwrap_err() );
 }
 
-template <class T>
-std::enable_if_t<
-  trait::formattable<T>::value,
-std::ostream&>
-operator<<(std::ostream& os, success<T> const& ok) {
-  return os << result<T>(ok);
-}
-
-template <class E>
-std::enable_if_t<
-  trait::formattable<E>::value,
-std::ostream&>
-operator<<(std::ostream& os, failure<E> const& err) {
-  return os << result<std::monostate, E>(err);
-}
-
 }
 
 #endif

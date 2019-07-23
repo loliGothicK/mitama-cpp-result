@@ -839,7 +839,7 @@ public:
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC("called `basic_result::unwrap()` on a value: `failure(%1%)`", unwrap_err());
+        PANIC("called `basic_result::unwrap()` on a value: `%1%`", boost::get<failure<E>>(storage_));
       }      
     }
     else {
@@ -864,7 +864,7 @@ public:
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC("called `basic_result::unwrap()` on a value: `failure(%1%)`", unwrap_err());
+        PANIC("called `basic_result::unwrap()` on a value: `%1%`", boost::get<failure<E>>(storage_));
       }      
     }
     else {
@@ -889,7 +889,7 @@ public:
         return boost::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC("called `basic_result::unwrap_err()` on a value: success(%1%)", unwrap());
+        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", boost::get<success<T>>(storage_));
       }
     }
     else {
@@ -914,7 +914,7 @@ public:
         return boost::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC("called `basic_result::unwrap_err()` on a value: success(%1%)", unwrap());
+        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", boost::get<success<T>>(storage_));
       }
     }
     else {

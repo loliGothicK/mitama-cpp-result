@@ -282,9 +282,10 @@ TEST_CASE("unwrap() test", "[result][unwrap]"){
     using namespace boost::xpressive;
     sregex re =
         as_xpr(
-            "runtime panicked at 'called `basic_result::unwrap()` on a value: failure(\"emergency failure\")', ") >>
+            "runtime panicked at 'called `basic_result::unwrap()` on a value: `failure(\"emergency failure\")`', ") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
+    std::cout << p.what() << std::endl;
     REQUIRE(regex_match(std::string{p.what()}, what, re));
   }
 }
@@ -299,7 +300,7 @@ TEST_CASE("unwrap_err() test", "[result][unwrap_err]"){
     using namespace boost::xpressive;
     sregex re =
         as_xpr(
-            R"(runtime panicked at 'called `basic_result::unwrap_err()` on a value: success(2)', )") >>
+            R"(runtime panicked at 'called `basic_result::unwrap_err()` on a value: `success(2)`', )") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
     REQUIRE(regex_match(std::string{p.what()}, what, re));
@@ -595,8 +596,8 @@ SCENARIO("test for dangling indirect", "[result][indirect][dangling]"){
       = mut_result<std::unique_ptr<int>, std::unique_ptr<int>>(success{std::make_unique<int>(1)})
         .as_ref()
         .indirect();
-
-    REQUIRE( std::is_same_v<decltype(indirect.unwrap()), dangling<std::reference_wrapper<int>>> );
+    std::cout << boost::typeindex::type_id_with_cvr<decltype(indirect.unwrap())>().pretty_name() << std::endl;
+    REQUIRE( std::is_same_v<decltype(indirect.unwrap()), dangling<std::reference_wrapper<int>>&> );
     // indirect.unwrap().transmute()
     // ^~~~~~~~~~~~~~~~~~~~~~~~~~ Undefined Behavior!
   }
