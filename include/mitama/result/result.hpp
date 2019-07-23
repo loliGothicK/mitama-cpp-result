@@ -371,33 +371,33 @@ public:
   /// @brief
   ///   in-place constructor for successful result
   template <class... Args,
-            where<std::is_constructible<T, Args...>> = required>
+            where<std::is_constructible<T, Args&&...>> = required>
   constexpr explicit basic_result(in_place_ok_t, Args && ... args)
-    : storage_{success<T>{std::forward<Args>(args)...}}
+    : storage_{success<T>{std::in_place, std::forward<Args>(args)...}}
   {}
 
   /// @brief
   ///   in-place constructor for unsuccessful result
   template <class... Args,
-            where<std::is_constructible<E, Args...>> = required>
+            where<std::is_constructible<E, Args&&...>> = required>
   constexpr explicit basic_result(in_place_err_t, Args && ... args)
-    : storage_{failure<E>{std::forward<Args>(args)...}}
+    : storage_{failure<E>{std::in_place, std::forward<Args>(args)...}}
   {}
 
   /// @brief
   ///   in-place constructor with initializer_list for successful result
   template <class U, class... Args,
-            where<std::is_constructible<T, std::initializer_list<U>, Args...>> = required>
+            where<std::is_constructible<T, std::initializer_list<U>, Args&&...>> = required>
   constexpr explicit basic_result(in_place_ok_t, std::initializer_list<U> il, Args && ... args)
-    : storage_{success<T>{il, std::forward<Args>(args)...}}
+    : storage_{success<T>{std::in_place, il, std::forward<Args>(args)...}}
   {}
 
   /// @brief
   ///   in-place constructor with initializer_list for unsuccessful result
   template <class U, class... Args,
-            where<std::is_constructible<E, Args...>> = required>
+            where<std::is_constructible<E, Args&&...>> = required>
   constexpr explicit basic_result(in_place_err_t, std::initializer_list<U> il, Args && ... args)
-    : storage_{failure<E>{il, std::forward<Args>(args)...}}
+    : storage_{failure<E>{std::in_place, il, std::forward<Args>(args)...}}
   {}
 
   /// @brief
@@ -437,10 +437,10 @@ public:
   maybe<std::remove_reference_t<ok_type>>
   ok() const & noexcept {
     if (is_ok()) {
-      return mitama::in_place(unwrap());
+      return maybe<std::remove_reference_t<ok_type>>(std::in_place, unwrap());
     }
     else {
-      return nothing<>;
+      return nothing;
     }
   }
 
@@ -453,10 +453,10 @@ public:
   maybe<std::remove_reference_t<err_type>>
   err() const & noexcept {
     if (is_err()) {
-      return mitama::in_place(unwrap_err());
+      return maybe<std::remove_reference_t<err_type>>(std::in_place, unwrap_err());
     }
     else {
-      return nothing<>;
+      return nothing;
     }
   }
 
@@ -832,14 +832,14 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an failure, with a panic message provided by the failure's value.
-  force_add_const_t<T>
+  force_add_const_t<T>&
   unwrap() const& {
     if constexpr (trait::formattable_element<E>::value) {
       if ( is_ok() ) {
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", failure(unwrap_err()));
+        PANIC("called `basic_result::unwrap()` on a value: `failure(%1%)`", unwrap_err());
       }      
     }
     else {
@@ -847,7 +847,7 @@ public:
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap()` on a value `failure(???)`)");
+        PANIC("called `basic_result::unwrap()` on a value `failure(?)`");
       }
     }
   }
@@ -857,14 +857,14 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an failure, with a panic message provided by the failure's value.
-  std::conditional_t<is_mut_v<_mutability>, T, force_add_const_t<T>>
+  std::conditional_t<is_mut_v<_mutability>, T&, force_add_const_t<T>&>
   unwrap() & {
     if constexpr (trait::formattable_element<E>::value) {
       if ( is_ok() ) {
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", failure(unwrap_err()));
+        PANIC("called `basic_result::unwrap()` on a value: `failure(%1%)`", unwrap_err());
       }      
     }
     else {
@@ -872,7 +872,7 @@ public:
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap()` on a value `failure(???)`)");
+        PANIC("called `basic_result::unwrap()` on a value `failure(?)`");
       }
     }
   }
@@ -882,14 +882,14 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an success, with a panic message provided by the success's value.
-  force_add_const_t<E>
+  force_add_const_t<E>&
   unwrap_err() const& {
-    if constexpr (trait::formattable<T>::value) {
+    if constexpr (trait::formattable_element<T>::value) {
       if ( is_err() ) {
         return boost::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap_err()` on a value: %1%)", success(unwrap()));
+        PANIC("called `basic_result::unwrap_err()` on a value: success(%1%)", unwrap());
       }
     }
     else {
@@ -897,7 +897,7 @@ public:
         return boost::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap_err()` on a value `success(???)`)");
+        PANIC("called `basic_result::unwrap_err()` on a value `success(?)`");
       }
     }
   }
@@ -907,14 +907,14 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an success, with a panic message provided by the success's value.
-  std::conditional_t<is_mut_v<_mutability>, E, force_add_const_t<E>>
+  std::conditional_t<is_mut_v<_mutability>, E&, force_add_const_t<E>&>
   unwrap_err() & {
-    if constexpr (trait::formattable<T>::value) {
+    if constexpr (trait::formattable_element<T>::value) {
       if ( is_err() ) {
         return boost::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap_err()` on a value: %1%)", success(unwrap()));
+        PANIC("called `basic_result::unwrap_err()` on a value: success(%1%)", unwrap());
       }
     }
     else {
@@ -922,7 +922,7 @@ public:
         return boost::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap_err()` on a value `success(???)`)");
+        PANIC("called `basic_result::unwrap_err()` on a value `success(?)`)");
       }
     }
   }
@@ -932,7 +932,7 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an failure, with a panic message including the passed message, and the content of the failure.
-  force_add_const_t<T>
+  force_add_const_t<T>&
   expect(std::string_view msg) const& {
     if ( is_err() )
       PANIC("%1%: %2%", msg, unwrap_err());
@@ -958,7 +958,7 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an success, with a panic message including the passed message, and the content of the success.
-  force_add_const_t<E>
+  force_add_const_t<E>&
   expect_err(std::string_view msg) const& {
     if ( is_ok() )
       PANIC("%1%: %2%", msg, unwrap());
@@ -1147,87 +1147,6 @@ public:
 
 };
 
-template <class T>
-std::enable_if_t<
-  trait::formattable<T>::value,
-std::ostream&>
-operator<<(std::ostream& os, success<T> const& ok) {
-  return os << result<T>(ok);
-}
-
-template <class E>
-std::enable_if_t<
-  trait::formattable<E>::value,
-std::ostream&>
-operator<<(std::ostream& os, failure<E> const& err) {
-  return os << result<std::monostate, E>(err);
-}
-
-/// @brief
-///   ostream output operator
-///
-/// @requires
-///   Format<T>;
-///   Format<E>
-///
-/// @note
-///   Output its contained value with pretty format, and is used by `operator<<` found by ADL.
-template <mutability _, class T, class E>
-std::enable_if_t<std::conjunction_v<trait::formattable<T>, trait::formattable<E>>,
-std::ostream&>
-operator<<(std::ostream& os, basic_result<_, T, E> const& res) {
-  using namespace std::literals::string_literals;
-  auto inner_format = boost::hana::fix(boost::hana::overload_linearly(
-      [](auto, auto const& x) -> std::enable_if_t<trait::formattable_element<std::decay_t<decltype(x)>>::value, std::string> {
-        return boost::hana::overload_linearly(
-          [](std::monostate) { return "()"s; },
-          [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
-          [](auto const& x) { return (boost::format("%1%") % x).str(); })
-        (x);        
-      },
-      [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_dictionary<std::decay_t<decltype(x)>>::value, std::string> {
-        if (x.empty()) return "{}"s;
-        using std::begin, std::end;
-        auto iter = begin(x);
-        std::string str = "{"s + (boost::format("%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
-        while (++iter != end(x)) {
-          str += (boost::format(",%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
-        }
-        return str += "}";
-      },
-      [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_range<std::decay_t<decltype(x)>>::value, std::string> {
-        if (x.empty()) return "[]"s;
-        using std::begin, std::end;
-        auto iter = begin(x);
-        std::string str = "["s + _fmt(*iter);
-        while (++iter != end(x)) {
-          str += (boost::format(",%1%") % _fmt(*iter)).str();
-        }
-        return str += "]";
-      },
-      [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_tuple<std::decay_t<decltype(x)>>::value, std::string> {
-        if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0) {
-          return "()"s;
-        }
-        else {
-          return std::apply(
-            [_fmt](auto const& head, auto const&... tail) {
-              return "("s + _fmt(head) + ((("," + _fmt(tail))) + ...) + ")"s;
-            }, x);
-        }
-      }));
-  return res.is_ok() ? os << boost::format("success(%1%)") % inner_format( res.unwrap() )
-                     : os << boost::format("failure(%1%)") % inner_format( res.unwrap_err() );
-}
-
 } // namespace mitama
-
-#ifdef MITAMA_WITH_MACROS
-
-#define MITAMA_TRY(res) \
-  if (res.is_err()) \
-    return ::mitama::failure(res.unwrap_err());
-
-#endif
 
 #endif

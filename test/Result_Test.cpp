@@ -1,6 +1,8 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
+#include <mitama/maybe/maybe.hpp>
 #include <mitama/result/result.hpp>
+#include <mitama/result/result_io.hpp>
 #include <utest_utility/is_invalid_expr.hpp>
 
 #include <boost/hana/assert.hpp>
@@ -126,12 +128,12 @@ TEST_CASE("ok() test", "[result][ok]"){
   REQUIRE(x.ok() == just(2u));
 
   result<int, str> y = failure("Nothing here"s);
-  REQUIRE(y.ok() == nothing<>);
+  REQUIRE(y.ok() == nothing);
 }
 
 TEST_CASE("err() test", "[result][err]"){
   result<u32, str> x = success(2u);
-  REQUIRE(x.err() == nothing<>);
+  REQUIRE(x.err() == nothing);
 
   result<u32, str> y = failure("Nothing here"s);
   REQUIRE(y.err() == just("Nothing here"s));
@@ -321,7 +323,7 @@ TEST_CASE("unwrap_or_default() test", "[result][unwrap_or_default]"){
 
 TEST_CASE("transpose() test", "[result][transpose]"){
   result<maybe<i32>, std::monostate> x = success(just(5));
-  maybe<result<i32, std::monostate>> y = just(mitama::in_place(success(5)));
+  maybe<result<i32, std::monostate>> y = just(success(5));
 
   REQUIRE(x.transpose() == y);
 }
