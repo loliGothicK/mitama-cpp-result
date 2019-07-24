@@ -4,6 +4,8 @@
 #include <mitama/result/detail/meta.hpp>
 #include <mitama/result/traits/perfect_traits_special_members.hpp>
 #include <mitama/panic.hpp>
+#include <mitama/result/factory/success.hpp>
+#include <mitama/result/factory/failure.hpp>
 
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
@@ -91,230 +93,14 @@ struct is_ok_type<success<T>> : std::true_type {};
 
 namespace mitama {
 
-/// class success:
-/// The main use of this class is to propagate successful results to the constructor of the result class.
-template <class T>
-class [[nodiscard]] success
-    : private ::mitamagic::perfect_trait_copy_move<
-          std::is_copy_constructible_v<T>,
-          std::conjunction_v<std::is_copy_constructible<T>, std::is_copy_assignable<T>>,
-          std::is_move_constructible_v<T>,
-          std::conjunction_v<std::is_move_constructible<T>, std::is_move_assignable<T>>,
-          success<T>>
-{
-  template <class>
-  friend class success;
-  T x;
-  template <mutability, class, class, class>
-  friend class basic_result;
-
-  template <class... Requires>
-  using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
-
-  static constexpr std::nullptr_t required = nullptr;
-
-  template <class U>
-  using not_self = std::negation<std::is_same<success, U>>;
-public:
-  using ok_type = T;
-
-  template <class U = T>
-  constexpr success(std::enable_if_t<std::is_same_v<std::monostate, U>, std::nullptr_t> = nullptr)
-  { /* whatever */ }
-
-  template <class U,
-            where<not_self<std::decay_t<U>>,
-                  std::is_constructible<T, U>,
-                  std::is_convertible<U, T>> = required>
-  constexpr success(U && u) noexcept(std::is_nothrow_constructible_v<T, U>)
-      : x(std::forward<U>(u)) {}
-
-  template <class U,
-            where<not_self<std::decay_t<U>>,
-                  std::is_constructible<T, U>,
-                  std::negation<std::is_convertible<U, T>>> = required>
-  explicit constexpr success(U && u) noexcept(std::is_nothrow_constructible_v<T, U>)
-      : x(std::forward<U>(u)) {}
-
-  template <typename U,
-            where<std::negation<std::is_same<T, U>>,
-                  std::is_constructible<T, const U &>,
-                  std::is_convertible<const U &, T>> = required>
-  constexpr success(const success<U> &t) noexcept(std::is_nothrow_constructible_v<T, U>)
-      : x(t.x) {}
-
-  template <typename U,
-            where<std::negation<std::is_same<T, U>>,
-                  std::is_constructible<T, const U &>,
-                  std::negation<std::is_convertible<const U &, T>>> = required>
-  explicit constexpr success(const success<U> &t) noexcept(std::is_nothrow_constructible_v<T, U>)
-      : x(t.x) {}
-
-  template <typename U,
-            where<std::negation<std::is_same<T, U>>,
-                  std::is_constructible<T, U &&>,
-                  std::is_convertible<U &&, T>> = required>
-  constexpr success(success<U> && t) noexcept(std::is_nothrow_constructible_v<T, U>)
-      : x(std::move(t.x)) {}
-
-  template <typename U,
-            where<std::negation<std::is_same<T, U>>,
-                  std::is_constructible<T, U &&>,
-                  std::negation<std::is_convertible<U &&, T>>> = required>
-  explicit constexpr success(success<U> && t) noexcept(std::is_nothrow_constructible_v<T, U>)
-      : x(std::move(t.x)) {}
-
-  template <class... Args,
-            where<std::is_constructible<T, Args...>> = required>
-  explicit constexpr success(std::in_place_t, Args && ... args) noexcept(std::is_nothrow_constructible_v<T, Args...>)
-      : x(std::forward<Args>(args)...) {}
-
-  template <mutability _mut, class T_, class E_>
-  std::enable_if_t<
-      is_comparable_with<T, T_>::value,
-      bool>
-  constexpr operator==(basic_result<_mut, T_, E_> const &rhs) const
-  {
-    return rhs.is_ok() ? rhs.unwrap() == this->x : false;
-  }
-
-  template <class T_>
-  std::enable_if_t<
-      is_comparable_with<T, T_>::value,
-      bool>
-  constexpr operator==(success<T_> const &rhs) const
-  {
-    return this->x == rhs.x;
-  }
-
-  template <class E_>
-  constexpr bool operator==(failure<E_> const &) const
-  {
-    return false;
-  }
-};
-
-/// Deduction guide for `success`
-template <class T>
-success(T&&)->success<T>;
-
-
-/// class failure:
-/// The main use of this class is to propagate unsuccessful results to the constructor of the result class.
-template <class E>
-class [[nodiscard]] failure
-    : private ::mitamagic::perfect_trait_copy_move<
-          std::is_copy_constructible_v<E>,
-          std::conjunction_v<std::is_copy_constructible<E>, std::is_copy_assignable<E>>,
-          std::is_move_constructible_v<E>,
-          std::conjunction_v<std::is_move_constructible<E>, std::is_move_assignable<E>>,
-          failure<E>>
-{
-  template <class>
-  friend class failure;
-  E x;
-  template <mutability, class, class, class>
-  friend class basic_result;
-
-  template <class... Requires>
-  using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
-
-  static constexpr std::nullptr_t required = nullptr;
-
-  template <class U>
-  using not_self = std::negation<std::is_same<failure, U>>;
-public:
-  using err_type = E;
-
-  template <class F = E>
-  constexpr failure(std::enable_if_t<std::is_same_v<std::monostate, F>, std::nullptr_t> = nullptr)
-  { /* whatever */ }
-
-  template <class U,
-            where<not_self<std::decay_t<U>>,
-                  std::is_constructible<E, U>,
-                  std::is_convertible<U, E>> = required>
-  constexpr failure(U && u) noexcept(std::is_nothrow_constructible_v<E, U>)
-      : x(std::forward<U>(u)) {}
-
-  template <class U,
-            where<not_self<std::decay_t<U>>,
-                  std::is_constructible<E, U>,
-                  std::negation<std::is_convertible<U, E>>> = required>
-  explicit constexpr failure(U && u) noexcept(std::is_nothrow_constructible_v<E, U>)
-      : x(std::forward<U>(u)) {}
-
-  template <typename U,
-            where<std::negation<std::is_same<E, U>>,
-                  std::is_constructible<E, const U &>,
-                  std::is_convertible<const U &, E>> = required>
-  constexpr failure(const failure<U> &t) noexcept(std::is_nothrow_constructible_v<E, U>)
-      : x(t.x) {}
-
-  template <typename U,
-            where<std::negation<std::is_same<E, U>>,
-                  std::is_constructible<E, const U &>,
-                  std::negation<std::is_convertible<const U &, E>>> = required>
-  explicit constexpr failure(const failure<U> &t) noexcept(std::is_nothrow_constructible_v<E, U>)
-      : x(t.x) {}
-
-  template <typename U,
-            where<std::negation<std::is_same<E, U>>,
-                  std::is_constructible<E, U &&>,
-                  std::is_convertible<U &&, E>> = required>
-  constexpr failure(failure<U> && t) noexcept(std::is_nothrow_constructible_v<E, U>)
-      : x(std::move(t.x)) {}
-
-  template <typename U,
-            where<std::negation<std::is_same<E, U>>,
-                  std::is_constructible<E, U &&>,
-                  std::negation<std::is_convertible<U &&, E>>> = required>
-  explicit constexpr failure(failure<U> && t) noexcept(std::is_nothrow_constructible_v<E, U>)
-      : x(std::move(t.x)) {}
-
-  template <class... Args,
-            where<std::is_constructible<E, Args...>> = required>
-  explicit constexpr failure(std::in_place_t, Args && ... args) noexcept(std::is_nothrow_constructible_v<E, Args...>)
-      : x(std::forward<Args>(args)...) {}
-
-  template <mutability _mut, class T_, class E_>
-  constexpr
-  std::enable_if_t<
-      is_comparable_with<E, E_>::value,
-      bool>
-  operator==(basic_result<_mut, T_, E_> const &rhs) const
-  {
-    return rhs.is_err() ? rhs.unwrap_err() == this->x : false;
-  }
-
-  template <class E_>
-  constexpr
-  std::enable_if_t<
-      is_comparable_with<E, E_>::value,
-      bool>
-  operator==(failure<E_> const &rhs) const
-  {
-    return this->x == rhs.x;
-  }
-
-  template <class T_>
-  constexpr bool operator==(success<T_> const &) const
-  {
-    return false;
-  }
-};
-
-/// Deduction guide for `failure`
-template <class E>
-failure(E&&)->failure<E>;
-
 /// Optional aliases (for migration)
 inline auto none = boost::none;
 
 template <class T>
-inline boost::optional<T> some(T &&x) {
+inline boost::optional<T> some(T&& x) {
   return {std::forward<T>(x)};
 }
+
 template <class T, class... Args>
 inline boost::optional<T> some(Args&&... args) {
   return boost::optional<T>{boost::in_place(std::forward<Args>(args)...)};
@@ -507,7 +293,7 @@ public:
   template <class U,
             where<std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
-  constexpr basic_result(success<U> const &ok)
+  constexpr basic_result(success<U> const& ok)
     : storage_{ok}
   {}
 
@@ -516,7 +302,7 @@ public:
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  constexpr explicit basic_result(success<U> const &ok)
+  constexpr explicit basic_result(success<U> const& ok)
     : storage_{ok}
   {}
 
@@ -543,7 +329,7 @@ public:
   template <class U,
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
-  constexpr basic_result(failure<U> const &err)
+  constexpr basic_result(failure<U> const& err)
     : storage_{err}
   {}
 
@@ -552,7 +338,7 @@ public:
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  constexpr explicit basic_result(failure<U> const &err)
+  constexpr explicit basic_result(failure<U> const& err)
     : storage_{err}
   {}
 
@@ -585,33 +371,33 @@ public:
   /// @brief
   ///   in-place constructor for successful result
   template <class... Args,
-            where<std::is_constructible<T, Args...>> = required>
+            where<std::is_constructible<T, Args&&...>> = required>
   constexpr explicit basic_result(in_place_ok_t, Args && ... args)
-    : storage_{success<T>{std::forward<Args>(args)...}}
+    : storage_{success<T>{std::in_place, std::forward<Args>(args)...}}
   {}
 
   /// @brief
   ///   in-place constructor for unsuccessful result
   template <class... Args,
-            where<std::is_constructible<E, Args...>> = required>
+            where<std::is_constructible<E, Args&&...>> = required>
   constexpr explicit basic_result(in_place_err_t, Args && ... args)
-    : storage_{failure<E>{std::forward<Args>(args)...}}
+    : storage_{failure<E>{std::in_place, std::forward<Args>(args)...}}
   {}
 
   /// @brief
   ///   in-place constructor with initializer_list for successful result
   template <class U, class... Args,
-            where<std::is_constructible<T, std::initializer_list<U>, Args...>> = required>
+            where<std::is_constructible<T, std::initializer_list<U>, Args&&...>> = required>
   constexpr explicit basic_result(in_place_ok_t, std::initializer_list<U> il, Args && ... args)
-    : storage_{success<T>{il, std::forward<Args>(args)...}}
+    : storage_{success<T>{std::in_place, il, std::forward<Args>(args)...}}
   {}
 
   /// @brief
   ///   in-place constructor with initializer_list for unsuccessful result
   template <class U, class... Args,
-            where<std::is_constructible<E, Args...>> = required>
+            where<std::is_constructible<E, Args&&...>> = required>
   constexpr explicit basic_result(in_place_err_t, std::initializer_list<U> il, Args && ... args)
-    : storage_{failure<E>{il, std::forward<Args>(args)...}}
+    : storage_{failure<E>{std::in_place, il, std::forward<Args>(args)...}}
   {}
 
   /// @brief
@@ -649,12 +435,12 @@ public:
   ///   Converts self into a `boost::optional<const T>`, and discarding the failure, if any.
   constexpr
   maybe<std::remove_reference_t<ok_type>>
-  ok() const & noexcept {
+  ok() const&  noexcept {
     if (is_ok()) {
-      return mitama::in_place(unwrap());
+      return maybe<std::remove_reference_t<ok_type>>(std::in_place, unwrap());
     }
     else {
-      return nothing<>;
+      return nothing;
     }
   }
 
@@ -665,12 +451,12 @@ public:
   ///   Converts self into a `boost::optional<const E>`, and discarding the success, if any.
   constexpr
   maybe<std::remove_reference_t<err_type>>
-  err() const & noexcept {
+  err() const&  noexcept {
     if (is_err()) {
-      return mitama::in_place(unwrap_err());
+      return maybe<std::remove_reference_t<err_type>>(std::in_place, unwrap_err());
     }
     else {
-      return nothing<>;
+      return nothing;
     }
   }
 
@@ -932,7 +718,7 @@ public:
   /// @brief
   ///   Returns `res` if the result is success, otherwise; returns the failure value of self.
   template <mutability _mu, class U>
-  constexpr decltype(auto) operator&&(basic_result<_mu, U, E> const &res) const & noexcept
+  constexpr decltype(auto) operator&&(basic_result<_mu, U, E> const& res) const& noexcept
   {
     using result_type = basic_result<_mutability && _mu, U, E>;
     return this->is_err()
@@ -950,7 +736,7 @@ public:
   ///   it is recommended to use `or_else`,
   ///   which is lazily evaluated.
   template <mutability _mut, class F>
-  constexpr decltype(auto) operator||(basic_result<_mut, T, F> const &res) const & noexcept
+  constexpr decltype(auto) operator||(basic_result<_mut, T, F> const& res) const& noexcept
   {
     using result_type = basic_result<_mutability, T, F>;
     return this->is_ok()
@@ -1046,14 +832,14 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an failure, with a panic message provided by the failure's value.
-  force_add_const_t<T>
+  force_add_const_t<T>&
   unwrap() const& {
     if constexpr (trait::formattable_element<E>::value) {
       if ( is_ok() ) {
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", failure(unwrap_err()));
+        PANIC("called `basic_result::unwrap()` on a value: `%1%`", boost::get<failure<E>>(storage_));
       }      
     }
     else {
@@ -1061,7 +847,7 @@ public:
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap()` on a value `failure(???)`)");
+        PANIC("called `basic_result::unwrap()` on a value `failure(?)`");
       }
     }
   }
@@ -1071,14 +857,14 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an failure, with a panic message provided by the failure's value.
-  std::conditional_t<is_mut_v<_mutability>, T, force_add_const_t<T>>
+  std::conditional_t<is_mut_v<_mutability>, T&, force_add_const_t<T>&>
   unwrap() & {
     if constexpr (trait::formattable_element<E>::value) {
       if ( is_ok() ) {
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap()` on a value: %1%)", failure(unwrap_err()));
+        PANIC("called `basic_result::unwrap()` on a value: `%1%`", boost::get<failure<E>>(storage_));
       }      
     }
     else {
@@ -1086,7 +872,7 @@ public:
         return boost::get<success<T>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap()` on a value `failure(???)`)");
+        PANIC("called `basic_result::unwrap()` on a value `failure(?)`");
       }
     }
   }
@@ -1096,14 +882,14 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an success, with a panic message provided by the success's value.
-  force_add_const_t<E>
+  force_add_const_t<E>&
   unwrap_err() const& {
-    if constexpr (trait::formattable<T>::value) {
+    if constexpr (trait::formattable_element<T>::value) {
       if ( is_err() ) {
         return boost::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap_err()` on a value: %1%)", success(unwrap()));
+        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", boost::get<success<T>>(storage_));
       }
     }
     else {
@@ -1111,7 +897,7 @@ public:
         return boost::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap_err()` on a value `success(???)`)");
+        PANIC("called `basic_result::unwrap_err()` on a value `success(?)`");
       }
     }
   }
@@ -1121,14 +907,14 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an success, with a panic message provided by the success's value.
-  std::conditional_t<is_mut_v<_mutability>, E, force_add_const_t<E>>
+  std::conditional_t<is_mut_v<_mutability>, E&, force_add_const_t<E>&>
   unwrap_err() & {
-    if constexpr (trait::formattable<T>::value) {
+    if constexpr (trait::formattable_element<T>::value) {
       if ( is_err() ) {
         return boost::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap_err()` on a value: %1%)", success(unwrap()));
+        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", boost::get<success<T>>(storage_));
       }
     }
     else {
@@ -1136,7 +922,7 @@ public:
         return boost::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC(R"(called `basic_result::unwrap_err()` on a value `success(???)`)");
+        PANIC("called `basic_result::unwrap_err()` on a value `success(?)`)");
       }
     }
   }
@@ -1146,7 +932,7 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an failure, with a panic message including the passed message, and the content of the failure.
-  force_add_const_t<T>
+  force_add_const_t<T>&
   expect(std::string_view msg) const& {
     if ( is_err() )
       PANIC("%1%: %2%", msg, unwrap_err());
@@ -1172,7 +958,7 @@ public:
   ///
   /// @panics
   ///   Panics if the value is an success, with a panic message including the passed message, and the content of the success.
-  force_add_const_t<E>
+  force_add_const_t<E>&
   expect_err(std::string_view msg) const& {
     if ( is_ok() )
       PANIC("%1%: %2%", msg, unwrap());
@@ -1220,7 +1006,7 @@ public:
   std::enable_if_t<
     std::conjunction_v<is_comparable_with<T, U>, is_comparable_with<E, F>>,
   bool>
-  operator==(basic_result<_mut, U, F> const &rhs) const & {
+  operator==(basic_result<_mut, U, F> const& rhs) const& {
     return boost::apply_visitor(
       boost::hana::overload(
         [](success<T> const& l, success<U> const& r) { return l.x == r.x; },
@@ -1242,7 +1028,7 @@ public:
   std::enable_if_t<
     std::conjunction_v<is_comparable_with<T, U>, is_comparable_with<E, F>>,
   bool>
-  operator!=(basic_result<_mut, U, F> const &rhs) const & {
+  operator!=(basic_result<_mut, U, F> const& rhs) const& {
     return boost::apply_visitor(
       boost::hana::overload(
         [](success<T> const& l, success<U> const& r) { return !(l.x == r.x); },
@@ -1263,7 +1049,7 @@ public:
   std::enable_if_t<
     is_comparable_with<T, U>::value,
   bool>
-  operator==(success<U> const &rhs) const {
+  operator==(success<U> const& rhs) const {
     return this->is_ok() ? this->unwrap() == rhs.x : false;
   }
 
@@ -1279,7 +1065,7 @@ public:
   std::enable_if_t<
     is_comparable_with<T, U>::value,
   bool>
-  operator!=(success<U> const &rhs) const {
+  operator!=(success<U> const& rhs) const {
     return this->is_ok() ? !(this->unwrap() == rhs.x) : true;
   }
 
@@ -1295,7 +1081,7 @@ public:
   std::enable_if_t<
     is_comparable_with<E, F>::value,
   bool>
-  operator==(failure<F> const &rhs) const {
+  operator==(failure<F> const& rhs) const {
     return this->is_err() ? this->unwrap_err() == rhs.x : false;
   }
 
@@ -1311,7 +1097,7 @@ public:
   std::enable_if_t<
     is_comparable_with<E, F>::value,
   bool>
-  operator!=(failure<F> const &rhs) const {
+  operator!=(failure<F> const& rhs) const {
     return this->is_err() ? !(this->unwrap_err() == rhs.x) : true;
   }
 
@@ -1361,87 +1147,6 @@ public:
 
 };
 
-template <class T>
-std::enable_if_t<
-  trait::formattable<T>::value,
-std::ostream&>
-operator<<(std::ostream& os, success<T> const& ok) {
-  return os << result<T>(ok);
-}
-
-template <class E>
-std::enable_if_t<
-  trait::formattable<E>::value,
-std::ostream&>
-operator<<(std::ostream& os, failure<E> const& err) {
-  return os << result<std::monostate, E>(err);
-}
-
-/// @brief
-///   ostream output operator
-///
-/// @requires
-///   Format<T>;
-///   Format<E>
-///
-/// @note
-///   Output its contained value with pretty format, and is used by `operator<<` found by ADL.
-template <mutability _, class T, class E>
-std::enable_if_t<std::conjunction_v<trait::formattable<T>, trait::formattable<E>>,
-std::ostream&>
-operator<<(std::ostream& os, basic_result<_, T, E> const& res) {
-  using namespace std::literals::string_literals;
-  auto inner_format = boost::hana::fix(boost::hana::overload_linearly(
-      [](auto, auto const& x) -> std::enable_if_t<trait::formattable_element<std::decay_t<decltype(x)>>::value, std::string> {
-        return boost::hana::overload_linearly(
-          [](std::monostate) { return "()"s; },
-          [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
-          [](auto const& x) { return (boost::format("%1%") % x).str(); })
-        (x);        
-      },
-      [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_dictionary<std::decay_t<decltype(x)>>::value, std::string> {
-        if (x.empty()) return "{}"s;
-        using std::begin, std::end;
-        auto iter = begin(x);
-        std::string str = "{"s + (boost::format("%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
-        while (++iter != end(x)) {
-          str += (boost::format(",%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
-        }
-        return str += "}";
-      },
-      [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_range<std::decay_t<decltype(x)>>::value, std::string> {
-        if (x.empty()) return "[]"s;
-        using std::begin, std::end;
-        auto iter = begin(x);
-        std::string str = "["s + _fmt(*iter);
-        while (++iter != end(x)) {
-          str += (boost::format(",%1%") % _fmt(*iter)).str();
-        }
-        return str += "]";
-      },
-      [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_tuple<std::decay_t<decltype(x)>>::value, std::string> {
-        if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0) {
-          return "()"s;
-        }
-        else {
-          return std::apply(
-            [_fmt](auto const& head, auto const&... tail) {
-              return "("s + _fmt(head) + ((("," + _fmt(tail))) + ...) + ")"s;
-            }, x);
-        }
-      }));
-  return res.is_ok() ? os << boost::format("success(%1%)") % inner_format( res.unwrap() )
-                     : os << boost::format("failure(%1%)") % inner_format( res.unwrap_err() );
-}
-
 } // namespace mitama
-
-#ifdef MITAMA_WITH_MACROS
-
-#define MITAMA_TRY(res) \
-  if (res.is_err()) \
-    return ::mitama::failure(res.unwrap_err());
-
-#endif
 
 #endif

@@ -23,7 +23,7 @@ namespace mitama {
     public:
         constexpr dangling(std::reference_wrapper<T> ref): ref_(ref) {}
 
-        T& transmute() const & {
+        T& transmute() const&  {
             return ref_.get();
         }
     };

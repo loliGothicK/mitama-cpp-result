@@ -2,6 +2,7 @@
 #define MITAMA_RESULT_IMPL_HPP
 
 #include <mitama/result/detail/meta.hpp>
+#include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
 #include <mitama/result/traits/Deref.hpp>
 #include <mitama/result/detail/dangling.hpp>
@@ -9,7 +10,6 @@
 #include <optional>
 #include <functional>
 #include <boost/optional.hpp>
-#include <boost/optional/optional_io.hpp>
 #include <boost/utility/in_place_factory.hpp>
 
 namespace mitama {
@@ -76,14 +76,14 @@ public:
   {
     if (static_cast<basic_result<_mutability, maybe<T>, E>const*>(this)->is_ok()) {
       if (auto const& may = static_cast<basic_result<_mutability, maybe<T>, E>const*>(this)->unwrap()) {
-        return just(::mitama::in_place(success(may.unwrap())));
+        return maybe<basic_result<_mutability ,T, E>>{std::in_place, in_place_ok, may.unwrap()};
       }
       else {
-        return mitama::nothing<>;
+        return mitama::nothing;
       }
     }
     else {
-        return just(::mitama::in_place(failure(static_cast<basic_result<_mutability, maybe<T>, E>const*>(this)->unwrap_err())));
+        return maybe<basic_result<_mutability ,T, E>>{std::in_place, in_place_err, static_cast<basic_result<_mutability, maybe<T>, E>const*>(this)->unwrap_err()};
     }
   }
 };
@@ -189,7 +189,7 @@ public:
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the success arm of the basic_result via `operator*`.
-  constexpr auto indirect_ok() const & -> const_indirect_ok_result {
+  constexpr auto indirect_ok() const&  -> const_indirect_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
       return const_indirect_ok_result{in_place_ok, *static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap()};
     }
@@ -208,7 +208,7 @@ public:
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the failure arm of the basic_result via `operator*`.
-  constexpr auto indirect_err() const & -> const_indirect_err_result {
+  constexpr auto indirect_err() const&  -> const_indirect_err_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
       return const_indirect_err_result{in_place_ok, static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap()};
     }
@@ -228,7 +228,7 @@ public:
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the success and failure arm of the basic_result via `operator*`.
-  constexpr auto indirect() const & -> const_indirect_result {
+  constexpr auto indirect() const&  -> const_indirect_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
       return const_indirect_result{in_place_ok, *static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap()};
     }
@@ -305,9 +305,9 @@ public:
     }
   }
 
-  constexpr void indirect_ok() const && = delete;
-  constexpr void indirect_err() const && = delete;
-  constexpr void indirect() const && = delete;
+  constexpr void indirect_ok() const&& = delete;
+  constexpr void indirect_err() const&& = delete;
+  constexpr void indirect() const&& = delete;
 
 };
 
@@ -360,7 +360,7 @@ public:
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the success arm of the basic_result via `operator*`.
-  constexpr auto indirect_ok() const & -> const_indirect_ok_result {
+  constexpr auto indirect_ok() const&  -> const_indirect_ok_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
       return const_indirect_ok_result{in_place_ok, *static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap()};
     }
@@ -368,8 +368,8 @@ public:
       return const_indirect_ok_result{in_place_err, static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap_err()};
     }
   }
-  constexpr void indirect_err() const & = delete;
-  constexpr void indirect() const & = delete;
+  constexpr void indirect_err() const&  = delete;
+  constexpr void indirect() const&  = delete;
 
 
 
@@ -397,9 +397,9 @@ public:
   constexpr void indirect_err() && = delete;
   constexpr void indirect() && = delete;
 
-  constexpr void indirect_ok() const && = delete;
-  constexpr void indirect_err() const && = delete;
-  constexpr void indirect() const && = delete;
+  constexpr void indirect_ok() const&& = delete;
+  constexpr void indirect_err() const&& = delete;
+  constexpr void indirect() const&& = delete;
 
 };
 
@@ -442,7 +442,7 @@ public:
 
 
 
-  constexpr void indirect_ok() const & = delete;
+  constexpr void indirect_ok() const&  = delete;
   /// @brief
   ///   Converts from basic_result<T, E> &` to basic_result<T const&, E::Target const&>.
   ///
@@ -453,7 +453,7 @@ public:
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the failure arm of the basic_result via `operator*`.
-  constexpr auto indirect_err() const & -> const_indirect_err_result {
+  constexpr auto indirect_err() const&  -> const_indirect_err_result {
     if ( static_cast<basic_result<_mutability, T, E> const *>(this)->is_ok() ) {
       return const_indirect_err_result{in_place_ok, static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap()};
     }
@@ -461,7 +461,7 @@ public:
       return const_indirect_err_result{in_place_err, *static_cast<basic_result<_mutability, T, E> const *>(this)->unwrap_err()};
     }
   }
-  constexpr void indirect() const & = delete;
+  constexpr void indirect() const&  = delete;
 
 
 
@@ -489,9 +489,9 @@ public:
   }
   constexpr void indirect() && = delete;
 
-  constexpr void indirect_ok() const && = delete;
-  constexpr void indirect_err() const && = delete;
-  constexpr void indirect() const && = delete;
+  constexpr void indirect_ok() const&& = delete;
+  constexpr void indirect_err() const&& = delete;
+  constexpr void indirect() const&& = delete;
 
 };
 

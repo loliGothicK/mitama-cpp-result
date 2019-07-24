@@ -179,8 +179,8 @@ class Constraints : is_constraints
 public:
   constexpr Constraints(Pre a, Post b): pre_fn(a), post_fn(b) {}
 
-  Constraints(Constraints const &) = default;
-  Constraints &operator=(Constraints const &) = default;
+  Constraints(Constraints const& ) = default;
+  Constraints &operator=(Constraints const& ) = default;
 
   template <class... Expected>
   constexpr
@@ -189,7 +189,7 @@ public:
       is_invocable_constrait<Pre, Expected...>,
       is_invocable_constrait<Post, Expected...>>,
   bool>
-  operator[](std::tuple<Expected...> const &actual) const
+  operator[](std::tuple<Expected...> const& actual) const
   {
     return LogicalOperator::Apply(
       [&actual, this]{ return std::apply(pre_fn, actual); },
@@ -210,8 +210,8 @@ class MatchExpression
 public:
   constexpr MatchExpression(Constraint cons, Fallback cb): constraint{cons}, fallback{cb} {}
 
-  MatchExpression(MatchExpression const &) = default;
-  MatchExpression &operator=(MatchExpression const &) = default;
+  MatchExpression(MatchExpression const& ) = default;
+  MatchExpression &operator=(MatchExpression const& ) = default;
 
   template <class... Args>
   constexpr
@@ -247,8 +247,8 @@ class MatchExpression<Constraint, Fallback, std::enable_if_t<is_result_match_v<C
 public:
   constexpr MatchExpression(Constraint cons, Fallback cb): constraint{cons}, fallback{cb} {}
 
-  MatchExpression(MatchExpression const &) = default;
-  MatchExpression &operator=(MatchExpression const &) = default;
+  MatchExpression(MatchExpression const& ) = default;
+  MatchExpression &operator=(MatchExpression const& ) = default;
 
   template <class... Args>
   constexpr
@@ -415,8 +415,8 @@ class Case : mitamagic::is_constraints
 public:
   explicit constexpr Case(Expected... values) : expected{values...} {}
 
-  Case(Case const &) = default;
-  Case &operator=(Case const &) = default;
+  Case(Case const& ) = default;
+  Case &operator=(Case const& ) = default;
 
   template < class... Actual >
   constexpr
@@ -440,8 +440,8 @@ public:
   explicit constexpr Case(success<T> expected) : expected{expected} {}
   static constexpr bool ok = true;
 
-  Case(Case const &) = default;
-  Case &operator=(Case const &) = default;
+  Case(Case const& ) = default;
+  Case &operator=(Case const& ) = default;
 
   template < mutability _mutability, class U, class E >
   constexpr 
@@ -470,8 +470,8 @@ public:
   explicit constexpr Case(failure<E> expected) : expected{expected} {}
   static constexpr bool ok = false;
 
-  Case(Case const &) = default;
-  Case &operator=(Case const &) = default;
+  Case(Case const& ) = default;
+  Case &operator=(Case const& ) = default;
 
   template < mutability _mutability, class T, class F >
   constexpr 
@@ -501,8 +501,8 @@ public:
   constexpr Constraints(Case<mitama::success<T>> a, Post b): ok_case(a), post_fn(b) {}
   static constexpr bool ok = true;
 
-  Constraints(Constraints const &) = default;
-  Constraints &operator=(Constraints const &) = default;
+  Constraints(Constraints const& ) = default;
+  Constraints &operator=(Constraints const& ) = default;
 
   template < mutability _mutability, class U, class E >
   constexpr 
@@ -510,7 +510,7 @@ public:
     std::is_same_v<std::decay_t<ignore_t>, std::decay_t<T>> ||
     mitamagic::is_comparable_with<T, U>::value,
   bool>
-  operator[](std::tuple<basic_result<_mutability, U, E>> const &actual) const
+  operator[](std::tuple<basic_result<_mutability, U, E>> const& actual) const
   {
     LogicalOperator::Apply(
       [&]{ return ok_case[std::get<0>(actual)]; },
@@ -529,8 +529,8 @@ public:
   constexpr Constraints(Case<mitama::failure<E>> a, Post b): err_case(a), post_fn(b) {}
   static constexpr bool ok = false;
 
-  Constraints(Constraints const &) = default;
-  Constraints &operator=(Constraints const &) = default;
+  Constraints(Constraints const& ) = default;
+  Constraints &operator=(Constraints const& ) = default;
 
   template < mutability _mutability, class T, class F >
   constexpr 
@@ -538,7 +538,7 @@ public:
     std::is_same_v<std::decay_t<ignore_t>, std::decay_t<E>> ||
     mitamagic::is_comparable_with<E, F>::value,
   bool>
-  operator[](std::tuple<basic_result<_mutability, T, F>> const &actual) const
+  operator[](std::tuple<basic_result<_mutability, T, F>> const& actual) const
   {
     LogicalOperator::Apply(
       [&]{ return err_case[std::get<0>(actual)]; },

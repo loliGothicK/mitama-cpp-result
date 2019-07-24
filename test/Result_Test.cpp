@@ -1,6 +1,8 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
+#include <mitama/maybe/maybe.hpp>
 #include <mitama/result/result.hpp>
+#include <mitama/result/result_io.hpp>
 #include <utest_utility/is_invalid_expr.hpp>
 
 #include <boost/hana/assert.hpp>
@@ -126,12 +128,12 @@ TEST_CASE("ok() test", "[result][ok]"){
   REQUIRE(x.ok() == just(2u));
 
   result<int, str> y = failure("Nothing here"s);
-  REQUIRE(y.ok() == nothing<>);
+  REQUIRE(y.ok() == nothing);
 }
 
 TEST_CASE("err() test", "[result][err]"){
   result<u32, str> x = success(2u);
-  REQUIRE(x.err() == nothing<>);
+  REQUIRE(x.err() == nothing);
 
   result<u32, str> y = failure("Nothing here"s);
   REQUIRE(y.err() == just("Nothing here"s));
@@ -280,9 +282,10 @@ TEST_CASE("unwrap() test", "[result][unwrap]"){
     using namespace boost::xpressive;
     sregex re =
         as_xpr(
-            "runtime panicked at 'called `basic_result::unwrap()` on a value: failure(\"emergency failure\")', ") >>
+            "runtime panicked at 'called `basic_result::unwrap()` on a value: `failure(\"emergency failure\")`', ") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
+    std::cout << p.what() << std::endl;
     REQUIRE(regex_match(std::string{p.what()}, what, re));
   }
 }
@@ -297,7 +300,7 @@ TEST_CASE("unwrap_err() test", "[result][unwrap_err]"){
     using namespace boost::xpressive;
     sregex re =
         as_xpr(
-            R"(runtime panicked at 'called `basic_result::unwrap_err()` on a value: success(2)', )") >>
+            R"(runtime panicked at 'called `basic_result::unwrap_err()` on a value: `success(2)`', )") >>
         *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
     REQUIRE(regex_match(std::string{p.what()}, what, re));
@@ -321,7 +324,7 @@ TEST_CASE("unwrap_or_default() test", "[result][unwrap_or_default]"){
 
 TEST_CASE("transpose() test", "[result][transpose]"){
   result<maybe<i32>, std::monostate> x = success(just(5));
-  maybe<result<i32, std::monostate>> y = just(mitama::in_place(success(5)));
+  maybe<result<i32, std::monostate>> y = just(success(5));
 
   REQUIRE(x.transpose() == y);
 }
@@ -593,8 +596,8 @@ SCENARIO("test for dangling indirect", "[result][indirect][dangling]"){
       = mut_result<std::unique_ptr<int>, std::unique_ptr<int>>(success{std::make_unique<int>(1)})
         .as_ref()
         .indirect();
-
-    REQUIRE( std::is_same_v<decltype(indirect.unwrap()), dangling<std::reference_wrapper<int>>> );
+    std::cout << boost::typeindex::type_id_with_cvr<decltype(indirect.unwrap())>().pretty_name() << std::endl;
+    REQUIRE( std::is_same_v<decltype(indirect.unwrap()), dangling<std::reference_wrapper<int>>&> );
     // indirect.unwrap().transmute()
     // ^~~~~~~~~~~~~~~~~~~~~~~~~~ Undefined Behavior!
   }
