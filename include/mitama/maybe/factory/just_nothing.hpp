@@ -26,7 +26,7 @@ constexpr bool operator> (const nothing_t, const nothing_t) { return false; }
 constexpr bool operator<=(const nothing_t, const nothing_t) { return true; }
 constexpr bool operator>=(const nothing_t, const nothing_t) { return true; }
 
-std::ostream& operator<<(std::ostream& os, nothing_t) { return os << "nothing"; }
+inline std::ostream& operator<<(std::ostream& os, nothing_t) { return os << "nothing"; }
 
 template <class>
 struct is_just: std::false_type {};
