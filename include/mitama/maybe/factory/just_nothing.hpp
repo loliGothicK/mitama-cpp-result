@@ -28,7 +28,7 @@ constexpr bool operator>=(const nothing_t, const nothing_t) { return true; }
 
 std::ostream& operator<<(std::ostream& os, nothing_t) { return os << "nothing"; }
 
-template <class T>
+template <class, class>
 class display {};
 
 template <class T>
