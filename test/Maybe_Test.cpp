@@ -175,11 +175,35 @@ struct noncopyable {
   noncopyable& operator=(noncopyable const&) = delete;
   noncopyable(noncopyable&&) = default;
   noncopyable& operator=(noncopyable&&) = default;
+
+  bool operator==(noncopyable&&) & {
+    return true;
+  }
+  bool operator==(noncopyable&&) const& {
+    return true;
+  }
+  bool operator==(noncopyable const&) & {
+    return true;
+  }
+  bool operator==(noncopyable const&) const& {
+    return true;
+  }
+
+  friend std::ostream& operator<<(std::ostream& os, noncopyable&) {
+    return os << "noncopyable&";
+  }
+  friend std::ostream& operator<<(std::ostream& os, noncopyable const&) {
+    return os << "noncopyable const&";
+  }
+  friend std::ostream& operator<<(std::ostream& os, noncopyable&&) {
+    return os << "noncopyable&&";
+  }
 };
 
 TEST_CASE("get_or_emplace()", "[maybe][get_or_emplace]"){
     maybe<noncopyable> x = nothing;
-    std::ignore = x.get_or_emplace(noncopyable{});
+    auto& y = x.get_or_emplace(noncopyable{});
+    REQUIRE(y == noncopyable{});
 }
 
 TEST_CASE("get_or_emplace_with()", "[maybe][get_or_emplace_with]"){
