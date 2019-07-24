@@ -299,6 +299,29 @@ TEST_CASE("and_finally()", "[maybe][and_finally]"){
 
 }
 
+TEST_CASE("or_finally()", "[maybe][or_finally]"){
+
+  std::string hook = "default";
+  maybe<int> x = nothing;
+  x.or_finally([&hook]{
+    hook = "error";
+  });
+  REQUIRE(hook == "error"s);
+
+}
+
+TEST_CASE("and_peek() test", "[maybe][and_peek]"){
+  maybe x = just(42);
+  REQUIRE(x.and_peek([](int& v){ v = 57; }) == just(57));
+}
+
+TEST_CASE("or_peek() test", "[maybe][and_peek]"){
+  maybe<int> x = nothing;
+  int hook = 0;
+  REQUIRE(x.or_peek([&hook]{ hook = 57; }) == nothing);
+  REQUIRE(hook == 57);
+}
+
 TEST_CASE("less compare", "[maybe][less]"){
   maybe<int> just1 = just(1);
   maybe<int> just2 = just(2);
