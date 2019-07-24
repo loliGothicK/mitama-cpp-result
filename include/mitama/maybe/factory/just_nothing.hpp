@@ -29,9 +29,7 @@ constexpr bool operator>=(const nothing_t, const nothing_t) { return true; }
 std::ostream& operator<<(std::ostream& os, nothing_t) { return os << "nothing"; }
 
 template <class T, class=void>
-class display {
-    friend std::ostream& operator<<(std::ostream&, T const&) = delete;
-};
+class display {};
 
 template <class T>
 class display<just_t<T>, std::enable_if_t<trait::formattable<T>::value> > {
