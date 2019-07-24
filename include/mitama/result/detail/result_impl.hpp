@@ -305,9 +305,9 @@ public:
     }
   }
 
-  constexpr void indirect_ok() const& & = delete;
-  constexpr void indirect_err() const& & = delete;
-  constexpr void indirect() const& & = delete;
+  constexpr void indirect_ok() const&& = delete;
+  constexpr void indirect_err() const&& = delete;
+  constexpr void indirect() const&& = delete;
 
 };
 
@@ -397,9 +397,9 @@ public:
   constexpr void indirect_err() && = delete;
   constexpr void indirect() && = delete;
 
-  constexpr void indirect_ok() const& & = delete;
-  constexpr void indirect_err() const& & = delete;
-  constexpr void indirect() const& & = delete;
+  constexpr void indirect_ok() const&& = delete;
+  constexpr void indirect_err() const&& = delete;
+  constexpr void indirect() const&& = delete;
 
 };
 
@@ -489,9 +489,9 @@ public:
   }
   constexpr void indirect() && = delete;
 
-  constexpr void indirect_ok() const& & = delete;
-  constexpr void indirect_err() const& & = delete;
-  constexpr void indirect() const& & = delete;
+  constexpr void indirect_ok() const&& = delete;
+  constexpr void indirect_err() const&& = delete;
+  constexpr void indirect() const&& = delete;
 
 };
 

@@ -278,111 +278,226 @@ TEST_CASE("and_finally()", "[maybe][and_finally]"){
 TEST_CASE("less compare", "[maybe][less]"){
   maybe<int> just1 = just(1);
   maybe<int> just2 = just(2);
-  maybe<int> none1 = nothing;
-  maybe<int> none2 = nothing;
+  maybe<int> none = nothing;
 
   REQUIRE(just1 < just2);
   REQUIRE_FALSE(just2 < just1);
   REQUIRE_FALSE(just1 < just1);
   REQUIRE_FALSE(just2 < just2);
 
-  REQUIRE_FALSE(none1 < none2);
-  REQUIRE_FALSE(none2 < none1);
-  REQUIRE_FALSE(none1 < none1);
-  REQUIRE_FALSE(none2 < none2);
+  REQUIRE(just(1) < just2);
+  REQUIRE_FALSE(just(2) < just1);
+  REQUIRE_FALSE(just(1) < just1);
+  REQUIRE_FALSE(just(2) < just2);
 
-  REQUIRE(none1 < just1);
-  REQUIRE(none1 < just2);
-  REQUIRE(none2 < just1);
-  REQUIRE(none2 < just2);
+  REQUIRE(just1 < just(2));
+  REQUIRE_FALSE(just2 < just(1));
+  REQUIRE_FALSE(just1 < just(1));
+  REQUIRE_FALSE(just2 < just(2));
 
-  REQUIRE_FALSE(just1 < none1);
-  REQUIRE_FALSE(just1 < none2);
-  REQUIRE_FALSE(just2 < none1);
-  REQUIRE_FALSE(just2 < none2);
+  REQUIRE(just(1) < just(2));
+  REQUIRE_FALSE(just(2) < just(1));
+  REQUIRE_FALSE(just(1) < just(1));
+  REQUIRE_FALSE(just(2) < just(2));
+
+  REQUIRE_FALSE(none < none);
+  REQUIRE_FALSE(nothing < none);
+  REQUIRE_FALSE(none < nothing);
+  REQUIRE_FALSE(nothing < nothing);
+
+  REQUIRE(none < just1);
+  REQUIRE(none < just2);
+
+  REQUIRE_FALSE(just1 < none);
+  REQUIRE_FALSE(just2 < none);
+
+  REQUIRE(nothing < just1);
+  REQUIRE(nothing < just2);
+
+  REQUIRE(none < just(1));
+  REQUIRE(none < just(2));
+
+  REQUIRE(nothing < just(1));
+  REQUIRE(nothing < just(2));
+
+  REQUIRE_FALSE(just1 < none);
+  REQUIRE_FALSE(just2 < none);
+
+  REQUIRE_FALSE(just(1) < none);
+  REQUIRE_FALSE(just(2) < none);
+
+  REQUIRE_FALSE(just1 < nothing);
+  REQUIRE_FALSE(just2 < nothing);
+
+  REQUIRE_FALSE(just(1) < nothing);
+  REQUIRE_FALSE(just(2) < nothing);
 
 }
 
 TEST_CASE("less_or_equal compare", "[maybe][less_or_equal]"){
   maybe<int> just1 = just(1);
   maybe<int> just2 = just(2);
-  maybe<int> none1 = nothing;
-  maybe<int> none2 = nothing;
+  maybe<int> none = nothing;
 
   REQUIRE(just1 <= just2);
   REQUIRE_FALSE(just2 <= just1);
   REQUIRE(just1 <= just1);
   REQUIRE(just2 <= just2);
 
-  REQUIRE(none1 <= none2);
-  REQUIRE(none2 <= none1);
-  REQUIRE(none1 <= none1);
-  REQUIRE(none2 <= none2);
+  REQUIRE(just(1) <= just2);
+  REQUIRE_FALSE(just(2) <= just1);
+  REQUIRE(just(1) <= just1);
+  REQUIRE(just(2) <= just2);
 
-  REQUIRE(none1 <= just1);
-  REQUIRE(none1 <= just2);
-  REQUIRE(none2 <= just1);
-  REQUIRE(none2 <= just2);
+  REQUIRE(just1 <= just(2));
+  REQUIRE_FALSE(just2 <= just(1));
+  REQUIRE(just1 <= just(1));
+  REQUIRE(just2 <= just(2));
 
-  REQUIRE_FALSE(just1 <= none1);
-  REQUIRE_FALSE(just1 <= none2);
-  REQUIRE_FALSE(just2 <= none1);
-  REQUIRE_FALSE(just2 <= none2);
+  REQUIRE(just(1) <= just(2));
+  REQUIRE_FALSE(just(2) <= just(1));
+  REQUIRE(just(1) <= just(1));
+  REQUIRE(just(2) <= just(2));
+
+  REQUIRE(none <= none);
+  REQUIRE(nothing <= none);
+  REQUIRE(none <= nothing);
+  REQUIRE(nothing <= nothing);
+
+  REQUIRE(none <= just1);
+  REQUIRE(none <= just2);
+
+  REQUIRE(nothing <= just1);
+  REQUIRE(nothing <= just2);
+
+  REQUIRE(none <= just(1));
+  REQUIRE(none <= just(2));
+
+  REQUIRE(nothing <= just(1));
+  REQUIRE(nothing <= just(2));
+
+  REQUIRE_FALSE(just1 <= none);
+  REQUIRE_FALSE(just2 <= none);
+
+  REQUIRE_FALSE(just(1) <= none);
+  REQUIRE_FALSE(just(2) <= none);
+
+  REQUIRE_FALSE(just1 <= nothing);
+  REQUIRE_FALSE(just2 <= nothing);
+
+  REQUIRE_FALSE(just(1) <= nothing);
+  REQUIRE_FALSE(just(2) <= nothing);
 
 }
 
 TEST_CASE("greater compare", "[maybe][greater]"){
   maybe<int> just1 = just(1);
   maybe<int> just2 = just(2);
-  maybe<int> none1 = nothing;
-  maybe<int> none2 = nothing;
+  maybe<int> none = nothing;
 
   REQUIRE_FALSE(just1 > just2);
   REQUIRE(just2 > just1);
   REQUIRE_FALSE(just1 > just1);
   REQUIRE_FALSE(just2 > just2);
 
-  REQUIRE_FALSE(none1 > none2);
-  REQUIRE_FALSE(none2 > none1);
-  REQUIRE_FALSE(none1 > none1);
-  REQUIRE_FALSE(none2 > none2);
+  REQUIRE_FALSE(just(1) > just2);
+  REQUIRE(just(2) > just1);
+  REQUIRE_FALSE(just(1) > just1);
+  REQUIRE_FALSE(just(2) > just2);
 
-  REQUIRE_FALSE(none1 > just1);
-  REQUIRE_FALSE(none1 > just2);
-  REQUIRE_FALSE(none2 > just1);
-  REQUIRE_FALSE(none2 > just2);
+  REQUIRE_FALSE(just1 > just(2));
+  REQUIRE(just2 > just(1));
+  REQUIRE_FALSE(just1 > just(1));
+  REQUIRE_FALSE(just2 > just(2));
 
-  REQUIRE(just1 > none1);
-  REQUIRE(just1 > none2);
-  REQUIRE(just2 > none1);
-  REQUIRE(just2 > none2);
+  REQUIRE_FALSE(just(1) > just(2));
+  REQUIRE(just(2) > just(1));
+  REQUIRE_FALSE(just(1) > just(1));
+  REQUIRE_FALSE(just(2) > just(2));
+
+  REQUIRE_FALSE(none > none);
+  REQUIRE_FALSE(nothing > none);
+  REQUIRE_FALSE(none > nothing);
+  REQUIRE_FALSE(nothing > nothing);
+
+  REQUIRE_FALSE(none > just1);
+  REQUIRE_FALSE(none > just2);
+
+  REQUIRE_FALSE(nothing > just1);
+  REQUIRE_FALSE(nothing > just2);
+
+  REQUIRE_FALSE(none > just(1));
+  REQUIRE_FALSE(none > just(2));
+
+  REQUIRE_FALSE(nothing > just(1));
+  REQUIRE_FALSE(nothing > just(2));
+
+  REQUIRE(just1 > none);
+  REQUIRE(just2 > none);
+
+  REQUIRE(just(1) > none);
+  REQUIRE(just(2) > none);
+
+  REQUIRE(just1 > nothing);
+  REQUIRE(just2 > nothing);
+
+  REQUIRE(just(1) > nothing);
+  REQUIRE(just(2) > nothing);
 
 }
 
 TEST_CASE("greater_or_equal compare", "[maybe][greater_or_equal]"){
   maybe<int> just1 = just(1);
   maybe<int> just2 = just(2);
-  maybe<int> none1 = nothing;
-  maybe<int> none2 = nothing;
+  maybe<int> none = nothing;
 
   REQUIRE_FALSE(just1 >= just2);
   REQUIRE(just2 >= just1);
   REQUIRE(just1 >= just1);
   REQUIRE(just2 >= just2);
 
-  REQUIRE(none1 >= none2);
-  REQUIRE(none2 >= none1);
-  REQUIRE(none1 >= none1);
-  REQUIRE(none2 >= none2);
+  REQUIRE_FALSE(just(1) >= just2);
+  REQUIRE(just(2) >= just1);
+  REQUIRE(just(1) >= just1);
+  REQUIRE(just(2) >= just2);
 
-  REQUIRE_FALSE(none1 >= just1);
-  REQUIRE_FALSE(none1 >= just2);
-  REQUIRE_FALSE(none2 >= just1);
-  REQUIRE_FALSE(none2 >= just2);
+  REQUIRE_FALSE(just1 >= just(2));
+  REQUIRE(just2 >= just(1));
+  REQUIRE(just1 >= just(1));
+  REQUIRE(just2 >= just(2));
 
-  REQUIRE(just1 >= none1);
-  REQUIRE(just1 >= none2);
-  REQUIRE(just2 >= none1);
-  REQUIRE(just2 >= none2);
+  REQUIRE_FALSE(just(1) >= just(2));
+  REQUIRE(just(2) >= just(1));
+  REQUIRE(just(1) >= just(1));
+  REQUIRE(just(2) >= just(2));
+
+  REQUIRE(none >= none);
+  REQUIRE(nothing >= none);
+  REQUIRE(none >= nothing);
+  REQUIRE(nothing >= nothing);
+
+  REQUIRE_FALSE(nothing >= just1);
+  REQUIRE_FALSE(nothing >= just2);
+
+  REQUIRE_FALSE(none >= just1);
+  REQUIRE_FALSE(none >= just2);
+
+  REQUIRE_FALSE(none >= just(1));
+  REQUIRE_FALSE(none >= just(2));
+
+  REQUIRE_FALSE(nothing >= just(1));
+  REQUIRE_FALSE(nothing >= just(2));
+
+  REQUIRE(just1 >= none);
+  REQUIRE(just2 >= none);
+
+  REQUIRE(just(1) >= none);
+  REQUIRE(just(2) >= none);
+
+  REQUIRE(just1 >= nothing);
+  REQUIRE(just2 >= nothing);
+
+  REQUIRE(just(1) >= nothing);
+  REQUIRE(just(2) >= nothing);
 
 }

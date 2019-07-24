@@ -92,126 +92,150 @@ public:
   explicit constexpr success(std::in_place_t, Args && ... args) noexcept(std::is_nothrow_constructible_v<T, Args...>)
       : x(std::forward<Args>(args)...) {}
 
+  template <mutability _mut, class T_, class E_>
+  constexpr
   std::enable_if_t<
-      is_comparable_with<T, T_>::value,
-      bool>
-  constexpr operator==(basic_result<_mut, T_, E_> const& rhs) const {
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator==(basic_result<_mut, T_, E_> const& rhs) const {
     return rhs.is_ok() ? rhs.unwrap() == this->x : false;
   }
 
   template <class T_>
+  constexpr
   std::enable_if_t<
-      is_comparable_with<T, T_>::value,
-      bool>
-  constexpr operator==(success<T_> const& rhs) const {
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator==(success<T_> const& rhs) const {
     return this->x == rhs.x;
   }
 
   template <class E_>
-  constexpr bool operator==(failure<E_> const& ) const {
+  constexpr bool
+  operator==(failure<E_> const& ) const {
     return false;
   }
 
+  template <mutability _mut, class T_, class E_>
+  constexpr
   std::enable_if_t<
-      is_comparable_with<T, T_>::value,
-      bool>
-  constexpr operator!=(basic_result<_mut, T_, E_> const& rhs) const {
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator!=(basic_result<_mut, T_, E_> const& rhs) const {
     return rhs.is_ok() ? !(rhs.unwrap() == this->x) : true;
   }
 
   template <class T_>
+  constexpr
   std::enable_if_t<
-      is_comparable_with<T, T_>::value,
-      bool>
-  constexpr operator!=(success<T_> const& rhs) const {
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator!=(success<T_> const& rhs) const {
     return !(this->x == rhs.x);
   }
 
   template <class E_>
-  constexpr bool operator!=(failure<E_> const& ) const {
+  constexpr bool
+  operator!=(failure<E_> const& ) const {
     return true;
   }
 
+  template <mutability _mut, class T_, class E_>
+  constexpr
   std::enable_if_t<
-      is_comparable_with<T, T_>::value,
-      bool>
-  constexpr operator<(basic_result<_mut, T_, E_> const& rhs) const {
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator<(basic_result<_mut, T_, E_> const& rhs) const {
     return rhs.is_ok() ? rhs.unwrap() < this->x : false;
   }
 
   template <class T_>
+  constexpr
   std::enable_if_t<
-      is_comparable_with<T, T_>::value,
-      bool>
-  constexpr operator<(success<T_> const& rhs) const {
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator<(success<T_> const& rhs) const {
     return this->x < rhs.x;
   }
 
   template <class E_>
-  constexpr bool operator<(failure<E_> const& ) const {
+  constexpr bool
+  operator<(failure<E_> const& ) const {
     return false;
   }
 
+  template <mutability _mut, class T_, class E_>
+  constexpr
   std::enable_if_t<
-      is_comparable_with<T, T_>::value,
-      bool>
-  constexpr operator<=(basic_result<_mut, T_, E_> const& rhs) const
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator<=(basic_result<_mut, T_, E_> const& rhs) const
   {
     return rhs.is_ok() ? rhs.unwrap() <= this->x : false;
   }
 
   template <class T_>
+  constexpr
   std::enable_if_t<
-      is_comparable_with<T, T_>::value,
-      bool>
-  constexpr operator<(success<T_> const& rhs) const {
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator<=(success<T_> const& rhs) const {
     return this->x <= rhs.x;
   }
 
   template <class E_>
-  constexpr bool operator<(failure<E_> const& ) const {
+  constexpr bool
+  operator<=(failure<E_> const& ) const {
     return false;
   }
 
+  template <mutability _mut, class T_, class E_>
+  constexpr
   std::enable_if_t<
-      is_comparable_with<T, T_>::value,
-      bool>
-  constexpr operator>(basic_result<_mut, T_, E_> const& rhs) const
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator>(basic_result<_mut, T_, E_> const& rhs) const
   {
     return rhs.is_ok() ? rhs.unwrap() > this->x : true;
   }
 
   template <class T_>
+  constexpr
   std::enable_if_t<
-      is_comparable_with<T, T_>::value,
-      bool>
-  constexpr operator>(success<T_> const& rhs) const {
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator>(success<T_> const& rhs) const {
     return this->x > rhs.x;
   }
 
   template <class E_>
-  constexpr bool operator>(failure<E_> const& ) const {
+  constexpr bool
+  operator>(failure<E_> const& ) const {
     return true;
   }
 
+  template <mutability _mut, class T_, class E_>
+  constexpr
   std::enable_if_t<
-      is_comparable_with<T, T_>::value,
-      bool>
-  constexpr operator>=(basic_result<_mut, T_, E_> const& rhs) const
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator>=(basic_result<_mut, T_, E_> const& rhs) const
   {
     return rhs.is_ok() ? rhs.unwrap() >= this->x : true;
   }
 
   template <class T_>
+  constexpr
   std::enable_if_t<
-      is_comparable_with<T, T_>::value,
-      bool>
-  constexpr operator>=(success<T_> const& rhs) const {
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator>=(success<T_> const& rhs) const {
     return this->x >= rhs.x;
   }
 
   template <class E_>
-  constexpr bool operator>=(failure<E_> const&) const {
+  constexpr bool
+  operator>=(failure<E_> const&) const {
     return true;
   }
 

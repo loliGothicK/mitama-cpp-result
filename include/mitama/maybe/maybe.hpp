@@ -647,13 +647,6 @@ operator==(maybe<T> const& lhs, maybe<U> const& rhs) {
     return lhs && rhs && (lhs.unwrap() == rhs.unwrap());
 }
 
-template <class T, class U>
-std::enable_if_t<meta::is_comparable_with<T, U>::value,
-bool>
-operator!=(maybe<T> const& lhs, maybe<U> const& rhs) {
-    return !(lhs == rhs);
-}
-
 template <class T>
 bool operator==(maybe<T> const& lhs, const nothing_t) {
     return lhs.is_nothing();
@@ -662,6 +655,13 @@ bool operator==(maybe<T> const& lhs, const nothing_t) {
 template <class T>
 bool operator==(const nothing_t, maybe<T> const& rhs) {
     return rhs.is_nothing();
+}
+
+template <class T, class U>
+std::enable_if_t<meta::is_comparable_with<T, U>::value,
+bool>
+operator!=(maybe<T> const& lhs, maybe<U> const& rhs) {
+    return !(lhs == rhs);
 }
 
 template <class T>
@@ -679,9 +679,29 @@ bool operator<(maybe<T> const& lhs, maybe<U> const& rhs) {
     return lhs.ok_or() < rhs.ok_or();
 }
 
+template <class T>
+bool operator<(nothing_t, maybe<T> const& rhs) {
+    return rhs.is_just();
+}
+
+template <class T>
+bool operator<(maybe<T> const&, nothing_t) {
+    return false;
+}
+
 template <class T, class U>
 bool operator<=(maybe<T> const& lhs, maybe<U> const& rhs) {
     return lhs.ok_or() <= rhs.ok_or();
+}
+
+template <class T>
+bool operator<=(nothing_t, maybe<T> const&) {
+    return true;
+}
+
+template <class T>
+bool operator<=(maybe<T> const& lhs, nothing_t) {
+    return lhs.is_nothing();
 }
 
 template <class T, class U>
@@ -689,9 +709,29 @@ bool operator>(maybe<T> const& lhs, maybe<U> const& rhs) {
     return lhs.ok_or() > rhs.ok_or();
 }
 
+template <class T>
+bool operator>(nothing_t, maybe<T> const&) {
+    return false;
+}
+
+template <class T>
+bool operator>(maybe<T> const& lhs, nothing_t) {
+    return lhs.is_just();
+}
+
 template <class T, class U>
 bool operator>=(maybe<T> const& lhs, maybe<U> const& rhs) {
     return lhs.ok_or() >= rhs.ok_or();
+}
+
+template <class T>
+bool operator>=(nothing_t, maybe<T> const& rhs) {
+    return rhs.is_nothing();
+}
+
+template <class T>
+bool operator>=(maybe<T> const&, nothing_t) {
+    return true;
 }
 
 /// @brief

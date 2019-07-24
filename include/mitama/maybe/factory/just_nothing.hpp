@@ -12,9 +12,14 @@ struct [[nodiscard]] nothing_t {};
 
 inline constexpr nothing_t nothing{};
 
-std::ostream& operator<<(std::ostream& os, nothing_t) {
-    return os << "nothing";
-}
+constexpr bool operator==(const nothing_t, const nothing_t) { return true; }
+constexpr bool operator!=(const nothing_t, const nothing_t) { return true; }
+constexpr bool operator< (const nothing_t, const nothing_t) { return true; }
+constexpr bool operator> (const nothing_t, const nothing_t) { return true; }
+constexpr bool operator<=(const nothing_t, const nothing_t) { return true; }
+constexpr bool operator>=(const nothing_t, const nothing_t) { return true; }
+
+std::ostream& operator<<(std::ostream& os, nothing_t) { return os << "nothing"; }
 
 
 /// class just:
@@ -95,9 +100,29 @@ public:
     explicit constexpr just_t(std::in_place_t, Args && ... args) noexcept(std::is_nothrow_constructible_v<T, Args...>)
         : x(std::forward<Args>(args)...) {}
 
+    friend constexpr bool
+    operator==(const nothing_t, just_t const&) {
+        return false;
+    }
+
+    friend constexpr bool
+    operator==(just_t const&, const nothing_t) {
+        return false;
+    }
+
+    template <class U>
+    constexpr
+    std::enable_if_t<
+        meta::is_comparable_with<T, U>::value,
+    bool>
+    operator==(just_t<U> const& rhs) const {
+        return this->x == rhs.x;
+    }
+
     template <class U>
     friend
-    std::enable_if_t<meta::is_comparable_with<T, U>::value,
+    std::enable_if_t<
+        meta::is_comparable_with<T, U>::value,
     bool>
     operator==(maybe<U> const& lhs, just_t const& rhs) {
         return lhs && (lhs.unwrap() == rhs.x);
@@ -105,26 +130,206 @@ public:
 
     template <class U>
     friend
-    std::enable_if_t<meta::is_comparable_with<T, U>::value,
+    std::enable_if_t<
+        meta::is_comparable_with<T, U>::value,
     bool>
     operator==(just_t const& lhs, maybe<U> const& rhs) {
         return rhs && (lhs.x == rhs.unwrap());
     }
 
+    friend constexpr bool
+    operator!=(const nothing_t , just_t const&) {
+        return true;
+    }
+
+    friend constexpr bool
+    operator!=(just_t const&, const nothing_t) {
+        return true;
+    }
+
     template <class U>
-    friend
-    std::enable_if_t<meta::is_comparable_with<T, U>::value,
+    constexpr
+    std::enable_if_t<
+        meta::is_comparable_with<T, U>::value,
     bool>
-    operator!=(maybe<U> const& lhs, just_t const& rhs) {
-        return !(lhs == rhs);
+    operator!=(just_t<U> const& rhs) const{
+        return !(this->x == rhs.x);
     }
 
     template <class U>
     friend
-    std::enable_if_t<meta::is_comparable_with<T, U>::value,
+    std::enable_if_t<
+        meta::is_comparable_with<T, U>::value,
+    bool>
+    operator!=(maybe<U> const& lhs, just_t const& rhs) {
+        return lhs && !(lhs.unwrap() == rhs);
+    }
+
+    template <class U>
+    friend
+    std::enable_if_t<
+        meta::is_comparable_with<T, U>::value,
     bool>
     operator!=(just_t const& lhs, maybe<U> const& rhs) {
-        return !(lhs == rhs);
+        return rhs && !(lhs == rhs.unwrap());
+    }
+
+    friend constexpr bool
+    operator<(const nothing_t , just_t const&) {
+        return true;
+    }
+
+    friend constexpr bool
+    operator<(just_t const&, const nothing_t) {
+        return false;
+    }
+
+    template <class U>
+    constexpr
+    std::enable_if_t<
+        meta::is_less_comparable_with<T, U>::value,
+    bool>
+    operator<(just_t<U> const& rhs) const{
+        return this->x < rhs.x;
+    }
+
+    template <class U>
+    friend
+    std::enable_if_t<
+        meta::is_less_comparable_with<T, U>::value,
+    bool>
+    operator<(just_t const& lhs, maybe<U> const& rhs) {
+        return rhs ? lhs.x < rhs.unwrap() : false;
+    }
+
+    template <class U>
+    friend
+    std::enable_if_t<
+        meta::is_less_comparable_with<T, U>::value,
+    bool>
+    operator<(maybe<U> const& lhs, just_t const& rhs) {
+        return lhs ? lhs.unwrap() < rhs.x : true;
+    }
+
+    friend constexpr bool
+    operator<=(const nothing_t , just_t const&) {
+        return true;
+    }
+
+    friend constexpr bool
+    operator<=(just_t const&, const nothing_t) {
+        return false;
+    }
+
+    template <class U>
+    constexpr 
+    std::enable_if_t<
+        std::conjunction_v<
+            meta::is_less_comparable_with<T, U>,
+            meta::is_comparable_with<T, U>>,
+    bool>
+    operator<=(just_t<U> const& rhs) const{
+        return this->x < rhs.x || this->x == rhs.x ;
+    }
+
+    template <class U>
+    friend
+    std::enable_if_t<
+        std::conjunction_v<
+            meta::is_less_comparable_with<T, U>,
+            meta::is_comparable_with<T, U>>,
+    bool>
+    operator<=(just_t const& lhs, maybe<U> const& rhs) {
+        return rhs ? (lhs.x < rhs.unwrap() || lhs.x == rhs.unwrap()) : false;
+    }
+
+    template <class U>
+    friend
+    std::enable_if_t<
+        std::conjunction_v<
+            meta::is_less_comparable_with<T, U>,
+            meta::is_comparable_with<T, U>>,
+    bool>
+    operator<=(maybe<U> const& lhs, just_t const& rhs) {
+        return lhs ? (lhs.unwrap() < rhs.x || lhs.unwrap() == rhs.x) : true;
+    }
+
+    friend constexpr bool
+    operator>(const nothing_t , just_t const&) {
+        return false;
+    }
+
+    friend constexpr bool
+    operator>(just_t const&, const nothing_t) {
+        return true;
+    }
+
+    template <class U>
+    std::enable_if_t<
+        meta::is_comparable_with<T, U>::value,
+    bool>
+    operator>(just_t<U> const& rhs) const{
+        return rhs < *this;
+    }
+
+    template <class U>
+    friend
+    std::enable_if_t<
+        meta::is_less_comparable_with<T, U>::value,
+    bool>
+    operator>(just_t const& lhs, maybe<U> const& rhs) {
+        return rhs < lhs;
+    }
+
+    template <class U>
+    friend
+    std::enable_if_t<
+        meta::is_less_comparable_with<T, U>::value,
+    bool>
+    operator>(maybe<U> const& lhs, just_t const& rhs) {
+        return rhs < lhs;
+    }
+
+    friend constexpr bool
+    operator>=(const nothing_t , just_t const&) {
+        return false;
+    }
+
+    friend constexpr bool
+    operator>=(just_t const&, const nothing_t) {
+        return true;
+    }
+
+    template <class U>
+    std::enable_if_t<
+        std::conjunction_v<
+            meta::is_less_comparable_with<T, U>,
+            meta::is_comparable_with<T, U>>,
+    bool>
+    operator>=(just_t<U> const& rhs) const{
+        return rhs <= *this;
+    }
+
+    template <class U>
+    friend
+    std::enable_if_t<
+        std::conjunction_v<
+            meta::is_less_comparable_with<T, U>,
+            meta::is_comparable_with<T, U>>,
+    bool>
+    operator>=(just_t const& lhs, maybe<U> const& rhs) {
+        return rhs <= lhs;
+    }
+
+    template <class U>
+    friend
+    std::enable_if_t<
+        std::conjunction_v<
+            meta::is_less_comparable_with<T, U>,
+            meta::is_comparable_with<T, U>>,
+    bool>
+    operator>=(maybe<U> const& lhs, just_t const& rhs) {
+        return rhs <= lhs;
     }
 
     friend std::ostream& operator<<(std::ostream& os, just_t const& j) {
