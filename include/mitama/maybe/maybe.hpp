@@ -791,7 +791,7 @@ operator<<(std::ostream& os, maybe<T> const& may) {
                        : os << "nothing"sv;
 }
 
-template <class T> maybe(T&&) -> maybe<typename mitamagic::element_type<std::decay_t<T>>::type>;
-
+template <class T, std::enable_if_t<!is_just<T>::value, bool> = false>
+maybe(T&&) -> maybe<typename mitamagic::element_type<std::decay_t<T>>::type>;
 }
 #endif

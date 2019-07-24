@@ -3,6 +3,13 @@
 #include <mitama/maybe/fwd/maybe_fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
 #include <mitama/result/traits/perfect_traits_special_members.hpp>
+#include <mitama/result/traits/impl_traits.hpp>
+#include <boost/hana/functional/fix.hpp>
+#include <boost/hana/functional/overload.hpp>
+#include <boost/hana/functional/overload_linearly.hpp>
+#include <iostream>
+#include <string>
+#include <string_view>
 #include <type_traits>
 #include <utility>
 
@@ -21,23 +28,88 @@ constexpr bool operator>=(const nothing_t, const nothing_t) { return true; }
 
 std::ostream& operator<<(std::ostream& os, nothing_t) { return os << "nothing"; }
 
+template <class T, class=void>
+class display {
+    friend std::ostream& operator<<(std::ostream&, T const&) = delete;
+};
+
+template <class T>
+class display<just_t<T>, std::enable_if_t<trait::formattable<T>::value> > {
+    friend std::ostream& operator<<(std::ostream& os, just_t<T> const& j) {
+        using namespace std::string_literals;
+        using namespace std::string_view_literals;
+        auto inner_format = boost::hana::fix(boost::hana::overload_linearly(
+            [](auto, auto const& x) -> std::enable_if_t<trait::formattable_element<std::decay_t<decltype(x)>>::value, std::string> {
+                return boost::hana::overload_linearly(
+                [](std::monostate) { return "()"s; },
+                [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
+                [](auto const& x) { return (boost::format("%1%") % x).str(); })
+                (x);
+            },
+            [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_dictionary<std::decay_t<decltype(x)>>::value, std::string> {
+                if (x.empty()) return "{}"s;
+                using std::begin, std::end;
+                auto iter = begin(x);
+                std::string str = "{"s + (boost::format("%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
+                while (++iter != end(x)) {
+                str += (boost::format(",%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
+                }
+                return str += "}";
+            },
+            [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_range<std::decay_t<decltype(x)>>::value, std::string> {
+                if (x.empty()) return "[]"s;
+                using std::begin, std::end;
+                auto iter = begin(x);
+                std::string str = "["s + _fmt(*iter);
+                while (++iter != end(x)) {
+                str += (boost::format(",%1%") % _fmt(*iter)).str();
+                }
+                return str += "]";
+            },
+            [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_tuple<std::decay_t<decltype(x)>>::value, std::string> {
+                if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0) {
+                return "()"s;
+                }
+                else {
+                return std::apply(
+                    [_fmt](auto const& head, auto const&... tail) {
+                    return "("s + _fmt(head) + ((("," + _fmt(tail))) + ...) + ")"s;
+                    }, x);
+                }
+            }));
+        return os << boost::format("just(%1%)") % inner_format(j.x);
+    }
+};
+
+template <class>
+struct is_just: std::false_type {};
+
+template <class T>
+struct is_just<just_t<T>>: std::true_type {};
+
+template <class, class>
+struct is_just_with: std::false_type {};
+
+template <class T>
+struct is_just_with<just_t<T>, T>: std::true_type {};
 
 /// class just:
 /// The main use of this class is to propagate some value to the constructor of the maybe class.
 template <class T>
 class [[nodiscard]] just_t
-    : private ::mitamagic::perfect_trait_copy_move<
+    : public display<just_t<T>>
+    , private ::mitamagic::perfect_trait_copy_move<
           std::is_copy_constructible_v<std::decay_t<T>>,
           std::conjunction_v<std::is_copy_constructible<std::decay_t<T>>, std::is_copy_assignable<std::decay_t<T>>>,
           std::is_move_constructible_v<std::decay_t<T>>,
           std::conjunction_v<std::is_move_constructible<std::decay_t<T>>, std::is_move_assignable<std::decay_t<T>>>,
           just_t<T>>
 {
-    template <class>
-    friend class just_t;
-    template <class>
-    friend class maybe;
     T x;
+
+    template <class> friend class just_t;
+    template <class,class> friend class display;
+    template <class> friend class maybe;
 
     template <class... Requires>
     using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
@@ -331,18 +403,11 @@ public:
     operator>=(maybe<U> const& lhs, just_t const& rhs) {
         return rhs <= lhs;
     }
-
-    friend std::ostream& operator<<(std::ostream& os, just_t const& j) {
-        return os << boost::hana::overload_linearly(
-          [](std::monostate) { return boost::format("just()"); },
-          [](std::string_view x) { return boost::format("just(\"%1%\")") % x; },
-          [](auto const& x) { return boost::format("just(%1%)") % x; })
-        (j.x);
-    }
 };
 
 template <class T>
 auto just(T&& v) { return just_t<T>{std::forward<T>(v)}; }
+
 
 }
 

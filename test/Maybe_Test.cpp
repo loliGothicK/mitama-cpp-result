@@ -525,3 +525,75 @@ TEST_CASE("greater_or_equal compare", "[maybe][greater_or_equal]"){
   REQUIRE(just(2) >= nothing);
 
 }
+
+TEST_CASE("format test", "[maybe][format]"){
+  using str = std::string;
+  SECTION("just"){
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << just(1);
+    REQUIRE(ss.str() ==  "just(1)"s);
+  }
+  SECTION("maybe of just"){
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << maybe<int>{just(1)};
+    REQUIRE(ss.str() ==  "just(1)"s);
+  }
+  SECTION("just of range"){
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << just(std::vector<std::string>{"foo"s, "bar"s});
+    REQUIRE(ss.str() == "just([\"foo\",\"bar\"])"s);
+  }
+  SECTION("result of range err"){
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << maybe(just(std::vector<std::string>{"foo"s, "bar"s}));
+    REQUIRE(ss.str() == "just([\"foo\",\"bar\"])"s);
+  }
+  SECTION("just of tuple"){
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << just(std::tuple{"foo"s, 1});
+    REQUIRE(ss.str() == "just((\"foo\",1))"s);
+  }
+  SECTION("maybe of just tuple"){
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << maybe(just(std::tuple{"foo"s, 1}));
+    REQUIRE(ss.str() == "just((\"foo\",1))"s);
+  }
+  SECTION("just of dictionary"){
+    using namespace std::literals;
+    {
+      std::stringstream ss;
+      ss << just(std::map<str, int>{{"foo"s, 1}});
+      REQUIRE(ss.str() == "just({\"foo\": 1})"s);
+    }
+  }
+  SECTION("maybe of just dictionary"){
+    using namespace std::literals;
+    {
+      std::stringstream ss;
+      ss << maybe<std::map<str, int>>(just(std::map<str, int>{{"foo"s, 1}}));
+      REQUIRE(ss.str() == "just({\"foo\": 1})"s);
+    }
+  }
+  SECTION("just of tuple of tuple"){
+    using namespace std::literals;
+    {
+      std::stringstream ss;
+      ss << just(std::tuple{std::tuple{1, 1}, 1});
+      REQUIRE(ss.str() == "just(((1,1),1))"s);
+    }
+  }
+  SECTION("maybe of just tuple of tuple"){
+    using namespace std::literals;
+    {
+      std::stringstream ss;
+      ss << maybe(just(std::tuple{std::tuple{1, 1}, 1}));
+      REQUIRE(ss.str() == "just(((1,1),1))"s);
+    }
+  }
+}
