@@ -359,6 +359,16 @@ TEST_CASE("or_finally() test", "[result][or_finally]"){
   REQUIRE(hook == "error"s);
 }
 
+TEST_CASE("and_peek() test", "[result][and_peek]"){
+  mut_result<int, std::string> x = success(42);
+  REQUIRE(x.and_peek([](int& v){ v = 57; }) == success(57));
+}
+
+TEST_CASE("or_peek() test", "[result][and_peek]"){
+  mut_result<int, std::string> x = failure("foo"s);
+  REQUIRE(x.or_peek([](std::string& v){ v = "bar"; }) == failure("bar"s));
+}
+
 TEST_CASE("basics test", "[result][basics]"){
   auto even = [](u32 u) -> result<u32, str> {
     if (u % 2 == 0)

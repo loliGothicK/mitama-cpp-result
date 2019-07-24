@@ -980,6 +980,7 @@ public:
   }
 
   template <class F>
+  constexpr
   std::enable_if_t<std::is_invocable_v<F&&, T>>
   and_finally(F&& f) const& {
     if (this->is_ok())
@@ -987,10 +988,125 @@ public:
   }
 
   template <class F>
+  constexpr
   std::enable_if_t<std::is_invocable_v<F&&, E>>
   or_finally(F&& f) const& {
     if (this->is_err())
       std::invoke(std::forward<F>(f), unwrap_err());
+  }
+
+  template <class F>
+  constexpr
+  std::enable_if_t<
+    std::disjunction_v<
+      std::is_invocable<F, T&>,
+      std::is_invocable<F>>,
+  basic_result&>
+  and_peek(F&& f) &
+  {
+    if constexpr (std::is_invocable_v<F, T&>) {
+      if (is_ok())
+        std::invoke(std::forward<F>(f), unwrap());
+    }
+    else {
+      if (is_ok())
+        std::invoke(std::forward<F>(f));
+    }
+    return *this;
+  }
+
+  template <class F>
+  std::enable_if_t<
+    std::disjunction_v<
+      std::is_invocable<F, T const&>,
+      std::is_invocable<F>>,
+  basic_result const&>
+  and_peek(F&& f) const&
+  {
+    if constexpr (std::is_invocable_v<F, T const&>) {
+      if (is_ok())
+        std::invoke(std::forward<F>(f), unwrap());
+    }
+    else {
+      if (is_ok())
+        std::invoke(std::forward<F>(f));
+    }
+    return *this;
+  }
+
+  template <class F>
+  std::enable_if_t<
+    std::disjunction_v<
+      std::is_invocable<F, T&&>,
+      std::is_invocable<F>>,
+  basic_result&&>
+  and_peek(F&& f) &&
+  {
+    if constexpr (std::is_invocable_v<F, T&&>) {
+      if (is_ok())
+        std::invoke(std::forward<F>(f), unwrap());
+    }
+    else {
+      if (is_ok())
+        std::invoke(std::forward<F>(f));
+    }
+    return std::move(*this);
+  }
+
+  template <class F>
+  std::enable_if_t<
+    std::disjunction_v<
+      std::is_invocable<F, E&>,
+      std::is_invocable<F>>,
+  basic_result&>
+  or_peek(F&& f) & {
+    if constexpr (std::is_invocable_v<F, E&>) {
+      if (is_err())
+        std::invoke(std::forward<F>(f), unwrap_err());
+    }
+    else {
+      if (is_err())
+        std::invoke(std::forward<F>(f));
+    }
+    return *this;
+  }
+
+  template <class F>
+  std::enable_if_t<
+    std::disjunction_v<
+      std::is_invocable<F, E const&>,
+      std::is_invocable<F>>,
+  basic_result const&>
+  or_peek(F&& f) const&
+  {
+    if constexpr (std::is_invocable_v<F, E const&>) {
+      if (is_err())
+        std::invoke(std::forward<F>(f), unwrap_err());
+    }
+    else {
+      if (is_err())
+        std::invoke(std::forward<F>(f));
+    }
+    return *this;
+  }
+
+  template <class F>
+  std::enable_if_t<
+    std::disjunction_v<
+      std::is_invocable<F, E&&>,
+      std::is_invocable<F>>,
+  basic_result&&>
+  or_peek(F&& f) &&
+  {
+    if constexpr (std::is_invocable_v<F, E&&>) {
+      if (is_err())
+        std::invoke(std::forward<F>(f), unwrap_err());
+    }
+    else {
+      if (is_err())
+        std::invoke(std::forward<F>(f));
+    }
+    return std::move(*this);
   }
 
   /// @brief
