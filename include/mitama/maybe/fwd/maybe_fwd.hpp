@@ -3,9 +3,6 @@
 #include <variant>
 namespace mitama {
 
-template <class T, class=void>
-class display;
-
 template <class> class just_t;
 template <class T> just_t(T&&) -> just_t<T>;
 

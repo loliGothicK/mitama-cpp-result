@@ -249,6 +249,10 @@ public:
   ///   Output its contained value with pretty format, and is used by `operator<<` found by ADL.
   friend
   std::ostream& operator<<(std::ostream& os, failure const& succ) {
+    static_assert(trait::formattable<E>::value,
+        "Error: trait `formattable<E>` was not satisfied.\n"
+        "Hint: Did you forgot some include?\n"
+        "Otherwise, please define `operator<<(std::ostream&, T)`.");
     using namespace std::literals::string_literals;
     auto inner_format = boost::hana::fix(boost::hana::overload_linearly(
         [](auto, auto const& x) -> std::enable_if_t<trait::formattable_element<std::decay_t<decltype(x)>>::value, std::string> {
