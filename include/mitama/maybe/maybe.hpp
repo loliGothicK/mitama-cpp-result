@@ -17,6 +17,7 @@
 #include <boost/hana/functional/overload_linearly.hpp>
 #include <boost/optional.hpp>
 #include <boost/utility/in_place_factory.hpp>
+#include <boost/type_traits/remove_cv_ref.hpp>
 
 #include <functional>
 #include <memory>
@@ -135,18 +136,43 @@ public:
 };
 
 template <class T>
-class maybe_copy_injector<maybe<T>, std::enable_if_t<std::is_copy_constructible_v<T>>> {
+class maybe_copy_injector<maybe<T>,
+    std::enable_if_t<
+        std::conjunction_v<
+            std::is_lvalue_reference<T>,
+            std::is_copy_constructible<boost::remove_cv_ref_t<T>>>>>
+{
 public:
-    maybe<std::remove_reference_t<T>> cloned() const& {
-        auto decay_copy = [](auto&& some) -> std::decay_t<decltype(some)> { return std::forward<decltype(some)>(some); };
+    maybe<std::remove_reference_t<T>> cloned() const {
+        auto decay_copy = [](auto&& some) -> boost::remove_cv_ref_t<T> { return std::forward<decltype(some)>(some); };
         return static_cast<maybe<T>const*>(this)->is_just()
             ? maybe<std::remove_reference_t<T>>{just(decay_copy(static_cast<maybe<T>const*>(this)->unwrap()))}
             : nothing;
     }
+};
 
-    maybe<T> replace(T value) & {
-        auto old = static_cast<maybe<T>*>(this)->cloned();
-        static_cast<maybe<T>*>(this)->storage_ = value;
+template <class T>
+class maybe_copy_injector<maybe<T>, std::enable_if_t<std::is_copy_constructible_v<boost::remove_cv_ref_t<T>>>> {
+public:
+    template <class... Args>
+    std::enable_if_t<
+        std::is_constructible_v<T, Args&&...>,
+    maybe<T>>
+    replace(Args&&... args) & {
+        auto old = static_cast<maybe<T>*>(this)->as_ref().cloned();
+        static_cast<maybe<T>*>(this)->storage_.emplace(std::forward<Args>(args)...);
+        return old;
+    }
+
+    template <class F, class... Args>
+    std::enable_if_t<
+        std::conjunction_v<
+            std::is_invocable<F, Args&&...>,
+            std::is_constructible<T, std::invoke_result_t<F&&, Args&&...>>>,
+    maybe<T>>
+    replace_with(F&& f, Args&&... args) & {
+        auto old = static_cast<maybe<T>*>(this)->as_ref().cloned();
+        static_cast<maybe<T>*>(this)->storage_.emplace(std::invoke(std::forward<F>(f), std::forward<Args>(args)...));
         return old;
     }
 };
