@@ -126,6 +126,11 @@
      <changefreq>daily</changefreq>
     </url>
     <url>
+     <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/replace_with/</loc>
+     <lastmod>2019-07-28</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/cloned/</loc>
      <lastmod>2019-07-28</lastmod>
      <changefreq>daily</changefreq>
@@ -146,6 +151,26 @@
      <changefreq>daily</changefreq>
     </url>
     <url>
+     <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/and_finally/</loc>
+     <lastmod>2019-07-28</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/or_finally/</loc>
+     <lastmod>2019-07-28</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/and_peek/</loc>
+     <lastmod>2019-07-28</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/or_peek/</loc>
+     <lastmod>2019-07-28</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/intro/</loc>
      <lastmod>2019-07-28</lastmod>
      <changefreq>daily</changefreq>
@@ -157,6 +182,21 @@
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/APIs/</loc>
+     <lastmod>2019-07-28</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://loligothick.github.io/mitama-cpp-result/result/metafunctions/</loc>
+     <lastmod>2019-07-28</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/</loc>
+     <lastmod>2019-07-28</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://loligothick.github.io/mitama-cpp-result/result/comparisons/</loc>
      <lastmod>2019-07-28</lastmod>
      <changefreq>daily</changefreq>
     </url>
@@ -246,16 +286,6 @@
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/equality/</loc>
-     <lastmod>2019-07-28</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-    <url>
-     <loc>https://loligothick.github.io/mitama-cpp-result/result/metafunctions/</loc>
-     <lastmod>2019-07-28</lastmod>
-     <changefreq>daily</changefreq>
-    </url>
-    <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_metafunctions/is_result/</loc>
      <lastmod>2019-07-28</lastmod>
      <changefreq>daily</changefreq>
@@ -266,7 +296,22 @@
      <changefreq>daily</changefreq>
     </url>
     <url>
-     <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/</loc>
+     <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/and_finally/</loc>
+     <lastmod>2019-07-28</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/or_finally/</loc>
+     <lastmod>2019-07-28</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/and_peek/</loc>
+     <lastmod>2019-07-28</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
+     <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/or_peek/</loc>
      <lastmod>2019-07-28</lastmod>
      <changefreq>daily</changefreq>
     </url>

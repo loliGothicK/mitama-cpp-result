@@ -604,6 +604,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../replace_with/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../cloned/" title="" class="md-nav__link">
       
     </a>
@@ -641,6 +653,54 @@
 
   <li class="md-nav__item">
     <a href="../flatten/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../and_finally/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../or_finally/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../and_peek/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../or_peek/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -702,6 +762,42 @@
   <li class="md-nav__item">
     <a href="../../../result/APIs/" title="APIs" class="md-nav__link">
       APIs
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../../result/metafunctions/" title="Meta Functions" class="md-nav__link">
+      Meta Functions
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../../result/_APIs/" title="CHANGELOG" class="md-nav__link">
+      CHANGELOG
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../../result/comparisons/" title="" class="md-nav__link">
+      
     </a>
   </li>
 
@@ -916,30 +1012,6 @@
 
 
   <li class="md-nav__item">
-    <a href="../../../result/_APIs/equality/" title="" class="md-nav__link">
-      
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../../../result/metafunctions/" title="Meta Functions" class="md-nav__link">
-      Meta Functions
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
     <a href="../../../result/_metafunctions/is_result/" title="" class="md-nav__link">
       
     </a>
@@ -964,8 +1036,44 @@
 
 
   <li class="md-nav__item">
-    <a href="../../../result/_APIs/" title="CHANGELOG" class="md-nav__link">
-      CHANGELOG
+    <a href="../../../result/_APIs/and_finally/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../../result/_APIs/or_finally/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../../result/_APIs/and_peek/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../../result/_APIs/or_peek/" title="" class="md-nav__link">
+      
     </a>
   </li>
 
@@ -990,11 +1098,11 @@
                 
                   <h1>Mitama.Result | User Manual</h1>
                 
-                <p><strong>replace(T&amp; value) requires T is copyable -&gt; maybe&lt;T&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">replace</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+                <p><strong>replace(Args... args) -&gt; maybe&lt;T&gt;</strong></p>
+<div class="codehilite"><pre><span></span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">replace</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
 </pre></div>
 
-<p>Replaces the actual value in the maybe by the value given in parameter, returning the old value if present, leaving a <code class="codehilite"><span class="n">just</span></code> value in its place without deinitializing either one.</p>
+<p>Replaces the actual value in the maybe by expression <code class="codehilite"><span class="n">std</span><span class="p">::</span><span class="k">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...</span></code>, returning the old value if present, leaving a <code class="codehilite"><span class="n">just</span></code> value in its place without deinitializing either one.</p>
 <p><strong>Example</strong></p>
 <div class="codehilite"><pre><span></span><span class="p">{</span>
     <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
@@ -1044,7 +1152,7 @@
           </a>
         
         
-          <a href="../cloned/" title="" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../replace_with/" title="" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">

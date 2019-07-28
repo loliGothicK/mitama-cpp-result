@@ -599,6 +599,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../../maybe/_APIs/replace_with/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../../maybe/_APIs/cloned/" title="" class="md-nav__link">
       
     </a>
@@ -636,6 +648,54 @@
 
   <li class="md-nav__item">
     <a href="../../maybe/_APIs/flatten/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../maybe/_APIs/and_finally/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../maybe/_APIs/or_finally/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../maybe/_APIs/and_peek/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../maybe/_APIs/or_peek/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -839,8 +899,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#equality" title="equality" class="md-nav__link">
-    equality
+  <a href="#and_finally" title="and_finally" class="md-nav__link">
+    and_finally
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#or_finally" title="or_finally" class="md-nav__link">
+    or_finally
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#and_peek" title="and_peek" class="md-nav__link">
+    and_peek
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#or_peek" title="or_peek" class="md-nav__link">
+    or_peek
   </a>
   
 </li>
@@ -853,6 +934,42 @@
   
 </nav>
     
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../metafunctions/" title="Meta Functions" class="md-nav__link">
+      Meta Functions
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../_APIs/" title="CHANGELOG" class="md-nav__link">
+      CHANGELOG
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../comparisons/" title="" class="md-nav__link">
+      
+    </a>
   </li>
 
         
@@ -1066,30 +1183,6 @@
 
 
   <li class="md-nav__item">
-    <a href="../_APIs/equality/" title="" class="md-nav__link">
-      
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="../metafunctions/" title="Meta Functions" class="md-nav__link">
-      Meta Functions
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
     <a href="../_metafunctions/is_result/" title="" class="md-nav__link">
       
     </a>
@@ -1114,8 +1207,44 @@
 
 
   <li class="md-nav__item">
-    <a href="../_APIs/" title="CHANGELOG" class="md-nav__link">
-      CHANGELOG
+    <a href="../_APIs/and_finally/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../_APIs/or_finally/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../_APIs/and_peek/" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../_APIs/or_peek/" title="" class="md-nav__link">
+      
     </a>
   </li>
 
@@ -1263,8 +1392,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#equality" title="equality" class="md-nav__link">
-    equality
+  <a href="#and_finally" title="and_finally" class="md-nav__link">
+    and_finally
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#or_finally" title="or_finally" class="md-nav__link">
+    or_finally
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#and_peek" title="and_peek" class="md-nav__link">
+    and_peek
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#or_peek" title="or_peek" class="md-nav__link">
+    or_peek
   </a>
   
 </li>
@@ -1711,35 +1861,131 @@ this function returns <code class="codehilite"><span class="n">boost</span><span
 <span class="n">assert_eq</span><span class="o">!</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">transpose</span><span class="p">(),</span> <span class="n">y</span><span class="p">);</span>
 </pre></div>
 
-<h2 id="equality">equality<a class="headerlink" href="#equality" title="Permanent link">&para;</a></h2>
-<p><strong>operator== [1/3]</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="p">,</span> <span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="kt">bool</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+<h2 id="and_finally">and_finally<a class="headerlink" href="#and_finally" title="Permanent link">&para;</a></h2>
+<p><strong>and_finally(F f) -&gt; void</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+<span class="k">constexpr</span>
+<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;&gt;</span>
+<span class="n">and_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+<span class="k">constexpr</span>
+<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;&gt;</span>
+<span class="n">and_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+<span class="k">constexpr</span>
+<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;&gt;</span>
+<span class="n">and_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 </pre></div>
 
-<p>Equality comparison for <code class="codehilite"><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code> and <code class="codehilite"><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">F</span><span class="o">&gt;</span></code>.</p>
-<p><strong>Remarks</strong></p>
-<p>This operator shall not participate in overload resolution unless <code class="codehilite"><span class="n">std</span><span class="p">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">T</span> <span class="n">const</span><span class="o">&amp;&gt;</span><span class="p">()</span> <span class="o">==</span> <span class="n">std</span><span class="p">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">U</span> <span class="n">const</span><span class="o">&amp;&gt;</span><span class="p">()</span></code> is valid expression and <code class="codehilite"><span class="n">std</span><span class="p">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">E</span> <span class="n">const</span><span class="o">&amp;&gt;</span><span class="p">()</span> <span class="o">==</span> <span class="n">std</span><span class="p">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">F</span> <span class="n">const</span><span class="o">&amp;&gt;</span><span class="p">()</span></code> is valid expression.</p>
-<p><strong>operator==() [2/3]</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
-<span class="kt">bool</span> <span class="n">result</span><span class="o">::</span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="n">success</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span>
+<p>Invokes the provided function with the contained success value (if success), or doing nothing (if failure).</p>
+<p><strong>Example</strong></p>
+<div class="codehilite"><pre><span></span><span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+<span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">and_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="n">hook</span><span class="p">](</span><span class="kt">int</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">){</span> <span class="n">hook</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
 </pre></div>
 
-<p>Equality comparison for <code class="codehilite"><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code> and <code class="codehilite"><span class="n">success</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span></code>.</p>
-<p><strong>Returns</strong></p>
-<p><code class="codehilite"><span class="k">true</span></code> if this has <code class="codehilite"><span class="n">success</span></code> value <code class="codehilite"><span class="n">this</span><span class="o">-&gt;</span><span class="n">unwrap</span><span class="p">()</span></code> equals <code class="codehilite"><span class="n">rhs</span></code> value, otherwise <code class="codehilite"><span class="k">false</span></code>.</p>
-<p><strong>Remarks</strong></p>
-<p>This operator shall not participate in overload resolution unless <code class="codehilite"><span class="n">std</span><span class="p">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">T</span> <span class="n">const</span><span class="o">&amp;&gt;</span><span class="p">()</span> <span class="o">==</span> <span class="n">std</span><span class="p">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">U</span> <span class="n">const</span><span class="o">&amp;&gt;</span><span class="p">()</span></code> is valid expression.</p>
-<p><strong>operator==() [3/3]</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span> <span class="o">&gt;</span>
-<span class="kt">bool</span> <span class="n">basic_result</span><span class="o">::</span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="n">failure</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span>
+<h2 id="or_finally">or_finally<a class="headerlink" href="#or_finally" title="Permanent link">&para;</a></h2>
+<p><strong>or_finally(F f) -&gt; void</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+<span class="k">constexpr</span>
+<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">E</span><span class="o">&amp;&gt;&gt;</span>
+<span class="n">and_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+<span class="k">constexpr</span>
+<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">E</span> <span class="k">const</span><span class="o">&amp;&gt;&gt;</span>
+<span class="n">and_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+<span class="k">constexpr</span>
+<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">E</span><span class="o">&amp;&amp;&gt;&gt;</span>
+<span class="n">and_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 </pre></div>
 
-<p>Equality comparison for <code class="codehilite"><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code> and <code class="codehilite"><span class="n">failure</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span></code>.</p>
-<p><strong>Returns</strong></p>
-<p><code class="codehilite"><span class="k">true</span></code> if this has <code class="codehilite"><span class="n">failure</span></code> value <code class="codehilite"><span class="n">this</span><span class="o">-&gt;</span><span class="n">unwrap_err</span><span class="p">()</span></code> equals <code class="codehilite"><span class="n">rhs</span></code> value, otherwise <code class="codehilite"><span class="k">false</span></code>.</p>
-<p><strong>Remarks</strong></p>
-<p>This operator shall not participate in overload resolution unless <code class="codehilite"><span class="n">std</span><span class="p">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">E</span> <span class="n">const</span><span class="o">&amp;&gt;</span><span class="p">()</span> <span class="o">==</span> <span class="n">std</span><span class="p">::</span><span class="n">declval</span><span class="o">&lt;</span><span class="n">F</span> <span class="n">const</span><span class="o">&amp;&gt;</span><span class="p">()</span></code> is valid expression.</p>
+<p>Invokes the provided function with contained failure value (if failure), or doing nothing (if success).</p>
+<p><strong>Example</strong></p>
+<div class="codehilite"><pre><span></span><span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">or_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="n">hook</span><span class="p">]{</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+</pre></div>
+
+<h2 id="and_peek">and_peek<a class="headerlink" href="#and_peek" title="Permanent link">&para;</a></h2>
+<p><strong>and_peek(F f) -&gt; maybe&lt;T&gt;</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+<span class="k">constexpr</span>
+<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="n">basic_result</span><span class="o">&amp;&gt;</span>
+<span class="n">and_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="n">basic_result</span> <span class="k">const</span><span class="o">&amp;&gt;</span>
+<span class="n">and_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="n">basic_result</span><span class="o">&amp;&amp;&gt;</span>
+<span class="n">and_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+</pre></div>
+
+<p>Peeks the contained value if self is <code class="codehilite"><span class="n">success</span></code>, then returns self.</p>
+<p>Invokes the provided function with the contained value and then return self (if success), or return self without doing anything (if failure).</p>
+<p><strong>Example</strong></p>
+<div class="codehilite"><pre><span></span><span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+<span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">and_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="n">hook</span><span class="p">](</span><span class="kt">int</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">){</span> <span class="n">hook</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+</pre></div>
+
+<h2 id="or_peek">or_peek<a class="headerlink" href="#or_peek" title="Permanent link">&para;</a></h2>
+<p><strong>or_peek(F f) -&gt; maybe&lt;T&gt;</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+<span class="k">constexpr</span>
+<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="n">basic_result</span><span class="o">&amp;&gt;</span>
+<span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="n">basic_result</span> <span class="k">const</span><span class="o">&amp;&gt;</span>
+<span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="n">basic_result</span><span class="o">&amp;&amp;&gt;</span>
+<span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+</pre></div>
+
+<p>Peeks the contained value if self is <code class="codehilite"><span class="n">failure</span></code>, then returns self.</p>
+<p>Invokes the provided function and then return self (if failure), or return self without doing anything (if success).</p>
+<p><strong>Example</strong></p>
+<div class="codehilite"><pre><span></span><span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">or_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="n">hook</span><span class="p">]{</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+</pre></div>
                 
                   
                 
@@ -1775,13 +2021,13 @@ this function returns <code class="codehilite"><span class="n">boost</span><span
           </a>
         
         
-          <a href="../_APIs/is_ok/" title="" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../metafunctions/" title="Meta Functions" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                
+                Meta Functions
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
