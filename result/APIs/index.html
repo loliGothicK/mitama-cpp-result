@@ -1941,7 +1941,7 @@ this function returns <code class="codehilite"><span class="n">boost</span><span
 <span class="n">and_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
 </pre></div>
 
-<p>Peeks the contained value if self is <code class="codehilite"><span class="n">success</span></code>, then returns self.</p>
+<p>Peeks the contained success value and then returns self.</p>
 <p>Invokes the provided function with the contained value and then return self (if success), or return self without doing anything (if failure).</p>
 <p><strong>Example</strong></p>
 <div class="codehilite"><pre><span></span><span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
@@ -1978,7 +1978,7 @@ this function returns <code class="codehilite"><span class="n">boost</span><span
 <span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
 </pre></div>
 
-<p>Peeks the contained value if self is <code class="codehilite"><span class="n">failure</span></code>, then returns self.</p>
+<p>Peeks the contained failure value and then returns self.</p>
 <p>Invokes the provided function and then return self (if failure), or return self without doing anything (if success).</p>
 <p><strong>Example</strong></p>
 <div class="codehilite"><pre><span></span><span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
