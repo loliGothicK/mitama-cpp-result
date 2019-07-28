@@ -718,13 +718,39 @@ public:
   /// @brief
   ///   Returns `res` if the result is success, otherwise; returns the failure value of self.
   template <mutability _mu, class U>
-  constexpr decltype(auto) operator&&(basic_result<_mu, U, E> const& res) const& noexcept
+  constexpr decltype(auto) conj(basic_result<_mu, U, E> const& res) const& noexcept
   {
     using result_type = basic_result<_mutability && _mu, U, E>;
     return this->is_err()
                ? static_cast<result_type>(failure{boost::get<failure<E>>(storage_).x})
                : res.is_err() ? static_cast<result_type>(failure{res.unwrap_err()})
                               : static_cast<result_type>(success{res.unwrap()});
+  }
+
+  /// @brief
+  ///   Returns `res` if the result is success, otherwise; returns the failure value of self.
+  template <mutability _mu, class U>
+  constexpr decltype(auto) operator&&(basic_result<_mu, U, E> const& res) const& noexcept
+  {
+    return this->conj(res);
+  }
+
+  /// @brief
+  ///   Returns res if the result is failure, otherwise returns the success value of self.
+  ///
+  /// @note
+  ///   Arguments passed to or are eagerly evaluated;
+  ///   if you are passing the result of a function call,
+  ///   it is recommended to use `or_else`,
+  ///   which is lazily evaluated.
+  template <mutability _mut, class F>
+  constexpr decltype(auto) disj(basic_result<_mut, T, F> const& res) const& noexcept
+  {
+    using result_type = basic_result<_mutability, T, F>;
+    return this->is_ok()
+               ? static_cast<result_type>(success{boost::get<success<T>>(storage_).x})
+               : res.is_ok() ? static_cast<result_type>(success{res.unwrap()})
+                             : static_cast<result_type>(failure{res.unwrap_err()});
   }
 
   /// @brief
@@ -738,11 +764,7 @@ public:
   template <mutability _mut, class F>
   constexpr decltype(auto) operator||(basic_result<_mut, T, F> const& res) const& noexcept
   {
-    using result_type = basic_result<_mutability, T, F>;
-    return this->is_ok()
-               ? static_cast<result_type>(success{boost::get<success<T>>(storage_).x})
-               : res.is_ok() ? static_cast<result_type>(success{res.unwrap()})
-                             : static_cast<result_type>(failure{res.unwrap_err()});
+    return this->disj(res);
   }
 
   /// @brief

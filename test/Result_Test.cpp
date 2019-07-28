@@ -176,27 +176,31 @@ TEST_CASE("map_err() test", "[result][map_err]"){
   REQUIRE(y.map_err(stringify) == failure("error code: 13"s));
 }
 
-TEST_CASE("operator&& test", "[result][and]"){
+TEST_CASE("conj test", "[result][conj]"){
   {
     result<u32, str> x = success(2);
     result<str, str> y = failure("late error"s);
+    REQUIRE(x.conj(y) == failure("late error"s));
     REQUIRE((x && y) == failure("late error"s));
   }
 
   {
     result<u32, str> x = failure("early error"s);
     result<str, str> y = success("foo"s);
+    REQUIRE(x.conj(y) == failure("early error"s));
     REQUIRE((x && y) == failure("early error"s));
   }
   {
     result<u32, str> x = failure("not a 2"s);
     result<str, str> y = failure("late error"s);
+    REQUIRE(x.conj(y) == failure("not a 2"s));
     REQUIRE((x && y) == failure("not a 2"s));
   }
 
   {
     result<u32, str> x = success(2);
     result<str, str> y = success("different result type"s);
+    REQUIRE(x.conj(y) == success("different result type"s));
     REQUIRE((x && y) == success("different result type"s));
   }
 }
@@ -219,25 +223,29 @@ TEMPLATE_TEST_CASE("is_convertible_result_with meta test", "[is_convertible_resu
   REQUIRE(!is_convertible_result_with_v<result<unsigned, std::vector<TestType>>, mitama::failure<TestType>>);
 }
 
-TEST_CASE("operator|| test", "[result][or]"){
+TEST_CASE("disj test", "[result][disj]"){
   {
     result<u32, str> x = success(2);
     result<u32, str> y = failure("late error"s);
+    REQUIRE(x.disj(y) ==  success(2u));
     REQUIRE((x || y) ==  success(2u));
   }
   {
     result<u32, str> x = failure("early error"s);
     result<u32, str> y = success(2);
+    REQUIRE(x.disj(y) ==  success(2u));
     REQUIRE((x || y) ==  success(2u));
   }
   {
     result<u32, str> x = failure("not a 2"s);
     result<u32, str> y = failure("late error"s);
+    REQUIRE(x.disj(y) ==  failure("late error"s));
     REQUIRE((x || y) ==  failure("late error"s));
   }
   {
     result<u32, str> x = success(2);
     result<u32, str> y = success(100);
+    REQUIRE(x.disj(y) ==  success(2u));
     REQUIRE((x || y) ==  success(2u));
   }
 }

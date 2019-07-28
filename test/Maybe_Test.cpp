@@ -135,6 +135,33 @@ TEST_CASE("ok_or_else()", "[maybe][ok_or_else]"){
 
 }
 
+TEST_CASE("conj()", "[maybe][conj]"){
+{
+  maybe x = just(2);
+  maybe<std::string> y = nothing;
+  REQUIRE(x.conj(y) == nothing);
+  REQUIRE((x&&y) == nothing);
+}
+{
+  maybe<int> x = nothing;
+  maybe y = just("foo"s);
+  REQUIRE(x.conj(y) == nothing);
+  REQUIRE((x&&y) == nothing);
+}
+{
+  maybe x = just(2);
+  maybe y = just("foo"s);
+  REQUIRE(x.conj(y) == just("foo"s));
+  REQUIRE((x&&y) == just("foo"s));
+}
+{
+  maybe<int> x = nothing;
+  maybe<std::string> y = nothing;
+  REQUIRE(x.conj(y) == nothing);
+  REQUIRE((x&&y) == nothing);
+}
+}
+
 TEST_CASE("and_then()", "[maybe][and_then]"){
 
   auto sq = [](int x) -> maybe<int> { return just(x * x); };
@@ -158,6 +185,33 @@ TEST_CASE("filter()", "[maybe][filter]"){
 
 }
 
+TEST_CASE("disj()", "[maybe][disj]"){
+{
+  maybe x = just(2);
+  maybe<int> y = nothing;
+  assert(x.disj(y) == just(2));
+  assert((x||y) == just(2));
+}
+{
+  maybe<int> x = nothing;
+  maybe y = just(100);
+  assert(x.disj(y) == just(100));
+  assert((x||y) == just(100));
+}
+{
+  maybe x = just(2);
+  maybe y = just(100);
+  assert(x.disj(y) == just(2));
+  assert((x||y) == just(2));
+}
+{
+  maybe<int> x = nothing;
+  maybe<int> y = nothing;
+  assert(x.disj(y) == nothing);
+  assert((x||y) == nothing);
+}
+}
+
 TEST_CASE("or_else()", "[maybe][or_else]"){
 
   auto nobody = []() -> maybe<std::string> { return nothing; };
@@ -167,6 +221,33 @@ TEST_CASE("or_else()", "[maybe][or_else]"){
   REQUIRE(maybe<std::string>{}.or_else(vikings) == just("vikings"s));
   REQUIRE(maybe<std::string>{}.or_else(nobody) == nothing);
 
+}
+
+TEST_CASE("xdisj()", "[maybe][xdisj]"){
+{
+  maybe x = just(2);
+  maybe<int> y = nothing;
+  assert(x.xdisj(y) == just(2));
+  assert((x^y) == just(2));
+}
+{
+  maybe<int> x = nothing;
+  maybe y = just(100);
+  assert(x.xdisj(y) == just(100));
+  assert((x^y) == just(100));
+}
+{
+  maybe x = just(2);
+  maybe y = just(100);
+  assert(x.xdisj(y) == nothing);
+  assert((x^y) == nothing);
+}
+{
+  maybe<int> x = nothing;
+  maybe<int> y = nothing;
+  assert(x.xdisj(y) == nothing);
+  assert((x^y) == nothing);
+}
 }
 
 struct noncopyable {

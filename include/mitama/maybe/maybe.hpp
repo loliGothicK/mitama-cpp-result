@@ -70,14 +70,13 @@ template <mutability _, class T, class E>
 class maybe_transpose_injector<maybe<basic_result<_, T, E>>>
 {
 public:
-    basic_result<_, maybe<std::remove_reference_t<T>>, E>
+    basic_result<_, maybe<T>, E>
     transpose() const& {
-        return
-            static_cast<maybe<basic_result<_, T, E>>const*>(this)->is_nothing()
-                ? basic_result<_, maybe<std::remove_reference_t<T>>, E>{success{nothing}}
-                : static_cast<maybe<basic_result<_, T, E>>const*>(this)->unwrap().is_ok()
-                    ? basic_result<_, maybe<std::remove_reference_t<T>>, E>{in_place_ok, std::in_place, static_cast<maybe<basic_result<_, T, E>>const*>(this)->unwrap().unwrap()}
-                    : basic_result<_, maybe<std::remove_reference_t<T>>, E>{in_place_err, static_cast<maybe<basic_result<_, T, E>>const*>(this)->unwrap().unwrap_err()};
+        return static_cast<maybe<basic_result<_, T, E>>const*>(this)->is_nothing()
+            ? basic_result<_, maybe<T>, E>{success{nothing}}
+            : static_cast<maybe<basic_result<_, T, E>>const*>(this)->unwrap().is_ok()
+                ? basic_result<_, maybe<T>, E>{in_place_ok, std::in_place, static_cast<maybe<basic_result<_, T, E>>const*>(this)->unwrap().unwrap()}
+                : basic_result<_, maybe<T>, E>{in_place_err, static_cast<maybe<basic_result<_, T, E>>const*>(this)->unwrap().unwrap_err()};
     }
 };
 
@@ -122,31 +121,60 @@ class maybe_flatten_injector<maybe<T>,
 public:
     auto flatten() const& {
         return static_cast<maybe<T>const*>(this)->is_just()
-            ? static_cast<maybe<T>const*>(this)->unwrap().cloned()
+            ? static_cast<maybe<T>const*>(this)->unwrap().as_ref().cloned()
             : nothing;
     }
 };
 
 
-template <class, class=void> class maybe_copy_injector {
+template <class, class=void> class maybe_cloned_injector {
 public:
     void cloned() = delete;
-    void replace() = delete;
 };
 
 template <class T>
-class maybe_copy_injector<maybe<T>, std::enable_if_t<std::is_copy_constructible_v<T>>> {
+class maybe_cloned_injector<maybe<T>,
+    std::enable_if_t<
+        std::conjunction_v<
+            std::is_lvalue_reference<T>,
+            std::is_copy_constructible<std::remove_const_t<std::remove_reference_t<T>>>>>>
+{
 public:
-    maybe<std::remove_reference_t<T>> cloned() const& {
-        auto decay_copy = [](auto&& some) -> std::decay_t<decltype(some)> { return std::forward<decltype(some)>(some); };
+    maybe<std::remove_reference_t<T>> cloned() const {
+        auto decay_copy = [](auto&& some) -> std::remove_const_t<std::remove_reference_t<T>> { return std::forward<decltype(some)>(some); };
         return static_cast<maybe<T>const*>(this)->is_just()
             ? maybe<std::remove_reference_t<T>>{just(decay_copy(static_cast<maybe<T>const*>(this)->unwrap()))}
             : nothing;
     }
+};
 
-    maybe<T> replace(T value) & {
-        auto old = static_cast<maybe<T>*>(this)->cloned();
-        static_cast<maybe<T>*>(this)->storage_ = value;
+template <class, class=void> class maybe_replace_injector {
+public:
+    void cloned() = delete;
+};
+
+template <class T>
+class maybe_replace_injector<maybe<T>, std::enable_if_t<std::is_copy_constructible_v<std::remove_const_t<std::remove_reference_t<T>>>>> {
+public:
+    template <class... Args>
+    std::enable_if_t<
+        std::is_constructible_v<T, Args&&...>,
+    maybe<T>>
+    replace(Args&&... args) & {
+        auto old = static_cast<maybe<T>*>(this)->as_ref().cloned();
+        static_cast<maybe<T>*>(this)->storage_.emplace(std::forward<Args>(args)...);
+        return old;
+    }
+
+    template <class F, class... Args>
+    std::enable_if_t<
+        std::conjunction_v<
+            std::is_invocable<F, Args&&...>,
+            std::is_constructible<T, std::invoke_result_t<F&&, Args&&...>>>,
+    maybe<T>>
+    replace_with(F&& f, Args&&... args) & {
+        auto old = static_cast<maybe<T>*>(this)->as_ref().cloned();
+        static_cast<maybe<T>*>(this)->storage_.emplace(std::invoke(std::forward<F>(f), std::forward<Args>(args)...));
         return old;
     }
 };
@@ -156,10 +184,11 @@ class maybe
     : public maybe_transpose_injector<maybe<T>>
     , public maybe_unwrap_or_default_injector<maybe<T>>
     , public maybe_flatten_injector<maybe<T>>
-    , public maybe_copy_injector<maybe<T>>
+    , public maybe_cloned_injector<maybe<T>>
+    , public maybe_replace_injector<maybe<T>>
 {
     boost::optional<T> storage_;
-    template<class, class> friend class maybe_copy_injector;
+    template<class, class> friend class maybe_replace_injector;
     template <class> friend class maybe;
 
   public:
@@ -544,6 +573,35 @@ class maybe
         return is_just()
             ? result<T, std::invoke_result_t<F&&>>{success{std::move(storage_.value())}}
             : result<T, std::invoke_result_t<F&&>>{failure{std::invoke(std::forward<F>(err))}};
+    }
+
+    template <class U>
+    maybe<U> conj(maybe<U> const& rhs) const {
+        return is_just() ? rhs : nothing;
+    }
+
+    template <class U>
+    maybe<U> operator&&(maybe<U> const& rhs) const {
+        return this->conj(rhs);
+    }
+
+    maybe<T> disj(maybe<T> const& rhs) const {
+        return is_nothing() ? rhs : *this;
+    }
+
+    maybe<T> operator||(maybe<T> const& rhs) const {
+        return this->disj(rhs);
+    }
+
+    maybe<T> xdisj(maybe<T> const& rhs) const {
+        return is_just() ^ rhs.is_just()
+            ? is_just() ? *this
+                        : rhs
+                        : nothing;
+    }
+
+    maybe<T> operator^(maybe<T> const& rhs) const {
+        return this->xdisj(rhs);
     }
 
     template <class F>
