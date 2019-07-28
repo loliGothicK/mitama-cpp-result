@@ -13,6 +13,8 @@
         <meta name="description" content="Mitama.Result C++17 Library">
       
       
+        <link rel="canonical" href="https://loligothick.github.io/mitama-cpp-result/result/metafunctions/">
+      
       
         <meta name="author" content="mitama">
       
@@ -35,18 +37,18 @@
       
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
-      <link rel="shortcut icon" href="/mitama-cpp-result/assets/images/favicon.png">
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.4.0">
     
     
       
-        <title>Mitama.Result | User Manual</title>
+        <title>Meta Functions - Mitama.Result | User Manual</title>
       
     
     
-      <link rel="stylesheet" href="/mitama-cpp-result/assets/stylesheets/application.0284f74d.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/application.0284f74d.css">
       
-        <link rel="stylesheet" href="/mitama-cpp-result/assets/stylesheets/application-palette.01803549.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/application-palette.01803549.css">
       
       
         
@@ -55,7 +57,7 @@
       
     
     
-      <script src="/mitama-cpp-result/assets/javascripts/modernizr.74668098.js"></script>
+      <script src="../../assets/javascripts/modernizr.74668098.js"></script>
     
     
       
@@ -64,12 +66,12 @@
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
-    <link rel="stylesheet" href="/mitama-cpp-result/assets/fonts/material-icons.css">
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
     
     
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     
-      <link rel="stylesheet" href="/mitama-cpp-result/cppmap_styles.css">
+      <link rel="stylesheet" href="../../cppmap_styles.css">
     
     
       
@@ -93,6 +95,10 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
+      <a href="#is_result" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid">
@@ -115,7 +121,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                
+                Meta Functions
               
             </span>
           
@@ -183,14 +189,16 @@
       
         
 
-<nav class="md-tabs" data-md-component="tabs">
+  
+
+<nav class="md-tabs md-tabs--active" data-md-component="tabs">
   <div class="md-tabs__inner md-grid">
     <ul class="md-tabs__list">
       
         
   <li class="md-tabs__item">
     
-      <a href="/mitama-cpp-result/." title="Home" class="md-tabs__link md-tabs__link--active">
+      <a href="../.." title="Home" class="md-tabs__link">
         Home
       </a>
     
@@ -202,7 +210,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="/mitama-cpp-result/maybe/intro/" title="maybe" class="md-tabs__link">
+        <a href="../../maybe/intro/" title="maybe" class="md-tabs__link">
           maybe
         </a>
       
@@ -215,7 +223,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="/mitama-cpp-result/result/intro/" title="result" class="md-tabs__link">
+        <a href="../intro/" title="result" class="md-tabs__link md-tabs__link--active">
           result
         </a>
       
@@ -272,7 +280,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/." title="Home" class="md-nav__link">
+    <a href="../.." title="Home" class="md-nav__link">
       Home
     </a>
   </li>
@@ -303,7 +311,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/intro/" title="Maybe 101" class="md-nav__link">
+    <a href="../../maybe/intro/" title="Maybe 101" class="md-nav__link">
       Maybe 101
     </a>
   </li>
@@ -315,7 +323,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/special_members/" title="Special Members" class="md-nav__link">
+    <a href="../../maybe/special_members/" title="Special Members" class="md-nav__link">
       Special Members
     </a>
   </li>
@@ -327,7 +335,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/APIs/" title="API Reference" class="md-nav__link">
+    <a href="../../maybe/APIs/" title="API Reference" class="md-nav__link">
       API Reference
     </a>
   </li>
@@ -339,7 +347,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/comparisons/" title="" class="md-nav__link">
+    <a href="../../maybe/comparisons/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -351,7 +359,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/is_just/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/is_just/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -363,7 +371,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/is_nothing/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/is_nothing/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -375,7 +383,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/as_ref/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/as_ref/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -387,7 +395,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/expect/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/expect/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -399,7 +407,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/unwrap/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/unwrap/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -411,7 +419,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/unwrap_or/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/unwrap_or/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -423,7 +431,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/unwrap_or_else/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/unwrap_or_else/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -435,7 +443,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/map/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/map/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -447,7 +455,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/map_or/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/map_or/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -459,7 +467,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/map_or_else/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/map_or_else/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -471,7 +479,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/ok_or/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/ok_or/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -483,7 +491,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/ok_or_else/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/ok_or_else/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -495,7 +503,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/conj/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/conj/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -507,7 +515,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/and_then/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/and_then/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -519,7 +527,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/filter/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/filter/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -531,7 +539,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/disj/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/disj/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -543,7 +551,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/or_else/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/or_else/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -555,7 +563,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/get_or_emplace/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/get_or_emplace/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -567,7 +575,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/get_or_emplace_with/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/get_or_emplace_with/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -579,7 +587,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/replace/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/replace/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -591,7 +599,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/cloned/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/cloned/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -603,7 +611,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/unwrap_or_default/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/unwrap_or_default/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -615,7 +623,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/transpose/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/transpose/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -627,7 +635,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/maybe/_APIs/flatten/" title="" class="md-nav__link">
+    <a href="../../maybe/_APIs/flatten/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -642,10 +650,12 @@
       
       
 
+  
 
-  <li class="md-nav__item md-nav__item--nested">
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
     
     <label class="md-nav__link" for="nav-3">
       result
@@ -663,7 +673,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/intro/" title="Result 101" class="md-nav__link">
+    <a href="../intro/" title="Result 101" class="md-nav__link">
       Result 101
     </a>
   </li>
@@ -675,7 +685,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/special_members/" title="Special Members" class="md-nav__link">
+    <a href="../special_members/" title="Special Members" class="md-nav__link">
       Special Members
     </a>
   </li>
@@ -687,7 +697,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/APIs/" title="APIs" class="md-nav__link">
+    <a href="../APIs/" title="APIs" class="md-nav__link">
       APIs
     </a>
   </li>
@@ -699,7 +709,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/is_ok/" title="" class="md-nav__link">
+    <a href="../_APIs/is_ok/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -711,7 +721,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/is_err/" title="" class="md-nav__link">
+    <a href="../_APIs/is_err/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -723,7 +733,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/ok/" title="" class="md-nav__link">
+    <a href="../_APIs/ok/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -735,7 +745,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/err/" title="" class="md-nav__link">
+    <a href="../_APIs/err/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -747,7 +757,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/map/" title="" class="md-nav__link">
+    <a href="../_APIs/map/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -759,7 +769,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/map_or_else/" title="" class="md-nav__link">
+    <a href="../_APIs/map_or_else/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -771,7 +781,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/map_err/" title="" class="md-nav__link">
+    <a href="../_APIs/map_err/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -783,7 +793,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/conj/" title="" class="md-nav__link">
+    <a href="../_APIs/conj/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -795,7 +805,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/and_then/" title="" class="md-nav__link">
+    <a href="../_APIs/and_then/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -807,7 +817,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/disj/" title="" class="md-nav__link">
+    <a href="../_APIs/disj/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -819,7 +829,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/or_else/" title="" class="md-nav__link">
+    <a href="../_APIs/or_else/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -831,7 +841,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/unwrap_or/" title="" class="md-nav__link">
+    <a href="../_APIs/unwrap_or/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -843,7 +853,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/unwrap_or_else/" title="" class="md-nav__link">
+    <a href="../_APIs/unwrap_or_else/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -855,7 +865,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/unwrap/" title="" class="md-nav__link">
+    <a href="../_APIs/unwrap/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -867,7 +877,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/unwrap_err/" title="" class="md-nav__link">
+    <a href="../_APIs/unwrap_err/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -879,7 +889,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/unwrap_or_default/" title="" class="md-nav__link">
+    <a href="../_APIs/unwrap_or_default/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -891,7 +901,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/transpose/" title="" class="md-nav__link">
+    <a href="../_APIs/transpose/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -903,7 +913,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/equality/" title="" class="md-nav__link">
+    <a href="../_APIs/equality/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -913,11 +923,78 @@
           
           
 
+  
 
-  <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/metafunctions/" title="Meta Functions" class="md-nav__link">
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Meta Functions
+      </label>
+    
+    <a href="./" title="Meta Functions" class="md-nav__link md-nav__link--active">
       Meta Functions
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#is_result" title="is_result" class="md-nav__link">
+    is_result
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#is_result_1" title="is_result" class="md-nav__link">
+    is_result
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#is_result_with" title="is_result_with" class="md-nav__link">
+    is_result_with
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#is_result_with_1" title="is_result_with" class="md-nav__link">
+    is_result_with
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
   </li>
 
         
@@ -927,7 +1004,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_metafunctions/is_result/" title="" class="md-nav__link">
+    <a href="../_metafunctions/is_result/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -939,7 +1016,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_metafunctions/is_result_with/" title="" class="md-nav__link">
+    <a href="../_metafunctions/is_result_with/" title="" class="md-nav__link">
       
     </a>
   </li>
@@ -951,7 +1028,7 @@
 
 
   <li class="md-nav__item">
-    <a href="/mitama-cpp-result/result/_APIs/" title="CHANGELOG" class="md-nav__link">
+    <a href="../_APIs/" title="CHANGELOG" class="md-nav__link">
       CHANGELOG
     </a>
   </li>
@@ -969,12 +1046,115 @@
               </div>
             
             
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#is_result" title="is_result" class="md-nav__link">
+    is_result
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#is_result_1" title="is_result" class="md-nav__link">
+    is_result
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#is_result_with" title="is_result_with" class="md-nav__link">
+    is_result_with
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#is_result_with_1" title="is_result_with" class="md-nav__link">
+    is_result_with
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
               
-  <h1>404 - Not found</h1>
+                
+                
+                  <h1>Meta Functions</h1>
+                
+                <h2 id="is_result">is_result<a class="headerlink" href="#is_result" title="Permanent link">&para;</a></h2>
+<h3 id="is_result_1">is_result<a class="headerlink" href="#is_result_1" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">class</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nl">is_result</span> <span class="p">:</span> <span class="n">std</span><span class="o">::</span><span class="n">false_type</span>
+<span class="p">{</span>
+<span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">is_result</span><span class="o">&lt;</span><span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;&gt;</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span>
+<span class="p">{</span>
+<span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="kr">inline</span> <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">is_result_v</span> <span class="o">=</span> <span class="n">is_result</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">;</span>
+</pre></div>
 
+<h2 id="is_result_with">is_result_with<a class="headerlink" href="#is_result_with" title="Permanent link">&para;</a></h2>
+<h3 id="is_result_with_1">is_result_with<a class="headerlink" href="#is_result_with_1" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">class</span><span class="p">,</span> <span class="n">class</span><span class="p">...</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="nl">is_result_with</span> <span class="p">:</span> <span class="n">std</span><span class="o">::</span><span class="n">false_type</span>
+<span class="p">{</span>
+<span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">is_result_with</span><span class="o">&lt;</span><span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">success</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span>
+<span class="p">{</span>
+<span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">is_result_with</span><span class="o">&lt;</span><span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">failure</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;&gt;</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span>
+<span class="p">{</span>
+<span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">is_result_with</span><span class="o">&lt;</span><span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">success</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">failure</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;&gt;</span> <span class="o">:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span>
+<span class="p">{</span>
+<span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="n">class</span><span class="p">...</span> <span class="n">Requires</span><span class="o">&gt;</span>
+<span class="kr">inline</span> <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">is_result_with_v</span> <span class="o">=</span> <span class="n">is_result_with</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Requires</span><span class="p">...</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">;</span>
+</pre></div>
+                
+                  
+                
+              
               
                 
 
@@ -988,6 +1168,41 @@
         
 <footer class="md-footer">
   
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../_APIs/equality/" title="" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../_metafunctions/is_result/" title="" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
       <div class="md-footer-copyright">
@@ -1000,7 +1215,7 @@
       </div>
       
   <div class="md-footer-social">
-    <link rel="stylesheet" href="/mitama-cpp-result/assets/fonts/font-awesome.css">
+    <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
     
       <a href="https://twitter.com/mitama_rs" class="md-footer-social__link fa fa-twitter"></a>
     
@@ -1012,13 +1227,13 @@
       
     </div>
     
-      <script src="/mitama-cpp-result/assets/javascripts/application.245445c6.js"></script>
+      <script src="../../assets/javascripts/application.245445c6.js"></script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:"/mitama-cpp-result/"}})</script>
+      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       
         <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
       
-        <script src="/mitama-cpp-result/mathjaxhelper.js"></script>
+        <script src="../../mathjaxhelper.js"></script>
       
     
   </body>
