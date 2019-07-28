@@ -112,7 +112,7 @@ public:
 
   template <class E_>
   constexpr bool
-  operator==(failure<E_> const& ) const {
+  operator==(failure<E_> const&) const {
     return false;
   }
 
@@ -136,23 +136,23 @@ public:
 
   template <class E_>
   constexpr bool
-  operator!=(failure<E_> const& ) const {
+  operator!=(failure<E_> const&) const {
     return true;
   }
 
   template <mutability _mut, class T_, class E_>
   constexpr
   std::enable_if_t<
-    is_comparable_with<T, T_>::value,
+    is_less_comparable_with<T, T_>::value,
   bool>
   operator<(basic_result<_mut, T_, E_> const& rhs) const {
-    return rhs.is_ok() ? rhs.unwrap() < this->x : false;
+    return rhs.is_ok() ? this->x < rhs.unwrap() : false;
   }
 
   template <class T_>
   constexpr
   std::enable_if_t<
-    is_comparable_with<T, T_>::value,
+    is_less_comparable_with<T, T_>::value,
   bool>
   operator<(success<T_> const& rhs) const {
     return this->x < rhs.x;
@@ -160,68 +160,71 @@ public:
 
   template <class E_>
   constexpr bool
-  operator<(failure<E_> const& ) const {
+  operator<(failure<E_> const&) const {
     return false;
   }
 
   template <mutability _mut, class T_, class E_>
   constexpr
   std::enable_if_t<
-    is_comparable_with<T, T_>::value,
+    is_comparable_with<T, T_>::value &&
+    is_less_comparable_with<T, T_>::value,
   bool>
   operator<=(basic_result<_mut, T_, E_> const& rhs) const
   {
-    return rhs.is_ok() ? rhs.unwrap() <= this->x : false;
+    return rhs.is_ok() ? (this->x == rhs.unwrap()) || (this->x < rhs.unwrap()) : false;
   }
 
   template <class T_>
   constexpr
   std::enable_if_t<
-    is_comparable_with<T, T_>::value,
+    is_comparable_with<T, T_>::value &&
+    is_less_comparable_with<T, T_>::value,
   bool>
   operator<=(success<T_> const& rhs) const {
-    return this->x <= rhs.x;
+    return (this->x == rhs.x) || (this->x < rhs.x);
   }
 
   template <class E_>
   constexpr bool
-  operator<=(failure<E_> const& ) const {
+  operator<=(failure<E_> const&) const {
     return false;
   }
 
   template <mutability _mut, class T_, class E_>
   constexpr
   std::enable_if_t<
-    is_comparable_with<T, T_>::value,
+    is_less_comparable_with<T_, T>::value,
   bool>
   operator>(basic_result<_mut, T_, E_> const& rhs) const
   {
-    return rhs.is_ok() ? rhs.unwrap() > this->x : true;
+    return rhs.is_ok() ? rhs.unwrap() < this->x : true;
   }
 
   template <class T_>
   constexpr
   std::enable_if_t<
-    is_comparable_with<T, T_>::value,
+    is_less_comparable_with<T_, T>::value,
   bool>
   operator>(success<T_> const& rhs) const {
-    return this->x > rhs.x;
+    return rhs < *this;
   }
 
   template <class E_>
   constexpr bool
-  operator>(failure<E_> const& ) const {
+  operator>(failure<E_> const&) const {
     return true;
   }
 
   template <mutability _mut, class T_, class E_>
   constexpr
   std::enable_if_t<
-    is_comparable_with<T, T_>::value,
+    is_comparable_with<T_, T>::value &&
+    is_less_comparable_with<T_, T>::value,
   bool>
   operator>=(basic_result<_mut, T_, E_> const& rhs) const
   {
-    return rhs.is_ok() ? rhs.unwrap() >= this->x : true;
+    return rhs.is_ok() ? (rhs.unwrap() == this->x) || (rhs.is_ok() < this->x) : true;
   }
 
   template <class T_>
@@ -230,7 +233,7 @@ public:
     is_comparable_with<T, T_>::value,
   bool>
   operator>=(success<T_> const& rhs) const {
-    return this->x >= rhs.x;
+    return rhs <= *this;
   }
 
   template <class E_>

@@ -413,6 +413,16 @@ TEST_CASE("less compare", "[maybe][less]"){
   REQUIRE_FALSE(just1 < just1);
   REQUIRE_FALSE(just2 < just2);
 
+  REQUIRE(just1 < 2);
+  REQUIRE_FALSE(just2 < 1);
+  REQUIRE_FALSE(just1 < 1);
+  REQUIRE_FALSE(just2 < 2);
+
+  REQUIRE(1 < just2);
+  REQUIRE_FALSE(2 < just1);
+  REQUIRE_FALSE(1 < just1);
+  REQUIRE_FALSE(2 < just2);
+
   REQUIRE(just(1) < just2);
   REQUIRE_FALSE(just(2) < just1);
   REQUIRE_FALSE(just(1) < just1);
@@ -435,6 +445,11 @@ TEST_CASE("less compare", "[maybe][less]"){
 
   REQUIRE(none < just1);
   REQUIRE(none < just2);
+  REQUIRE(none < 1);
+  REQUIRE(none < 2);
+
+  REQUIRE_FALSE(1 < none);
+  REQUIRE_FALSE(2 < none);
 
   REQUIRE_FALSE(just1 < none);
   REQUIRE_FALSE(just2 < none);
@@ -472,6 +487,16 @@ TEST_CASE("less_or_equal compare", "[maybe][less_or_equal]"){
   REQUIRE(just1 <= just1);
   REQUIRE(just2 <= just2);
 
+  REQUIRE(just1 <= 2);
+  REQUIRE_FALSE(just2 <= 1);
+  REQUIRE(just1 <= 1);
+  REQUIRE(just2 <= 2);
+
+  REQUIRE(1 <= just2);
+  REQUIRE_FALSE(2 <= just1);
+  REQUIRE(1 <= just1);
+  REQUIRE(2 <= just2);
+
   REQUIRE(just(1) <= just2);
   REQUIRE_FALSE(just(2) <= just1);
   REQUIRE(just(1) <= just1);
@@ -495,6 +520,9 @@ TEST_CASE("less_or_equal compare", "[maybe][less_or_equal]"){
   REQUIRE(none <= just1);
   REQUIRE(none <= just2);
 
+  REQUIRE(none <= 1);
+  REQUIRE(none <= 2);
+
   REQUIRE(nothing <= just1);
   REQUIRE(nothing <= just2);
 
@@ -506,6 +534,9 @@ TEST_CASE("less_or_equal compare", "[maybe][less_or_equal]"){
 
   REQUIRE_FALSE(just1 <= none);
   REQUIRE_FALSE(just2 <= none);
+
+  REQUIRE_FALSE(1 <= none);
+  REQUIRE_FALSE(2 <= none);
 
   REQUIRE_FALSE(just(1) <= none);
   REQUIRE_FALSE(just(2) <= none);
@@ -527,6 +558,16 @@ TEST_CASE("greater compare", "[maybe][greater]"){
   REQUIRE(just2 > just1);
   REQUIRE_FALSE(just1 > just1);
   REQUIRE_FALSE(just2 > just2);
+
+  REQUIRE_FALSE(just1 > 2);
+  REQUIRE(just2 > 1);
+  REQUIRE_FALSE(just1 > 1);
+  REQUIRE_FALSE(just2 > 2);
+
+  REQUIRE_FALSE(1 > just2);
+  REQUIRE(2 > just1);
+  REQUIRE_FALSE(1 > just1);
+  REQUIRE_FALSE(2 > just2);
 
   REQUIRE_FALSE(just(1) > just2);
   REQUIRE(just(2) > just1);
@@ -551,6 +592,9 @@ TEST_CASE("greater compare", "[maybe][greater]"){
   REQUIRE_FALSE(none > just1);
   REQUIRE_FALSE(none > just2);
 
+  REQUIRE_FALSE(none > 1);
+  REQUIRE_FALSE(none > 2);
+
   REQUIRE_FALSE(nothing > just1);
   REQUIRE_FALSE(nothing > just2);
 
@@ -562,6 +606,9 @@ TEST_CASE("greater compare", "[maybe][greater]"){
 
   REQUIRE(just1 > none);
   REQUIRE(just2 > none);
+
+  REQUIRE(1 > none);
+  REQUIRE(2 > none);
 
   REQUIRE(just(1) > none);
   REQUIRE(just(2) > none);
@@ -583,6 +630,16 @@ TEST_CASE("greater_or_equal compare", "[maybe][greater_or_equal]"){
   REQUIRE(just2 >= just1);
   REQUIRE(just1 >= just1);
   REQUIRE(just2 >= just2);
+
+  REQUIRE_FALSE(just1 >= 2);
+  REQUIRE(just2 >= 1);
+  REQUIRE(just1 >= 1);
+  REQUIRE(just2 >= 2);
+
+  REQUIRE_FALSE(1 >= just2);
+  REQUIRE(2 >= just1);
+  REQUIRE(1 >= just1);
+  REQUIRE(2 >= just2);
 
   REQUIRE_FALSE(just(1) >= just2);
   REQUIRE(just(2) >= just1);
@@ -610,6 +667,9 @@ TEST_CASE("greater_or_equal compare", "[maybe][greater_or_equal]"){
   REQUIRE_FALSE(none >= just1);
   REQUIRE_FALSE(none >= just2);
 
+  REQUIRE_FALSE(none >= 1);
+  REQUIRE_FALSE(none >= 2);
+
   REQUIRE_FALSE(none >= just(1));
   REQUIRE_FALSE(none >= just(2));
 
@@ -618,6 +678,9 @@ TEST_CASE("greater_or_equal compare", "[maybe][greater_or_equal]"){
 
   REQUIRE(just1 >= none);
   REQUIRE(just2 >= none);
+
+  REQUIRE(1 >= none);
+  REQUIRE(2 >= none);
 
   REQUIRE(just(1) >= none);
   REQUIRE(just(2) >= none);

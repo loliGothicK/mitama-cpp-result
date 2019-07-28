@@ -119,15 +119,15 @@ public:
   constexpr
   std::enable_if_t<
     is_comparable_with<E, E_>::value,
-      bool>
+  bool>
   operator!=(basic_result<_mut, T_, E_> const& rhs) const {
-    return rhs.is_err() ? !(rhs.unwrap_err() == this->x) : true;
+    return !(*this == rhs);
   }
 
   template <class T_>
   constexpr bool
   operator!=(success<T_> const&) const {
-    return true;
+    return false;
   }
 
   template <class E_>
@@ -145,7 +145,7 @@ public:
     is_comparable_with<E, E_>::value,
   bool>
   operator<(basic_result<_mut, T_, E_> const& rhs) const {
-    return rhs.is_err() ? rhs.unwrap_err() < this->x : true;
+    return rhs.is_err() ? this->x < rhs.unwrap_err() : true;
   }
 
   template <class T_>
@@ -157,7 +157,7 @@ public:
   template <class E_>
   constexpr
   std::enable_if_t<
-    is_comparable_with<E, E_>::value,
+    meta::is_less_comparable_with<E, E_>::value,
   bool>
   operator<(failure<E_> const& rhs) const {
     return this->x < rhs.x;
@@ -166,11 +166,13 @@ public:
   template <mutability _mut, class T_, class E_>
   constexpr
   std::enable_if_t<
-    is_comparable_with<E, E_>::value,
+    std::conjunction_v<
+      is_comparable_with<E, E_>,
+      meta::is_less_comparable_with<E, E_>>,
   bool>
   operator<=(basic_result<_mut, T_, E_> const& rhs) const
   {
-    return rhs.is_ok_err() ? rhs.unwrap_err() <= this->x : true;
+    return rhs.is_err() ? (this->x == rhs.unwrap_err()) || (this->x < rhs.unwrap_err()) : true;
   }
 
   template <class T_>
@@ -182,20 +184,22 @@ public:
   template <class E_>
   constexpr
   std::enable_if_t<
-    is_comparable_with<E, E_>::value,
+    std::conjunction_v<
+      is_comparable_with<E, E_>,
+      meta::is_less_comparable_with<E, E_>>,
   bool>
   operator<=(failure<E_> const& rhs) const {
-    return this->x < rhs.x;
+    return (*this == rhs) || (*this < rhs);
   }
 
   template <mutability _mut, class T_, class E_>
   constexpr
   std::enable_if_t<
-    is_comparable_with<E, E_>::value,
+    meta::is_less_comparable_with<E_, E>::value,
   bool>
   operator>(basic_result<_mut, T_, E_> const& rhs) const
   {
-    return rhs.is_err() ? rhs.unwrap_err() > this->x : false;
+    return rhs.is_err() ? rhs.unwrap_err() < this->x : false;
   }
 
   template <class T_>
@@ -207,20 +211,22 @@ public:
   template <class E_>
   constexpr
   std::enable_if_t<
-    is_comparable_with<E, E_>::value,
+    meta::is_comparable_with<E_, E>::value,
   bool>
   operator>(failure<E_> const& rhs) const {
-    return this->x > rhs.x;
+    return rhs < *this;
   }
 
   template <mutability _mut, class T_, class E_>
   constexpr
   std::enable_if_t<
-    is_comparable_with<E, E_>::value,
-      bool>
+    std::conjunction_v<
+      is_comparable_with<E_, E>,
+      meta::is_less_comparable_with<E_, E>>,
+  bool>
   operator>=(basic_result<_mut, T_, E_> const& rhs) const
   {
-    return rhs.is_ok_err() ? rhs.unwrap_err() >= this->x : false;
+    return rhs.is_err() ? (rhs.unwrap_err() == this->x) || (rhs.unwrap_err() < this->x) : false;
   }
 
   template <class T_>
@@ -232,10 +238,12 @@ public:
   template <class E_>
   constexpr
   std::enable_if_t<
-    is_comparable_with<E, E_>::value,
+    std::conjunction_v<
+      is_comparable_with<E_, E>,
+      meta::is_less_comparable_with<E_, E>>,
   bool>
   operator>=(failure<E_> const& rhs) const {
-    return this->x >= rhs.x;
+    return rhs <= *this;
   }
 
   /// @brief

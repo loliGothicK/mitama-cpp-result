@@ -1240,7 +1240,12 @@ public:
   }
 
   template <mutability _, class U, class F>
-  bool operator<(basic_result<_, U, F> const& rhs) const {
+  std::enable_if_t<
+    std::conjunction_v<
+      meta::is_less_comparable_with<T, U>,
+      meta::is_less_comparable_with<E, F>>,
+  bool>
+  operator<(basic_result<_, U, F> const& rhs) const {
     return boost::apply_visitor(
       boost::hana::overload(
         [](success<T> const& l, success<U> const& r) { return l.x < r.x; },
@@ -1250,8 +1255,29 @@ public:
       this->storage_, rhs.storage_);
   }
 
+  template <class U>
+  std::enable_if_t<
+      meta::is_less_comparable_with<U, T>::value,
+  bool>
+  operator<(success<U> const& rhs) const {
+    return rhs > *this;
+  }
+
+  template <class F>
+  std::enable_if_t<
+      meta::is_less_comparable_with<F, E>::value,
+  bool>
+  operator<(failure<F> const& rhs) const {
+    return rhs > *this;
+  }
+
   template <mutability _, class U, class F>
-  bool operator>(basic_result<_, U, F> const& rhs) const {
+  std::enable_if_t<
+    std::conjunction_v<
+      meta::is_less_comparable_with<U, T>,
+      meta::is_less_comparable_with<F, E>>,
+  bool>
+  operator>(basic_result<_, U, F> const& rhs) const {
     return boost::apply_visitor(
       boost::hana::overload(
         [](success<T> const& l, success<U> const& r) { return r.x < l.x; },
@@ -1261,29 +1287,259 @@ public:
       this->storage_, rhs.storage_);
   }
 
+  template <class U>
+  std::enable_if_t<
+      meta::is_less_comparable_with<U, T>::value,
+  bool>
+  operator>(success<U> const& rhs) const {
+    return rhs < *this;
+  }
+
+  template <class F>
+  std::enable_if_t<
+      meta::is_less_comparable_with<F, E>::value,
+  bool>
+  operator>(failure<F> const& rhs) const {
+    return rhs < *this;
+  }
+
   template <mutability _, class U, class F>
-  bool operator<=(basic_result<_, U, F> const& rhs) const {
+  std::enable_if_t<
+    std::conjunction_v<
+      meta::is_less_comparable_with<T, U>,
+      meta::is_less_comparable_with<E, F>,
+      is_comparable_with<T, U>,
+      is_comparable_with<E, F>>,
+  bool>
+  operator<=(basic_result<_, U, F> const& rhs) const {
     return boost::apply_visitor(
       boost::hana::overload(
-        [](success<T> const& l, success<U> const& r) { return l.x <= r.x; },
-        [](failure<E> const& l, failure<F> const& r) { return l.x <= r.x; },
+        [](success<T> const& l, success<U> const& r) { return (l.x == r.x) || (l.x < r.x); },
+        [](failure<E> const& l, failure<F> const& r) { return (l.x == r.x) || (l.x < r.x); },
         [](failure<E> const&, success<U> const&) { return true; },
         [](success<T> const&, failure<F> const&) { return false; }),
       this->storage_, rhs.storage_);
   }
 
+  template <class U>
+  std::enable_if_t<
+    std::conjunction_v<
+      meta::is_less_comparable_with<U, T>,
+      is_comparable_with<U, T>>,
+  bool>
+  operator<=(success<U> const& rhs) const {
+    return rhs >= *this;
+  }
+
+  template <class F>
+  std::enable_if_t<
+    std::conjunction_v<
+      meta::is_less_comparable_with<F, E>,
+      is_comparable_with<F, E>>,
+  bool>
+  operator<=(failure<F> const& rhs) const {
+    return rhs >= *this;
+  }
+
   template <mutability _, class U, class F>
-  bool operator>=(basic_result<_, U, F> const& rhs) const {
+  std::enable_if_t<
+    std::conjunction_v<
+      meta::is_less_comparable_with<T, U>,
+      meta::is_less_comparable_with<E, F>,
+      is_comparable_with<T, U>,
+      is_comparable_with<E, F>>,
+  bool>
+  operator>=(basic_result<_, U, F> const& rhs) const {
     return boost::apply_visitor(
       boost::hana::overload(
-        [](success<T> const& l, success<U> const& r) { return r.x <= l.x; },
-        [](failure<E> const& l, failure<F> const& r) { return r.x <= l.x; },
+        [](success<T> const& l, success<U> const& r) { return (l.x == r.x) || (r.x < l.x); },
+        [](failure<E> const& l, failure<F> const& r) { return (l.x == r.x) || (r.x < l.x); },
         [](failure<E> const&, success<U> const&) { return false; },
         [](success<T> const&, failure<F> const&) { return true; }),
       this->storage_, rhs.storage_);
   }
 
+  template <class U>
+  std::enable_if_t<
+    std::conjunction_v<
+      meta::is_less_comparable_with<U, T>,
+      is_comparable_with<U, T>>,
+  bool>
+  operator>=(success<U> const& rhs) const {
+    return rhs <= *this;
+  }
+
+  template <class F>
+  std::enable_if_t<
+    std::conjunction_v<
+      meta::is_less_comparable_with<F, E>,
+      is_comparable_with<F, E>>,
+  bool>
+  operator>=(failure<F> const& rhs) const {
+    return rhs <= *this;
+  }
+
 };
+
+  template <mutability _, class T, class E, class U>
+  std::enable_if_t<
+    std::negation_v<
+      std::disjunction<
+        is_result<std::decay_t<U>>,
+        is_ok_type<std::decay_t<U>>,
+        is_err_type<std::decay_t<U>>>>
+    && is_comparable_with<T, U>::value,
+  bool>
+  operator==(basic_result<_, T, E> const& lhs, U&& rhs) {
+    return lhs == success(std::forward<U>(rhs));
+  }
+
+  template <mutability _, class T, class E, class U>
+  std::enable_if_t<
+    std::negation_v<
+      std::disjunction<
+        is_result<std::decay_t<T>>,
+        is_ok_type<std::decay_t<T>>,
+        is_err_type<std::decay_t<T>>>>
+    && is_comparable_with<T, U>::value,
+  bool>
+  operator==(T&& lhs, basic_result<_, U, E> const& rhs) {
+    return success(std::forward<T>(lhs)) == rhs;
+  }
+
+  template <mutability _, class T, class E, class U>
+  std::enable_if_t<
+    std::negation_v<
+      std::disjunction<
+        is_result<std::decay_t<U>>,
+        is_ok_type<std::decay_t<U>>,
+        is_err_type<std::decay_t<U>>>>
+    && is_comparable_with<T, U>::value,
+  bool>
+  operator!=(basic_result<_, T, E> const& lhs, U&& rhs) {
+    return lhs != success(std::forward<U>(rhs));
+  }
+
+  template <mutability _, class T, class E, class U>
+  std::enable_if_t<
+    std::negation_v<
+      std::disjunction<
+        is_result<std::decay_t<T>>,
+        is_ok_type<std::decay_t<T>>,
+        is_err_type<std::decay_t<T>>>>
+    && is_comparable_with<T, U>::value,
+  bool>
+  operator!=(T&& lhs, basic_result<_, U, E> const& rhs) {
+    return success(std::forward<T>(lhs)) != rhs;
+  }
+
+  template <mutability _, class T, class E, class U>
+  std::enable_if_t<
+    std::negation_v<
+      std::disjunction<
+        is_result<std::decay_t<U>>,
+        is_ok_type<std::decay_t<U>>,
+        is_err_type<std::decay_t<U>>>>
+    && meta::is_less_comparable_with<T, U>::value,
+  bool>
+  operator<(basic_result<_, T, E> const& lhs, U&& rhs) {
+    return lhs < success(std::forward<U>(rhs));
+  }
+
+  template <mutability _, class T, class E, class U>
+  std::enable_if_t<
+    std::negation_v<
+      std::disjunction<
+        is_result<std::decay_t<T>>,
+        is_ok_type<std::decay_t<T>>,
+        is_err_type<std::decay_t<T>>>>
+    && meta::is_less_comparable_with<T, U>::value,
+  bool>
+  operator<(T&& lhs, basic_result<_, U, E> const& rhs) {
+    return success(std::forward<T>(lhs)) < rhs;
+  }
+
+  template <mutability _, class T, class E, class U>
+  std::enable_if_t<
+    std::negation_v<
+      std::disjunction<
+        is_result<std::decay_t<U>>,
+        is_ok_type<std::decay_t<U>>,
+        is_err_type<std::decay_t<U>>>>
+    && meta::is_less_comparable_with<T, U>::value
+    && is_comparable_with<T, U>::value,
+  bool>
+  operator<=(basic_result<_, T, E> const& lhs, U&& rhs) {
+    return lhs <= success(std::forward<U>(rhs));
+  }
+
+  template <mutability _, class T, class E, class U>
+  std::enable_if_t<
+    std::negation_v<
+      std::disjunction<
+        is_result<std::decay_t<T>>,
+        is_ok_type<std::decay_t<T>>,
+        is_err_type<std::decay_t<T>>>>
+    && meta::is_less_comparable_with<T, U>::value
+    && is_comparable_with<T, U>::value,
+  bool>
+  operator<=(T&& lhs, basic_result<_, U, E> const& rhs) {
+    return success(std::forward<T>(lhs)) <= rhs;
+  }
+
+  template <mutability _, class T, class E, class U>
+  std::enable_if_t<
+    std::negation_v<
+      std::disjunction<
+        is_result<std::decay_t<U>>,
+        is_ok_type<std::decay_t<U>>,
+        is_err_type<std::decay_t<U>>>>
+    && meta::is_less_comparable_with<U, T>::value,
+  bool>
+  operator>(basic_result<_, T, E> const& lhs, U&& rhs) {
+    return lhs > success(std::forward<U>(rhs));
+  }
+
+  template <mutability _, class T, class E, class U>
+  std::enable_if_t<
+    std::negation_v<
+      std::disjunction<
+        is_result<std::decay_t<T>>,
+        is_ok_type<std::decay_t<T>>,
+        is_err_type<std::decay_t<T>>>>
+    && meta::is_less_comparable_with<U, T>::value,
+  bool>
+  operator>(T&& lhs, basic_result<_, U, E> const& rhs) {
+    return success(std::forward<T>(lhs)) > rhs;
+  }
+
+  template <mutability _, class T, class E, class U>
+  std::enable_if_t<
+    std::negation_v<
+      std::disjunction<
+        is_result<std::decay_t<U>>,
+        is_ok_type<std::decay_t<U>>,
+        is_err_type<std::decay_t<U>>>>
+    && meta::is_less_comparable_with<U, T>::value
+    && is_comparable_with<U, T>::value,
+  bool>
+  operator>=(basic_result<_, T, E> const& lhs, U&& rhs) {
+    return lhs >= success(std::forward<U>(rhs));
+  }
+
+  template <mutability _, class T, class E, class U>
+  std::enable_if_t<
+    std::negation_v<
+      std::disjunction<
+        is_result<std::decay_t<T>>,
+        is_ok_type<std::decay_t<T>>,
+        is_err_type<std::decay_t<T>>>>
+    && meta::is_less_comparable_with<U, T>::value
+    && is_comparable_with<U, T>::value,
+  bool>
+  operator>=(T&& lhs, basic_result<_, U, E> const& rhs) {
+    return success(std::forward<T>(lhs)) >= rhs;
+  }
 
 } // namespace mitama
 

@@ -639,20 +639,95 @@ TEST_CASE("less compare", "[result][less]"){
   REQUIRE_FALSE(ok1 < ok1);
   REQUIRE_FALSE(ok2 < ok2);
 
+  REQUIRE(success(1) < ok2);
+  REQUIRE_FALSE(success(2) < ok1);
+  REQUIRE_FALSE(success(1) < ok1);
+  REQUIRE_FALSE(success(2) < ok2);
+
+  REQUIRE(ok1 < success(2));
+  REQUIRE_FALSE(ok2 < success(1));
+  REQUIRE_FALSE(ok1 < success(1));
+  REQUIRE_FALSE(ok2 < success(2));
+
+  REQUIRE(success(1) < success(2));
+  REQUIRE_FALSE(success(2) < success(1));
+  REQUIRE_FALSE(success(1) < success(1));
+  REQUIRE_FALSE(success(2) < success(2));
+
+  REQUIRE(ok1 < 2);
+  REQUIRE_FALSE(ok2 < 1);
+  REQUIRE_FALSE(ok1 < 1);
+  REQUIRE_FALSE(ok2 < 2);
+
+  REQUIRE(1 < ok2);
+  REQUIRE_FALSE(2 < ok1);
+  REQUIRE_FALSE(1 < ok1);
+  REQUIRE_FALSE(2 < ok2);
+
   REQUIRE(err1 < err2);
   REQUIRE_FALSE(err2 < err1);
   REQUIRE_FALSE(err1 < err1);
   REQUIRE_FALSE(err2 < err2);
+
+  REQUIRE(failure(1) < err2);
+  REQUIRE_FALSE(failure(2) < err1);
+  REQUIRE_FALSE(failure(1) < err1);
+  REQUIRE_FALSE(failure(2) < err2);
+
+  REQUIRE(err1 < failure(2));
+  REQUIRE_FALSE(err2 < failure(1));
+  REQUIRE_FALSE(err1 < failure(1));
+  REQUIRE_FALSE(err2 < failure(2));
+
+  REQUIRE(failure(1) < failure(2));
+  REQUIRE_FALSE(failure(2) < failure(1));
+  REQUIRE_FALSE(failure(1) < failure(1));
+  REQUIRE_FALSE(failure(2) < failure(2));
 
   REQUIRE(err1 < ok1);
   REQUIRE(err1 < ok2);
   REQUIRE(err2 < ok1);
   REQUIRE(err2 < ok2);
 
+  REQUIRE(failure(1) < ok1);
+  REQUIRE(failure(1) < ok2);
+  REQUIRE(failure(2) < ok1);
+  REQUIRE(failure(2) < ok2);
+
+  REQUIRE(err1 < success(1));
+  REQUIRE(err1 < success(2));
+  REQUIRE(err2 < success(1));
+  REQUIRE(err2 < success(2));
+
+  REQUIRE(failure(1) < success(1));
+  REQUIRE(failure(1) < success(2));
+  REQUIRE(failure(2) < success(1));
+  REQUIRE(failure(2) < success(2));
+
   REQUIRE_FALSE(ok1 < err1);
   REQUIRE_FALSE(ok1 < err2);
   REQUIRE_FALSE(ok2 < err1);
   REQUIRE_FALSE(ok2 < err2);
+
+  REQUIRE_FALSE(success(1) < err1);
+  REQUIRE_FALSE(success(1) < err2);
+  REQUIRE_FALSE(success(2) < err1);
+  REQUIRE_FALSE(success(2) < err2);
+
+  REQUIRE_FALSE(ok1 < failure(1));
+  REQUIRE_FALSE(ok1 < failure(2));
+  REQUIRE_FALSE(ok2 < failure(1));
+  REQUIRE_FALSE(ok2 < failure(2));
+
+  REQUIRE_FALSE(success(1) < failure(1));
+  REQUIRE_FALSE(success(1) < failure(2));
+  REQUIRE_FALSE(success(2) < failure(1));
+  REQUIRE_FALSE(success(2) < failure(2));
+
+  REQUIRE_FALSE(1 < err1);
+  REQUIRE_FALSE(1 < err2);
+  REQUIRE_FALSE(2 < err1);
+  REQUIRE_FALSE(2 < err2);
 
 }
 
@@ -667,20 +742,100 @@ TEST_CASE("less_or_equal compare", "[result][less_or_equal]"){
   REQUIRE(ok1 <= ok1);
   REQUIRE(ok2 <= ok2);
 
+  REQUIRE(success(1) <= ok2);
+  REQUIRE_FALSE(success(2) <= ok1);
+  REQUIRE(success(1) <= ok1);
+  REQUIRE(success(2) <= ok2);
+
+  REQUIRE(ok1 <= success(2));
+  REQUIRE_FALSE(ok2 <= success(1));
+  REQUIRE(ok1 <= success(1));
+  REQUIRE(ok2 <= success(2));
+
+  REQUIRE(success(1) <= success(2));
+  REQUIRE_FALSE(success(2) <= success(1));
+  REQUIRE(success(1) <= success(1));
+  REQUIRE(success(2) <= success(2));
+
+  REQUIRE(1 <= ok2);
+  REQUIRE_FALSE(2 <= ok1);
+  REQUIRE(1 <= ok1);
+  REQUIRE(2 <= ok2);
+
+  REQUIRE(ok1 <= 2);
+  REQUIRE_FALSE(ok2 <= 1);
+  REQUIRE(ok1 <= 1);
+  REQUIRE(ok2 <= 2);
+
   REQUIRE(err1 <= err2);
   REQUIRE_FALSE(err2 <= err1);
   REQUIRE(err1 <= err1);
   REQUIRE(err2 <= err2);
+
+  REQUIRE(failure(1) <= err2);
+  REQUIRE_FALSE(failure(2) <= err1);
+  REQUIRE(failure(1) <= err1);
+  REQUIRE(failure(2) <= err2);
+
+  REQUIRE(err1 <= failure(2));
+  REQUIRE_FALSE(err2 <= failure(1));
+  REQUIRE(err1 <= failure(1));
+  REQUIRE(err2 <= failure(2));
+
+  REQUIRE(failure(1) <= failure(2));
+  REQUIRE_FALSE(failure(2) <= failure(1));
+  REQUIRE(failure(1) <= failure(1));
+  REQUIRE(failure(2) <= failure(2));
 
   REQUIRE(err1 <= ok1);
   REQUIRE(err1 <= ok2);
   REQUIRE(err2 <= ok1);
   REQUIRE(err2 <= ok2);
 
+  REQUIRE(failure(1) <= ok1);
+  REQUIRE(failure(1) <= ok2);
+  REQUIRE(failure(2) <= ok1);
+  REQUIRE(failure(2) <= ok2);
+
+  REQUIRE(err1 <= success(1));
+  REQUIRE(err1 <= success(2));
+  REQUIRE(err2 <= success(1));
+  REQUIRE(err2 <= success(2));
+
+  REQUIRE(failure(1) <= success(1));
+  REQUIRE(failure(1) <= success(2));
+  REQUIRE(failure(2) <= success(1));
+  REQUIRE(failure(2) <= success(2));
+
+  REQUIRE(err1 <= 1);
+  REQUIRE(err1 <= 2);
+  REQUIRE(err2 <= 1);
+  REQUIRE(err2 <= 2);
+
   REQUIRE_FALSE(ok1 <= err1);
   REQUIRE_FALSE(ok1 <= err2);
   REQUIRE_FALSE(ok2 <= err1);
   REQUIRE_FALSE(ok2 <= err2);
+
+  REQUIRE_FALSE(success(1) <= err1);
+  REQUIRE_FALSE(success(1) <= err2);
+  REQUIRE_FALSE(success(2) <= err1);
+  REQUIRE_FALSE(success(2) <= err2);
+
+  REQUIRE_FALSE(ok1 <= failure(1));
+  REQUIRE_FALSE(ok1 <= failure(2));
+  REQUIRE_FALSE(ok2 <= failure(1));
+  REQUIRE_FALSE(ok2 <= failure(2));
+
+  REQUIRE_FALSE(success(1) <= failure(1));
+  REQUIRE_FALSE(success(1) <= failure(2));
+  REQUIRE_FALSE(success(2) <= failure(1));
+  REQUIRE_FALSE(success(2) <= failure(2));
+
+  REQUIRE_FALSE(1 <= err1);
+  REQUIRE_FALSE(1 <= err2);
+  REQUIRE_FALSE(2 <= err1);
+  REQUIRE_FALSE(2 <= err2);
 
 }
 
@@ -695,20 +850,100 @@ TEST_CASE("greater compare", "[result][greater]"){
   REQUIRE_FALSE(ok1 > ok1);
   REQUIRE_FALSE(ok2 > ok2);
 
+  REQUIRE_FALSE(success(1) > ok2);
+  REQUIRE(success(2) > ok1);
+  REQUIRE_FALSE(success(1) > ok1);
+  REQUIRE_FALSE(success(2) > ok2);
+
+  REQUIRE_FALSE(ok1 > success(2));
+  REQUIRE(ok2 > success(1));
+  REQUIRE_FALSE(ok1 > success(1));
+  REQUIRE_FALSE(ok2 > success(2));
+
+  REQUIRE_FALSE(success(1) > success(2));
+  REQUIRE(success(2) > success(1));
+  REQUIRE_FALSE(success(1) > success(1));
+  REQUIRE_FALSE(success(2) > success(2));
+
+  REQUIRE_FALSE(1 > ok2);
+  REQUIRE(2 > ok1);
+  REQUIRE_FALSE(1 > ok1);
+  REQUIRE_FALSE(2 > ok2);
+
+  REQUIRE_FALSE(ok1 > 2);
+  REQUIRE(ok2 > 1);
+  REQUIRE_FALSE(ok1 > 1);
+  REQUIRE_FALSE(ok2 > 2);
+
   REQUIRE_FALSE(err1 > err2);
   REQUIRE(err2 > err1);
   REQUIRE_FALSE(err1 > err1);
   REQUIRE_FALSE(err2 > err2);
+
+  REQUIRE_FALSE(failure(1) > err2);
+  REQUIRE(failure(2) > err1);
+  REQUIRE_FALSE(failure(1) > err1);
+  REQUIRE_FALSE(failure(2) > err2);
+
+  REQUIRE_FALSE(err1 > failure(2));
+  REQUIRE(err2 > failure(1));
+  REQUIRE_FALSE(err1 > failure(1));
+  REQUIRE_FALSE(err2 > failure(2));
+
+  REQUIRE_FALSE(failure(1) > failure(2));
+  REQUIRE(failure(2) > failure(1));
+  REQUIRE_FALSE(failure(1) > failure(1));
+  REQUIRE_FALSE(failure(2) > failure(2));
 
   REQUIRE_FALSE(err1 > ok1);
   REQUIRE_FALSE(err1 > ok2);
   REQUIRE_FALSE(err2 > ok1);
   REQUIRE_FALSE(err2 > ok2);
 
+  REQUIRE_FALSE(failure(1) > ok1);
+  REQUIRE_FALSE(failure(1) > ok2);
+  REQUIRE_FALSE(failure(2) > ok1);
+  REQUIRE_FALSE(failure(2) > ok2);
+
+  REQUIRE_FALSE(err1 > success(1));
+  REQUIRE_FALSE(err1 > success(2));
+  REQUIRE_FALSE(err2 > success(1));
+  REQUIRE_FALSE(err2 > success(2));
+
+  REQUIRE_FALSE(failure(1) > success(1));
+  REQUIRE_FALSE(failure(1) > success(2));
+  REQUIRE_FALSE(failure(2) > success(1));
+  REQUIRE_FALSE(failure(2) > success(2));
+
+  REQUIRE_FALSE(err1 > 1);
+  REQUIRE_FALSE(err1 > 2);
+  REQUIRE_FALSE(err2 > 1);
+  REQUIRE_FALSE(err2 > 2);
+
   REQUIRE(ok1 > err1);
   REQUIRE(ok1 > err2);
   REQUIRE(ok2 > err1);
   REQUIRE(ok2 > err2);
+
+  REQUIRE(success(1) > err1);
+  REQUIRE(success(1) > err2);
+  REQUIRE(success(2) > err1);
+  REQUIRE(success(2) > err2);
+
+  REQUIRE(ok1 > failure(1));
+  REQUIRE(ok1 > failure(2));
+  REQUIRE(ok2 > failure(1));
+  REQUIRE(ok2 > failure(2));
+
+  REQUIRE(success(1) > failure(1));
+  REQUIRE(success(1) > failure(2));
+  REQUIRE(success(2) > failure(1));
+  REQUIRE(success(2) > failure(2));
+
+  REQUIRE(1 > err1);
+  REQUIRE(1 > err2);
+  REQUIRE(2 > err1);
+  REQUIRE(2 > err2);
 
 }
 
@@ -723,19 +958,99 @@ TEST_CASE("greater_or_equal compare", "[result][greater_or_equal]"){
   REQUIRE(ok1 >= ok1);
   REQUIRE(ok2 >= ok2);
 
+  REQUIRE_FALSE(success(1) >= ok2);
+  REQUIRE(success(2) >= ok1);
+  REQUIRE(success(1) >= ok1);
+  REQUIRE(success(2) >= ok2);
+
+  REQUIRE_FALSE(ok1 >= success(2));
+  REQUIRE(ok2 >= success(1));
+  REQUIRE(ok1 >= success(1));
+  REQUIRE(ok2 >= success(2));
+
+  REQUIRE_FALSE(success(1) >= success(2));
+  REQUIRE(success(2) >= success(1));
+  REQUIRE(success(1) >= success(1));
+  REQUIRE(success(2) >= success(2));
+
+  REQUIRE_FALSE(1 >= ok2);
+  REQUIRE(2 >= ok1);
+  REQUIRE(1 >= ok1);
+  REQUIRE(2 >= ok2);
+
+  REQUIRE_FALSE(ok1 >= 2);
+  REQUIRE(ok2 >= 1);
+  REQUIRE(ok1 >= 1);
+  REQUIRE(ok2 >= 2);
+
   REQUIRE_FALSE(err1 >= err2);
   REQUIRE(err2 >= err1);
   REQUIRE(err1 >= err1);
   REQUIRE(err2 >= err2);
+
+  REQUIRE_FALSE(failure(1) >= err2);
+  REQUIRE(failure(2) >= err1);
+  REQUIRE(failure(1) >= err1);
+  REQUIRE(failure(2) >= err2);
+
+  REQUIRE_FALSE(err1 >= failure(2));
+  REQUIRE(err2 >= failure(1));
+  REQUIRE(err1 >= failure(1));
+  REQUIRE(err2 >= failure(2));
+
+  REQUIRE_FALSE(failure(1) >= failure(2));
+  REQUIRE(failure(2) >= failure(1));
+  REQUIRE(failure(1) >= failure(1));
+  REQUIRE(failure(2) >= failure(2));
 
   REQUIRE_FALSE(err1 >= ok1);
   REQUIRE_FALSE(err1 >= ok2);
   REQUIRE_FALSE(err2 >= ok1);
   REQUIRE_FALSE(err2 >= ok2);
 
+  REQUIRE_FALSE(failure(1) >= ok1);
+  REQUIRE_FALSE(failure(1) >= ok2);
+  REQUIRE_FALSE(failure(2) >= ok1);
+  REQUIRE_FALSE(failure(2) >= ok2);
+
+  REQUIRE_FALSE(err1 >= success(1));
+  REQUIRE_FALSE(err1 >= success(2));
+  REQUIRE_FALSE(err2 >= success(1));
+  REQUIRE_FALSE(err2 >= success(2));
+
+  REQUIRE_FALSE(failure(1) >= success(1));
+  REQUIRE_FALSE(failure(1) >= success(2));
+  REQUIRE_FALSE(failure(2) >= success(1));
+  REQUIRE_FALSE(failure(2) >= success(2));
+
+  REQUIRE_FALSE(err1 >= 1);
+  REQUIRE_FALSE(err1 >= 2);
+  REQUIRE_FALSE(err2 >= 1);
+  REQUIRE_FALSE(err2 >= 2);
+
   REQUIRE(ok1 >= err1);
   REQUIRE(ok1 >= err2);
   REQUIRE(ok2 >= err1);
   REQUIRE(ok2 >= err2);
+
+  REQUIRE(success(1) >= err1);
+  REQUIRE(success(1) >= err2);
+  REQUIRE(success(2) >= err1);
+  REQUIRE(success(2) >= err2);
+
+  REQUIRE(ok1 >= failure(1));
+  REQUIRE(ok1 >= failure(2));
+  REQUIRE(ok2 >= failure(1));
+  REQUIRE(ok2 >= failure(2));
+
+  REQUIRE(success(1) >= failure(1));
+  REQUIRE(success(1) >= failure(2));
+  REQUIRE(success(2) >= failure(1));
+  REQUIRE(success(2) >= failure(2));
+
+  REQUIRE(1 >= err1);
+  REQUIRE(1 >= err2);
+  REQUIRE(2 >= err1);
+  REQUIRE(2 >= err2);
 
 }

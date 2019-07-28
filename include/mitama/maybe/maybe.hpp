@@ -829,6 +829,27 @@ bool operator==(const nothing_t, maybe<T> const& rhs) {
 }
 
 template <class T, class U>
+std::enable_if_t<
+    std::conjunction_v<
+        std::negation<is_maybe<std::decay_t<U>>>,
+        meta::is_comparable_with<T, U>>,
+bool>
+operator==(maybe<T> const& lhs, U&& rhs) {
+    return lhs == just(std::forward<U>(rhs));
+}
+
+template <class T, class U>
+std::enable_if_t<
+    std::conjunction_v<
+        std::negation<is_maybe<std::decay_t<T>>>,
+        meta::is_comparable_with<T, U>>,
+bool>
+operator==(T&& lhs, maybe<U> const& rhs) {
+    return just(std::forward<T>(lhs)) == rhs;
+}
+
+
+template <class T, class U>
 std::enable_if_t<meta::is_comparable_with<T, U>::value,
 bool>
 operator!=(maybe<T> const& lhs, maybe<U> const& rhs) {
@@ -846,6 +867,27 @@ bool operator!=(const nothing_t, maybe<T> const& rhs) {
 }
 
 template <class T, class U>
+std::enable_if_t<
+    std::conjunction_v<
+        std::negation<is_maybe<std::decay_t<U>>>,
+        meta::is_comparable_with<T, U>>,
+bool>
+operator!=(maybe<T> const& lhs, U&& rhs) {
+    return lhs != just(std::forward<U>(rhs));
+}
+
+template <class T, class U>
+std::enable_if_t<
+    std::conjunction_v<
+        std::negation<is_maybe<std::decay_t<T>>>,
+        meta::is_comparable_with<T, U>>,
+bool>
+operator!=(T&& lhs, maybe<U> const& rhs) {
+    return just(std::forward<T>(lhs)) != rhs;
+}
+
+
+template <class T, class U>
 bool operator<(maybe<T> const& lhs, maybe<U> const& rhs) {
     return lhs.ok_or() < rhs.ok_or();
 }
@@ -859,6 +901,27 @@ template <class T>
 bool operator<(maybe<T> const&, nothing_t) {
     return false;
 }
+
+template <class T, class U>
+std::enable_if_t<
+    std::conjunction_v<
+        std::negation<is_maybe<std::decay_t<U>>>,
+        meta::is_less_comparable_with<T, U>>,
+bool>
+operator<(maybe<T> const& lhs, U&& rhs) {
+    return lhs < just(std::forward<U>(rhs));
+}
+
+template <class T, class U>
+std::enable_if_t<
+    std::conjunction_v<
+        std::negation<is_maybe<std::decay_t<T>>>,
+        meta::is_less_comparable_with<T, U>>,
+bool>
+operator<(T&& lhs, maybe<U> const& rhs) {
+    return just(std::forward<T>(lhs)) < rhs;
+}
+
 
 template <class T, class U>
 bool operator<=(maybe<T> const& lhs, maybe<U> const& rhs) {
@@ -876,6 +939,29 @@ bool operator<=(maybe<T> const& lhs, nothing_t) {
 }
 
 template <class T, class U>
+std::enable_if_t<
+    std::conjunction_v<
+        std::negation<is_maybe<std::decay_t<U>>>,
+        meta::is_less_comparable_with<T, U>,
+        meta::is_comparable_with<T, U>>,
+bool>
+operator<=(maybe<T> const& lhs, U&& rhs) {
+    return lhs <= just(std::forward<U>(rhs));
+}
+
+template <class T, class U>
+std::enable_if_t<
+    std::conjunction_v<
+        std::negation<is_maybe<std::decay_t<T>>>,
+        meta::is_less_comparable_with<T, U>,
+        meta::is_comparable_with<T, U>>,
+bool>
+operator<=(T&& lhs, maybe<U> const& rhs) {
+    return just(std::forward<T>(lhs)) <= rhs;
+}
+
+
+template <class T, class U>
 bool operator>(maybe<T> const& lhs, maybe<U> const& rhs) {
     return lhs.ok_or() > rhs.ok_or();
 }
@@ -891,6 +977,27 @@ bool operator>(maybe<T> const& lhs, nothing_t) {
 }
 
 template <class T, class U>
+std::enable_if_t<
+    std::conjunction_v<
+        std::negation<is_maybe<std::decay_t<U>>>,
+        meta::is_less_comparable_with<U, T>>,
+bool>
+operator>(maybe<T> const& lhs, U&& rhs) {
+    return lhs > just(std::forward<U>(rhs));
+}
+
+template <class T, class U>
+std::enable_if_t<
+    std::conjunction_v<
+        std::negation<is_maybe<std::decay_t<T>>>,
+        meta::is_less_comparable_with<U, T>>,
+bool>
+operator>(T&& lhs, maybe<U> const& rhs) {
+    return just(std::forward<T>(lhs)) > rhs;
+}
+
+
+template <class T, class U>
 bool operator>=(maybe<T> const& lhs, maybe<U> const& rhs) {
     return lhs.ok_or() >= rhs.ok_or();
 }
@@ -904,6 +1011,29 @@ template <class T>
 bool operator>=(maybe<T> const&, nothing_t) {
     return true;
 }
+
+template <class T, class U>
+std::enable_if_t<
+    std::conjunction_v<
+        std::negation<is_maybe<std::decay_t<U>>>,
+        meta::is_less_comparable_with<U, T>,
+        meta::is_comparable_with<U, T>>,
+bool>
+operator>=(maybe<T> const& lhs, U&& rhs) {
+    return lhs >= just(std::forward<U>(rhs));
+}
+
+template <class T, class U>
+std::enable_if_t<
+    std::conjunction_v<
+        std::negation<is_maybe<std::decay_t<T>>>,
+        meta::is_less_comparable_with<U, T>,
+        meta::is_comparable_with<U, T>>,
+bool>
+operator>=(T&& lhs, maybe<U> const& rhs) {
+    return just(std::forward<T>(lhs)) >= rhs;
+}
+
 
 /// @brief
 ///   ostream output operator for maybe<T>
