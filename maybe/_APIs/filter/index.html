@@ -1098,24 +1098,27 @@
                 
                   <h1>Mitama.Result | User Manual</h1>
                 
-                <p><strong>filter(Pred predicate) -&gt; maybe&lt;T&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+                <p><strong>maybe&lt;T&gt;::filter(Pred predicate) -&gt; maybe&lt;T&gt;</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_r_v</span><span class="o">&lt;</span><span class="kt">bool</span><span class="p">,</span> <span class="n">Pred</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">filter</span><span class="p">(</span><span class="n">Pred</span><span class="o">&amp;&amp;</span> <span class="n">predicate</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">filter</span><span class="p">(</span><span class="n">Pred</span><span class="o">&amp;&amp;</span> <span class="n">predicate</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_r_v</span><span class="o">&lt;</span><span class="kt">bool</span><span class="p">,</span> <span class="n">Pred</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">filter</span><span class="p">(</span><span class="n">Pred</span><span class="o">&amp;&amp;</span> <span class="n">predicate</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">filter</span><span class="p">(</span><span class="n">Pred</span><span class="o">&amp;&amp;</span> <span class="n">predicate</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_r_v</span><span class="o">&lt;</span><span class="kt">bool</span><span class="p">,</span> <span class="n">Pred</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">filter</span><span class="p">(</span><span class="n">Pred</span><span class="o">&amp;&amp;</span> <span class="n">predicate</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">filter</span><span class="p">(</span><span class="n">Pred</span><span class="o">&amp;&amp;</span> <span class="n">predicate</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Returns <code class="codehilite"><span class="k">nothing</span></code> if the option is <code class="codehilite"><span class="k">nothing</span></code>, otherwise calls predicate with the wrapped value and returns:</p>

@@ -1551,8 +1551,11 @@
                   <h1>API Reference</h1>
                 
                 <h2 id="is_just">is_just<a class="headerlink" href="#is_just" title="Permanent link">&para;</a></h2>
-<p><strong>is_just()</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">is_just</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">;</span>
+<p><strong>maybe&lt;T&gt;::is_just() -&gt; bool</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">is_just</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Returns <code class="codehilite"><span class="k">true</span></code> if the maybe has same value.</p>
@@ -1573,8 +1576,11 @@
 </pre></div>
 
 <h2 id="is_nothing">is_nothing<a class="headerlink" href="#is_nothing" title="Permanent link">&para;</a></h2>
-<p><strong>is_nothing()</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">is_nothing</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">;</span>
+<p><strong>maybe&lt;T&gt;::is_nothing() -&gt; bool</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">is_nothing</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Returns <code class="codehilite"><span class="k">true</span></code> if the maybe has not same value.</p>
@@ -1595,10 +1601,13 @@
 </pre></div>
 
 <h2 id="as_ref">as_ref<a class="headerlink" href="#as_ref" title="Permanent link">&para;</a></h2>
-<p><strong>as_ref()</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">as_ref</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&gt;</span> <span class="p">;</span>
+<p><strong>maybe&lt;T&gt;::as_ref() -&gt; maybe&lt;T&amp;&gt;</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">as_ref</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&gt;</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">as_ref</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;&gt;</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">as_ref</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Converts from <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span></code> to <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&gt;</span></code>.</p>
@@ -1621,12 +1630,15 @@
 </pre></div>
 
 <h2 id="expect">expect<a class="headerlink" href="#expect" title="Permanent link">&para;</a></h2>
-<p><strong>expect(msg)</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">expect</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">msg</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">&amp;</span> <span class="p">;</span>
+<p><strong>maybe&lt;T&gt;::expect(std::string_view msg) -&gt; T&amp;</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">expect</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">msg</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">expect</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">msg</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">expect</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">msg</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">expect</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">msg</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">&amp;&amp;</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">expect</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">msg</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Unwraps a maybe, yielding the content of an <code class="codehilite"><span class="n">just</span></code>.</p>
@@ -1657,12 +1669,15 @@
 </pre></div>
 
 <h2 id="unwrap">unwrap<a class="headerlink" href="#unwrap" title="Permanent link">&para;</a></h2>
-<p><strong>unwrap()</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">&amp;</span> <span class="p">;</span>
+<p><strong>maybe&lt;T&gt;::unwrap() -&gt; T&amp;</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">&amp;&amp;</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Unwraps a maybe, yielding the content of an <code class="codehilite"><span class="n">just</span></code>.</p>
@@ -1693,24 +1708,27 @@
 </pre></div>
 
 <h2 id="unwrap_or">unwrap_or<a class="headerlink" href="#unwrap_or" title="Permanent link">&para;</a></h2>
-<p><strong>unwrap_or(U u) -&gt; common_type&lt;T, U&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+<p><strong>maybe&lt;T&gt;::unwrap_or(T def) -&gt; T</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">U</span><span class="o">&amp;&amp;&gt;&gt;::</span><span class="n">value</span><span class="p">,</span>
-<span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">U</span><span class="o">&amp;&amp;&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or</span><span class="p">(</span><span class="n">U</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">U</span><span class="o">&amp;&amp;&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or</span><span class="p">(</span><span class="n">U</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">T</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">U</span><span class="o">&amp;&amp;&gt;&gt;::</span><span class="n">value</span><span class="p">,</span>
-<span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">T</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">U</span><span class="o">&amp;&amp;&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or</span><span class="p">(</span><span class="n">U</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">T</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">U</span><span class="o">&amp;&amp;&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or</span><span class="p">(</span><span class="n">U</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">U</span><span class="o">&amp;&amp;&gt;&gt;::</span><span class="n">value</span><span class="p">,</span>
-<span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">U</span><span class="o">&amp;&amp;&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or</span><span class="p">(</span><span class="n">U</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">U</span><span class="o">&amp;&amp;&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or</span><span class="p">(</span><span class="n">U</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Returns the contained value or a default.</p>
@@ -1731,30 +1749,34 @@
 </pre></div>
 
 <h2 id="unwrap_or_else">unwrap_or_else<a class="headerlink" href="#unwrap_or_else" title="Permanent link">&para;</a></h2>
-<p><strong>unwrap_or_else()</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+<p><strong>maybe&lt;T&gt;::unwrap_or_else(F f) -&gt; T</strong>
+<strong>where F: () -&gt; T</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-        <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
-<span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+      <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-        <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">T</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
-<span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">T</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+      <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">T</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">T</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-        <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
-<span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+      <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Returns the contained value or computes it from a invocable object <code class="codehilite"><span class="n">op</span></code>.</p>
@@ -1773,21 +1795,25 @@
 </pre></div>
 
 <h2 id="map">map<a class="headerlink" href="#map" title="Permanent link">&para;</a></h2>
-<p><strong>map(F f) -&gt; maybe&lt;std::invoke_result_t&lt;F, T&gt;&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span>
+<p><strong>maybe&lt;T&gt;::map(F f) -&gt; maybe&lt;T&gt;</strong>
+<strong>where F: T -&gt; U</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span>
     <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nb">false</span><span class="o">&gt;</span>
-<span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">map</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;&gt;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nb">false</span><span class="o">&gt;</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">map</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;&gt;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span>
     <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nb">false</span><span class="o">&gt;</span>
-<span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">map</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;&gt;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nb">false</span><span class="o">&gt;</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">map</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;&gt;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span>
     <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nb">false</span><span class="o">&gt;</span>
-<span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">map</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;&gt;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nb">false</span><span class="o">&gt;</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">map</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Maps an <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code> to <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span></code> by applying a function to a contained value.</p>
@@ -1811,30 +1837,33 @@
 </pre></div>
 
 <h2 id="map_or">map_or<a class="headerlink" href="#map_or" title="Permanent link">&para;</a></h2>
-<p><strong>map_or(U def, F f) -&gt; common_type&lt;U, std::invoke_result_t&lt;F, T&gt;&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="p">,</span> <span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+<p><strong>maybe&lt;T&gt;::map_or(T def, F f) -&gt; T</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="p">,</span> <span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-        <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
-<span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;&gt;&gt;</span>
-<span class="n">map_or</span><span class="p">(</span><span class="n">U</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+      <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;&gt;&gt;</span>
+  <span class="n">map_or</span><span class="p">(</span><span class="n">U</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="p">,</span> <span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="p">,</span> <span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-        <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
-<span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;&gt;&gt;</span>
-<span class="n">map_or</span><span class="p">(</span><span class="n">U</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+      <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;&gt;&gt;</span>
+  <span class="n">map_or</span><span class="p">(</span><span class="n">U</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="p">,</span> <span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="p">,</span> <span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-        <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
-<span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
-<span class="n">map_or</span><span class="p">(</span><span class="n">U</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+      <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
+  <span class="n">map_or</span><span class="p">(</span><span class="n">U</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Applies a function to the contained value (if any), or returns the provided default (if not).</p>
@@ -1856,33 +1885,39 @@
 </pre></div>
 
 <h2 id="map_or_else">map_or_else<a class="headerlink" href="#map_or_else" title="Permanent link">&para;</a></h2>
-<p><strong>map_or_else(D def, F f) -&gt; U</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">D</span><span class="p">,</span> <span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+<p><strong>maybe&lt;T&gt;::map_or_else(D def, F f) -&gt; U</strong>
+<strong>where</strong>
+<strong>D: () -&gt; U,</strong>
+<strong>F: T -&gt; U,</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">D</span><span class="p">,</span> <span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-        <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
-<span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;&gt;&gt;</span>
-<span class="n">map_or_else</span><span class="p">(</span><span class="n">D</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+      <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;&gt;&gt;</span>
+  <span class="n">map_or_else</span><span class="p">(</span><span class="n">D</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">D</span><span class="p">,</span> <span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">D</span><span class="p">,</span> <span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-        <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
-<span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;&gt;&gt;</span>
-<span class="n">map_or_else</span><span class="p">(</span><span class="n">D</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+      <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;&gt;&gt;</span>
+  <span class="n">map_or_else</span><span class="p">(</span><span class="n">D</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">D</span><span class="p">,</span> <span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">D</span><span class="p">,</span> <span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-        <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
-<span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
-<span class="n">map_or_else</span><span class="p">(</span><span class="n">D</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+      <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
+  <span class="n">map_or_else</span><span class="p">(</span><span class="n">D</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Applies a function to the contained value (if any), or computes a default (if not).</p>
@@ -1905,16 +1940,19 @@
 </pre></div>
 
 <h2 id="ok_or">ok_or<a class="headerlink" href="#ok_or" title="Permanent link">&para;</a></h2>
-<p><strong>ok_or(E err) -&gt; result<T, E></strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
-<span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ok_or</span><span class="p">(</span><span class="n">E</span><span class="o">&amp;&amp;</span> <span class="n">err</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">;</span>
+<p><strong>maybe&lt;T&gt;::ok_or(E err) -&gt; result<T, E></strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ok_or</span><span class="p">(</span><span class="n">E</span><span class="o">&amp;&amp;</span> <span class="n">err</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
-<span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ok_or</span><span class="p">(</span><span class="n">E</span><span class="o">&amp;&amp;</span> <span class="n">err</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ok_or</span><span class="p">(</span><span class="n">E</span><span class="o">&amp;&amp;</span> <span class="n">err</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ok_or</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">monostate</span><span class="o">&gt;</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ok_or</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">monostate</span><span class="o">&gt;</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ok_or</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">monostate</span><span class="o">&gt;</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ok_or</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">monostate</span><span class="o">&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Transforms the <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code> into a <code class="codehilite"><span class="k">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code>, mapping <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></code> to <code class="codehilite"><span class="n">success</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></code> and <code class="codehilite"><span class="k">nothing</span></code> to <code class="codehilite"><span class="n">failure</span><span class="p">(</span><span class="n">err</span><span class="p">)</span></code>.</p>
@@ -1940,18 +1978,22 @@
 </pre></div>
 
 <h2 id="ok_or_else">ok_or_else<a class="headerlink" href="#ok_or_else" title="Permanent link">&para;</a></h2>
-<p><strong>ok_or_else(F f) -&gt; result&lt;T, std::invoke_result_t&lt;F&gt;&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+<p><strong>maybe&lt;T&gt;::ok_or_else(F f) -&gt; result&lt;T, E&gt;</strong>
+<strong>where F: () -&gt; E</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-<span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ok_or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">err</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+  <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ok_or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">err</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-<span class="n">result</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ok_or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">err</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+  <span class="n">result</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ok_or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">err</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Transforms the <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code> into a <code class="codehilite"><span class="k">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code>, mapping <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></code> to <code class="codehilite"><span class="n">success</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></code> and <code class="codehilite"><span class="k">nothing</span></code> to <code class="codehilite"><span class="n">failure</span><span class="p">(</span><span class="n">err</span><span class="p">())</span></code>.</p>
@@ -1976,14 +2018,15 @@
 
 <h2 id="conj">conj<a class="headerlink" href="#conj" title="Permanent link">&para;</a></h2>
 <p><strong>maybe&lt;T&gt;::conj(maybe&lt;U&gt;) -&gt; maybe&gt;U&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
-<span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">conj</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="p">;</span>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">conj</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Returns <code class="codehilite"><span class="k">nothing</span></code> if the <code class="codehilite"><span class="n">lhs</span></code> is <code class="codehilite"><span class="k">nothing</span></code>, otherwise returns <code class="codehilite"><span class="n">rhs</span></code>.</p>
 <p><strong>Example</strong></p>
-<p><div class="codehilite"><pre><span></span>
-</pre></div>
 <div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
 <span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
@@ -2014,32 +2057,37 @@
   <span class="p">}</span>
 <span class="p">}</span>
 <span class="c1">// end example</span>
-</pre></div></p>
+</pre></div>
+
 <h2 id="and_then">and_then<a class="headerlink" href="#and_then" title="Permanent link">&para;</a></h2>
-<p><strong>and_then(F f) -&gt; std::invoke_result_t&lt;F, T&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+<p><strong>maybe&lt;T&gt;::and_then(F f) -&gt; maybe&lt;U&gt;</strong>
+<strong>where F: T -&gt; maybe&lt;U&gt;</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-        <span class="n">is_maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
-<span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span> <span class="o">&gt;</span>
-<span class="n">and_then</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+      <span class="n">is_maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span> <span class="o">&gt;</span>
+  <span class="n">and_then</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-        <span class="n">is_maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
-<span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span> <span class="o">&gt;</span>
-<span class="n">and_then</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+      <span class="n">is_maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span> <span class="o">&gt;</span>
+  <span class="n">and_then</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-        <span class="n">is_maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
-<span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span> <span class="o">&gt;</span>
-<span class="n">and_then</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+      <span class="n">is_maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span> <span class="o">&gt;</span>
+  <span class="n">and_then</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Returns <code class="codehilite"><span class="k">nothing</span></code> if the option is <code class="codehilite"><span class="k">nothing</span></code>, otherwise calls <code class="codehilite"><span class="n">f</span></code> with the wrapped value and returns the result.</p>
@@ -2063,24 +2111,27 @@
 </pre></div>
 
 <h2 id="filter">filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h2>
-<p><strong>filter(Pred predicate) -&gt; maybe&lt;T&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+<p><strong>maybe&lt;T&gt;::filter(Pred predicate) -&gt; maybe&lt;T&gt;</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_r_v</span><span class="o">&lt;</span><span class="kt">bool</span><span class="p">,</span> <span class="n">Pred</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">filter</span><span class="p">(</span><span class="n">Pred</span><span class="o">&amp;&amp;</span> <span class="n">predicate</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">filter</span><span class="p">(</span><span class="n">Pred</span><span class="o">&amp;&amp;</span> <span class="n">predicate</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_r_v</span><span class="o">&lt;</span><span class="kt">bool</span><span class="p">,</span> <span class="n">Pred</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">filter</span><span class="p">(</span><span class="n">Pred</span><span class="o">&amp;&amp;</span> <span class="n">predicate</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">filter</span><span class="p">(</span><span class="n">Pred</span><span class="o">&amp;&amp;</span> <span class="n">predicate</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_r_v</span><span class="o">&lt;</span><span class="kt">bool</span><span class="p">,</span> <span class="n">Pred</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">filter</span><span class="p">(</span><span class="n">Pred</span><span class="o">&amp;&amp;</span> <span class="n">predicate</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">filter</span><span class="p">(</span><span class="n">Pred</span><span class="o">&amp;&amp;</span> <span class="n">predicate</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Returns <code class="codehilite"><span class="k">nothing</span></code> if the option is <code class="codehilite"><span class="k">nothing</span></code>, otherwise calls predicate with the wrapped value and returns:</p>
@@ -2106,7 +2157,10 @@
 
 <h2 id="disj">disj<a class="headerlink" href="#disj" title="Permanent link">&para;</a></h2>
 <p><strong>maybe&lt;T&gt;::disj(maybe&lt;T&gt;) -&gt; maybe&gt;T&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">disj</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">;</span>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">disj</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Returns the maybe if it contains a value, otherwise returns rhs.</p>
@@ -2143,30 +2197,34 @@
 </pre></div>
 
 <h2 id="or_else">or_else<a class="headerlink" href="#or_else" title="Permanent link">&para;</a></h2>
-<p><strong>or_else(F f) -&gt; maybe&lt;T&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+<p><strong>maybe&lt;T&gt;::or_else(F f) -&gt; maybe&lt;T&gt;</strong>
+<strong>where F: () -&gt; maybe&lt;T&gt;</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-        <span class="n">is_maybe_with</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;&gt;</span><span class="p">,</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+      <span class="n">is_maybe_with</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-        <span class="n">is_maybe_with</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;&gt;</span><span class="p">,</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+      <span class="n">is_maybe_with</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-        <span class="n">is_maybe_with</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;&gt;</span><span class="p">,</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+      <span class="n">is_maybe_with</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Returns the maybe if it contains a value, otherwise calls <code class="codehilite"><span class="n">f</span></code> and returns the result.</p>
@@ -2190,12 +2248,15 @@
 </pre></div>
 
 <h2 id="get_or_emplace">get_or_emplace<a class="headerlink" href="#get_or_emplace" title="Permanent link">&para;</a></h2>
-<p><strong>get_or_emplace(Args... args) -&gt; T&amp;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">class</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+<p><strong>maybe&lt;T&gt;::get_or_emplace(Args... args) -&gt; T&amp;</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="n">class</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">is_constructible_v</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span><span class="p">,</span>
-<span class="n">T</span><span class="o">&amp;&gt;</span>
-<span class="n">get_or_emplace</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+  <span class="n">T</span><span class="o">&amp;&gt;</span>
+  <span class="n">get_or_emplace</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Emplace constructs <code class="codehilite"><span class="n">T</span></code> into the maybe with expression <code class="codehilite"><span class="n">std</span><span class="p">::</span><span class="k">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...</span></code> if it is <code class="codehilite"><span class="k">nothing</span></code>, then returns a mutable reference to the contained value.</p>
@@ -2229,14 +2290,17 @@
 </pre></div>
 
 <h2 id="get_or_emplace_with">get_or_emplace_with<a class="headerlink" href="#get_or_emplace_with" title="Permanent link">&para;</a></h2>
-<p><strong>get_or_emplace_with(F f,Args... args) -&gt; T&amp;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span> <span class="n">class</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+<p><strong>maybe&lt;T&gt;::get_or_emplace_with(F f,Args... args) -&gt; T&amp;</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span> <span class="n">class</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_constructible</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;&gt;&gt;</span><span class="p">,</span>
-<span class="n">T</span><span class="o">&amp;&gt;</span>
-<span class="n">get_or_emplace_with</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span><span class="p">,</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_constructible</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;&gt;&gt;</span><span class="p">,</span>
+  <span class="n">T</span><span class="o">&amp;&gt;</span>
+  <span class="n">get_or_emplace_with</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Emplace constructs <code class="codehilite"><span class="n">T</span></code> into the maybe with expression <code class="codehilite"><span class="n">std</span><span class="p">::</span><span class="n">invoke</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="k">forward</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">std</span><span class="p">::</span><span class="k">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...)</span></code> if it is <code class="codehilite"><span class="k">nothing</span></code>, then returns a mutable reference to the contained value.</p>
@@ -2261,8 +2325,12 @@
 </pre></div>
 
 <h2 id="replace">replace<a class="headerlink" href="#replace" title="Permanent link">&para;</a></h2>
-<p><strong>replace(Args... args) -&gt; maybe&lt;T&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">replace</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+<p><strong>maybe&lt;T&gt;::replace(Args... args) -&gt; maybe&lt;T&gt;</strong>
+<strong>where T is constructible from (Args...)</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">replace</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Replaces the actual value in the maybe by expression <code class="codehilite"><span class="n">std</span><span class="p">::</span><span class="k">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...</span></code>, returning the old value if present, leaving a <code class="codehilite"><span class="n">just</span></code> value in its place without deinitializing either one.</p>
@@ -2290,9 +2358,13 @@
 </pre></div>
 
 <h2 id="replace_with">replace_with<a class="headerlink" href="#replace_with" title="Permanent link">&para;</a></h2>
-<p><strong>replace_with(F f, Args... args) -&gt; maybe&lt;T&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span> <span class="n">class</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">replace_with</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+<p><strong>maybe&lt;T&gt;::replace_with(F f, Args... args) -&gt; maybe&lt;T&gt;</strong>
+<strong>where T is constructible from F(Args...)</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span> <span class="n">class</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">replace_with</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Replaces the actual value in the maybe by expression <code class="codehilite"><span class="n">std</span><span class="p">::</span><span class="n">invoke</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="k">forward</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">std</span><span class="p">::</span><span class="k">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...)</span></code>, returning the old value if present, leaving a <code class="codehilite"><span class="n">just</span></code> value in its place without deinitializing either one.</p>
@@ -2322,8 +2394,12 @@
 </pre></div>
 
 <h2 id="cloned">cloned<a class="headerlink" href="#cloned" title="Permanent link">&para;</a></h2>
-<p><strong>maybe&lt;T&amp;&gt;::cloned() requires T is copyable -&gt; maybe&lt;T&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&gt;::</span><span class="n">cloned</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">;</span>
+<p><strong>maybe&lt;T&amp;&gt;::cloned() -&gt; maybe&lt;T&gt;</strong>
+<strong>where T is copyable</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&gt;::</span><span class="n">cloned</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Maps an <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&gt;</span></code> to an <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code> by deep copying the contents of the maybe.</p>
@@ -2350,8 +2426,11 @@
 </pre></div>
 
 <h2 id="unwrap_or_default">unwrap_or_default<a class="headerlink" href="#unwrap_or_default" title="Permanent link">&para;</a></h2>
-<p><strong>unwrap_or_default()</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or_default</span><span class="p">()</span> <span class="k">const</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">;</span>
+<p><strong>maybe&lt;T&gt;::unwrap_or_default() -&gt; T</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or_default</span><span class="p">()</span> <span class="k">const</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Returns the contained value or a default.</p>
@@ -2374,9 +2453,12 @@
 </pre></div>
 
 <h2 id="transpose">transpose<a class="headerlink" href="#transpose" title="Permanent link">&para;</a></h2>
-<p><strong>maybe&lt;basic_result&lt;_, T, E&gt;&gt;::transpose()</strong></p>
-<div class="codehilite"><pre><span></span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;&gt;::</span><span class="n">transpose</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span>
-  <span class="o">-&gt;</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">;</span>
+<p><strong>maybe&lt;basic_result&lt;<em>, T, E&gt;&gt;::transpose() -&gt; basic_result&lt;</em>, maybe&lt;T&gt;, E&gt;</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;&gt;::</span><span class="n">transpose</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span>
+    <span class="o">-&gt;</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Transposes a <code class="codehilite"><span class="n">maybe</span></code> of a <code class="codehilite"><span class="k">result</span></code> into a <code class="codehilite"><span class="k">result</span></code> of a <code class="codehilite"><span class="n">maybe</span></code>.</p>
@@ -2401,7 +2483,10 @@
 
 <h2 id="flatten">flatten<a class="headerlink" href="#flatten" title="Permanent link">&para;</a></h2>
 <p><strong>maybe&lt;maybe&lt;T&gt;&gt;::flatten() -&gt; maybe&lt;T&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;::</span><span class="n">transpose</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">;</span>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;::</span><span class="n">transpose</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Converts from <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span></code> to <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code>.</p>
@@ -2429,28 +2514,32 @@
 </pre></div>
 
 <h2 id="and_finally">and_finally<a class="headerlink" href="#and_finally" title="Permanent link">&para;</a></h2>
-<p><strong>and_finally(F f) -&gt; void</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="k">constexpr</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+<p><strong>maybe&lt;T&gt;::and_finally(F f) -&gt; void</strong>
+<strong>where F: T -&gt; void</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="k">constexpr</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;&gt;</span>
-<span class="n">and_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;&gt;</span>
+  <span class="n">and_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;&gt;</span>
-<span class="n">and_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;&gt;</span>
+  <span class="n">and_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;&gt;</span>
-<span class="n">and_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;&gt;</span>
+  <span class="n">and_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Invokes the provided function with the contained value (if any), or doing nothing (if not).</p>
@@ -2461,33 +2550,37 @@
 <span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-    <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
-    <span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">and_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="kt">int</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">){</span> <span class="n">hook</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
-    <span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+  <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+  <span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">and_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="kt">int</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">){</span> <span class="n">hook</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
 <span class="p">}</span>
 <span class="c1">// end example</span>
 </pre></div>
 
 <h2 id="or_finally">or_finally<a class="headerlink" href="#or_finally" title="Permanent link">&para;</a></h2>
-<p><strong>or_finally(F f) -&gt; void</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="k">constexpr</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+<p><strong>maybe&lt;T&gt;::or_finally(F f) -&gt; void</strong>
+<strong>where F: T -&gt; void</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="k">constexpr</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span>
-<span class="n">or_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+  <span class="n">or_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="k">constexpr</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="k">constexpr</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span>
-<span class="n">or_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span> <span class="o">&amp;</span> <span class="p">;</span>
+  <span class="n">or_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span> <span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="k">constexpr</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="k">constexpr</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span>
-<span class="n">or_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+  <span class="n">or_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Invokes the provided function (if nothing), or doing nothing (if any).</p>
@@ -2507,31 +2600,35 @@
 </pre></div>
 
 <h2 id="and_peek">and_peek<a class="headerlink" href="#and_peek" title="Permanent link">&para;</a></h2>
-<p><strong>and_peek(F f) -&gt; maybe&lt;T&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="k">constexpr</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+<p><strong>maybe&lt;T&gt;::and_peek(F f) -&gt; maybe&lt;T&gt;</strong>
+<strong>where F: T -&gt; void</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="k">constexpr</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
-<span class="n">maybe</span><span class="o">&amp;&gt;</span>
-<span class="n">and_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+  <span class="n">maybe</span><span class="o">&amp;&gt;</span>
+  <span class="n">and_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
-<span class="n">maybe</span> <span class="k">const</span><span class="o">&amp;&gt;</span>
-<span class="n">and_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+  <span class="n">maybe</span> <span class="k">const</span><span class="o">&amp;&gt;</span>
+  <span class="n">and_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
-<span class="n">maybe</span><span class="o">&amp;&amp;&gt;</span>
-<span class="n">and_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+  <span class="n">maybe</span><span class="o">&amp;&amp;&gt;</span>
+  <span class="n">and_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Peeks the contained value if self is <code class="codehilite"><span class="n">just</span></code>, then returns self.</p>
@@ -2552,27 +2649,31 @@
 </pre></div>
 
 <h2 id="or_peek">or_peek<a class="headerlink" href="#or_peek" title="Permanent link">&para;</a></h2>
-<p><strong>or_peek(F f) -&gt; maybe&lt;T&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="k">constexpr</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+<p><strong>maybe&lt;T&gt;::or_peek(F f) -&gt; maybe&lt;T&gt;</strong>
+<strong>where F: T -&gt; void</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="k">constexpr</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">,</span>
-<span class="n">maybe</span><span class="o">&amp;&gt;</span>
-<span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+  <span class="n">maybe</span><span class="o">&amp;&gt;</span>
+  <span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="k">constexpr</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="k">constexpr</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">,</span>
-<span class="n">maybe</span> <span class="k">const</span><span class="o">&amp;&gt;</span>
-<span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span> <span class="o">&amp;</span> <span class="p">;</span>
+  <span class="n">maybe</span> <span class="k">const</span><span class="o">&amp;&gt;</span>
+  <span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span> <span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="k">constexpr</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="k">constexpr</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">,</span>
 <span class="n">maybe</span><span class="o">&amp;&amp;&gt;</span>
 <span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Invokes the provided function and then return self (if nothing), or return self without doing anything (if any).</p>

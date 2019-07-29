@@ -1098,9 +1098,13 @@
                 
                   <h1>Mitama.Result | User Manual</h1>
                 
-                <p><strong>replace_with(F f, Args... args) -&gt; maybe&lt;T&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span> <span class="n">class</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">replace_with</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+                <p><strong>maybe&lt;T&gt;::replace_with(F f, Args... args) -&gt; maybe&lt;T&gt;</strong>
+<strong>where T is constructible from F(Args...)</strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span> <span class="n">class</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">replace_with</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Replaces the actual value in the maybe by expression <code class="codehilite"><span class="n">std</span><span class="p">::</span><span class="n">invoke</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="k">forward</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">std</span><span class="p">::</span><span class="k">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...)</span></code>, returning the old value if present, leaving a <code class="codehilite"><span class="n">just</span></code> value in its place without deinitializing either one.</p>

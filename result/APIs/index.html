@@ -1439,7 +1439,7 @@
                   <h1>APIs</h1>
                 
                 <h2 id="is_ok">is_ok<a class="headerlink" href="#is_ok" title="Permanent link">&para;</a></h2>
-<p><strong>result&lt;T, E&gt;::is_ok() -&gt; bool</strong></p>
+<p><strong>basic_result&lt;_, T, E&gt;:::is_ok() -&gt; bool</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
   <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">is_ok</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">;</span>
@@ -1465,7 +1465,7 @@
 </pre></div>
 
 <h2 id="is_err">is_err<a class="headerlink" href="#is_err" title="Permanent link">&para;</a></h2>
-<p><strong>result&lt;T, E&gt;::is_err() -&gt; bool</strong></p>
+<p><strong>basic_result&lt;_, T, E&gt;::is_err() -&gt; bool</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
   <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">is_err</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">;</span>
@@ -1491,7 +1491,7 @@
 </pre></div>
 
 <h2 id="ok">ok<a class="headerlink" href="#ok" title="Permanent link">&para;</a></h2>
-<p><strong>result&lt;T, E&gt;::ok() -&gt; maybe&lt;T&gt;</strong></p>
+<p><strong>basic_result&lt;_, T, E&gt;::ok() -&gt; maybe&lt;T&gt;</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span><span class="o">&lt;</span><span class="n">mutability</span><span class="o">::</span><span class="n">immut</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="k">constexpr</span> <span class="k">auto</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">ok</span><span class="p">()</span> <span class="o">&amp;</span>
@@ -1541,7 +1541,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="err">err<a class="headerlink" href="#err" title="Permanent link">&para;</a></h2>
-<p><strong>result&lt;T, E&gt;::err() -&gt; maybe&lt;E&gt;</strong></p>
+<p><strong>basic_result&lt;_, T, E&gt;::err() -&gt; maybe&lt;E&gt;</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span><span class="o">&lt;</span><span class="n">mutability</span><span class="o">::</span><span class="n">immut</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="k">constexpr</span> <span class="k">auto</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">err</span><span class="p">()</span> <span class="o">&amp;</span>
@@ -1591,7 +1591,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="map">map<a class="headerlink" href="#map" title="Permanent link">&para;</a></h2>
-<p><strong>result&lt;T, E&gt;::map(O op) -&gt; result&lt;U, E&gt;</strong>
+<p><strong>basic_result&lt;<em>, T, E&gt;::map(O op) -&gt; basic_result&lt;</em>, U, E&gt;</strong>
 <strong>where O: T -&gt; U</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
@@ -1623,7 +1623,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="map_or_else">map_or_else<a class="headerlink" href="#map_or_else" title="Permanent link">&para;</a></h2>
-<p><strong>result&lt;T, E&gt;::map_or_else(Fallback _fallback, Map _map) -&gt; U</strong><br />
+<p><strong>basic_result&lt;_, T, E&gt;::map_or_else(Fallback _fallback, Map _map) -&gt; U</strong><br />
 <strong>where</strong><br />
 <strong>Fallback: E -&gt; U,</strong><br />
 <strong>Map: T -&gt; U,</strong>  </p>
@@ -1661,7 +1661,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="map_err">map_err<a class="headerlink" href="#map_err" title="Permanent link">&para;</a></h2>
-<p><strong>result&lt;T, E&gt;::map_err(O op) -&gt; result&lt;T, F&gt;</strong>
+<p><strong>basic_result&lt;<em>, T, E&gt;::map_err(O op) -&gt; basic_result&lt;</em>, T, F&gt;</strong>
 <strong>where O: E -&gt; F</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
@@ -1694,7 +1694,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="conj">conj<a class="headerlink" href="#conj" title="Permanent link">&para;</a></h2>
-<p><strong>result&amp;ltT, E&gt;::conj(result&amp;ltU, E&gt; res) -&gt; result&amp;ltU, E&gt;</strong></p>
+<p><strong>basic_result&lt;<em>, T, E&gt;::conj(basic_result&lt;</em>, U, E&gt; res) -&gt; basic_result&lt;_, U, E&gt;</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
   <span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
@@ -1742,8 +1742,8 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="and_then">and_then<a class="headerlink" href="#and_then" title="Permanent link">&para;</a></h2>
-<p><strong>result&lt;T, E&gt;::and_then(O op) -&gt; result&lt;U, E&gt;</strong>
-<strong>where O: T -&gt; result&lt;U, E&gt;</strong></p>
+<p><strong>basic_result&lt;<em>, T, E&gt;::and_then(O op) -&gt; basic_result&lt;</em>, U, E&gt;</strong>
+<strong>where O: T -&gt; basic_result&lt;_, U, E&gt;</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
   <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">O</span><span class="p">,</span>
@@ -1792,7 +1792,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="disj">disj<a class="headerlink" href="#disj" title="Permanent link">&para;</a></h2>
-<p><strong>result&amp;ltT, E&gt;::disj(result&amp;ltT, F&gt; res) -&gt; result&amp;ltT, F&gt;</strong></p>
+<p><strong>basic_result&lt;<em>, T, E&gt;::disj(basic_result&lt;</em>, T, F&gt; res) -&gt; basic_result&lt;_, T, F&gt;</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
   <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
@@ -1845,8 +1845,8 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="or_else">or_else<a class="headerlink" href="#or_else" title="Permanent link">&para;</a></h2>
-<p><strong>result&lt;T, E&gt;::or_else(O op) -&gt;result&lt;T, F&gt;</strong>
-<strong>where O: E -&gt; result&lt;T, F&gt;</strong></p>
+<p><strong>basic_result&lt;<em>, T, E&gt;or_else(O op) -&gt; basic_result&lt;</em>, T, F&gt;</strong>
+<strong>where O: E -&gt; basic_result&lt;_, T, F&gt;</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
   <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">O</span><span class="o">&gt;</span>
@@ -1883,7 +1883,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="unwrap_or">unwrap_or<a class="headerlink" href="#unwrap_or" title="Permanent link">&para;</a></h2>
-<p><strong>result&lt;, E&gt;::unwrap_or(T const&amp; optb) -&gt; T</strong></p>
+<p><strong>basic_result&lt;_, T, E&gt;::unwrap_or(T const&amp; optb) -&gt; T</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
   <span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_or</span><span class="p">(</span><span class="n">T</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">optb</span><span class="p">)</span> <span class="k">const</span> <span class="k">noexcept</span>
@@ -1910,7 +1910,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="unwrap_or_else">unwrap_or_else<a class="headerlink" href="#unwrap_or_else" title="Permanent link">&para;</a></h2>
-<p><strong>result&lt;T, E&gt;::unwrap_or_else() -&gt; T</strong></p>
+<p><strong>basic_result&lt;_, T, E&gt;::unwrap_or_else() -&gt; T</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
   <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">O</span><span class="o">&gt;</span>
@@ -1938,7 +1938,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="unwrap">unwrap<a class="headerlink" href="#unwrap" title="Permanent link">&para;</a></h2>
-<p><strong>result&lt;T, E&gt;::unwrap() -&gt; E&amp;</strong></p>
+<p><strong>basic_result&lt;_, T, E&gt;::unwrap() -&gt; E&amp;</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span><span class="o">&lt;</span><span class="n">mutability</span><span class="o">::</span><span class="n">immut</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="k">auto</span> <span class="n">unwrap</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">T</span> <span class="p">;</span>
@@ -1989,7 +1989,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="unwrap_err">unwrap_err<a class="headerlink" href="#unwrap_err" title="Permanent link">&para;</a></h2>
-<p><strong>result&lt;T, E&gt;::unwrap_err() -&gt; E&amp;</strong></p>
+<p><strong>basic_result&lt;_, T, E&gt;::unwrap_err() -&gt; E&amp;</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span><span class="o">&lt;</span><span class="n">mutability</span><span class="o">::</span><span class="n">immut</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="k">auto</span> <span class="n">unwrap_err</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">E</span> <span class="p">;</span>
@@ -2041,7 +2041,8 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="unwrap_or_default">unwrap_or_default<a class="headerlink" href="#unwrap_or_default" title="Permanent link">&para;</a></h2>
-<p><strong>result&lt;T: DefaultConstructible, E&gt;::unwrap_or_default() -&gt; T</strong></p>
+<p><strong>basic_result&lt;_, T, E&gt;::unwrap_or_default() -&gt; T</strong>
+<strong>where T is default constructible</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
   <span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_or_default</span><span class="p">()</span> <span class="k">const</span> <span class="o">&amp;</span>
@@ -2073,7 +2074,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="transpose">transpose<a class="headerlink" href="#transpose" title="Permanent link">&para;</a></h2>
-<p><strong>result&lt;&lt;T&gt;, E&gt;::transpose() -&gt; maybe&lt;result&lt;T, E&gt;&gt;</strong></p>
+<p><strong>basic_result&lt;<em>, maybe&amp;ltT&gt;, E&gt;::transpose() -&gt; maybe&lt;basic_result&lt;</em>, T, E&gt;&gt;</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
   <span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">transpose</span><span class="p">()</span>
@@ -2140,7 +2141,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="or_finally">or_finally<a class="headerlink" href="#or_finally" title="Permanent link">&para;</a></h2>
-<p><strong>or_finally(F f) -&gt; void</strong></p>
+<p><strong>basic_result::or_finally(F f) -&gt; void</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
   <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
@@ -2225,7 +2226,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <h2 id="or_peek">or_peek<a class="headerlink" href="#or_peek" title="Permanent link">&para;</a></h2>
-<p><strong>or_peek(F f) -&gt; maybe&lt;T&gt;</strong></p>
+<p><strong>basic_result::or_peek(F f) -&gt; basic_result</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
   <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
