@@ -1099,39 +1099,50 @@
                   <h1>Mitama.Result | User Manual</h1>
                 
                 <p><strong>or_peek(F f) -&gt; maybe&lt;T&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="k">constexpr</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="k">constexpr</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
-<span class="n">basic_result</span><span class="o">&amp;&gt;</span>
-<span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+  <span class="n">basic_result</span><span class="o">&amp;&gt;</span>
+  <span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
-<span class="n">basic_result</span> <span class="k">const</span><span class="o">&amp;&gt;</span>
-<span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span> <span class="k">const</span><span class="o">&amp;&gt;</span><span class="p">,</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+  <span class="n">basic_result</span> <span class="k">const</span><span class="o">&amp;&gt;</span>
+  <span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">;</span>
 
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
     <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
-        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
-<span class="n">basic_result</span><span class="o">&amp;&amp;&gt;</span>
-<span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+  <span class="n">basic_result</span><span class="o">&amp;&amp;&gt;</span>
+  <span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Peeks the contained failure value and then returns self.</p>
 <p>Invokes the provided function and then return self (if failure), or return self without doing anything (if success).</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
-<span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">or_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="n">hook</span><span class="p">]{</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">or_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="p">]{</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
                 
                   
