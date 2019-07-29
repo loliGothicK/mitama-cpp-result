@@ -69,6 +69,20 @@ TEST_CASE("expect()", "[maybe][expect]"){
   }
 }
 
+TEST_CASE("cloned()", "[maybe][cloned]"){
+  int x = 12;
+  maybe<int&> opt_x = x;
+  REQUIRE(opt_x == just(12));
+  REQUIRE(&(opt_x.unwrap()) == &x);
+
+  auto shallow_copied = opt_x;
+  REQUIRE(&(shallow_copied.unwrap()) == &x);
+
+  auto cloned = opt_x.cloned();
+  REQUIRE(cloned == just(12));
+  REQUIRE(&(cloned.unwrap()) != &x);
+}
+
 TEST_CASE("unwrap_or()", "[maybe][unwrap_or]"){
   REQUIRE(maybe{just("car"s)}.unwrap_or("bike"s) == "car"s);
   REQUIRE(maybe<std::string>{nothing}.unwrap_or("bike"s) == "bike"s);
