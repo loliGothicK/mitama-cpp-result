@@ -1100,7 +1100,7 @@
                 
                 <p><strong>result&lt;T, E&gt;::and_then(O op) -&gt; result&lt;U, E&gt;</strong>
 <strong>where O: T -&gt; result&lt;U, E&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
   <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">O</span><span class="p">,</span>
     <span class="n">std</span><span class="o">::</span><span class="n">enable_of</span><span class="o">&gt;</span>
@@ -1117,7 +1117,7 @@
   <span class="k">constexpr</span> <span class="k">auto</span> <span class="n">and_then</span><span class="p">(</span><span class="n">O</span><span class="o">&amp;&amp;</span> <span class="n">op</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
     <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">is_convertible_result_with_v</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">O</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span> <span class="n">failure</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;&gt;</span><span class="p">,</span>
     <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">O</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
-<span class="p">}</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Calls <code class="codehilite"><span class="n">op</span></code> if the result is success, otherwise returns the failure value of self.</p>
