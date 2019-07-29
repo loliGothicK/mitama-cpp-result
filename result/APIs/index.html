@@ -1884,89 +1884,129 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 
 <h2 id="unwrap_or">unwrap_or<a class="headerlink" href="#unwrap_or" title="Permanent link">&para;</a></h2>
 <p><strong>result&lt;, E&gt;::unwrap_or(T const&amp; optb) -&gt; T</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_or</span><span class="p">(</span><span class="n">T</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">optb</span><span class="p">)</span> <span class="k">const</span> <span class="k">noexcept</span>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_or</span><span class="p">(</span><span class="n">T</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">optb</span><span class="p">)</span> <span class="k">const</span> <span class="k">noexcept</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Unwraps a result, yielding the content of an <code class="codehilite"><span class="n">success</span></code>. Else, it returns <code class="codehilite"><span class="n">optb</span></code>.</p>
 <p>Arguments passed to unwrap_or are eagerly evaluated; if you are passing the result of a function call, it is recommended to use <code class="codehilite"><span class="n">unwrap_or_else</span></code>, which is lazily evaluated.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="kt">unsigned</span><span class="o">&gt;</span> <span class="n">err</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-<span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="kt">unsigned</span><span class="o">&gt;</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-<span class="n">assert_eq</span><span class="p">(</span><span class="n">ok</span><span class="p">.</span><span class="n">unwrap_or</span><span class="p">(</span><span class="mi">1u</span><span class="p">),</span> <span class="mi">2u</span><span class="p">);</span>
-<span class="n">assert_eq</span><span class="p">(</span><span class="n">err</span><span class="p">.</span><span class="n">unwrap_or</span><span class="p">(</span><span class="mi">1u</span><span class="p">),</span> <span class="mi">1u</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="kt">unsigned</span><span class="o">&gt;</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+  <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="kt">unsigned</span><span class="o">&gt;</span> <span class="n">err</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">ok</span><span class="p">.</span><span class="n">unwrap_or</span><span class="p">(</span><span class="mi">1u</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2u</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">err</span><span class="p">.</span><span class="n">unwrap_or</span><span class="p">(</span><span class="mi">1u</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1u</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
 
 <h2 id="unwrap_or_else">unwrap_or_else<a class="headerlink" href="#unwrap_or_else" title="Permanent link">&para;</a></h2>
 <p><strong>result&lt;T, E&gt;::unwrap_or_else() -&gt; T</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">O</span><span class="o">&gt;</span>
-<span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="n">O</span> <span class="o">&amp;&amp;</span> <span class="n">op</span><span class="p">)</span> <span class="k">const</span> <span class="k">noexcept</span>
-  <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_invocable_r_v</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">O</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="p">;</span>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">O</span><span class="o">&gt;</span>
+  <span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="n">O</span> <span class="o">&amp;&amp;</span> <span class="n">op</span><span class="p">)</span> <span class="k">const</span> <span class="k">noexcept</span>
+    <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">is_invocable_r_v</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">O</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Unwraps a result, yielding the content of an <code class="codehilite"><span class="n">success</span></code>. If the value is an <code class="codehilite"><span class="n">failure</span></code> then it calls <code class="codehilite"><span class="n">op</span></code> with its value.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">count</span> <span class="o">=</span> <span class="p">[](</span><span class="n">std</span><span class="o">::</span><span class="n">stringx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">size_t</span> <span class="p">{</span> <span class="k">return</span> <span class="n">x</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="p">};</span>
-<span class="n">assert_eq</span><span class="p">(</span><span class="n">success</span><span class="p">(</span><span class="mi">2</span><span class="p">).</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="n">count</span><span class="p">),</span> <span class="mi">2</span><span class="p">);</span>
-<span class="n">assert_eq</span><span class="p">(</span><span class="n">failure</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">).</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="n">count</span><span class="p">),</span> <span class="mi">3</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+  <span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">err</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">ok</span><span class="p">.</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">err</span><span class="p">.</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
 
 <h2 id="unwrap">unwrap<a class="headerlink" href="#unwrap" title="Permanent link">&para;</a></h2>
 <p><strong>result&lt;T, E&gt;::unwrap() -&gt; E&amp;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&amp;</span>
-  <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">T</span> <span class="p">;</span>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">basic_result</span><span class="o">&lt;</span><span class="n">mutability</span><span class="o">::</span><span class="n">immut</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">unwrap</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">T</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span>
-  <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">T</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="nf">unwrap</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">T</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
-  <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">T</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="nf">unwrap</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">T</span> <span class="p">;</span>
+<span class="p">};</span>
 
-<span class="k">auto</span> <span class="n">mut_result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&amp;</span>
-  <span class="o">-&gt;</span> <span class="n">T</span> <span class="p">;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">basic_result</span><span class="o">&lt;</span><span class="n">mutability</span><span class="o">::</span><span class="n">mut</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">unwrap</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">mut_result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span>
-  <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">T</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="nf">unwrap</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">T</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">mut_result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
-  <span class="o">-&gt;</span> <span class="n">T</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="nf">unwrap</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Unwraps a result, yielding the content of an <code class="codehilite"><span class="n">success</span></code>.</p>
 <p><strong>Exception</strong></p>
 <p>Raise <code class="codehilite"><span class="n">mitama</span><span class="p">::</span><span class="n">runtime_panic</span></code> if a result is containing <code class="codehilite"><span class="n">failure</span></code> value.</p>
+<p><strong>Remarks</strong></p>
+<p>If self is rvalue and <code class="codehilite"><span class="n">T</span></code> is a reference type,
+this function returns <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">dangling</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">reference_wrapper</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;&gt;&gt;</span></code>.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-  <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-  <span class="n">assert_eq</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">unwrap</span><span class="p">(),</span> <span class="mi">2</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">{</span>
+    <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;emergency failure&quot;</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">x</span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span> <span class="c1">// panics with `emergency failure`</span>
+  <span class="p">}</span>
+  <span class="k">catch</span> <span class="p">(</span> <span class="n">mitama</span><span class="o">::</span><span class="n">runtime_panic</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">panic</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="n">panic</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+  <span class="p">}</span>
 <span class="p">}</span>
-<span class="k">try</span> <span class="p">{</span>
-  <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;emergency failure&quot;</span><span class="n">s</span><span class="p">);</span>
-  <span class="n">x</span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span> <span class="c1">// panics with `emergency failure`</span>
-<span class="p">}</span>
-<span class="k">catch</span> <span class="p">(</span> <span class="n">mitama</span><span class="o">::</span><span class="n">runtime_panic</span> <span class="n">cosnt</span> <span class="o">&amp;</span> <span class="n">panic</span> <span class="p">)</span> <span class="p">{</span>
-  <span class="n">std</span><span class="o">::</span><span class="n">err</span> <span class="o">&lt;&lt;</span> <span class="n">panic</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="c1">// `emergency failure`</span>
-<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
 
 <h2 id="unwrap_err">unwrap_err<a class="headerlink" href="#unwrap_err" title="Permanent link">&para;</a></h2>
 <p><strong>result&lt;T, E&gt;::unwrap_err() -&gt; E&amp;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_err</span><span class="p">()</span> <span class="o">&amp;</span>
-  <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">E</span> <span class="p">;</span>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">basic_result</span><span class="o">&lt;</span><span class="n">mutability</span><span class="o">::</span><span class="n">immut</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">unwrap_err</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">E</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_err</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span>
-  <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">E</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="nf">unwrap_err</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">E</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_err</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
-  <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">E</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="nf">unwrap_err</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">E</span> <span class="p">;</span>
+<span class="p">};</span>
 
-<span class="k">auto</span> <span class="n">mut_result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_err</span><span class="p">()</span> <span class="o">&amp;</span>
-  <span class="o">-&gt;</span> <span class="n">E</span> <span class="p">;</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">basic_result</span><span class="o">&lt;</span><span class="n">mutability</span><span class="o">::</span><span class="n">mut</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">mut_unwrap_err</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">E</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">mut_result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_err</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span>
-  <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">E</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="nf">mut_unwrap_err</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="k">const</span> <span class="n">E</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">mut_result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_err</span><span class="p">()</span> <span class="o">&amp;&amp;</span>
-  <span class="o">-&gt;</span> <span class="n">E</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="nf">mut_unwrap_err</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="o">-&gt;</span> <span class="n">E</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Unwraps a result, yielding the content of an <code class="codehilite"><span class="n">failure</span></code>.</p>
@@ -1974,26 +2014,39 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 <p>Raise <code class="codehilite"><span class="n">mitama</span><span class="p">::</span><span class="n">runtime_panic</span></code> if a result is containing <code class="codehilite"><span class="n">success</span></code> value.</p>
 <p><strong>Remarks</strong></p>
 <p>If self is rvalue and <code class="codehilite"><span class="n">E</span></code> is a reference type,
-this function returns <code class="codehilite"><span class="n">boost</span><span class="p">::</span><span class="n">optional</span><span class="o">&lt;</span><span class="n">dangling</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">reference_wrapper</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;&gt;&gt;&gt;</span></code>.</p>
+this function returns <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">dangling</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">reference_wrapper</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;&gt;&gt;&gt;</span></code>.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">try</span> <span class="p">{</span>
-  <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-  <span class="n">x</span><span class="p">.</span><span class="n">unwrap_err</span><span class="p">();</span> <span class="c1">// panics with `2`</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">x</span><span class="p">.</span><span class="n">unwrap_err</span><span class="p">();</span> <span class="c1">// panics with `2`</span>
+  <span class="p">}</span>
+  <span class="k">catch</span> <span class="p">(</span><span class="n">runtime_panic</span> <span class="k">const</span> <span class="o">&amp;</span><span class="n">panic</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="n">panic</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="p">{</span>
+    <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;emergency failure&quot;</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">unwrap_err</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;emergency failure&quot;</span><span class="n">s</span><span class="p">);</span>
+  <span class="p">}</span>
 <span class="p">}</span>
-<span class="k">catch</span> <span class="p">(</span><span class="n">runtime_panic</span> <span class="k">const</span> <span class="o">&amp;</span><span class="n">panic</span><span class="p">)</span>
-<span class="p">{</span>
-   <span class="n">std</span><span class="o">::</span><span class="n">err</span> <span class="o">&lt;&lt;</span> <span class="n">panic</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="c1">// 2</span>
-<span class="p">}</span>
-<span class="p">{</span>
-  <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;emergency failure&quot;</span><span class="n">s</span><span class="p">);</span>
-  <span class="n">assert_eq</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">unwrap_err</span><span class="p">(),</span> <span class="s">&quot;emergency failure&quot;</span><span class="n">s</span><span class="p">);</span>
-<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
 
 <h2 id="unwrap_or_default">unwrap_or_default<a class="headerlink" href="#unwrap_or_default" title="Permanent link">&para;</a></h2>
 <p><strong>result&lt;T: DefaultConstructible, E&gt;::unwrap_or_default() -&gt; T</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_or_default</span><span class="p">()</span> <span class="k">const</span> <span class="o">&amp;</span>
-  <span class="o">-&gt;</span> <span class="n">T</span> <span class="p">;</span>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_or_default</span><span class="p">()</span> <span class="k">const</span> <span class="o">&amp;</span>
+    <span class="o">-&gt;</span> <span class="n">T</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Returns the contained value or a default.</p>
@@ -2001,32 +2054,52 @@ this function returns <code class="codehilite"><span class="n">boost</span><span
 <p><strong>Remarks</strong></p>
 <p>This operator shall be defined as deleted unless <code class="codehilite"><span class="n">is_default_constructible_v</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code> is true.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">good_year_from_input</span> <span class="o">=</span> <span class="s">&quot;1909&quot;</span><span class="n">s</span><span class="p">;</span>
-<span class="k">auto</span> <span class="n">bad_year_from_input</span> <span class="o">=</span> <span class="s">&quot;190blarg&quot;</span><span class="n">s</span><span class="p">;</span>
-<span class="k">auto</span> <span class="n">good_year</span> <span class="o">=</span> <span class="n">parse</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">good_year_from_input</span><span class="p">).</span><span class="n">unwrap_or_default</span><span class="p">();</span>
-<span class="k">auto</span> <span class="n">bad_year</span> <span class="o">=</span> <span class="n">parse</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bad_year_from_input</span><span class="p">).</span><span class="n">unwrap_or_default</span><span class="p">();</span>
-<span class="n">assert_eq</span><span class="p">(</span><span class="mi">1909</span><span class="p">,</span> <span class="n">good_year</span><span class="p">);</span>
-<span class="n">assert_eq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bad_year</span><span class="p">);</span>   <span class="o">*</span> 
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">good</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="mi">1909</span><span class="p">);</span>
+  <span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">bad</span> <span class="o">=</span> <span class="n">failure</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+  <span class="k">auto</span> <span class="n">good_year</span> <span class="o">=</span> <span class="n">good</span><span class="p">.</span><span class="n">unwrap_or_default</span><span class="p">();</span>
+  <span class="k">auto</span> <span class="n">bad_year</span> <span class="o">=</span> <span class="n">bad</span><span class="p">.</span><span class="n">unwrap_or_default</span><span class="p">();</span>
+  <span class="n">assert</span><span class="p">(</span><span class="mi">1909</span> <span class="o">==</span> <span class="n">good_year</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="mi">0</span> <span class="o">==</span> <span class="n">bad_year</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
 
 <h2 id="transpose">transpose<a class="headerlink" href="#transpose" title="Permanent link">&para;</a></h2>
 <p><strong>result&lt;&lt;T&gt;, E&gt;::transpose() -&gt; maybe&lt;result&lt;T, E&gt;&gt;</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">transpose</span><span class="p">()</span>
-  <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">transpose</span><span class="p">()</span>
+    <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
 
-<span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">transpose</span><span class="p">()</span>
-  <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+  <span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">transpose</span><span class="p">()</span>
+    <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Transposes a <code class="codehilite"><span class="k">result</span></code> of an <code class="codehilite"><span class="n">maybe</span></code> into an <code class="codehilite"><span class="n">maybe</span></code> of a <code class="codehilite"><span class="k">result</span></code>.</p>
 <p><code class="codehilite"><span class="n">success</span><span class="p">(</span><span class="k">nothing</span><span class="p">)</span></code> will be mapped to <code class="codehilite"><span class="k">nothing</span></code>.
 <code class="codehilite"><span class="n">success</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="n">v</span><span class="p">))</span></code> and <code class="codehilite"><span class="n">failure</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></code> will be mapped to <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">success</span><span class="p">(</span><span class="n">v</span><span class="p">))</span></code> and <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">failure</span><span class="p">(</span><span class="n">v</span><span class="p">))</span></code>.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">struct</span> <span class="n">SomeError</span><span class="p">{};</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
 
-<span class="n">result</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">SomeError</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">SomeError</span><span class="o">&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="n">success</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
-<span class="n">assert_eq</span><span class="o">!</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">transpose</span><span class="p">(),</span> <span class="n">y</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">result</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="n">success</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">transpose</span><span class="p">()</span> <span class="o">==</span> <span class="n">y</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
 
 <h2 id="and_finally">and_finally<a class="headerlink" href="#and_finally" title="Permanent link">&para;</a></h2>

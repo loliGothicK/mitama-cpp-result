@@ -1099,8 +1099,11 @@
                   <h1>Mitama.Result | User Manual</h1>
                 
                 <p><strong>result&lt;T: DefaultConstructible, E&gt;::unwrap_or_default() -&gt; T</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_or_default</span><span class="p">()</span> <span class="k">const</span> <span class="o">&amp;</span>
-  <span class="o">-&gt;</span> <span class="n">T</span> <span class="p">;</span>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">unwrap_or_default</span><span class="p">()</span> <span class="k">const</span> <span class="o">&amp;</span>
+    <span class="o">-&gt;</span> <span class="n">T</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Returns the contained value or a default.</p>
@@ -1108,12 +1111,22 @@
 <p><strong>Remarks</strong></p>
 <p>This operator shall be defined as deleted unless <code class="codehilite"><span class="n">is_default_constructible_v</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code> is true.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">good_year_from_input</span> <span class="o">=</span> <span class="s">&quot;1909&quot;</span><span class="n">s</span><span class="p">;</span>
-<span class="k">auto</span> <span class="n">bad_year_from_input</span> <span class="o">=</span> <span class="s">&quot;190blarg&quot;</span><span class="n">s</span><span class="p">;</span>
-<span class="k">auto</span> <span class="n">good_year</span> <span class="o">=</span> <span class="n">parse</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">good_year_from_input</span><span class="p">).</span><span class="n">unwrap_or_default</span><span class="p">();</span>
-<span class="k">auto</span> <span class="n">bad_year</span> <span class="o">=</span> <span class="n">parse</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bad_year_from_input</span><span class="p">).</span><span class="n">unwrap_or_default</span><span class="p">();</span>
-<span class="n">assert_eq</span><span class="p">(</span><span class="mi">1909</span><span class="p">,</span> <span class="n">good_year</span><span class="p">);</span>
-<span class="n">assert_eq</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bad_year</span><span class="p">);</span>   <span class="o">*</span> 
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">good</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="mi">1909</span><span class="p">);</span>
+  <span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">bad</span> <span class="o">=</span> <span class="n">failure</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+  <span class="k">auto</span> <span class="n">good_year</span> <span class="o">=</span> <span class="n">good</span><span class="p">.</span><span class="n">unwrap_or_default</span><span class="p">();</span>
+  <span class="k">auto</span> <span class="n">bad_year</span> <span class="o">=</span> <span class="n">bad</span><span class="p">.</span><span class="n">unwrap_or_default</span><span class="p">();</span>
+  <span class="n">assert</span><span class="p">(</span><span class="mi">1909</span> <span class="o">==</span> <span class="n">good_year</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="mi">0</span> <span class="o">==</span> <span class="n">bad_year</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
                 
                   
