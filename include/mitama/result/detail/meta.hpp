@@ -3,6 +3,7 @@
 #include <type_traits>
 #include <optional>
 #include <utility>
+#include <tuple>
 #include <boost/optional/optional_fwd.hpp>
 
 namespace mitama {
