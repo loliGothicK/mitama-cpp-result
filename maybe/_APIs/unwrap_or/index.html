@@ -1121,8 +1121,18 @@
 <p>Returns the contained value or a default.</p>
 <p>Arguments passed to <code class="codehilite"><span class="n">unwrap_or</span></code> are eagerly evaluated; if you are passing the result of a function call, it is recommended to use <code class="codehilite"><span class="n">unwrap_or_else</span></code>, which is lazily evaluated.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="p">{</span><span class="n">just</span><span class="p">(</span><span class="s">&quot;car&quot;</span><span class="n">s</span><span class="p">)}.</span><span class="n">unwrap_or</span><span class="p">(</span><span class="s">&quot;bike&quot;</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;car&quot;</span><span class="n">s</span><span class="p">);</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">{</span><span class="n">nothing</span><span class="p">}.</span><span class="n">unwrap_or</span><span class="p">(</span><span class="s">&quot;bike&quot;</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;bike&quot;</span><span class="n">s</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="p">{</span><span class="n">just</span><span class="p">(</span><span class="s">&quot;car&quot;</span><span class="n">s</span><span class="p">)}.</span><span class="n">unwrap_or</span><span class="p">(</span><span class="s">&quot;bike&quot;</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;car&quot;</span><span class="n">s</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">{</span><span class="n">nothing</span><span class="p">}.</span><span class="n">unwrap_or</span><span class="p">(</span><span class="s">&quot;bike&quot;</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;bike&quot;</span><span class="n">s</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
                 
                   

@@ -1669,17 +1669,27 @@
 <p><strong>Exception</strong></p>
 <p>Raise <code class="codehilite"><span class="n">mitama</span><span class="p">::</span><span class="n">runtime_panic</span></code> if a maybe has not <code class="codehilite"><span class="n">just</span></code> value.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
-  <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;air&quot;</span><span class="n">s</span><span class="p">);</span>
-  <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;air&quot;</span><span class="n">s</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">{</span>
+    <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;air&quot;</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;air&quot;</span><span class="n">s</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+    <span class="n">x</span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span> <span class="c1">// raise an exception</span>
+  <span class="p">}</span>
+  <span class="k">catch</span> <span class="p">(</span> <span class="n">mitama</span><span class="o">::</span><span class="n">runtime_panic</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">panic</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="n">panic</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="c1">// runtime panicked at &#39;called `maybe::unwrap()` on a `nothing` value&#39;</span>
+  <span class="p">}</span>
 <span class="p">}</span>
-<span class="k">try</span> <span class="p">{</span>
-  <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
-  <span class="n">x</span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span> <span class="c1">// raise an exception</span>
-<span class="p">}</span>
-<span class="k">catch</span> <span class="p">(</span> <span class="n">mitama</span><span class="o">::</span><span class="n">runtime_panic</span> <span class="n">cosnt</span> <span class="o">&amp;</span> <span class="n">panic</span> <span class="p">)</span> <span class="p">{</span>
-  <span class="n">std</span><span class="o">::</span><span class="n">err</span> <span class="o">&lt;&lt;</span> <span class="n">panic</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="c1">// runtime panicked at &#39;called `maybe::unwrap()` on a `nothing` value&#39;</span>
-<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
 
 <h2 id="unwrap_or">unwrap_or<a class="headerlink" href="#unwrap_or" title="Permanent link">&para;</a></h2>
@@ -1706,8 +1716,18 @@
 <p>Returns the contained value or a default.</p>
 <p>Arguments passed to <code class="codehilite"><span class="n">unwrap_or</span></code> are eagerly evaluated; if you are passing the result of a function call, it is recommended to use <code class="codehilite"><span class="n">unwrap_or_else</span></code>, which is lazily evaluated.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="p">{</span><span class="n">just</span><span class="p">(</span><span class="s">&quot;car&quot;</span><span class="n">s</span><span class="p">)}.</span><span class="n">unwrap_or</span><span class="p">(</span><span class="s">&quot;bike&quot;</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;car&quot;</span><span class="n">s</span><span class="p">);</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">{</span><span class="n">nothing</span><span class="p">}.</span><span class="n">unwrap_or</span><span class="p">(</span><span class="s">&quot;bike&quot;</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;bike&quot;</span><span class="n">s</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="p">{</span><span class="n">just</span><span class="p">(</span><span class="s">&quot;car&quot;</span><span class="n">s</span><span class="p">)}.</span><span class="n">unwrap_or</span><span class="p">(</span><span class="s">&quot;bike&quot;</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;car&quot;</span><span class="n">s</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">{</span><span class="n">nothing</span><span class="p">}.</span><span class="n">unwrap_or</span><span class="p">(</span><span class="s">&quot;bike&quot;</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;bike&quot;</span><span class="n">s</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
 
 <h2 id="unwrap_or_else">unwrap_or_else<a class="headerlink" href="#unwrap_or_else" title="Permanent link">&para;</a></h2>
@@ -1739,9 +1759,17 @@
 
 <p>Returns the contained value or computes it from a invocable object <code class="codehilite"><span class="n">op</span></code>.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="p">{</span><span class="n">just</span><span class="p">(</span><span class="mi">4</span><span class="p">)}.</span><span class="n">unwrap_or_else</span><span class="p">([</span><span class="n">k</span><span class="p">]{</span> <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="mi">4</span><span class="p">);</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">{}.</span><span class="n">unwrap_or_else</span><span class="p">([</span><span class="n">k</span><span class="p">]{</span> <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="mi">20</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="p">{</span><span class="n">just</span><span class="p">(</span><span class="mi">4</span><span class="p">)}.</span><span class="n">unwrap_or_else</span><span class="p">([</span><span class="n">k</span><span class="p">]{</span> <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="mi">4</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">{}.</span><span class="n">unwrap_or_else</span><span class="p">([</span><span class="n">k</span><span class="p">]{</span> <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="mi">20</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
 
 <h2 id="map">map<a class="headerlink" href="#map" title="Permanent link">&para;</a></h2>
@@ -2239,18 +2267,26 @@
 
 <p>Replaces the actual value in the maybe by expression <code class="codehilite"><span class="n">std</span><span class="p">::</span><span class="k">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...</span></code>, returning the old value if present, leaving a <code class="codehilite"><span class="n">just</span></code> value in its place without deinitializing either one.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">{</span>
     <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
     <span class="k">auto</span> <span class="n">old</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
-    <span class="n">REQUIRE</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
-    <span class="n">REQUIRE</span><span class="p">(</span><span class="n">old</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
-<span class="p">}</span>
-<span class="p">{</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">old</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="p">{</span>
     <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
     <span class="k">auto</span> <span class="n">old</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
-    <span class="n">REQUIRE</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
-    <span class="n">REQUIRE</span><span class="p">(</span><span class="n">old</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">old</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+  <span class="p">}</span>
 <span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
 
 <h2 id="replace_with">replace_with<a class="headerlink" href="#replace_with" title="Permanent link">&para;</a></h2>
@@ -2261,18 +2297,28 @@
 
 <p>Replaces the actual value in the maybe by expression <code class="codehilite"><span class="n">std</span><span class="p">::</span><span class="n">invoke</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="k">forward</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">std</span><span class="p">::</span><span class="k">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...)</span></code>, returning the old value if present, leaving a <code class="codehilite"><span class="n">just</span></code> value in its place without deinitializing either one.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="p">{</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">{</span>
     <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
     <span class="k">auto</span> <span class="n">old</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">replace_with</span><span class="p">([]{</span> <span class="k">return</span> <span class="mi">5</span><span class="p">;</span> <span class="p">});</span>
-    <span class="n">REQUIRE</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
-    <span class="n">REQUIRE</span><span class="p">(</span><span class="n">old</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
-<span class="p">}</span>
-<span class="p">{</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">old</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="p">{</span>
     <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
     <span class="k">auto</span> <span class="n">old</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">replace_with</span><span class="p">(</span><span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">);</span>
-    <span class="n">REQUIRE</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
-    <span class="n">REQUIRE</span><span class="p">(</span><span class="n">old</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">old</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+  <span class="p">}</span>
 <span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
 
 <h2 id="cloned">cloned<a class="headerlink" href="#cloned" title="Permanent link">&para;</a></h2>
@@ -2337,9 +2383,20 @@
 <p><code class="codehilite"><span class="k">nothing</span></code> will be mapped to <code class="codehilite"><span class="n">success</span><span class="p">(</span><span class="k">nothing</span><span class="p">)</span></code>.
 <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">success</span><span class="p">(</span><span class="n">_</span><span class="p">))</span></code> and <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">failure</span><span class="p">(</span><span class="n">_</span><span class="p">))</span></code> will be mapped to <code class="codehilite"><span class="n">success</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="n">_</span><span class="p">))</span></code> and <code class="codehilite"><span class="n">failure</span><span class="p">(</span><span class="n">_</span><span class="p">)</span></code>　(_ is a placeholder).</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="n">result</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="n">success</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
-<span class="n">REQUIRE</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">.</span><span class="n">transpose</span><span class="p">());</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">result</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="n">success</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">.</span><span class="n">transpose</span><span class="p">());</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
 
 <h2 id="flatten">flatten<a class="headerlink" href="#flatten" title="Permanent link">&para;</a></h2>
@@ -2435,10 +2492,18 @@
 
 <p>Invokes the provided function (if nothing), or doing nothing (if any).</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
-<span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">or_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="n">hook</span><span class="p">]{</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">or_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="n">hook</span><span class="p">]{</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
 
 <h2 id="and_peek">and_peek<a class="headerlink" href="#and_peek" title="Permanent link">&para;</a></h2>
@@ -2512,10 +2577,18 @@
 
 <p>Invokes the provided function and then return self (if nothing), or return self without doing anything (if any).</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
-<span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">or_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="n">hook</span><span class="p">]{</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">or_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="n">hook</span><span class="p">]{</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
                 
                   
