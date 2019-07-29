@@ -1106,10 +1106,21 @@
 
 <p>Converts from <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span></code> to <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&gt;</span></code>.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="n">maybe</span> <span class="n">text</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;Hello, world!&quot;</span><span class="n">s</span><span class="p">);</span>
-<span class="c1">// First, cast `maybe&lt;T&gt;` to `maybe&lt;T&amp;&gt;` with `as_ref`,</span>
-<span class="k">auto</span> <span class="n">text_length</span> <span class="o">=</span> <span class="n">text</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span><span class="p">);</span>
-<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;still can print text: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">text</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">maybe</span> <span class="n">text</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;Hello, world!&quot;</span><span class="n">s</span><span class="p">);</span>
+    <span class="c1">// First, cast `maybe&lt;T&gt;` to `maybe&lt;T&amp;&gt;` with `as_ref`,</span>
+    <span class="k">auto</span> <span class="n">text_length</span> <span class="o">=</span> <span class="n">text</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;still can print text: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">text</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
                 
                   
