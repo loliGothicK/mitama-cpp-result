@@ -430,6 +430,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#ok_or" title="ok_or" class="md-nav__link">
+    ok_or
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#ok_or_else" title="ok_or_else" class="md-nav__link">
     ok_or_else
   </a>
@@ -1392,6 +1399,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#ok_or" title="ok_or" class="md-nav__link">
+    ok_or
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#ok_or_else" title="ok_or_else" class="md-nav__link">
     ok_or_else
   </a>
@@ -1796,14 +1810,11 @@
 
 <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
 <span class="n">assert</span><span class="p">(</span><span class="n">y</span><span class="p">.</span><span class="n">map_or_else</span><span class="p">([</span><span class="n">k</span><span class="p">]{</span> <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">;</span> <span class="p">},</span> <span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
-<span class="err">``</span>
+</pre></div>
 
-<span class="cp">## ok_or</span>
-
-<span class="o">**</span><span class="n">ok_or</span><span class="p">(</span><span class="n">E</span> <span class="n">err</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;**</span>
-
-<span class="err">```</span><span class="n">cpp</span>
-<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<h2 id="ok_or">ok_or<a class="headerlink" href="#ok_or" title="Permanent link">&para;</a></h2>
+<p><strong>ok_or(E err) -&gt; result<T, E></strong></p>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ok_or</span><span class="p">(</span><span class="n">E</span><span class="o">&amp;&amp;</span> <span class="n">err</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">;</span>
 
 <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
