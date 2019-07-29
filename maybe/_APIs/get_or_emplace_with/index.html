@@ -1110,13 +1110,23 @@
 
 <p>Emplace constructs <code class="codehilite"><span class="n">T</span></code> into the maybe with expression <code class="codehilite"><span class="n">std</span><span class="p">::</span><span class="n">invoke</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="k">forward</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">std</span><span class="p">::</span><span class="k">forward</span><span class="o">&lt;</span><span class="n">Args</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">)...)</span></code> if it is <code class="codehilite"><span class="k">nothing</span></code>, then returns a mutable reference to the contained value.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
-<span class="n">std</span><span class="o">::</span><span class="n">ignore</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">get_or_emplace_with</span><span class="p">([]{</span> <span class="k">return</span> <span class="mi">5</span><span class="p">;</span> <span class="p">});</span>
-<span class="n">std</span><span class="o">::</span><span class="n">ignore</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">get_or_emplace_with</span><span class="p">([](</span><span class="k">auto</span> <span class="n">x</span><span class="p">){</span> <span class="k">return</span> <span class="n">x</span><span class="p">;</span> <span class="p">},</span> <span class="mi">5</span><span class="p">);</span>
-<span class="k">auto</span><span class="o">&amp;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">get_or_emplace_with</span><span class="p">(</span><span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span> <span class="p">,</span> <span class="s">&quot;12345&quot;</span><span class="n">s</span><span class="p">);</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">y</span> <span class="o">==</span> <span class="mi">5</span><span class="p">);</span>
-<span class="n">y</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">7</span><span class="p">));</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">ignore</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">get_or_emplace_with</span><span class="p">([]{</span> <span class="k">return</span> <span class="mi">5</span><span class="p">;</span> <span class="p">});</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">ignore</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">get_or_emplace_with</span><span class="p">([](</span><span class="k">auto</span> <span class="n">x</span><span class="p">){</span> <span class="k">return</span> <span class="n">x</span><span class="p">;</span> <span class="p">},</span> <span class="mi">5</span><span class="p">);</span>
+  <span class="k">auto</span><span class="o">&amp;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">get_or_emplace_with</span><span class="p">(</span><span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span> <span class="p">,</span> <span class="s">&quot;12345&quot;</span><span class="n">s</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">y</span> <span class="o">==</span> <span class="mi">5</span><span class="p">);</span>
+  <span class="n">y</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">7</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
                 
                   

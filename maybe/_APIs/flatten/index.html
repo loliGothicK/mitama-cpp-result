@@ -1104,18 +1104,26 @@
 
 <p>Converts from <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span></code> to <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code>.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span></span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">6</span><span class="p">));</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="o">==</span> <span class="n">x</span><span class="p">.</span><span class="n">flatten</span><span class="p">());</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
 
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="n">nothing</span><span class="p">);</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">nothing</span> <span class="o">==</span> <span class="n">y</span><span class="p">.</span><span class="n">flatten</span><span class="p">());</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">6</span><span class="p">));</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="o">==</span> <span class="n">x</span><span class="p">.</span><span class="n">flatten</span><span class="p">());</span>
 
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">z</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">nothing</span> <span class="o">==</span> <span class="n">z</span><span class="p">.</span><span class="n">flatten</span><span class="p">());</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="n">nothing</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">nothing</span> <span class="o">==</span> <span class="n">y</span><span class="p">.</span><span class="n">flatten</span><span class="p">());</span>
 
-<span class="c1">// Flattening once only removes one level of nesting:</span>
-<span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span> <span class="n">nest</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">6</span><span class="p">)));</span>
-<span class="n">assert</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="o">==</span> <span class="n">nest</span><span class="p">.</span><span class="n">flatten</span><span class="p">().</span><span class="n">flatten</span><span class="p">());</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">z</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">nothing</span> <span class="o">==</span> <span class="n">z</span><span class="p">.</span><span class="n">flatten</span><span class="p">());</span>
+
+  <span class="c1">// Flattening once only removes one level of nesting:</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span> <span class="n">nest</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">6</span><span class="p">)));</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="o">==</span> <span class="n">nest</span><span class="p">.</span><span class="n">flatten</span><span class="p">().</span><span class="n">flatten</span><span class="p">());</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
                 
                   
