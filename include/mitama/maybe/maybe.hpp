@@ -213,6 +213,15 @@ class maybe
         if (u) storage_.emplace(*std::forward<U>(u));
     }
 
+    template <typename U,
+        std::enable_if_t<
+            std::is_constructible_v<T, U&&> &&
+            !std::disjunction_v<
+                mitamagic::is_pointer_like<std::remove_reference_t<U>>,
+                std::is_pointer<std::remove_reference_t<U>>>,
+        bool> = false>
+    maybe(U&& u) : storage_(std::forward<U>(u)) {}
+
     template <class... Args,
         std::enable_if_t<
             std::is_constructible_v<T, Args&&...>,
@@ -1092,7 +1101,9 @@ operator<<(std::ostream& os, maybe<T> const& may) {
                        : os << "nothing"sv;
 }
 
-template <class T, std::enable_if_t<!is_just<T>::value, bool> = false>
+template <class T, std::enable_if_t<!std::disjunction_v<is_just<T>, mitamagic::is_pointer_like<T>>, bool> = false>
+maybe(T&&) -> maybe<T>;
+template <class T, std::enable_if_t<mitamagic::is_pointer_like<T>::value, bool> = false>
 maybe(T&&) -> maybe<typename mitamagic::element_type<std::decay_t<T>>::type>;
 }
 #endif
