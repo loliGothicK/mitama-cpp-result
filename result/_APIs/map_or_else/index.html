@@ -1102,24 +1102,37 @@
 <strong>where</strong><br />
 <strong>Fallback: E -&gt; U,</strong><br />
 <strong>Map: T -&gt; U,</strong>  </p>
-<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Map</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Fallback</span><span class="o">&gt;</span>
-<span class="k">constexpr</span> <span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">map_or_else</span><span class="p">(</span><span class="n">Fallback</span><span class="o">&amp;&amp;</span> <span class="n">_fallback</span><span class="p">,</span> <span class="n">Map</span><span class="o">&amp;&amp;</span> <span class="n">_map</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span>
-  <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">Map</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">Fallback</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Map</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Fallback</span><span class="o">&gt;</span>
+  <span class="k">constexpr</span> <span class="k">auto</span> <span class="n">map_or_else</span><span class="p">(</span><span class="n">Fallback</span><span class="o">&amp;&amp;</span> <span class="n">_fallback</span><span class="p">,</span> <span class="n">Map</span><span class="o">&amp;&amp;</span> <span class="n">_map</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span>
+    <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">Map</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">Fallback</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
 </pre></div>
 
 <p>Maps a <code class="codehilite"><span class="k">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code> to <code class="codehilite"><span class="n">U</span></code> by applying a function to a contained <code class="codehilite"><span class="n">success</span></code> value, or a fallback function to a contained <code class="codehilite"><span class="n">failure</span></code> value.</p>
 <p>This function can be used to unpack a successful result while handling an error.</p>
 <p><strong>Examples</strong></p>
 <p>Basic usage:</p>
-<div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">21</span><span class="p">;</span>
-<span class="p">{</span>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">21</span><span class="p">;</span>
+  <span class="p">{</span>
     <span class="n">result</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">);</span>
     <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">map_or_else</span><span class="p">([</span><span class="n">k</span><span class="p">](</span><span class="k">auto</span><span class="p">){</span> <span class="k">return</span> <span class="n">k</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span> <span class="p">},</span> <span class="p">[](</span><span class="k">auto</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">v</span><span class="p">.</span><span class="n">length</span><span class="p">();</span> <span class="p">})</span> <span class="o">==</span> <span class="mi">3</span><span class="p">);</span>
-<span class="p">}</span>
-<span class="p">{</span>
+  <span class="p">}</span>
+  <span class="p">{</span>
     <span class="n">result</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="n">s</span><span class="p">);</span>
     <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">map_or_else</span><span class="p">([</span><span class="n">k</span><span class="p">](</span><span class="k">auto</span><span class="p">){</span> <span class="k">return</span> <span class="n">k</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span> <span class="p">},</span> <span class="p">[](</span><span class="k">auto</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">v</span><span class="p">.</span><span class="n">length</span><span class="p">();</span> <span class="p">})</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+  <span class="p">}</span>
 <span class="p">}</span>
+<span class="c1">// end example</span>
 </pre></div>
                 
                   
