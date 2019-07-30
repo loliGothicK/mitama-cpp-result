@@ -1275,7 +1275,7 @@
 </ul>
 <p>7-18) Compares <code class="codehilite"><span class="n">opt</span></code> with a <code class="codehilite"><span class="k">nothing</span></code>. Equivalent to (1-6) when comparing to a maybe that does not contain a value.</p>
 <p>19-30) Compares <code class="codehilite"><span class="n">opt</span></code> with a <code class="codehilite"><span class="k">some</span> <span class="p">:</span><span class="o">=</span> <span class="n">just_t</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>. The values are compared (using the corresponding operator of <code class="codehilite"><span class="n">T</span></code>) only if <code class="codehilite"><span class="n">opt</span></code> contains a value.
-Otherwise, <code class="codehilite"><span class="n">opt</span></code> is considered less than <code class="codehilite"><span class="n">value</span></code>.</p>
+Otherwise, <code class="codehilite"><span class="n">opt</span></code> is considered less than <code class="codehilite"><span class="k">some</span></code>.</p>
 <p>If the corresponding comparison expression between <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span></code> and value is not well-formed, or if its result is not convertible to bool, the behavior is undefined.</p>
 <p>31-42) Compares <code class="codehilite"><span class="n">opt</span></code> with a <code class="codehilite"><span class="n">value</span></code>. Equivalent to (19-30) expression <code class="codehilite"><span class="n">opt</span> <span class="o">~</span> <span class="n">just</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>.</p>
 <p><strong>Parameters</strong></p>
@@ -1425,7 +1425,7 @@ Otherwise, <code class="codehilite"><span class="n">opt</span></code> is conside
 </ol>
 <p><strong>Note</strong></p>
 <ul>
-<li><code class="codehilite"><span class="k">some</span><span class="p">.</span><span class="n">value</span></code> is a private member of <code class="codehilite"><span class="n">just_t</span></code>.</li>
+<li><code class="codehilite"><span class="k">some</span><span class="p">.</span><span class="n">value</span></code>: <code class="codehilite"><span class="n">value</span></code> is a private member of <code class="codehilite"><span class="n">just_t</span></code> (actually, cannot access to it).</li>
 </ul>
                 
                   
