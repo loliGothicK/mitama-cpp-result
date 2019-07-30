@@ -778,3 +778,11 @@ TEST_CASE("format test", "[maybe][format]"){
     }
   }
 }
+
+TEST_CASE("forward mode test", "[maybe][forward]"){
+  maybe<std::string> aaaaaaaaaa = just(10, 'a');
+  REQUIRE(aaaaaaaaaa == just("aaaaaaaaaa"));
+
+  maybe<std::vector<int>> vec = just({1,2,3});
+  REQUIRE(vec == just(std::vector{1,2,3}));
+}
