@@ -7,11 +7,18 @@
 #include <boost/hana/functional/fix.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
+#include <etude/memory/in_place_factory.hpp>
+
 #include <iostream>
 #include <string>
 #include <string_view>
 #include <type_traits>
 #include <utility>
+
+namespace mitama::_just_detail {
+    template<class T=void>
+    struct forward_mode {};
+}
 
 namespace mitama {
 
@@ -43,7 +50,7 @@ struct is_just_with<just_t<T>, T>: std::true_type {};
 /// class just:
 /// The main use of this class is to propagate some value to the constructor of the maybe class.
 template <class T>
-class [[nodiscard]] just_t
+class [[nodiscard]] just_t<T>
     : private ::mitamagic::perfect_trait_copy_move<
           std::is_copy_constructible_v<std::decay_t<T>>,
           std::conjunction_v<std::is_copy_constructible<std::decay_t<T>>, std::is_copy_assignable<std::decay_t<T>>>,
@@ -51,7 +58,7 @@ class [[nodiscard]] just_t
           std::conjunction_v<std::is_move_constructible<std::decay_t<T>>, std::is_move_assignable<std::decay_t<T>>>,
           just_t<T>>
 {
-    template <class> friend class just_t;
+    template <class...> friend class just_t;
     template <class> friend class maybe;
 
     T x;
@@ -401,10 +408,37 @@ public:
 
 };
 
-template <class T>
-auto just(T&& v) { return just_t<T>{std::forward<T>(v)}; }
+template <class Target = void, class... Types>
+auto just(Types&&... v) {
+    if constexpr (sizeof...(Types) > 1) {
+        return just_t<_just_detail::forward_mode<Target>, Types&&...>{std::forward<Types>(v)...};
+    }
+    else {
+        if constexpr (!std::is_void_v<Target>)
+            return just_t<_just_detail::forward_mode<Target>, Types&&...>{std::forward<Types>(v)...};
+        else
+            return just_t<Types...>{std::forward<Types>(v)...};
+    }
+}
 
+template <class Target = void, class T, class... Types>
+auto just(std::initializer_list<T> il, Types&&... v) {
+    return just_t<_just_detail::forward_mode<Target>, std::initializer_list<T>, Types&&...>{il, std::forward<Types>(v)...};
+}
 
+template <class T, class... Args>
+class [[nodiscard]] just_t<_just_detail::forward_mode<T>, Args...>
+    : private ::mitamagic::perfect_trait_copy_move<false, false, false, false,
+        just_t<_just_detail::forward_mode<T>, Args...>>
+{
+    std::tuple<Args...> args;
+public:
+    constexpr explicit just_t(Args... args): args(std::forward<Args>(args)...) {}
+
+    auto operator()() && {
+        return std::apply([](auto&&... fwd){ return etude::in_place(std::forward<decltype(fwd)>(fwd)...); }, args);
+    }
+};
 }
 
 #endif

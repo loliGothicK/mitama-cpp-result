@@ -3,7 +3,7 @@
 #include <variant>
 namespace mitama {
 
-template <class> class just_t;
+template <class...> class just_t;
 template <class T> just_t(T&&) -> just_t<T>;
 
 template <class> class maybe;

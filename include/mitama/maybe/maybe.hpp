@@ -236,6 +236,20 @@ class maybe
     explicit maybe(std::in_place_t, std::initializer_list<U> il, Args&&... args)
         : storage_(etude::in_place(il, std::forward<Args>(args)...)) {}
 
+    template <class... Args,
+        std::enable_if_t<
+            std::is_constructible_v<T, Args...>,
+        bool> = false>
+    maybe(just_t<_just_detail::forward_mode<T>, Args...>&& fwd)
+        : storage_(std::move(fwd)()) {}
+
+    template <class... Args,
+        std::enable_if_t<
+            std::is_constructible_v<T, Args...>,
+        bool> = false>
+    maybe(just_t<_just_detail::forward_mode<>, Args...>&& fwd)
+        : storage_(std::move(fwd)()) {}
+
     template <class U,
         std::enable_if_t<
             std::is_constructible_v<T, U const&>,
