@@ -42,7 +42,7 @@
     
     
       
-        <title>Mitama.Result | User Manual</title>
+        <title>Comparisons - Mitama.Result | User Manual</title>
       
     
     
@@ -95,6 +95,10 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
+      <a href="#operator_maybe" tabindex="1" class="md-skip">
+        Skip to content
+      </a>
+    
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid">
@@ -117,7 +121,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                
+                Comparisons
               
             </span>
           
@@ -351,10 +355,49 @@
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     
     
-    <a href="./" title="" class="md-nav__link md-nav__link--active">
-      
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Comparisons
+      </label>
+    
+    <a href="./" title="Comparisons" class="md-nav__link md-nav__link--active">
+      Comparisons
     </a>
     
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#operator_maybe" title="operator==, !=, &lt;, &lt;=, &gt;, &gt;=(maybe)" class="md-nav__link">
+    operator==, !=, &lt;, &lt;=, &gt;, &gt;=(maybe)
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../_Internal/comparisons/" title="" class="md-nav__link">
+      
+    </a>
   </li>
 
         
@@ -1090,40 +1133,299 @@
               </div>
             
             
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#operator_maybe" title="operator==, !=, &lt;, &lt;=, &gt;, &gt;=(maybe)" class="md-nav__link">
+    operator==, !=, &lt;, &lt;=, &gt;, &gt;=(maybe)
+  </a>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
               
                 
                 
-                  <h1>Mitama.Result | User Manual</h1>
+                  <h1>Comparisons</h1>
                 
-                <p><strong>operator==</strong></p>
+                <h2 id="operator_maybe">operator==, !=, &lt;, &lt;=, &gt;, &gt;=(maybe)<a class="headerlink" href="#operator_maybe" title="Permanent link">&para;</a></h2>
 <div class="codehilite"><pre><span></span><span class="k">namespace</span> <span class="n">mitama</span> <span class="p">{</span>
-  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
-  <span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">);</span> <span class="c1">// (1)</span>
+<span class="c1">// Compare two maybe objects</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span> <span class="p">);</span> <span class="c1">// (1)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">!=</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span> <span class="p">);</span> <span class="c1">// (2)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span> <span class="p">);</span>  <span class="c1">// (3)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;=</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span> <span class="p">);</span> <span class="c1">// (4)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span> <span class="p">);</span>  <span class="c1">// (5)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;=</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span> <span class="p">);</span> <span class="c1">// (6)</span>
 
-  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
-  <span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">just_t</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">);</span> <span class="c1">// (2)</span>
-  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
-  <span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span> <span class="n">just_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">);</span> <span class="c1">// (3)</span>
+<span class="c1">// Compare a maybe object with a nothing</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="n">nothing_t</span> <span class="p">)</span> <span class="k">noexcept</span><span class="p">;</span> <span class="c1">// (7)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span> <span class="n">nothing_t</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">)</span> <span class="k">noexcept</span><span class="p">;</span> <span class="c1">// (8)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">!=</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="n">nothing_t</span> <span class="p">)</span> <span class="k">noexcept</span><span class="p">;</span> <span class="c1">// (9)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">!=</span><span class="p">(</span> <span class="n">nothing_t</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">)</span> <span class="k">noexcept</span><span class="p">;</span> <span class="c1">// (10)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="n">nothing_t</span> <span class="p">)</span> <span class="k">noexcept</span><span class="p">;</span>  <span class="c1">// (11)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span> <span class="n">nothing_t</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">)</span> <span class="k">noexcept</span><span class="p">;</span>  <span class="c1">// (12)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;=</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="n">nothing_t</span> <span class="p">)</span> <span class="k">noexcept</span><span class="p">;</span> <span class="c1">// (13)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;=</span><span class="p">(</span> <span class="n">nothing_t</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">)</span> <span class="k">noexcept</span><span class="p">;</span>  <span class="c1">// (14)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="n">nothing_t</span> <span class="p">)</span> <span class="k">noexcept</span><span class="p">;</span>  <span class="c1">// (15)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;</span><span class="p">(</span> <span class="n">nothing_t</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">)</span> <span class="k">noexcept</span><span class="p">;</span>  <span class="c1">// (16)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;=</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="n">nothing_t</span> <span class="p">)</span> <span class="k">noexcept</span><span class="p">;</span> <span class="c1">// (17)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;=</span><span class="p">(</span> <span class="n">nothing_t</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">)</span> <span class="k">noexcept</span><span class="p">;</span> <span class="c1">// (18)</span>
 
-  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
-  <span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">nothing_t</span><span class="p">)</span> <span class="k">noexcept</span><span class="p">;</span>   <span class="c1">// (4)</span>
-  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
-  <span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="n">nothing_t</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">noexcept</span><span class="p">;</span>   <span class="c1">// (5)</span>
+<span class="c1">// Compare a maybe object with a just(value)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="n">just_t</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">some</span> <span class="p">);</span> <span class="c1">// (19)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span> <span class="n">just_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">some</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">);</span> <span class="c1">// (20)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">!=</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="n">just_t</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">some</span> <span class="p">);</span> <span class="c1">// (21)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">!=</span><span class="p">(</span> <span class="n">just_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">some</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">);</span> <span class="c1">// (22)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="n">just_t</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">some</span> <span class="p">);</span>  <span class="c1">// (23)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span> <span class="n">just_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">some</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">);</span>  <span class="c1">// (24)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;=</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="n">just_t</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">some</span> <span class="p">);</span> <span class="c1">// (25)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;=</span><span class="p">(</span> <span class="n">just_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">some</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">);</span> <span class="c1">// (26)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="n">just_t</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">some</span> <span class="p">);</span>  <span class="c1">// (27)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;</span><span class="p">(</span> <span class="n">just_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">some</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">);</span>  <span class="c1">// (28)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;=</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="n">just_t</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">some</span> <span class="p">);</span> <span class="c1">// (29)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;=</span><span class="p">(</span> <span class="n">just_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">some</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">);</span> <span class="c1">// (30)</span>
 
-  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
-  <span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">U</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">);</span>           <span class="c1">// (6)</span>
-  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
-  <span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span> <span class="n">U</span><span class="o">&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">rhs</span><span class="p">);</span>           <span class="c1">// (7)</span>
+<span class="c1">// Compare a maybe object with a T</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="k">const</span> <span class="n">U</span><span class="o">&amp;</span> <span class="n">value</span> <span class="p">);</span> <span class="c1">// (31)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">);</span> <span class="c1">// (32)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">!=</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="k">const</span> <span class="n">U</span><span class="o">&amp;</span> <span class="n">value</span> <span class="p">);</span> <span class="c1">// (33)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">!=</span><span class="p">(</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">);</span> <span class="c1">// (34)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="k">const</span> <span class="n">U</span><span class="o">&amp;</span> <span class="n">value</span> <span class="p">);</span>  <span class="c1">// (35)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">);</span>  <span class="c1">// (36)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;=</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="k">const</span> <span class="n">U</span><span class="o">&amp;</span> <span class="n">value</span> <span class="p">);</span> <span class="c1">// (37)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;=</span><span class="p">(</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">);</span>  <span class="c1">// (38)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="k">const</span> <span class="n">U</span><span class="o">&amp;</span> <span class="n">value</span> <span class="p">);</span>  <span class="c1">// (39)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;</span><span class="p">(</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">);</span>  <span class="c1">// (40)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;=</span><span class="p">(</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span> <span class="n">opt</span><span class="p">,</span> <span class="k">const</span> <span class="n">U</span><span class="o">&amp;</span> <span class="n">value</span> <span class="p">);</span> <span class="c1">// (41)</span>
+<span class="k">template</span><span class="o">&lt;</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span> <span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&gt;=</span><span class="p">(</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">value</span><span class="p">,</span> <span class="k">const</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span> <span class="n">opt</span> <span class="p">);</span> <span class="c1">// (42)</span>
 <span class="p">}</span>
 </pre></div>
 
+<p>Performs comparison operations on maybe objects.</p>
+<p>1-6) Compares two maybe objects, <code class="codehilite"><span class="n">lhs</span></code> and <code class="codehilite"><span class="n">rhs</span></code>. The contained values are compared (using the corresponding operator of <code class="codehilite"><span class="n">T</span></code> and <code class="codehilite"><span class="n">U</span></code>) only if both <code class="codehilite"><span class="n">lhs</span></code> and <code class="codehilite"><span class="n">rhs</span></code> contain values.</p>
+<p>Otherwise,</p>
 <ul>
-<li>1-7) Compares two maybe objects, lhs and rhs. The contained values are compared (using the corresponding operator of T and U) only if both lhs and rhs contain values. Otherwise,</li>
-<li>lhs is considered equal to rhs if, and only if, both lhs and rhs do not contain a value.</li>
-<li>lhs is considered less than rhs if, and only if, rhs contains a value and lhs does not.</li>
+<li><code class="codehilite"><span class="n">lhs</span></code> is considered equal to <code class="codehilite"><span class="n">rhs</span></code> if, and only if, both <code class="codehilite"><span class="n">lhs</span></code> and <code class="codehilite"><span class="n">rhs</span></code> do not contain a value.</li>
+<li><code class="codehilite"><span class="n">lhs</span></code> is considered less than <code class="codehilite"><span class="n">rhs</span></code> if, and only if, <code class="codehilite"><span class="n">rhs</span></code> contains a value and <code class="codehilite"><span class="n">lhs</span></code> does not.</li>
+</ul>
+<p>7-18) Compares <code class="codehilite"><span class="n">opt</span></code> with a <code class="codehilite"><span class="k">nothing</span></code>. Equivalent to (1-6) when comparing to a maybe that does not contain a value.</p>
+<p>19-30) Compares <code class="codehilite"><span class="n">opt</span></code> with a <code class="codehilite"><span class="k">some</span> <span class="p">:</span><span class="o">=</span> <span class="n">just_t</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>. The values are compared (using the corresponding operator of <code class="codehilite"><span class="n">T</span></code>) only if <code class="codehilite"><span class="n">opt</span></code> contains a value.
+Otherwise, <code class="codehilite"><span class="n">opt</span></code> is considered less than <code class="codehilite"><span class="n">value</span></code>.</p>
+<p>If the corresponding comparison expression between <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span></code> and value is not well-formed, or if its result is not convertible to bool, the behavior is undefined.</p>
+<p>31-42) Compares <code class="codehilite"><span class="n">opt</span></code> with a <code class="codehilite"><span class="n">value</span></code>. Equivalent to (19-30) expression <code class="codehilite"><span class="n">opt</span> <span class="o">~</span> <span class="n">just</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>.</p>
+<p><strong>Parameters</strong></p>
+<p><code class="codehilite"><span class="n">lhs</span></code>, <code class="codehilite"><span class="n">rhs</span></code>, <code class="codehilite"><span class="n">opt</span></code> -   a maybe object to compare</p>
+<p><code class="codehilite"><span class="k">some</span></code> - a just_t object to compare</p>
+<p><code class="codehilite"><span class="n">value</span></code> -   value to compare to the contained value</p>
+<p><strong>Return value</strong></p>
+<ol>
+<li>
+<p>If <code class="codehilite"><span class="n">bool</span><span class="p">(</span><span class="n">lhs</span><span class="p">)</span> <span class="o">!=</span> <span class="n">bool</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span></code>, returns false</p>
+<p>Otherwise, if <code class="codehilite"><span class="n">bool</span><span class="p">(</span><span class="n">lhs</span><span class="p">)</span> <span class="o">==</span> <span class="k">false</span></code> (and so <code class="codehilite"><span class="n">bool</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span> <span class="o">==</span> <span class="k">false</span></code> as well), returns true</p>
+<p>Otherwise, returns <code class="codehilite"><span class="n">lhs</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">==</span> <span class="n">rhs</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span></code>.</p>
+</li>
+<li>
+<p>If <code class="codehilite"><span class="n">bool</span><span class="p">(</span><span class="n">lhs</span><span class="p">)</span> <span class="o">!=</span> <span class="n">bool</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span></code>, returns true</p>
+<p>Otherwise, if <code class="codehilite"><span class="n">bool</span><span class="p">(</span><span class="n">lhs</span><span class="p">)</span> <span class="o">==</span> <span class="k">false</span></code> (and so <code class="codehilite"><span class="n">bool</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span> <span class="o">==</span> <span class="k">false</span></code> as well), returns false</p>
+<p>Otherwise, returns <code class="codehilite"><span class="n">lhs</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">!=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span></code>.</p>
+</li>
+<li>
+<p>If <code class="codehilite"><span class="n">bool</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span> <span class="o">==</span> <span class="k">false</span></code> returns false</p>
+<p>Otherwise, if <code class="codehilite"><span class="n">bool</span><span class="p">(</span><span class="n">lhs</span><span class="p">)</span> <span class="o">==</span> <span class="k">false</span></code>, returns true</p>
+<p>Otherwise returns <code class="codehilite"><span class="n">lhs</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">rhs</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span></code>.</p>
+</li>
+<li>
+<p>If <code class="codehilite"><span class="n">bool</span><span class="p">(</span><span class="n">lhs</span><span class="p">)</span> <span class="o">==</span> <span class="k">false</span></code> returns true</p>
+<p>Otherwise, if <code class="codehilite"><span class="n">bool</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span> <span class="o">==</span> <span class="k">false</span></code>, returns false</p>
+<p>Otherwise returns <code class="codehilite"><span class="n">lhs</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span></code>.</p>
+</li>
+<li>
+<p>If <code class="codehilite"><span class="n">bool</span><span class="p">(</span><span class="n">lhs</span><span class="p">)</span> <span class="o">==</span> <span class="k">false</span></code> returns false</p>
+<p>Otherwise, if <code class="codehilite"><span class="n">bool</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span> <span class="o">==</span> <span class="k">false</span></code>, returns true</p>
+<p>Otherwise returns <code class="codehilite"><span class="n">lhs</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">rhs</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span></code>.</p>
+</li>
+<li>
+<p>If <code class="codehilite"><span class="n">bool</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span> <span class="o">==</span> <span class="k">false</span></code> returns true</p>
+<p>Otherwise, if <code class="codehilite"><span class="n">bool</span><span class="p">(</span><span class="n">lhs</span><span class="p">)</span> <span class="o">==</span> <span class="k">false</span></code>, returns false</p>
+<p>Otherwise returns <code class="codehilite"><span class="n">lhs</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_nothing</span><span class="p">()</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_nothing</span><span class="p">()</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="k">false</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_nothing</span><span class="p">()</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="k">true</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="k">false</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="k">true</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_nothing</span><span class="p">()</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span> <span class="o">?</span> <span class="n">opt</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">==</span> <span class="k">some</span><span class="p">.</span><span class="n">value</span> <span class="p">:</span> <span class="k">false</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span> <span class="o">?</span> <span class="k">some</span><span class="p">.</span><span class="n">value</span> <span class="o">==</span> <span class="n">opt</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="p">:</span> <span class="k">false</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span> <span class="o">?</span> <span class="n">opt</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">!=</span> <span class="k">some</span><span class="p">.</span><span class="n">value</span> <span class="p">:</span> <span class="k">true</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span> <span class="o">?</span> <span class="k">some</span><span class="p">.</span><span class="n">value</span> <span class="o">!=</span> <span class="n">opt</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="p">:</span> <span class="k">true</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span> <span class="o">?</span> <span class="n">opt</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&lt;</span> <span class="k">some</span><span class="p">.</span><span class="n">value</span>  <span class="p">:</span> <span class="k">true</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span> <span class="o">?</span> <span class="k">some</span><span class="p">.</span><span class="n">value</span> <span class="o">&lt;</span> <span class="n">opt</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span>  <span class="p">:</span> <span class="k">false</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span> <span class="o">?</span> <span class="n">opt</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="k">some</span><span class="p">.</span><span class="n">value</span> <span class="p">:</span> <span class="k">true</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span> <span class="o">?</span> <span class="k">some</span><span class="p">.</span><span class="n">value</span> <span class="o">&lt;=</span> <span class="n">opt</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="p">:</span> <span class="k">false</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span> <span class="o">?</span> <span class="n">opt</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&gt;</span> <span class="k">some</span><span class="p">.</span><span class="n">value</span>  <span class="p">:</span> <span class="k">false</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span> <span class="o">?</span> <span class="k">some</span><span class="p">.</span><span class="n">value</span> <span class="o">&gt;</span> <span class="n">opt</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span>  <span class="p">:</span> <span class="k">true</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span> <span class="o">?</span> <span class="n">opt</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="k">some</span><span class="p">.</span><span class="n">value</span> <span class="p">:</span> <span class="k">false</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span> <span class="o">?</span> <span class="k">some</span><span class="p">.</span><span class="n">value</span> <span class="o">&gt;=</span> <span class="n">opt</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="p">:</span> <span class="k">true</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="n">opt</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span> <span class="o">!=</span> <span class="n">just</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="n">opt</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span> <span class="o">&lt;</span> <span class="n">just</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">opt</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span> <span class="o">&lt;=</span> <span class="n">just</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">opt</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span> <span class="o">&gt;</span> <span class="n">just</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">opt</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">opt</span> <span class="o">&gt;=</span> <span class="n">just</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></code>.</p>
+</li>
+<li>
+<p>Returns <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">opt</span></code>.</p>
+</li>
+</ol>
+<p><strong>Note</strong></p>
+<ul>
+<li><code class="codehilite"><span class="k">some</span><span class="p">.</span><span class="n">value</span></code> is a private member of <code class="codehilite"><span class="n">just_t</span></code>.</li>
 </ul>
                 
                   
@@ -1160,7 +1462,7 @@
           </a>
         
         
-          <a href="../_APIs/is_just/" title="" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../_Internal/comparisons/" title="" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
