@@ -23,8 +23,8 @@ namespace mitama::_range_to_maybe_detail {
 namespace mitama {
     template <class Range>
     auto range_to_maybe(Range&& range) {
-        using std::begin;
-        return std::empty(range) ? nothing : maybe(just(*begin(std::forward<Range>(range))));
+        using std::begin, std::end;
+        return begin(range) != end(range) ? maybe(just(*begin(std::forward<Range>(range)))) : nothing;
     }
 }
 
