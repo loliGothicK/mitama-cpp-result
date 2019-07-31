@@ -834,6 +834,11 @@ class maybe
 
 };
 
+template <class T, std::enable_if_t<!std::disjunction_v<is_just<T>, mitamagic::is_pointer_like<T>>, bool> = false>
+maybe(T&&) -> maybe<T>;
+template <class T, std::enable_if_t<mitamagic::is_pointer_like<T>::value, bool> = false>
+maybe(T&&) -> maybe<typename mitamagic::element_type<std::decay_t<T>>::type>;
+
 template <class T, class U>
 std::enable_if_t<meta::is_comparable_with<T, U>::value,
 bool>
@@ -1115,9 +1120,5 @@ operator<<(std::ostream& os, maybe<T> const& may) {
                        : os << "nothing"sv;
 }
 
-template <class T, std::enable_if_t<!std::disjunction_v<is_just<T>, mitamagic::is_pointer_like<T>>, bool> = false>
-maybe(T&&) -> maybe<T>;
-template <class T, std::enable_if_t<mitamagic::is_pointer_like<T>::value, bool> = false>
-maybe(T&&) -> maybe<typename mitamagic::element_type<std::decay_t<T>>::type>;
 }
 #endif
