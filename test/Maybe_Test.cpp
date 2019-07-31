@@ -3,6 +3,7 @@
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
 #include <mitama/maybe/maybe.hpp>
+#include <mitama/maybe/range_to_maybe.hpp>
 
 #include <boost/xpressive/xpressive.hpp>
 
@@ -785,4 +786,17 @@ TEST_CASE("forward mode test", "[maybe][forward]"){
 
   maybe<std::vector<int>> vec = just({1,2,3});
   REQUIRE(vec == just(std::vector{1,2,3}));
+}
+
+TEST_CASE("range_to_maybe test", "[maybe][range_to_maybe]"){
+  std::vector v{1,2,3};
+  maybe x = range_to_maybe(v);
+  REQUIRE(x == just(1));
+
+  maybe y = range_to_maybe(std::vector<int>{});
+  REQUIRE(y == nothing);
+
+  int a[] = {1};
+  maybe z = range_to_maybe(a);
+  REQUIRE(z == 1);
 }
