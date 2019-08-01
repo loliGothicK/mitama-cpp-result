@@ -7,7 +7,7 @@
 #include <mitama/result/factory/success.hpp>
 #include <mitama/result/factory/failure.hpp>
 
-#include <boost/variant.hpp>
+#include <boost/variant2/variant.hpp>
 #include <boost/optional.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
@@ -19,13 +19,6 @@
 #include <type_traits>
 #include <utility>
 #include <string_view>
-
-namespace mitama::workaround {
-  template < class T, class... Ts >
-  bool holds_alternative(boost::variant<Ts...> const& var) {
-    return boost::get<T>(&var) != nullptr;
-  }
-}
 
 namespace boost {
 template < class T, class U >
@@ -134,13 +127,13 @@ class [[nodiscard]] basic_result<_mutability, T, E,
   public indirect_friend_injector<basic_result<_mutability, T, E>>
 {
   /// result storage
-  boost::variant<success<T>, failure<E>> storage_;
+  boost::variant2::variant<success<T>, failure<E>> storage_;
   /// friend accessors
   template <mutability, class, class, class>
   friend class basic_result;
   /// private aliases
-  template <class... Requiers>
-  using where = std::enable_if_t<std::conjunction_v<Requiers...>, std::nullptr_t>;
+  template <class... Requires>
+  using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
   static constexpr std::nullptr_t required = nullptr;
   template <mutability _mut, class T_, class E_>
   using not_self = std::negation<std::is_same<basic_result, basic_result<_mut, T_, E_>>>;
@@ -294,7 +287,7 @@ public:
             where<std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
   constexpr basic_result(success<U> const& ok)
-    : storage_{ok}
+    : storage_{boost::variant2::in_place_type<success<T>>, std::in_place, ok.x}
   {}
 
   /// @brief
@@ -303,7 +296,7 @@ public:
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
   constexpr explicit basic_result(success<U> const& ok)
-    : storage_{ok}
+    : storage_{boost::variant2::in_place_type<success<T>>, std::in_place, ok.x}
   {}
 
   /// @brief
@@ -312,7 +305,7 @@ public:
             where<std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
   constexpr basic_result(success<U> && ok)
-    : storage_{std::move(ok)}
+    : storage_{boost::variant2::in_place_type<success<T>>, std::in_place, std::move(ok).x}
   {}
 
   /// @brief
@@ -321,7 +314,7 @@ public:
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
   constexpr explicit basic_result(success<U> && ok)
-    : storage_{std::move(ok)}
+    : storage_{boost::variant2::in_place_type<success<T>>, std::in_place, std::move(ok).x}
   {}
 
   /// @brief
@@ -330,7 +323,7 @@ public:
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
   constexpr basic_result(failure<U> const& err)
-    : storage_{err}
+    : storage_{boost::variant2::in_place_type<failure<E>>, std::in_place, err.x}
   {}
 
   /// @brief
@@ -339,7 +332,7 @@ public:
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
   constexpr explicit basic_result(failure<U> const& err)
-    : storage_{err}
+    : storage_{boost::variant2::in_place_type<failure<E>>, std::in_place, err.x}
   {}
 
   /// @brief
@@ -348,7 +341,7 @@ public:
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
   constexpr basic_result(failure<U> && err)
-    : storage_{err}
+    : storage_{boost::variant2::in_place_type<failure<E>>, std::in_place, std::move(err).x}
   {}
 
   /// @brief
@@ -357,15 +350,15 @@ public:
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
   constexpr explicit basic_result(failure<U> && err)
-    : storage_{err}
+    : storage_{boost::variant2::in_place_type<failure<E>>, std::in_place, std::move(err).x}
   {}
 
-  constexpr basic_result(success<> ok)
-    : storage_{ok}
+  constexpr basic_result(success<>)
+    : storage_{boost::variant2::in_place_type<success<>>, std::monostate{}}
   {}
 
-  constexpr basic_result(failure<> err)
-    : storage_{err}
+  constexpr basic_result(failure<>)
+    : storage_{boost::variant2::in_place_type<failure<>>, std::monostate{}}
   {}
 
   /// @brief
@@ -373,7 +366,7 @@ public:
   template <class... Args,
             where<std::is_constructible<T, Args&&...>> = required>
   constexpr explicit basic_result(in_place_ok_t, Args && ... args)
-    : storage_{success<T>{std::in_place, std::forward<Args>(args)...}}
+    : storage_{boost::variant2::in_place_type<success<T>>, std::in_place, std::forward<Args>(args)...}
   {}
 
   /// @brief
@@ -381,7 +374,7 @@ public:
   template <class... Args,
             where<std::is_constructible<E, Args&&...>> = required>
   constexpr explicit basic_result(in_place_err_t, Args && ... args)
-    : storage_{failure<E>{std::in_place, std::forward<Args>(args)...}}
+    : storage_{boost::variant2::in_place_type<failure<E>>, std::in_place, std::forward<Args>(args)...}
   {}
 
   /// @brief
@@ -389,7 +382,7 @@ public:
   template <class U, class... Args,
             where<std::is_constructible<T, std::initializer_list<U>, Args&&...>> = required>
   constexpr explicit basic_result(in_place_ok_t, std::initializer_list<U> il, Args && ... args)
-    : storage_{success<T>{std::in_place, il, std::forward<Args>(args)...}}
+    : storage_{boost::variant2::in_place_type<success<T>>, std::in_place, il, std::forward<Args>(args)...}
   {}
 
   /// @brief
@@ -397,7 +390,7 @@ public:
   template <class U, class... Args,
             where<std::is_constructible<E, Args&&...>> = required>
   constexpr explicit basic_result(in_place_err_t, std::initializer_list<U> il, Args && ... args)
-    : storage_{failure<E>{std::in_place, il, std::forward<Args>(args)...}}
+    : storage_{boost::variant2::in_place_type<failure<E>>, std::in_place, il, std::forward<Args>(args)...}
   {}
 
   /// @brief
@@ -405,28 +398,28 @@ public:
   ///
   /// @note
   ///   Returns true if the result is succsess.
-  constexpr bool is_ok() const noexcept { return ::mitama::workaround::holds_alternative<success<T>>(storage_); }
+  constexpr bool is_ok() const noexcept { return boost::variant2::holds_alternative<success<T>>(storage_); }
 
   /// @brief
   ///   Checks if self has a failure value.
   ///
   /// @note
   ///   Returns true if the result is failure.
-  constexpr bool is_err() const noexcept { return ::mitama::workaround::holds_alternative<failure<E>>(storage_); }
+  constexpr bool is_err() const noexcept { return boost::variant2::holds_alternative<failure<E>>(storage_); }
 
   /// @brief
   ///   Converts from basic_result to bool.
   ///
   /// @note
   ///   Covert result to bool and returns true if the result is succsess.
-  explicit constexpr operator bool() const noexcept { return ::mitama::workaround::holds_alternative<success<T>>(storage_); }
+  explicit constexpr operator bool() const noexcept { return boost::variant2::holds_alternative<success<T>>(storage_); }
 
   /// @brief
   ///   Converts from basic_result to bool.
   ///
   /// @note
   ///   Covert result to bool and returns true if the result is failure.
-  constexpr bool operator !() const noexcept { return ::mitama::workaround::holds_alternative<failure<E>>(storage_); }
+  constexpr bool operator !() const noexcept { return boost::variant2::holds_alternative<failure<E>>(storage_); }
 
   /// @brief
   ///   Converts from basic_result to `boost::optional<const T>`.
@@ -467,9 +460,9 @@ public:
     -> basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>
   {
     if ( is_ok() )
-      return basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>{in_place_ok, boost::get<success<T>>(storage_).x};
+      return basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>{in_place_ok, boost::variant2::get<success<T>>(storage_).x};
     else
-      return basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>{in_place_err, boost::get<failure<E>>(storage_).x};
+      return basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>{in_place_err, boost::variant2::get<failure<E>>(storage_).x};
   }
 
   /// @brief
@@ -490,9 +483,9 @@ public:
       "Error: result is immutable");
 
     if ( is_ok() )
-      return basic_result<mutability::immut, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_ok, boost::get<success<T>>(storage_).x};
+      return basic_result<mutability::immut, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_ok, boost::variant2::get<success<T>>(storage_).x};
     else
-      return basic_result<mutability::immut, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_err, boost::get<failure<E>>(storage_).x};
+      return basic_result<mutability::immut, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_err, boost::variant2::get<failure<E>>(storage_).x};
   }
 
   /// @brief
@@ -512,8 +505,8 @@ public:
   {
     using result_type = basic_result<_mutability, std::invoke_result_t<O, T>, E>;
     return is_ok()
-               ? static_cast<result_type>(success{std::invoke(std::forward<O>(op), boost::get<success<T>>(storage_).x)})
-               : static_cast<result_type>(failure{boost::get<failure<E>>(storage_).x});
+               ? static_cast<result_type>(success{std::invoke(std::forward<O>(op), boost::variant2::get<success<T>>(storage_).x)})
+               : static_cast<result_type>(failure{boost::variant2::get<failure<E>>(storage_).x});
   }
 
   /// @brief
@@ -533,8 +526,8 @@ public:
   {
     using result_type = basic_result<_mutability, std::invoke_result_t<O, T>, E>;
     return is_ok()
-               ? static_cast<result_type>(success{std::invoke(std::forward<O>(op), std::move(boost::get<success<T>>(storage_).x))})
-               : static_cast<result_type>(failure{std::move(boost::get<failure<E>>(storage_).x)});
+               ? static_cast<result_type>(success{std::invoke(std::forward<O>(op), std::move(boost::variant2::get<success<T>>(storage_).x))})
+               : static_cast<result_type>(failure{std::move(boost::variant2::get<failure<E>>(storage_).x)});
   }
 
   /// @brief
@@ -561,8 +554,8 @@ public:
   {
     using result_type = std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
     return is_ok()
-               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), boost::get<success<T>>(storage_).x))
-               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), boost::get<failure<E>>(storage_).x));
+               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), boost::variant2::get<success<T>>(storage_).x))
+               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), boost::variant2::get<failure<E>>(storage_).x));
   }
 
   /// @brief
@@ -589,8 +582,8 @@ public:
   {
     using result_type = std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
     return is_ok()
-               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), std::move(boost::get<success<T>>(storage_).x)))
-               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), std::move(boost::get<failure<E>>(storage_).x)));
+               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), std::move(boost::variant2::get<success<T>>(storage_).x)))
+               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), std::move(boost::variant2::get<failure<E>>(storage_).x)));
   }
 
   /// @brief
@@ -610,8 +603,8 @@ public:
   {
     using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E>>;
     return is_err()
-               ? static_cast<result_type>(failure{std::invoke(std::forward<O>(op), boost::get<failure<E>>(storage_).x)})
-               : static_cast<result_type>(success{boost::get<success<T>>(storage_).x});
+               ? static_cast<result_type>(failure{std::invoke(std::forward<O>(op), boost::variant2::get<failure<E>>(storage_).x)})
+               : static_cast<result_type>(success{boost::variant2::get<success<T>>(storage_).x});
   }
 
   /// @brief
@@ -631,8 +624,8 @@ public:
   {
     using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E>>;
     return is_err()
-               ? static_cast<result_type>(failure{std::invoke(std::forward<O>(op), std::move(boost::get<failure<E>>(storage_).x))})
-               : static_cast<result_type>(success{std::move(boost::get<success<T>>(storage_).x)});
+               ? static_cast<result_type>(failure{std::invoke(std::forward<O>(op), std::move(boost::variant2::get<failure<E>>(storage_).x))})
+               : static_cast<result_type>(success{std::move(boost::variant2::get<success<T>>(storage_).x)});
   }
 
   /// @brief
@@ -651,8 +644,8 @@ public:
   {
     using result_type = std::invoke_result_t<O, T>;
     return is_ok()
-               ? std::invoke(std::forward<O>(op), boost::get<success<T>>(storage_).x)
-               : static_cast<result_type>(failure{boost::get<failure<E>>(storage_).x});
+               ? std::invoke(std::forward<O>(op), boost::variant2::get<success<T>>(storage_).x)
+               : static_cast<result_type>(failure{boost::variant2::get<failure<E>>(storage_).x});
   }
 
   /// @brief
@@ -671,8 +664,8 @@ public:
   {
     using result_type = std::invoke_result_t<O, T>;
     return is_ok()
-               ? std::invoke(std::forward<O>(op), std::move(boost::get<success<T>>(storage_).x))
-               : static_cast<result_type>(failure{std::move(boost::get<failure<E>>(storage_).x)});
+               ? std::invoke(std::forward<O>(op), std::move(boost::variant2::get<success<T>>(storage_).x))
+               : static_cast<result_type>(failure{std::move(boost::variant2::get<failure<E>>(storage_).x)});
   }
 
   /// @brief
@@ -691,8 +684,8 @@ public:
   {
     using result_type = std::invoke_result_t<O, E>;
     return is_err()
-               ? std::invoke(std::forward<O>(op), boost::get<failure<E>>(storage_).x)
-               : static_cast<result_type>(success{boost::get<success<T>>(storage_).x});
+               ? std::invoke(std::forward<O>(op), boost::variant2::get<failure<E>>(storage_).x)
+               : static_cast<result_type>(success{boost::variant2::get<success<T>>(storage_).x});
   }
 
   /// @brief
@@ -711,8 +704,8 @@ public:
   {
     using result_type = std::invoke_result_t<O, E>;
     return is_err()
-               ? std::invoke(std::forward<O>(op), boost::get<failure<E>>(std::move(storage_)).x)
-               : static_cast<result_type>(success{boost::get<success<T>>(std::move(storage_)).x});
+               ? std::invoke(std::forward<O>(op), boost::variant2::get<failure<E>>(std::move(storage_)).x)
+               : static_cast<result_type>(success{boost::variant2::get<success<T>>(std::move(storage_)).x});
   }
 
   /// @brief
@@ -722,7 +715,7 @@ public:
   {
     using result_type = basic_result<_mutability && _mu, U, E>;
     return this->is_err()
-               ? static_cast<result_type>(failure{boost::get<failure<E>>(storage_).x})
+               ? static_cast<result_type>(failure{boost::variant2::get<failure<E>>(storage_).x})
                : res.is_err() ? static_cast<result_type>(failure{res.unwrap_err()})
                               : static_cast<result_type>(success{res.unwrap()});
   }
@@ -748,7 +741,7 @@ public:
   {
     using result_type = basic_result<_mutability, T, F>;
     return this->is_ok()
-               ? static_cast<result_type>(success{boost::get<success<T>>(storage_).x})
+               ? static_cast<result_type>(success{boost::variant2::get<success<T>>(storage_).x})
                : res.is_ok() ? static_cast<result_type>(success{res.unwrap()})
                              : static_cast<result_type>(failure{res.unwrap_err()});
   }
@@ -783,7 +776,7 @@ public:
             where<meta::has_common_type<T, U&&>> = required>
   decltype(auto) unwrap_or(U&& optb) const& noexcept
   {
-    return is_ok() ? boost::get<success<T>>(storage_).x
+    return is_ok() ? boost::variant2::get<success<T>>(storage_).x
                    : std::forward<U>(optb);
   }
 
@@ -802,7 +795,7 @@ public:
   template <class U,
             where<meta::has_common_type<std::remove_reference_t<T>&&, U&&>> = required>
   decltype(auto) unwrap_or(U&& optb) && noexcept {
-    return is_ok() ? std::move(boost::get<success<T>>(storage_).x)
+    return is_ok() ? std::move(boost::variant2::get<success<T>>(storage_).x)
                    : std::forward<U>(optb);
   }
 
@@ -839,10 +832,10 @@ public:
     )
   {
     if constexpr (std::is_invocable_r_v<T, O, E>) {
-      return is_ok() ? boost::get<success<T>>(storage_).x : std::invoke(std::forward<O>(op), boost::get<failure<E>>(storage_).x);
+      return is_ok() ? boost::variant2::get<success<T>>(storage_).x : std::invoke(std::forward<O>(op), boost::variant2::get<failure<E>>(storage_).x);
     }
     else if constexpr (std::is_invocable_r_v<T, O>) {
-      return is_ok() ? boost::get<success<T>>(storage_).x : std::invoke(std::forward<O>(op));
+      return is_ok() ? boost::variant2::get<success<T>>(storage_).x : std::invoke(std::forward<O>(op));
     }
     else {
       static_assert([]{ return false; }(), "invalid argument: designated function object is not invocable");
@@ -858,15 +851,15 @@ public:
   unwrap() const& {
     if constexpr (trait::formattable_element<E>::value) {
       if ( is_ok() ) {
-        return boost::get<success<T>>(storage_).x;
+        return boost::variant2::get<success<T>>(storage_).x;
       }
       else {
-        PANIC("called `basic_result::unwrap()` on a value: `%1%`", boost::get<failure<E>>(storage_));
+        PANIC("called `basic_result::unwrap()` on a value: `%1%`", boost::variant2::get<failure<E>>(storage_));
       }      
     }
     else {
       if ( is_ok() ) {
-        return boost::get<success<T>>(storage_).x;
+        return boost::variant2::get<success<T>>(storage_).x;
       }
       else {
         PANIC("called `basic_result::unwrap()` on a value `failure(?)`");
@@ -883,15 +876,15 @@ public:
   unwrap() & {
     if constexpr (trait::formattable_element<E>::value) {
       if ( is_ok() ) {
-        return boost::get<success<T>>(storage_).x;
+        return boost::variant2::get<success<T>>(storage_).x;
       }
       else {
-        PANIC("called `basic_result::unwrap()` on a value: `%1%`", boost::get<failure<E>>(storage_));
+        PANIC("called `basic_result::unwrap()` on a value: `%1%`", boost::variant2::get<failure<E>>(storage_));
       }      
     }
     else {
       if ( is_ok() ) {
-        return boost::get<success<T>>(storage_).x;
+        return boost::variant2::get<success<T>>(storage_).x;
       }
       else {
         PANIC("called `basic_result::unwrap()` on a value `failure(?)`");
@@ -908,15 +901,15 @@ public:
   unwrap_err() const& {
     if constexpr (trait::formattable_element<T>::value) {
       if ( is_err() ) {
-        return boost::get<failure<E>>(storage_).x;
+        return boost::variant2::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", boost::get<success<T>>(storage_));
+        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", boost::variant2::get<success<T>>(storage_));
       }
     }
     else {
       if ( is_err() ) {
-        return boost::get<failure<E>>(storage_).x;
+        return boost::variant2::get<failure<E>>(storage_).x;
       }
       else {
         PANIC("called `basic_result::unwrap_err()` on a value `success(?)`");
@@ -933,15 +926,15 @@ public:
   unwrap_err() & {
     if constexpr (trait::formattable_element<T>::value) {
       if ( is_err() ) {
-        return boost::get<failure<E>>(storage_).x;
+        return boost::variant2::get<failure<E>>(storage_).x;
       }
       else {
-        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", boost::get<success<T>>(storage_));
+        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", boost::variant2::get<success<T>>(storage_));
       }
     }
     else {
       if ( is_err() ) {
-        return boost::get<failure<E>>(storage_).x;
+        return boost::variant2::get<failure<E>>(storage_).x;
       }
       else {
         PANIC("called `basic_result::unwrap_err()` on a value `success(?)`)");
@@ -1145,7 +1138,7 @@ public:
     std::conjunction_v<is_comparable_with<T, U>, is_comparable_with<E, F>>,
   bool>
   operator==(basic_result<_mut, U, F> const& rhs) const& {
-    return boost::apply_visitor(
+    return boost::variant2::visit(
       boost::hana::overload(
         [](success<T> const& l, success<U> const& r) { return l.x == r.x; },
         [](failure<E> const& l, failure<F> const& r) { return l.x == r.x; },
@@ -1167,7 +1160,7 @@ public:
     std::conjunction_v<is_comparable_with<T, U>, is_comparable_with<E, F>>,
   bool>
   operator!=(basic_result<_mut, U, F> const& rhs) const& {
-    return boost::apply_visitor(
+    return boost::variant2::visit(
       boost::hana::overload(
         [](success<T> const& l, success<U> const& r) { return !(l.x == r.x); },
         [](failure<E> const& l, failure<F> const& r) { return !(l.x == r.x); },
@@ -1246,7 +1239,7 @@ public:
       meta::is_less_comparable_with<E, F>>,
   bool>
   operator<(basic_result<_, U, F> const& rhs) const {
-    return boost::apply_visitor(
+    return boost::variant2::visit(
       boost::hana::overload(
         [](success<T> const& l, success<U> const& r) { return l.x < r.x; },
         [](failure<E> const& l, failure<F> const& r) { return l.x < r.x; },
@@ -1278,7 +1271,7 @@ public:
       meta::is_less_comparable_with<F, E>>,
   bool>
   operator>(basic_result<_, U, F> const& rhs) const {
-    return boost::apply_visitor(
+    return boost::variant2::visit(
       boost::hana::overload(
         [](success<T> const& l, success<U> const& r) { return r.x < l.x; },
         [](failure<E> const& l, failure<F> const& r) { return r.x < l.x; },
@@ -1312,7 +1305,7 @@ public:
       is_comparable_with<E, F>>,
   bool>
   operator<=(basic_result<_, U, F> const& rhs) const {
-    return boost::apply_visitor(
+    return boost::variant2::visit(
       boost::hana::overload(
         [](success<T> const& l, success<U> const& r) { return (l.x == r.x) || (l.x < r.x); },
         [](failure<E> const& l, failure<F> const& r) { return (l.x == r.x) || (l.x < r.x); },
@@ -1350,7 +1343,7 @@ public:
       is_comparable_with<E, F>>,
   bool>
   operator>=(basic_result<_, U, F> const& rhs) const {
-    return boost::apply_visitor(
+    return boost::variant2::visit(
       boost::hana::overload(
         [](success<T> const& l, success<U> const& r) { return (l.x == r.x) || (r.x < l.x); },
         [](failure<E> const& l, failure<F> const& r) { return (l.x == r.x) || (r.x < l.x); },
