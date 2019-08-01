@@ -7,7 +7,6 @@
 #include <boost/hana/functional/fix.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
-#include <etude/memory/in_place_factory.hpp>
 
 #include <iostream>
 #include <string>
@@ -436,7 +435,7 @@ public:
     constexpr explicit just_t(Args... args): args(std::forward<Args>(args)...) {}
 
     auto operator()() && {
-        return std::apply([](auto&&... fwd){ return etude::in_place(std::forward<decltype(fwd)>(fwd)...); }, args);
+        return std::apply([](auto&&... fwd){ return std::forward_as_tuple(std::forward<decltype(fwd)>(fwd)...); }, args);
     }
 };
 }
