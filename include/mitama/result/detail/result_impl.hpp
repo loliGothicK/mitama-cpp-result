@@ -9,8 +9,6 @@
 #include <mitama/maybe/maybe.hpp>
 #include <optional>
 #include <functional>
-#include <boost/optional.hpp>
-#include <boost/utility/in_place_factory.hpp>
 
 namespace mitama {
 
