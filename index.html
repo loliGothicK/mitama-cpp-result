@@ -1197,7 +1197,7 @@
                 
                 
                 <h1 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h1>
-<p>result is a header only C++17 library for error handling.</p>
+<p><code class="codehilite"><span class="n">Mitama</span><span class="p">.</span><span class="k">Result</span></code> is a header only C++17 library for error handling.</p>
 <h2 id="prerequisites_and_installation">Prerequisites and installation<a class="headerlink" href="#prerequisites_and_installation" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -1235,14 +1235,11 @@
 </ul>
 <p>Mitama.result requires a Boost supporting the following libraries:</p>
 <ul>
-<li><code class="codehilite"><span class="n">boost</span><span class="p">::</span><span class="n">optional</span></code> from the <code class="codehilite"><span class="o">&lt;</span><span class="n">boost</span><span class="o">/</span><span class="n">optional</span><span class="p">.</span><span class="n">hpp</span><span class="o">&gt;</span></code> header</li>
-<li><code class="codehilite"><span class="n">boost</span><span class="p">::</span><span class="n">variant</span></code> from the <code class="codehilite"><span class="o">&lt;</span><span class="n">boost</span><span class="o">/</span><span class="n">variant</span><span class="p">.</span><span class="n">hpp</span><span class="o">&gt;</span></code> header</li>
 <li><code class="codehilite"><span class="n">boost</span><span class="p">::</span><span class="n">format</span></code> from the <code class="codehilite"><span class="o">&lt;</span><span class="n">boost</span><span class="o">/</span><span class="n">format</span><span class="p">.</span><span class="n">hpp</span><span class="o">&gt;</span></code> header</li>
 <li><code class="codehilite"><span class="n">boost</span><span class="p">::</span><span class="n">hana</span><span class="p">::</span><span class="err">{</span><span class="n">fix</span><span class="p">,</span> <span class="n">overload</span><span class="p">,</span> <span class="n">overload_linearly</span><span class="err">}</span></code> from the <code class="codehilite"><span class="o">&lt;</span><span class="n">boost</span><span class="o">/</span><span class="n">hana</span><span class="o">/</span><span class="n">functional</span><span class="o">/</span><span class="err">{</span><span class="n">fix</span><span class="p">,</span> <span class="n">overload</span><span class="p">,</span> <span class="n">overload_linearly</span><span class="err">}</span><span class="p">.</span><span class="n">hpp</span><span class="o">&gt;</span></code> header</li>
 </ul>
 <h2 id="basic_usage">Basic Usage<a class="headerlink" href="#basic_usage" title="Permanent link">&para;</a></h2>
-<p>Here is a bad code, see below.</p>
-<p>If this program fail to assert, you don't know the reason for the error.</p>
+<p>Here is a bad code.</p>
 <div class="codehilite"><pre><span></span><span class="kt">bool</span> <span class="nf">func</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span> <span class="n">first</span> <span class="n">check</span> <span class="p">)</span>
     <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
@@ -1257,8 +1254,8 @@
 <span class="n">assert</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
 </pre></div>
 
-<p>Here is a code using result.</p>
-<p>Even if this program fail to assert, you can get the reason for the error.</p>
+<p>If this program fail to assert, you don't know the reason for the error.</p>
+<p>Rewrite this code using result.</p>
 <div class="codehilite"><pre><span></span><span class="k">auto</span> <span class="nf">func</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">mitama</span><span class="o">::</span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span> <span class="n">first</span> <span class="n">check</span> <span class="p">)</span>
     <span class="k">return</span> <span class="n">mitama</span><span class="o">::</span><span class="n">failure</span><span class="p">(</span><span class="s">&quot;first check failed&quot;</span><span class="p">);</span> <span class="c1">// early return</span>
@@ -1275,6 +1272,8 @@
 <span class="c1">// raise an exception</span>
 <span class="c1">// and you get reason for the error.</span>
 </pre></div>
+
+<p>Even if this program fails to assert, you can get the reason for the error.</p>
                 
                   
                 

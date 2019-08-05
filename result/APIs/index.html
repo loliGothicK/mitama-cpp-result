@@ -1542,7 +1542,7 @@
 </pre></div>
 
 <p>Converts from <code class="codehilite"><span class="n">basic_result</span></code> to <code class="codehilite"><span class="n">maybe</span></code>.</p>
-<p>Converts self into an <code class="codehilite"><span class="n">maybe</span></code>, and discarding the failure value, if any.</p>
+<p>Converts self into a <code class="codehilite"><span class="n">maybe</span></code>, and discarding the failure value, if any.</p>
 <p>Note that these functions propagate mutability to element type of <code class="codehilite"><span class="n">maybe</span></code>.</p>
 <p><strong>Remarks</strong></p>
 <p>If self is rvalue and <code class="codehilite"><span class="n">T</span></code> is a reference type,
@@ -1592,7 +1592,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 </pre></div>
 
 <p>Converts from <code class="codehilite"><span class="n">basic_result</span></code> to <code class="codehilite"><span class="n">maybe</span></code>.</p>
-<p>Converts self into an <code class="codehilite"><span class="n">maybe</span></code>, and discarding the success value, if any.</p>
+<p>Converts self into a <code class="codehilite"><span class="n">maybe</span></code>, and discarding the success value, if any.</p>
 <p>Note that these functions propagate mutability to element type of <code class="codehilite"><span class="n">maybe</span></code>.</p>
 <p><strong>Remarks</strong></p>
 <p>If self is rvalue and <code class="codehilite"><span class="n">E</span></code> is a reference type,
@@ -1943,7 +1943,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 <span class="p">};</span>
 </pre></div>
 
-<p>Unwraps a result, yielding the content of an <code class="codehilite"><span class="n">success</span></code>. If the value is an <code class="codehilite"><span class="n">failure</span></code> then it calls <code class="codehilite"><span class="n">op</span></code> with its value.</p>
+<p>Unwraps a result, yielding the content of an <code class="codehilite"><span class="n">success</span></code>. If the value is an <code class="codehilite"><span class="n">failure</span></code> then it invokes <code class="codehilite"><span class="n">op</span></code> with its value.</p>
 <p><strong>Example</strong></p>
 <div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
 <span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
@@ -2109,7 +2109,7 @@ this function returns <code class="codehilite"><span class="n">maybe</span><span
 <span class="p">};</span>
 </pre></div>
 
-<p>Transposes a <code class="codehilite"><span class="k">result</span></code> of an <code class="codehilite"><span class="n">maybe</span></code> into an <code class="codehilite"><span class="n">maybe</span></code> of a <code class="codehilite"><span class="k">result</span></code>.</p>
+<p>Transposes a <code class="codehilite"><span class="k">result</span></code> of a <code class="codehilite"><span class="n">maybe</span></code> into a <code class="codehilite"><span class="n">maybe</span></code> of a <code class="codehilite"><span class="k">result</span></code>.</p>
 <p><code class="codehilite"><span class="n">success</span><span class="p">(</span><span class="k">nothing</span><span class="p">)</span></code> will be mapped to <code class="codehilite"><span class="k">nothing</span></code>.
 <code class="codehilite"><span class="n">success</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="n">v</span><span class="p">))</span></code> and <code class="codehilite"><span class="n">failure</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></code> will be mapped to <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">success</span><span class="p">(</span><span class="n">v</span><span class="p">))</span></code> and <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">failure</span><span class="p">(</span><span class="n">v</span><span class="p">))</span></code>.</p>
 <p><strong>Example</strong></p>

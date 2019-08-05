@@ -1145,7 +1145,7 @@
 <span class="p">};</span>
 </pre></div>
 
-<p>Returns <code class="codehilite"><span class="k">nothing</span></code> if the option is <code class="codehilite"><span class="k">nothing</span></code>, otherwise calls predicate with the wrapped value and returns:</p>
+<p>Returns <code class="codehilite"><span class="k">nothing</span></code> if the option is <code class="codehilite"><span class="k">nothing</span></code>, otherwise invokes predicate with the wrapped value and returns:</p>
 <ul>
 <li><code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">t</span><span class="p">)</span></code> if predicate returns true (where t is the wrapped value), and</li>
 <li><code class="codehilite"><span class="k">nothing</span></code> if predicate returns false.</li>

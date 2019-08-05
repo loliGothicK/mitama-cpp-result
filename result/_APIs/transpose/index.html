@@ -1133,7 +1133,7 @@
 <span class="p">};</span>
 </pre></div>
 
-<p>Transposes a <code class="codehilite"><span class="k">result</span></code> of an <code class="codehilite"><span class="n">maybe</span></code> into an <code class="codehilite"><span class="n">maybe</span></code> of a <code class="codehilite"><span class="k">result</span></code>.</p>
+<p>Transposes a <code class="codehilite"><span class="k">result</span></code> of a <code class="codehilite"><span class="n">maybe</span></code> into a <code class="codehilite"><span class="n">maybe</span></code> of a <code class="codehilite"><span class="k">result</span></code>.</p>
 <p><code class="codehilite"><span class="n">success</span><span class="p">(</span><span class="k">nothing</span><span class="p">)</span></code> will be mapped to <code class="codehilite"><span class="k">nothing</span></code>.
 <code class="codehilite"><span class="n">success</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="n">v</span><span class="p">))</span></code> and <code class="codehilite"><span class="n">failure</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></code> will be mapped to <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">success</span><span class="p">(</span><span class="n">v</span><span class="p">))</span></code> and <code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">failure</span><span class="p">(</span><span class="n">v</span><span class="p">))</span></code>.</p>
 <p><strong>Example</strong></p>

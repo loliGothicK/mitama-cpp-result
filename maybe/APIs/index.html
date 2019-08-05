@@ -1596,7 +1596,7 @@
 <span class="p">};</span>
 </pre></div>
 
-<p>Returns <code class="codehilite"><span class="k">true</span></code> if the maybe has same value.</p>
+<p>Returns <code class="codehilite"><span class="k">true</span></code> if the maybe has some value.</p>
 <p><strong>Example</strong></p>
 <div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
 <span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
@@ -1621,7 +1621,7 @@
 <span class="p">};</span>
 </pre></div>
 
-<p>Returns <code class="codehilite"><span class="k">true</span></code> if the maybe has not same value.</p>
+<p>Returns <code class="codehilite"><span class="k">true</span></code> if the <code class="codehilite"><span class="n">maybe</span></code> is a <code class="codehilite"><span class="k">nothing</span></code> value.</p>
 <p><strong>Example</strong></p>
 <div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
 <span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
@@ -1679,7 +1679,7 @@
 <span class="p">};</span>
 </pre></div>
 
-<p>Unwraps a maybe, yielding the content of an <code class="codehilite"><span class="n">just</span></code>.</p>
+<p>Unwraps a maybe, yielding the content of a <code class="codehilite"><span class="n">just</span></code>.</p>
 <p><strong>Exception</strong></p>
 <p>Raise <code class="codehilite"><span class="n">mitama</span><span class="p">::</span><span class="n">runtime_panic</span></code> if the value is a <code class="codehilite"><span class="k">nothing</span></code> with a custom panic message provided by <code class="codehilite"><span class="n">msg</span></code>.</p>
 <p><strong>Example</strong></p>
@@ -1718,7 +1718,7 @@
 <span class="p">};</span>
 </pre></div>
 
-<p>Unwraps a maybe, yielding the content of an <code class="codehilite"><span class="n">just</span></code>.</p>
+<p>Unwraps a maybe, yielding the content of a <code class="codehilite"><span class="n">just</span></code>.</p>
 <p><strong>Exception</strong></p>
 <p>Raise <code class="codehilite"><span class="n">mitama</span><span class="p">::</span><span class="n">runtime_panic</span></code> if a maybe has not <code class="codehilite"><span class="n">just</span></code> value.</p>
 <p><strong>Example</strong></p>
@@ -1854,7 +1854,7 @@
 <span class="p">};</span>
 </pre></div>
 
-<p>Maps an <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code> to <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span></code> by applying a function to a contained value.</p>
+<p>Maps a <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code> to <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span></code> by applying a function to a contained value.</p>
 <p><strong>Example</strong></p>
 <div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
 <span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
@@ -2128,7 +2128,7 @@
 <span class="p">};</span>
 </pre></div>
 
-<p>Returns <code class="codehilite"><span class="k">nothing</span></code> if the option is <code class="codehilite"><span class="k">nothing</span></code>, otherwise calls <code class="codehilite"><span class="n">f</span></code> with the wrapped value and returns the result.</p>
+<p>Returns <code class="codehilite"><span class="k">nothing</span></code> if the option is <code class="codehilite"><span class="k">nothing</span></code>, otherwise invokes <code class="codehilite"><span class="n">f</span></code> with the wrapped value and returns the result.</p>
 <p>Some languages call this operation flatmap.</p>
 <p><strong>Example</strong></p>
 <div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
@@ -2172,7 +2172,7 @@
 <span class="p">};</span>
 </pre></div>
 
-<p>Returns <code class="codehilite"><span class="k">nothing</span></code> if the option is <code class="codehilite"><span class="k">nothing</span></code>, otherwise calls predicate with the wrapped value and returns:</p>
+<p>Returns <code class="codehilite"><span class="k">nothing</span></code> if the option is <code class="codehilite"><span class="k">nothing</span></code>, otherwise invokes predicate with the wrapped value and returns:</p>
 <ul>
 <li><code class="codehilite"><span class="n">just</span><span class="p">(</span><span class="n">t</span><span class="p">)</span></code> if predicate returns true (where t is the wrapped value), and</li>
 <li><code class="codehilite"><span class="k">nothing</span></code> if predicate returns false.</li>
@@ -2265,7 +2265,7 @@
 <span class="p">};</span>
 </pre></div>
 
-<p>Returns the maybe if it contains a value, otherwise calls <code class="codehilite"><span class="n">f</span></code> and returns the result.</p>
+<p>Returns the maybe if it contains a value, otherwise invokes <code class="codehilite"><span class="n">f</span></code> and returns the result.</p>
 <p><strong>Example</strong></p>
 <div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
 <span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
@@ -2440,7 +2440,7 @@
 <span class="p">};</span>
 </pre></div>
 
-<p>Maps an <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&gt;</span></code> to an <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code> by deep copying the contents of the maybe.</p>
+<p>Maps a <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&gt;</span></code> to a <code class="codehilite"><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code> by deep copying the contents of the maybe.</p>
 <p><strong>Example</strong></p>
 <div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
 <span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
@@ -2491,7 +2491,7 @@
 </pre></div>
 
 <h2 id="transpose">transpose<a class="headerlink" href="#transpose" title="Permanent link">&para;</a></h2>
-<p><strong>maybe&lt;basic_result&lt;<em>, T, E&gt;&gt;::transpose() -&gt; basic_result&lt;</em>, maybe&lt;T&gt;, E&gt;</strong></p>
+<p><strong>maybe&lt;basic_result&lt;_, T, E&gt;&gt;::transpose() -&gt; basic_result&lt;_, maybe&lt;T&gt;, E&gt;</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
   <span class="n">maybe</span><span class="o">&lt;</span><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;&gt;::</span><span class="n">transpose</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span>
@@ -2670,7 +2670,7 @@
 </pre></div>
 
 <p>Peeks the contained value if self is <code class="codehilite"><span class="n">just</span></code>, then returns self.</p>
-<p>Invokes the provided function with the contained value and then return self (if any), or return self without doing anything (if not).</p>
+<p>Invokes the provided function with the contained value and then returns self (if any), or returns self without doing anything (if not).</p>
 <p><strong>Example</strong></p>
 <div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
 <span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
@@ -2714,7 +2714,7 @@
 <span class="p">};</span>
 </pre></div>
 
-<p>Invokes the provided function and then return self (if nothing), or return self without doing anything (if any).</p>
+<p>Invokes the provided function and then returns self (if nothing), or returns self without doing anything (if any).</p>
 <p><strong>Example</strong></p>
 <div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
 <span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
