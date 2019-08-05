@@ -309,6 +309,26 @@
     Prerequisites and installation
   </a>
   
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" title="Prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installation" title="Installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -846,8 +866,8 @@
 
 
   <li class="md-nav__item">
-    <a href="result/_APIs/" title="CHANGELOG" class="md-nav__link">
-      CHANGELOG
+    <a href="result/comparisons/" title="Comparisons" class="md-nav__link">
+      Comparisons
     </a>
   </li>
 
@@ -858,8 +878,8 @@
 
 
   <li class="md-nav__item">
-    <a href="result/comparisons/" title="" class="md-nav__link">
-      
+    <a href="result/_APIs/" title="CHANGELOG" class="md-nav__link">
+      CHANGELOG
     </a>
   </li>
 
@@ -1170,6 +1190,26 @@
     Prerequisites and installation
   </a>
   
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" title="Prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installation" title="Installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1199,6 +1239,7 @@
                 <h1 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h1>
 <p><code class="codehilite"><span class="n">Mitama</span><span class="p">.</span><span class="k">Result</span></code> is a header only C++17 library for error handling.</p>
 <h2 id="prerequisites_and_installation">Prerequisites and installation<a class="headerlink" href="#prerequisites_and_installation" title="Permanent link">&para;</a></h2>
+<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -1221,7 +1262,7 @@
 </tr>
 </tbody>
 </table>
-<p>More specifically, Mitama.result requires a compiler/standard library supporting the following C++17 features:</p>
+<p>More specifically, <code class="codehilite"><span class="n">Mitama</span><span class="p">.</span><span class="k">Result</span></code> requires a compiler/standard library supporting the following C++17 features:</p>
 <ul>
 <li>constexpr if</li>
 <li>constexpr lambda</li>
@@ -1233,10 +1274,20 @@
 <li><code class="codehilite"><span class="n">std</span><span class="p">::</span><span class="n">string_view</span></code> from the <code class="codehilite"><span class="o">&lt;</span><span class="n">string_view</span><span class="o">&gt;</span></code> header</li>
 <li><code class="codehilite"><span class="n">std</span><span class="p">::</span><span class="n">monostate</span></code> from the <code class="codehilite"><span class="o">&lt;</span><span class="n">variant</span><span class="o">&gt;</span></code> header</li>
 </ul>
-<p>Mitama.result requires a Boost supporting the following libraries:</p>
+<p>And requires a Boost supporting the following libraries:</p>
 <ul>
 <li><code class="codehilite"><span class="n">boost</span><span class="p">::</span><span class="n">format</span></code> from the <code class="codehilite"><span class="o">&lt;</span><span class="n">boost</span><span class="o">/</span><span class="n">format</span><span class="p">.</span><span class="n">hpp</span><span class="o">&gt;</span></code> header</li>
 <li><code class="codehilite"><span class="n">boost</span><span class="p">::</span><span class="n">hana</span><span class="p">::</span><span class="err">{</span><span class="n">fix</span><span class="p">,</span> <span class="n">overload</span><span class="p">,</span> <span class="n">overload_linearly</span><span class="err">}</span></code> from the <code class="codehilite"><span class="o">&lt;</span><span class="n">boost</span><span class="o">/</span><span class="n">hana</span><span class="o">/</span><span class="n">functional</span><span class="o">/</span><span class="err">{</span><span class="n">fix</span><span class="p">,</span> <span class="n">overload</span><span class="p">,</span> <span class="n">overload_linearly</span><span class="err">}</span><span class="p">.</span><span class="n">hpp</span><span class="o">&gt;</span></code> header</li>
+</ul>
+<h3 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h3>
+<ul>
+<li>First, cloning mitama-cpp-result repository.</li>
+</ul>
+<div class="codehilite"><pre><span></span>$ git clone https://github.com/LoliGothick/mitama-cpp-result.git
+</pre></div>
+
+<ul>
+<li>Second, add <code class="codehilite"><span class="nv">path</span><span class="o">/</span><span class="nv">to</span><span class="o">/</span><span class="nv">mitama</span><span class="o">-</span><span class="nv">cpp</span><span class="o">/</span><span class="k">include</span></code> to include path.</li>
 </ul>
 <h2 id="basic_usage">Basic Usage<a class="headerlink" href="#basic_usage" title="Permanent link">&para;</a></h2>
 <p>Here is a bad code.</p>
@@ -1267,13 +1318,10 @@
   <span class="k">return</span> <span class="n">mitama</span><span class="o">::</span><span class="n">success</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
 <span class="p">}</span>
 <span class="c1">// ...</span>
-<span class="kt">int</span> <span class="n">value</span> <span class="nf">func</span><span class="p">(</span><span class="mi">42</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span>
-<span class="c1">// even if fail to unwrap,</span>
-<span class="c1">// raise an exception</span>
-<span class="c1">// and you get reason for the error.</span>
+<span class="kt">int</span> <span class="n">value</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="mi">42</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span>
 </pre></div>
 
-<p>Even if this program fails to assert, you can get the reason for the error.</p>
+<p>Even if this program fail to assert, you can get the reason for the error.</p>
                 
                   
                 
