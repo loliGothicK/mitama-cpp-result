@@ -65,21 +65,11 @@ namespace mitama {
 /// @param E: Type of unsuccessful value
 template <mutability _mutability, class T, class E>
 class [[nodiscard]] basic_result<_mutability, T, E,
-  /* bounded types requirements (see the document below) */
-  /* https://www.boost.org/doc/libs/1_64_0/doc/html/variant/reference.html#variant.concepts */
   trait::where<
-    std::disjunction<
-      std::conjunction<
-        std::is_copy_constructible<meta::remove_cvr_t<T>>, 
-        std::is_copy_constructible<meta::remove_cvr_t<E>>
-      >,
-      std::conjunction<
-        std::is_move_constructible<meta::remove_cvr_t<T>>, 
-        std::is_move_constructible<meta::remove_cvr_t<E>>
-      >
-    >,
-    std::is_nothrow_destructible<meta::remove_cvr_t<T>>,
-    std::is_nothrow_destructible<meta::remove_cvr_t<E>>
+    std::is_object<meta::remove_cvr_t<T>>,
+    std::is_object<meta::remove_cvr_t<E>>,
+    std::negation<std::is_array<meta::remove_cvr_t<T>>>,
+    std::negation<std::is_array<meta::remove_cvr_t<E>>>
   >>
   : /* method injection selectors */ 
   public unwrap_or_default_friend_injector<basic_result<_mutability, T, E>>,
@@ -98,7 +88,7 @@ class [[nodiscard]] basic_result<_mutability, T, E,
   template <mutability _mut, class T_, class E_>
   using not_self = std::negation<std::is_same<basic_result, basic_result<_mut, T_, E_>>>;
 public:
-  /// type fields
+  /// associated types
   using ok_type = T;
   using err_type = E;
   using ok_reference_type = std::remove_reference_t<T>&;
@@ -382,10 +372,10 @@ public:
   constexpr bool operator !() const noexcept { return std::holds_alternative<failure<E>>(storage_); }
 
   /// @brief
-  ///   Converts from basic_result to `boost::optional<const T>`.
+  ///   Converts from basic_result to `maybe<const T>`.
   ///
   /// @note
-  ///   Converts self into a `boost::optional<const T>`, and discarding the failure, if any.
+  ///   Converts self into a `maybe<const T>`, and discarding the failure, if any.
   constexpr
   maybe<std::remove_reference_t<ok_type>>
   ok() const&  noexcept {
@@ -398,10 +388,10 @@ public:
   }
 
   /// @brief
-  ///   Converts from basic_result to `boost::optional`.
+  ///   Converts from basic_result to `maybe`.
   ///
   /// @note
-  ///   Converts self into a `boost::optional<const E>`, and discarding the success, if any.
+  ///   Converts self into a `maybe<const E>`, and discarding the success, if any.
   constexpr
   maybe<std::remove_reference_t<err_type>>
   err() const&  noexcept {
