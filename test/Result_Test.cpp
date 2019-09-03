@@ -1,5 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
+#define MITAMA_PANIC_WITH_STACKTRACE
 #include <mitama/maybe/maybe.hpp>
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
@@ -291,9 +292,9 @@ TEST_CASE("unwrap() test", "[result][unwrap]"){
     sregex re =
         as_xpr(
             "runtime panicked at 'called `basic_result::unwrap()` on a value: `failure(\"emergency failure\")`', ") >>
-        *_ >> as_xpr(":") >> +range('0', '9');
+        *_ >> as_xpr(":") >> +range('0', '9') >> 	_n >> _n >> as_xpr("stacktrace:") >> +(_n | ~_n);
     smatch what;
-    std::cout << p.what() << std::endl;
+    std::cout << p.what() << "eos" << std::endl;
     REQUIRE(regex_match(std::string{p.what()}, what, re));
   }
 }
@@ -309,7 +310,7 @@ TEST_CASE("unwrap_err() test", "[result][unwrap_err]"){
     sregex re =
         as_xpr(
             R"(runtime panicked at 'called `basic_result::unwrap_err()` on a value: `success(2)`', )") >>
-        *_ >> as_xpr(":") >> +range('0', '9');
+        *_ >> as_xpr(":") >> +range('0', '9') >> 	_n >> _n >> as_xpr("stacktrace:") >> +(_n | ~_n);
     smatch what;
     REQUIRE(regex_match(std::string{p.what()}, what, re));
   }
