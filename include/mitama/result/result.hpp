@@ -1074,6 +1074,54 @@ public:
     return std::move(*this);
   }
 
+  template <class F>
+  auto map_anything_else(F&& f) &
+    noexcept(std::is_nothrow_invocable_v<F, E&> && std::is_nothrow_invocable_v<F, T&>)
+    -> std::enable_if_t<
+          std::conjunction_v<
+            std::is_invocable<F, T&>,
+            std::is_invocable<F, E&>,
+            std::is_convertible<std::invoke_result_t<F, T&>, std::invoke_result_t<F, E&>>,
+            std::is_convertible<std::invoke_result_t<F, E&>, std::invoke_result_t<F, T&>>
+          >,
+    std::common_type_t<std::invoke_result_t<F, T&>, std::invoke_result_t<F, E&>>>
+  {
+    auto decay_copy = [](auto&& some) -> std::remove_const_t<std::remove_reference_t<decltype(some)>> { return std::forward<decltype(some)>(some); };
+    return this->map_or_else(decay_copy(std::forward<F>(f)), decay_copy(std::forward<F>(f)));
+  }
+
+  template <class F>
+  auto map_anything_else(F&& f) const&
+    noexcept(std::is_nothrow_invocable_v<F, E const&> && std::is_nothrow_invocable_v<F, T const&>)
+    -> std::enable_if_t<
+          std::conjunction_v<
+            std::is_invocable<F, T const&>,
+            std::is_invocable<F, E const&>,
+            std::is_convertible<std::invoke_result_t<F, T const&>, std::invoke_result_t<F, E const&>>,
+            std::is_convertible<std::invoke_result_t<F, E const&>, std::invoke_result_t<F, T const&>>
+          >,
+    std::common_type_t<std::invoke_result_t<F, T const&>, std::invoke_result_t<F, E const&>>>
+  {
+    auto decay_copy = [](auto&& some) -> std::remove_const_t<std::remove_reference_t<decltype(some)>> { return std::forward<decltype(some)>(some); };
+    return this->map_or_else(decay_copy(std::forward<F>(f)), decay_copy(std::forward<F>(f)));
+  }
+
+  template <class F>
+  auto map_anything_else(F&& f) &&
+    noexcept(std::is_nothrow_invocable_v<F, E&&> && std::is_nothrow_invocable_v<F, T&&>)
+    -> std::enable_if_t<
+          std::conjunction_v<
+            std::is_invocable<F, T&&>,
+            std::is_invocable<F, E&&>,
+            std::is_convertible<std::invoke_result_t<F, T&&>, std::invoke_result_t<F, E&&>>,
+            std::is_convertible<std::invoke_result_t<F, E&&>, std::invoke_result_t<F, T&&>>
+          >,
+    std::common_type_t<std::invoke_result_t<F, T&&>, std::invoke_result_t<F, E&&>>>
+  {
+    auto decay_copy = [](auto&& some) -> std::remove_const_t<std::remove_reference_t<decltype(some)>> { return std::forward<decltype(some)>(some); };
+    return std::move(*this).map_or_else(decay_copy(std::forward<F>(f)), decay_copy(std::forward<F>(f)));
+  }
+
   /// @brief
   ///   equal compare
   ///
