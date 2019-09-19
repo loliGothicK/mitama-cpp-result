@@ -371,7 +371,7 @@ TEST_CASE("or_finally() test", "[result][or_finally]"){
   });
   REQUIRE(hook == "default"s);
 
-  result<int, std::string> y = failure("error");
+  result<int, std::string> y = failure("error"s);
   y.or_finally([&hook](std::string v){
     hook = v;
   });

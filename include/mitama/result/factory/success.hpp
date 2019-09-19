@@ -3,7 +3,6 @@
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
-#include <mitama/result/traits/perfect_traits_special_members.hpp>
 #include <boost/hana/functional/fix.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
@@ -18,18 +17,10 @@ namespace mitama {
 /// The main use of this class is to propagate successful results to the constructor of the result class.
 template <class T>
 class [[nodiscard]] success
-    : private ::mitamagic::perfect_trait_copy_move<
-          std::is_copy_constructible_v<std::decay_t<T>>,
-          std::conjunction_v<std::is_copy_constructible<std::decay_t<T>>, std::is_copy_assignable<std::decay_t<T>>>,
-          std::is_move_constructible_v<std::decay_t<T>>,
-          std::conjunction_v<std::is_move_constructible<std::decay_t<T>>, std::is_move_assignable<std::decay_t<T>>>,
-          success<T>>
 {
   template <class>
   friend class success;
   T x;
-  template <mutability, class, class, class>
-  friend class basic_result;
 
   template <class... Requires>
   using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
@@ -242,6 +233,193 @@ public:
     return true;
   }
 
+  T& get() & { return x; }
+  T const& get() const& { return x; }
+  T&& get() && { return std::move(x); }
+
+};
+
+template <class T>
+class [[nodiscard]] success<T&>
+{
+  template <class>
+  friend class success;
+  std::reference_wrapper<T> x;
+
+  template <class... Requires>
+  using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
+
+  static constexpr std::nullptr_t required = nullptr;
+
+  template <class U>
+  using not_self = std::negation<std::is_same<success, U>>;
+public:
+  using ok_type = T&;
+
+  success() = delete;
+  explicit constexpr success(T& ok) : x(ok) {}
+  explicit constexpr success(std::in_place_t, T& ok) : x(ok) {}
+  explicit constexpr success(success &&) = default;
+  explicit constexpr success(success const&) = default;
+  constexpr success& operator=(success &&) = default;
+  constexpr success& operator=(success const&) = default;
+
+  template <mutability _mut, class T_, class E_>
+  constexpr
+  std::enable_if_t<
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator==(basic_result<_mut, T_, E_> const& rhs) const {
+    return rhs.is_ok() ? rhs.unwrap() == this->x : false;
+  }
+
+  template <class T_>
+  constexpr
+  std::enable_if_t<
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator==(success<T_> const& rhs) const {
+    return this->x == rhs.x;
+  }
+
+  template <class E_>
+  constexpr bool
+  operator==(failure<E_> const&) const {
+    return false;
+  }
+
+  template <mutability _mut, class T_, class E_>
+  constexpr
+  std::enable_if_t<
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator!=(basic_result<_mut, T_, E_> const& rhs) const {
+    return rhs.is_ok() ? !(rhs.unwrap() == this->x) : true;
+  }
+
+  template <class T_>
+  constexpr
+  std::enable_if_t<
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator!=(success<T_> const& rhs) const {
+    return !(this->x == rhs.x);
+  }
+
+  template <class E_>
+  constexpr bool
+  operator!=(failure<E_> const&) const {
+    return true;
+  }
+
+  template <mutability _mut, class T_, class E_>
+  constexpr
+  std::enable_if_t<
+    is_less_comparable_with<T, T_>::value,
+  bool>
+  operator<(basic_result<_mut, T_, E_> const& rhs) const {
+    return rhs.is_ok() ? this->x < rhs.unwrap() : false;
+  }
+
+  template <class T_>
+  constexpr
+  std::enable_if_t<
+    is_less_comparable_with<T, T_>::value,
+  bool>
+  operator<(success<T_> const& rhs) const {
+    return this->x < rhs.x;
+  }
+
+  template <class E_>
+  constexpr bool
+  operator<(failure<E_> const&) const {
+    return false;
+  }
+
+  template <mutability _mut, class T_, class E_>
+  constexpr
+  std::enable_if_t<
+    is_comparable_with<T, T_>::value &&
+    is_less_comparable_with<T, T_>::value,
+  bool>
+  operator<=(basic_result<_mut, T_, E_> const& rhs) const
+  {
+    return rhs.is_ok() ? (this->x == rhs.unwrap()) || (this->x < rhs.unwrap()) : false;
+  }
+
+  template <class T_>
+  constexpr
+  std::enable_if_t<
+    is_comparable_with<T, T_>::value &&
+    is_less_comparable_with<T, T_>::value,
+  bool>
+  operator<=(success<T_> const& rhs) const {
+    return (this->x == rhs.x) || (this->x < rhs.x);
+  }
+
+  template <class E_>
+  constexpr bool
+  operator<=(failure<E_> const&) const {
+    return false;
+  }
+
+  template <mutability _mut, class T_, class E_>
+  constexpr
+  std::enable_if_t<
+    is_less_comparable_with<T_, T>::value,
+  bool>
+  operator>(basic_result<_mut, T_, E_> const& rhs) const
+  {
+    return rhs.is_ok() ? rhs.unwrap() < this->x : true;
+  }
+
+  template <class T_>
+  constexpr
+  std::enable_if_t<
+    is_less_comparable_with<T_, T>::value,
+  bool>
+  operator>(success<T_> const& rhs) const {
+    return rhs < *this;
+  }
+
+  template <class E_>
+  constexpr bool
+  operator>(failure<E_> const&) const {
+    return true;
+  }
+
+  template <mutability _mut, class T_, class E_>
+  constexpr
+  std::enable_if_t<
+    is_comparable_with<T_, T>::value &&
+    is_less_comparable_with<T_, T>::value,
+  bool>
+  operator>=(basic_result<_mut, T_, E_> const& rhs) const
+  {
+    return rhs.is_ok() ? (rhs.unwrap() == this->x) || (rhs.is_ok() < this->x) : true;
+  }
+
+  template <class T_>
+  constexpr
+  std::enable_if_t<
+    is_comparable_with<T, T_>::value,
+  bool>
+  operator>=(success<T_> const& rhs) const {
+    return rhs <= *this;
+  }
+
+  template <class E_>
+  constexpr bool
+  operator>=(failure<E_> const&) const {
+    return true;
+  }
+
+  T& get() & { return x; }
+  T const& get() const& { return x; }
+  T&& get() && { return std::move(x); }
+
+};
+
   /// @brief
   ///   ostream output operator
   ///
@@ -251,12 +429,9 @@ public:
   ///
   /// @note
   ///   Output its contained value with pretty format, and is used by `operator<<` found by ADL.
-  friend
-  std::ostream& operator<<(std::ostream& os, success const& fail) {
-    static_assert(trait::formattable<T>::value,
-        "Error: trait `formattable<T>` was not satisfied.\n"
-        "Hint: Did you forgot some include?\n"
-        "Otherwise, please define `operator<<(std::ostream&, T)`.");
+  template <class T>
+  inline std::enable_if_t<trait::formattable<T>::value, std::ostream&>
+  operator<<(std::ostream& os, success<T> const& ok) {
     using namespace std::literals::string_literals;
     auto inner_format = boost::hana::fix(boost::hana::overload_linearly(
         [](auto, auto const& x) -> std::enable_if_t<trait::formattable_element<std::decay_t<decltype(x)>>::value, std::string> {
@@ -297,10 +472,9 @@ public:
               }, x);
           }
         }));
-    return os << boost::format("success(%1%)") % inner_format( fail.x );
+    return os << boost::format("success(%1%)") % inner_format( ok.get() );
   }
 
-};
 }
 
 #endif
