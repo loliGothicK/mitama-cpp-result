@@ -55,28 +55,28 @@ public:
                   std::is_constructible<T, const U &>,
                   std::is_convertible<const U &, T>> = required>
   constexpr success(const success<U> &t) noexcept(std::is_nothrow_constructible_v<T, U>)
-      : x(t.x) {}
+      : x(t.get()) {}
 
   template <typename U,
             where<std::negation<std::is_same<T, U>>,
                   std::is_constructible<T, const U &>,
                   std::negation<std::is_convertible<const U &, T>>> = required>
   explicit constexpr success(const success<U> &t) noexcept(std::is_nothrow_constructible_v<T, U>)
-      : x(t.x) {}
+      : x(t.get()) {}
 
   template <typename U,
             where<std::negation<std::is_same<T, U>>,
                   std::is_constructible<T, U&&>,
                   std::is_convertible<U&&, T>> = required>
   constexpr success(success<U> && t) noexcept(std::is_nothrow_constructible_v<T, U>)
-      : x(std::move(t.x)) {}
+      : x(std::move(t.get())) {}
 
   template <typename U,
             where<std::negation<std::is_same<T, U>>,
                   std::is_constructible<T, U&&>,
                   std::negation<std::is_convertible<U&&, T>>> = required>
   explicit constexpr success(success<U> && t) noexcept(std::is_nothrow_constructible_v<T, U>)
-      : x(std::move(t.x)) {}
+      : x(std::move(t.get())) {}
 
   template <class... Args,
             where<std::is_constructible<T, Args...>> = required>

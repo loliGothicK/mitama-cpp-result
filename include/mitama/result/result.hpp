@@ -492,6 +492,35 @@ public:
   /// @note
   ///   This function can be used to unpack a successful result while handling an error.
   template <class Map, class Fallback>
+  constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) &
+    noexcept(std::is_nothrow_invocable_v<Fallback, E> && std::is_nothrow_invocable_v<Map, T>)
+    -> std::enable_if_t<
+          std::conjunction_v<
+            std::is_invocable<Map, T&>,
+            std::is_invocable<Fallback, E&>,
+            std::is_convertible<std::invoke_result_t<Map, T&>, std::invoke_result_t<Fallback, E&>>,
+            std::is_convertible<std::invoke_result_t<Fallback, E&>, std::invoke_result_t<Map, T&>>
+          >,
+    std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>>
+  {
+    using result_type = std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
+    return is_ok()
+               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), std::get<success<T>>(storage_).get()))
+               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), std::get<failure<E>>(storage_).get()));
+  }
+
+  /// @brief
+  ///   Maps a basic_result<T, E> to U by applying a function to a contained success value,
+  ///   or a fallback function to a contained failure value.
+  ///
+  /// @requires
+  ///   { std::invoke(_fallback, unwrap_err()) };
+  ///   { std::invoke(_map, unwrap()) };
+  ///   Common< decltype(std::invoke(_fallback, unwrap_err())), decltype(std::invoke(_map, unwrap())) >;
+  ///
+  /// @note
+  ///   This function can be used to unpack a successful result while handling an error.
+  template <class Map, class Fallback>
   constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) const&
     noexcept(std::is_nothrow_invocable_v<Fallback, E> && std::is_nothrow_invocable_v<Map, T>)
     -> std::enable_if_t<
