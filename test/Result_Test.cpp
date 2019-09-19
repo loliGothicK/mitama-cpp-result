@@ -164,6 +164,16 @@ TEST_CASE("map_or_else(F, M) test", "[result][map_or_else]"){
   }
 }
 
+TEST_CASE("map_anything_else(F) test", "[result][map_anything_else]"){
+  {
+    result<str, str> x = success("foo"s);
+    REQUIRE(x.map_anything_else([](auto v) { return v.length(); }) == 3);
+  }
+  {
+    result<str, str> x = failure("bar"s);
+    REQUIRE(x.map_anything_else([](auto v) { return v.length(); }) == 3);
+  }
+}
 
 TEST_CASE("map_err() test", "[result][map_err]"){
   auto stringify = [](u32 x) -> str {
