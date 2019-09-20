@@ -812,9 +812,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#result_of_reference_types" title="Result of reference types" class="md-nav__link">
-    Result of reference types
+  <a href="#result_with_reference_types" title="Result with reference types" class="md-nav__link">
+    Result with reference types
   </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using_reference_type_for_result" title="Using reference type for result" class="md-nav__link">
+    Using reference type for result
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using_reference_of_imcomplete_type" title="Using reference of imcomplete type" class="md-nav__link">
+    Using reference of imcomplete type
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1219,9 +1239,29 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#result_of_reference_types" title="Result of reference types" class="md-nav__link">
-    Result of reference types
+  <a href="#result_with_reference_types" title="Result with reference types" class="md-nav__link">
+    Result with reference types
   </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using_reference_type_for_result" title="Using reference type for result" class="md-nav__link">
+    Using reference type for result
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using_reference_of_imcomplete_type" title="Using reference of imcomplete type" class="md-nav__link">
+    Using reference of imcomplete type
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1289,8 +1329,52 @@ Therefore, <code class="codehilite"><span class="n">T</span></code> and <code cl
 <div class="codehilite"><pre><span></span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">res</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;error&quot;</span><span class="n">s</span><span class="p">);</span>
 </pre></div>
 
-<h2 id="result_of_reference_types">Result of reference types<a class="headerlink" href="#result_of_reference_types" title="Permanent link">&para;</a></h2>
-<p>(In Progress...)</p>
+<h2 id="result_with_reference_types">Result with reference types<a class="headerlink" href="#result_with_reference_types" title="Permanent link">&para;</a></h2>
+<h3 id="using_reference_type_for_result">Using reference type for result<a class="headerlink" href="#using_reference_type_for_result" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">mut_result</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;&gt;</span> <span class="n">res</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+    <span class="n">res</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="c1">// get reference to `i`, and assign `2`.</span>
+
+    <span class="n">assert</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">2</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</pre></div>
+
+<h3 id="using_reference_of_imcomplete_type">Using reference of imcomplete type<a class="headerlink" href="#using_reference_of_imcomplete_type" title="Permanent link">&para;</a></h3>
+<div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;type_traits&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+
+<span class="k">struct</span> <span class="n">incomplete_type</span><span class="p">;</span>
+<span class="n">incomplete_type</span><span class="o">&amp;</span> <span class="n">get_incomplete_type</span><span class="p">();</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="n">class</span><span class="o">=</span><span class="kt">void</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="nl">is_complete_type</span><span class="p">:</span> <span class="n">std</span><span class="o">::</span><span class="n">false_type</span> <span class="p">{};</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> <span class="k">struct</span> <span class="n">is_complete_type</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">void_t</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">))</span><span class="o">&gt;&gt;:</span> <span class="n">std</span><span class="o">::</span><span class="n">true_type</span> <span class="p">{};</span>
+
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">static_assert</span><span class="p">(</span><span class="o">!</span><span class="n">is_complete_type</span><span class="o">&lt;</span><span class="n">incomplete_type</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">);</span>
+  <span class="p">[[</span><span class="n">maybe_unused</span><span class="p">]]</span>
+  <span class="n">result</span><span class="o">&lt;</span><span class="n">incomplete_type</span><span class="o">&amp;&gt;</span> <span class="n">res</span> <span class="o">=</span> <span class="n">success</span><span class="o">&lt;</span><span class="n">incomplete_type</span><span class="o">&amp;&gt;</span><span class="p">(</span><span class="n">get_incomplete_type</span><span class="p">());</span> <span class="c1">// use incomplete_type&amp; for result</span>
+<span class="p">}</span>
+
+<span class="k">struct</span> <span class="n">incomplete_type</span> <span class="p">{};</span>
+
+<span class="n">incomplete_type</span><span class="o">&amp;</span> <span class="n">get_incomplete_type</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">static</span> <span class="n">incomplete_type</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">incomplete_type</span><span class="p">{};</span>
+  <span class="k">return</span> <span class="n">obj</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</pre></div>
                 
                   
                 
