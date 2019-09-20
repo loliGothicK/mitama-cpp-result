@@ -418,6 +418,21 @@ TEST_CASE("or_peek() test", "[maybe][and_peek]"){
   REQUIRE(hook == 57);
 }
 
+struct base {
+  virtual ~base() = default;
+  virtual std::string test() { return "base"; }
+};
+
+struct derived final: base {
+  virtual std::string test() override { return "derived"; }
+};
+
+TEST_CASE("reference of abstract", "[maybe][abstract]"){
+  derived _derived = {}; 
+  maybe<base&> x = just(_derived);
+  REQUIRE(x->test() == "derived"s);
+}
+
 TEST_CASE("less compare", "[maybe][less]"){
   maybe<int> just1 = just(1);
   maybe<int> just2 = just(2);
