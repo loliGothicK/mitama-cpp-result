@@ -260,25 +260,25 @@ class maybe
             std::is_constructible_v<T, U const&>,
         bool> = false>
     maybe(just_t<U> const& j)
-        : storage_(std::in_place_type<just_t<T>>, std::in_place, j.x) {}
+        : storage_(std::in_place_type<just_t<T>>, std::in_place, j.get()) {}
 
     template <class U,
         std::enable_if_t<
             std::is_constructible_v<T, U&&>,
         bool> = false>
     maybe(just_t<U>&& j)
-        : storage_(std::in_place_type<just_t<T>>, std::in_place, std::move(j).x) {}
+        : storage_(std::in_place_type<just_t<T>>, std::in_place, std::move(j).get()) {}
 
     explicit operator bool() const {
         return is_just();
     }
 
     T& operator->() & {
-        return std::get<just_t<T>>(storage_).x;
+        return std::get<just_t<T>>(storage_).get();
     }
 
     T const& operator->() const& {
-        return std::get<just_t<T>>(storage_).x;
+        return std::get<just_t<T>>(storage_).get();
     }
 
     bool is_just() const {
@@ -292,19 +292,20 @@ class maybe
     T& unwrap() & {
         if (is_nothing())
             PANIC("called `maybe::unwrap()` on a `nothing` value");
-        return std::get<just_t<T>>(storage_).x;
+        return std::get<just_t<T>>(storage_).get();
     }
 
-    T const& unwrap() const& {
+    std::add_const_t<std::remove_reference_t<T>>&
+    unwrap() const& {
         if (is_nothing())
             PANIC("called `maybe::unwrap()` on a `nothing` value");
-        return std::get<just_t<T>>(storage_).x;
+        return std::get<just_t<T>>(storage_).get();
     }
 
     T&& unwrap() && {
         if (is_nothing())
             PANIC("called `maybe::unwrap()` on a `nothing` value");
-        return std::move(std::get<just_t<T>>(storage_).x);
+        return std::move(std::get<just_t<T>>(storage_).get());
     }
 
     auto as_ref() & {

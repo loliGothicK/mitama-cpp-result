@@ -414,9 +414,9 @@ public:
     return true;
   }
 
-  T& get() & { return x; }
-  T const& get() const& { return x; }
-  T&& get() && { return std::move(x); }
+  T& get() & { return x.get(); }
+  T const& get() const& { return x.get(); }
+  T&& get() && { return std::move(x.get()); }
 
 };
 

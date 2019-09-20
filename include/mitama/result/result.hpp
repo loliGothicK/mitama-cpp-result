@@ -2,7 +2,6 @@
 #define MITAMA_RESULT_HPP
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
-#include <mitama/result/traits/perfect_traits_special_members.hpp>
 #include <mitama/panic.hpp>
 #include <mitama/result/factory/success.hpp>
 #include <mitama/result/factory/failure.hpp>

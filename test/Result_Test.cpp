@@ -639,6 +639,24 @@ SCENARIO("test for dangling indirect", "[result][indirect][dangling]"){
   }
 }
 
+struct incomplete_type;
+incomplete_type& get_incomplete_type();
+template <class T, class=void> struct is_complete_type: std::false_type {};
+template <class T> struct is_complete_type<T, std::void_t<decltype(sizeof(T))>>: std::true_type {};
+
+TEST_CASE("incomplete type reference", "[result]") {
+  static_assert(!is_complete_type<incomplete_type>::value);
+  [[maybe_unused]]
+  result<incomplete_type&> res = success<incomplete_type&>(get_incomplete_type()); // use incomplete_type& for result
+}
+
+struct incomplete_type {};
+
+incomplete_type& get_incomplete_type() {
+  static incomplete_type obj = incomplete_type{};
+  return obj;
+}
+
 TEST_CASE("less compare", "[result][less]"){
   result<int, int> ok1 = success(1);
   result<int, int> ok2 = success(2);
