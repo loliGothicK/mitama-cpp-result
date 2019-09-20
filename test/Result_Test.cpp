@@ -371,7 +371,7 @@ TEST_CASE("or_finally() test", "[result][or_finally]"){
   });
   REQUIRE(hook == "default"s);
 
-  result<int, std::string> y = failure("error");
+  result<int, std::string> y = failure("error"s);
   y.or_finally([&hook](std::string v){
     hook = v;
   });
@@ -637,6 +637,24 @@ SCENARIO("test for dangling indirect", "[result][indirect][dangling]"){
     REQUIRE( indirect.unwrap().transmute() == 1 );
     //       ^~~~~~~~~~~~~~~~~~~~~~~~~~ OK! 
   }
+}
+
+struct incomplete_type;
+incomplete_type& get_incomplete_type();
+template <class T, class=void> struct is_complete_type: std::false_type {};
+template <class T> struct is_complete_type<T, std::void_t<decltype(sizeof(T))>>: std::true_type {};
+
+TEST_CASE("incomplete type reference", "[result]") {
+  static_assert(!is_complete_type<incomplete_type>::value);
+  [[maybe_unused]]
+  result<incomplete_type&> res = success<incomplete_type&>(get_incomplete_type()); // use incomplete_type& for result
+}
+
+struct incomplete_type {};
+
+incomplete_type& get_incomplete_type() {
+  static incomplete_type obj = incomplete_type{};
+  return obj;
 }
 
 TEST_CASE("less compare", "[result][less]"){
