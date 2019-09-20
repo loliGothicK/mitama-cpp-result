@@ -1,5 +1,6 @@
 #ifndef MITAMA_MAYBE_FACTORY_JUST_HPP
 #define MITAMA_MAYBE_FACTORY_JUST_HPP
+#include <mitama/mitamagic/is_interface_of.hpp>
 #include <mitama/maybe/fwd/maybe_fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
@@ -373,6 +374,12 @@ public:
 
     explicit constexpr just_t(T& ref) : x(ref) {}
     explicit constexpr just_t(std::in_place_t, T& ref) : x(ref) {}
+
+    template <class Derived, std::enable_if_t<mitamagic::is_interface_of_v<std::decay_t<T>, std::decay_t<Derived>>, bool> = false>
+    explicit constexpr just_t(Derived& derived) : x(derived) {}
+    template <class Derived, std::enable_if_t<mitamagic::is_interface_of_v<std::decay_t<T>, std::decay_t<Derived>>, bool> = false>
+    explicit constexpr just_t(std::in_place_t, Derived& derived) : x(derived) {}
+
     explicit constexpr just_t(just_t &&) = default;
     explicit constexpr just_t(just_t const&) = default;
     constexpr just_t& operator=(just_t &&) = default;
@@ -612,7 +619,7 @@ public:
 
     T& get() & { return x.get(); }
     T const& get() const& { return x.get(); }
-    T&& get() && { return std::move(x.get()); }
+    T& get() && { return x.get(); }
 
 };
 

@@ -1,5 +1,6 @@
 #ifndef MITAMA_RESULT_FACTORY_FAILURE_HPP
 #define MITAMA_RESULT_FACTORY_FAILURE_HPP
+#include <mitama/mitamagic/is_interface_of.hpp>
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
@@ -264,6 +265,12 @@ public:
   failure() = delete;
   explicit constexpr failure(E& err) : x(err) {}
   explicit constexpr failure(std::in_place_t, E& err) : x(err) {}
+
+  template <class Derived, std::enable_if_t<mitamagic::is_interface_of_v<std::decay_t<E>, std::decay_t<Derived>>, bool> = false>
+  explicit constexpr failure(Derived& derived) : x(derived) {}
+  template <class Derived, std::enable_if_t<mitamagic::is_interface_of_v<std::decay_t<E>, std::decay_t<Derived>>, bool> = false>
+  explicit constexpr failure(std::in_place_t, Derived& derived) : x(derived) {}
+
   explicit constexpr failure(failure &&) = default;
   explicit constexpr failure(failure const&) = default;
   constexpr failure& operator=(failure &&) = default;
@@ -425,7 +432,7 @@ public:
 
   E& get() & { return x.get(); }
   E const& get() const& { return x.get(); }
-  E&& get() && { return std::move(x.get()); }
+  E& get() && { return x.get(); }
 
 };
 
