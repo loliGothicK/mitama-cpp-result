@@ -86,6 +86,11 @@
      <changefreq>daily</changefreq>
     </url>
     <url>
+     <loc></loc>
+     
+     <changefreq>daily</changefreq>
+    </url>
+    <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/ok_or/</loc>
      <lastmod>2019-09-20</lastmod>
      <changefreq>daily</changefreq>

@@ -13,7 +13,7 @@
         <meta name="description" content="Mitama.Result C++17 Library">
       
       
-        <link rel="canonical" href="https://loligothick.github.io/mitama-cpp-result/result/_APIs/conj/">
+        <link rel="canonical" href="https://loligothick.github.io/mitama-cpp-result/result/_APIs/map_anything_else/">
       
       
         <meta name="author" content="mitama">
@@ -42,7 +42,7 @@
     
     
       
-        <title>Mitama.Result | User Manual</title>
+        <title>Map anything else - Mitama.Result | User Manual</title>
       
     
     
@@ -117,7 +117,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                
+                Map anything else
               
             </span>
           
@@ -185,16 +185,14 @@
       
         
 
-  
-
-<nav class="md-tabs md-tabs--active" data-md-component="tabs">
+<nav class="md-tabs" data-md-component="tabs">
   <div class="md-tabs__inner md-grid">
     <ul class="md-tabs__list">
       
         
   <li class="md-tabs__item">
     
-      <a href="../../.." title="Home" class="md-tabs__link">
+      <a href="../../.." title="Home" class="md-tabs__link md-tabs__link--active">
         Home
       </a>
     
@@ -219,7 +217,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../../intro/" title="result" class="md-tabs__link md-tabs__link--active">
+        <a href="../../intro/" title="result" class="md-tabs__link">
           result
         </a>
       
@@ -742,12 +740,10 @@
       
       
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+  <li class="md-nav__item md-nav__item--nested">
     
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" checked>
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
     
     <label class="md-nav__link" for="nav-3">
       result
@@ -919,18 +915,11 @@
           
           
 
-  
 
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-    
-    <a href="./" title="" class="md-nav__link md-nav__link--active">
+  <li class="md-nav__item">
+    <a href="../conj/" title="" class="md-nav__link">
       
     </a>
-    
   </li>
 
         
@@ -1132,23 +1121,24 @@
               
                 
                 
-                  <h1>Mitama.Result | User Manual</h1>
+                  <h1>Map anything else</h1>
                 
-                <p><strong>basic_result&lt;<em>, T, E&gt;::conj(basic_result&lt;</em>, U, E&gt; res) -&gt; basic_result&lt;_, U, E&gt;</strong></p>
+                <p><strong>basic_result&lt;_, T, E&gt;::map_anything_else(Map _map) -&gt; U</strong><br />
+<strong>where</strong><br />
+<strong>Map: T -&gt; U,</strong>  </p>
+<p><strong>[since v7.8.0]</strong></p>
 <div class="codehilite"><pre><span></span><span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_mu</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">E</span><span class="o">&gt;</span>
 <span class="k">class</span> <span class="nc">basic_result</span> <span class="p">{</span>
-  <span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
-  <span class="k">constexpr</span> <span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="n">conj</span><span class="p">(</span><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="k">const</span> <span class="o">&amp;</span>
-    <span class="o">-&gt;</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">;</span>
-
-  <span class="k">template</span> <span class="o">&lt;</span><span class="n">mutability</span> <span class="n">_</span><span class="p">,</span> <span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
-  <span class="k">constexpr</span> <span class="k">auto</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;::</span><span class="k">operator</span><span class="o">&amp;&amp;</span><span class="p">(</span><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="k">const</span> <span class="o">&amp;</span> <span class="n">res</span><span class="p">)</span> <span class="k">const</span> <span class="o">&amp;</span>
-    <span class="o">-&gt;</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">;</span>
+  <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Map</span><span class="o">&gt;</span>
+  <span class="k">constexpr</span> <span class="k">auto</span> <span class="n">map_or_else</span><span class="p">(</span><span class="n">Map</span><span class="o">&amp;&amp;</span> <span class="n">_map</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span>
+    <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">Map</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">Fallback</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
 <span class="p">};</span>
 </pre></div>
 
-<p>Returns <code class="codehilite"><span class="n">res</span></code> if the result is <code class="codehilite"><span class="n">success</span></code>, otherwise returns the <code class="codehilite"><span class="n">failure</span></code> value of self.</p>
-<p><strong>Example</strong></p>
+<p>Maps a <code class="codehilite"><span class="k">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code> to <code class="codehilite"><span class="n">U</span></code> by applying a function <code class="codehilite"><span class="n">_map</span></code> to a contained either <code class="codehilite"><span class="n">success</span></code> or <code class="codehilite"><span class="n">failure</span></code> value.</p>
+<p>This function is syntax sugar for <code class="codehilite"><span class="n">res</span><span class="p">.</span><span class="n">map_or_else</span><span class="p">(</span><span class="n">_map</span><span class="p">,</span> <span class="n">_map</span><span class="p">)</span></code>.</p>
+<p><strong>Examples</strong></p>
+<p>Basic usage:</p>
 <div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
 <span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
@@ -1158,24 +1148,12 @@
 
 <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
   <span class="p">{</span>
-    <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-    <span class="n">result</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;late error&quot;</span><span class="n">s</span><span class="p">);</span>
-    <span class="n">assert</span><span class="p">((</span><span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;late error&quot;</span><span class="n">s</span><span class="p">));</span>
+    <span class="n">result</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">map_anything_else</span><span class="p">([](</span><span class="k">auto</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">v</span><span class="p">.</span><span class="n">length</span><span class="p">();</span> <span class="p">})</span> <span class="o">==</span> <span class="mi">3</span><span class="p">);</span>
   <span class="p">}</span>
   <span class="p">{</span>
-    <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;early error&quot;</span><span class="n">s</span><span class="p">);</span>
-    <span class="n">result</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">);</span>
-    <span class="n">assert</span><span class="p">((</span><span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;early error&quot;</span><span class="n">s</span><span class="p">));</span>
-  <span class="p">}</span>
-  <span class="p">{</span>
-    <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;not a 2&quot;</span><span class="n">s</span><span class="p">);</span>
-    <span class="n">result</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;late error&quot;</span><span class="n">s</span><span class="p">);</span>
-    <span class="n">assert</span><span class="p">((</span><span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;not a 2&quot;</span><span class="n">s</span><span class="p">));</span>
-  <span class="p">}</span>
-  <span class="p">{</span>
-    <span class="n">result</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
-    <span class="n">result</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="s">&quot;different result type&quot;</span><span class="n">s</span><span class="p">);</span>
-    <span class="n">assert</span><span class="p">((</span><span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">success</span><span class="p">(</span><span class="s">&quot;different result type&quot;</span><span class="n">s</span><span class="p">));</span>
+    <span class="n">result</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">map_anything_else</span><span class="p">([](</span><span class="k">auto</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">v</span><span class="p">.</span><span class="n">length</span><span class="p">();</span> <span class="p">})</span> <span class="o">==</span> <span class="mi">3</span><span class="p">);</span>
   <span class="p">}</span>
 <span class="p">}</span>
 <span class="c1">// end example</span>
@@ -1196,41 +1174,6 @@
       
         
 <footer class="md-footer">
-  
-    <div class="md-footer-nav">
-      <nav class="md-footer-nav__inner md-grid">
-        
-          <a href="../map_err/" title="" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
-            <div class="md-flex__cell md-flex__cell--shrink">
-              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
-            </div>
-            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-              <span class="md-flex__ellipsis">
-                <span class="md-footer-nav__direction">
-                  Previous
-                </span>
-                
-              </span>
-            </div>
-          </a>
-        
-        
-          <a href="../and_then/" title="" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
-            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-              <span class="md-flex__ellipsis">
-                <span class="md-footer-nav__direction">
-                  Next
-                </span>
-                
-              </span>
-            </div>
-            <div class="md-flex__cell md-flex__cell--shrink">
-              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
-            </div>
-          </a>
-        
-      </nav>
-    </div>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">

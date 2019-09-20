@@ -503,6 +503,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../../maybe/_APIs/map_anything_else.md" title="" class="md-nav__link">
+      
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../../maybe/_APIs/ok_or/" title="" class="md-nav__link">
       
     </a>
@@ -820,15 +832,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#using_reference_type_for_result" title="Using reference type for result" class="md-nav__link">
-    Using reference type for result
+  <a href="#using_reference_type" title="Using reference type" class="md-nav__link">
+    Using reference type
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#using_reference_of_imcomplete_type" title="Using reference of imcomplete type" class="md-nav__link">
-    Using reference of imcomplete type
+  <a href="#using_reference_of_imcomplete_type_since_v800" title="Using reference of imcomplete type [since v8.0.0]" class="md-nav__link">
+    Using reference of imcomplete type [since v8.0.0]
   </a>
   
 </li>
@@ -1247,15 +1259,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#using_reference_type_for_result" title="Using reference type for result" class="md-nav__link">
-    Using reference type for result
+  <a href="#using_reference_type" title="Using reference type" class="md-nav__link">
+    Using reference type
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#using_reference_of_imcomplete_type" title="Using reference of imcomplete type" class="md-nav__link">
-    Using reference of imcomplete type
+  <a href="#using_reference_of_imcomplete_type_since_v800" title="Using reference of imcomplete type [since v8.0.0]" class="md-nav__link">
+    Using reference of imcomplete type [since v8.0.0]
   </a>
   
 </li>
@@ -1301,15 +1313,11 @@
 </pre></div>
 
 <h2 id="concepts">Concepts<a class="headerlink" href="#concepts" title="Permanent link">&para;</a></h2>
-<p><code class="codehilite"><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code> is a class that holds either a success value type <code class="codehilite"><span class="n">T</span></code> or a failure value type <code class="codehilite"><span class="n">E</span></code>.
-<code class="codehilite"><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code> holds values like <code class="codehilite"><span class="n">boost</span><span class="p">::</span><span class="n">variant</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code>.
-Therefore, <code class="codehilite"><span class="n">T</span></code> and <code class="codehilite"><span class="n">E</span></code> must satisfy the following requirements for bounded types:</p>
+<p>Both of <code class="codehilite"><span class="n">T</span></code> and <code class="codehilite"><span class="n">E</span></code> must satisfy the following requirements:</p>
 <ul>
-<li>CopyConstructible or MoveConstructible.</li>
+<li>Complete type (if it is not reference type) or Reference Type (possibly incomplete type)</li>
 <li>Destructor upholds the no-throw exception-safety guarantee.</li>
-<li>Complete at the point of variant template instantiation.</li>
 </ul>
-<p>In more detail, see <a href="https://www.boost.org/doc/libs/1_70_0/doc/html/variant/reference.html#variant.concepts">the document</a>.</p>
 <h2 id="resultmut_result_the_alias_templates">result/mut_result the alias templates<a class="headerlink" href="#resultmut_result_the_alias_templates" title="Permanent link">&para;</a></h2>
 <p>First (non-type) template parameter of <code class="codehilite"><span class="n">basic_result</span></code> is a value of enum class <code class="codehilite"><span class="n">mutability</span></code> for mutability control.</p>
 <p>The library provides two type synonyms of <code class="codehilite"><span class="n">basic_result</span></code> as follows:</p>
@@ -1330,7 +1338,7 @@ Therefore, <code class="codehilite"><span class="n">T</span></code> and <code cl
 </pre></div>
 
 <h2 id="result_with_reference_types">Result with reference types<a class="headerlink" href="#result_with_reference_types" title="Permanent link">&para;</a></h2>
-<h3 id="using_reference_type_for_result">Using reference type for result<a class="headerlink" href="#using_reference_type_for_result" title="Permanent link">&para;</a></h3>
+<h3 id="using_reference_type">Using reference type<a class="headerlink" href="#using_reference_type" title="Permanent link">&para;</a></h3>
 <div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
 <span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
@@ -1347,7 +1355,7 @@ Therefore, <code class="codehilite"><span class="n">T</span></code> and <code cl
 <span class="c1">// end example</span>
 </pre></div>
 
-<h3 id="using_reference_of_imcomplete_type">Using reference of imcomplete type<a class="headerlink" href="#using_reference_of_imcomplete_type" title="Permanent link">&para;</a></h3>
+<h3 id="using_reference_of_imcomplete_type_since_v800">Using reference of imcomplete type [since v8.0.0]<a class="headerlink" href="#using_reference_of_imcomplete_type_since_v800" title="Permanent link">&para;</a></h3>
 <div class="codehilite"><pre><span></span><span class="c1">// begin example</span>
 <span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
