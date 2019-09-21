@@ -135,7 +135,7 @@ public:
   template <mutability _mut, class T_, class E_>
   constexpr
   std::enable_if_t<
-    is_less_comparable_with<T, T_>::value,
+    meta::is_less_comparable_with<T, T_>::value,
   bool>
   operator<(basic_result<_mut, T_, E_> const& rhs) const {
     return rhs.is_ok() ? this->x < rhs.unwrap() : false;
@@ -144,7 +144,7 @@ public:
   template <class T_>
   constexpr
   std::enable_if_t<
-    is_less_comparable_with<T, T_>::value,
+    meta::is_less_comparable_with<T, T_>::value,
   bool>
   operator<(success<T_> const& rhs) const {
     return this->x < rhs.x;
@@ -160,7 +160,7 @@ public:
   constexpr
   std::enable_if_t<
     meta::is_comparable_with<T, T_>::value &&
-    is_less_comparable_with<T, T_>::value,
+    meta::is_less_comparable_with<T, T_>::value,
   bool>
   operator<=(basic_result<_mut, T_, E_> const& rhs) const
   {
@@ -171,7 +171,7 @@ public:
   constexpr
   std::enable_if_t<
     meta::is_comparable_with<T, T_>::value &&
-    is_less_comparable_with<T, T_>::value,
+    meta::is_less_comparable_with<T, T_>::value,
   bool>
   operator<=(success<T_> const& rhs) const {
     return (this->x == rhs.x) || (this->x < rhs.x);
@@ -186,7 +186,7 @@ public:
   template <mutability _mut, class T_, class E_>
   constexpr
   std::enable_if_t<
-    is_less_comparable_with<T_, T>::value,
+    meta::is_less_comparable_with<T_, T>::value,
   bool>
   operator>(basic_result<_mut, T_, E_> const& rhs) const
   {
@@ -196,7 +196,7 @@ public:
   template <class T_>
   constexpr
   std::enable_if_t<
-    is_less_comparable_with<T_, T>::value,
+    meta::is_less_comparable_with<T_, T>::value,
   bool>
   operator>(success<T_> const& rhs) const {
     return rhs < *this;
@@ -212,7 +212,7 @@ public:
   constexpr
   std::enable_if_t<
     meta::is_comparable_with<T_, T>::value &&
-    is_less_comparable_with<T_, T>::value,
+    meta::is_less_comparable_with<T_, T>::value,
   bool>
   operator>=(basic_result<_mut, T_, E_> const& rhs) const
   {
@@ -322,7 +322,7 @@ public:
   template <mutability _mut, class T_, class E_>
   constexpr
   std::enable_if_t<
-    is_less_comparable_with<T, T_>::value,
+    meta::is_less_comparable_with<T, T_>::value,
   bool>
   operator<(basic_result<_mut, T_, E_> const& rhs) const {
     return rhs.is_ok() ? this->x < rhs.unwrap() : false;
@@ -331,7 +331,7 @@ public:
   template <class T_>
   constexpr
   std::enable_if_t<
-    is_less_comparable_with<T, T_>::value,
+    meta::is_less_comparable_with<T, T_>::value,
   bool>
   operator<(success<T_> const& rhs) const {
     return this->x < rhs.x;
@@ -347,7 +347,7 @@ public:
   constexpr
   std::enable_if_t<
     meta::is_comparable_with<T, T_>::value &&
-    is_less_comparable_with<T, T_>::value,
+    meta::is_less_comparable_with<T, T_>::value,
   bool>
   operator<=(basic_result<_mut, T_, E_> const& rhs) const
   {
@@ -358,7 +358,7 @@ public:
   constexpr
   std::enable_if_t<
     meta::is_comparable_with<T, T_>::value &&
-    is_less_comparable_with<T, T_>::value,
+    meta::is_less_comparable_with<T, T_>::value,
   bool>
   operator<=(success<T_> const& rhs) const {
     return (this->x == rhs.x) || (this->x < rhs.x);
@@ -373,7 +373,7 @@ public:
   template <mutability _mut, class T_, class E_>
   constexpr
   std::enable_if_t<
-    is_less_comparable_with<T_, T>::value,
+    meta::is_less_comparable_with<T_, T>::value,
   bool>
   operator>(basic_result<_mut, T_, E_> const& rhs) const
   {
@@ -383,7 +383,7 @@ public:
   template <class T_>
   constexpr
   std::enable_if_t<
-    is_less_comparable_with<T_, T>::value,
+    meta::is_less_comparable_with<T_, T>::value,
   bool>
   operator>(success<T_> const& rhs) const {
     return rhs < *this;
@@ -399,7 +399,7 @@ public:
   constexpr
   std::enable_if_t<
     meta::is_comparable_with<T_, T>::value &&
-    is_less_comparable_with<T_, T>::value,
+    meta::is_less_comparable_with<T_, T>::value,
   bool>
   operator>=(basic_result<_mut, T_, E_> const& rhs) const
   {
