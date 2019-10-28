@@ -720,10 +720,17 @@ class maybe
     }
 
     template <class F>
-    std::enable_if_t<std::is_invocable_v<F&&, value_type&&>>
-    and_finally(F&& f) && {
-        if (is_just())
-            std::invoke(std::forward<F>(f), std::move(unwrap()));
+    void and_finally(F&& f) && {
+        if constexpr (std::is_lvalue_reference_v<T>) {
+            static_assert(std::is_invocable_v<F&&, value_type&>);
+            if (is_just())
+                std::invoke(std::forward<F>(f), unwrap());
+        }
+        else {
+            static_assert(std::is_invocable_v<F&&, value_type&&>);
+            if (is_just())
+                std::invoke(std::forward<F>(f), std::move(unwrap()));
+        }
     }
 
     template <class F>
