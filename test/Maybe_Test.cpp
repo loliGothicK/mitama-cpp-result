@@ -72,7 +72,7 @@ TEST_CASE("expect()", "[maybe][expect]"){
 
 TEST_CASE("cloned()", "[maybe][cloned]"){
   int x = 12;
-  maybe<int&> opt_x = x;
+  maybe<int&> opt_x = just(x);
   REQUIRE(opt_x == just(12));
   REQUIRE(&(opt_x.unwrap()) == &x);
 
@@ -431,6 +431,9 @@ TEST_CASE("reference of abstract", "[maybe][abstract]"){
   derived _derived = {}; 
   maybe<base&> x = just(_derived);
   REQUIRE(x->test() == "derived"s);
+  base _base = {};
+  x = just(_base);
+  REQUIRE(x->test() == "base"s);
 }
 
 TEST_CASE("less compare", "[maybe][less]"){

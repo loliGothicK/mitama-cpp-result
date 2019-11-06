@@ -204,22 +204,19 @@ class maybe
 
     template <typename U,
         std::enable_if_t<
-            std::disjunction_v<
-                mitamagic::is_pointer_like<std::remove_reference_t<U>>,
-                std::is_pointer<std::remove_reference_t<U>>>,
-        bool> = false>
-    maybe(U&& u) : storage_(std::in_place_type<nothing_t>) {
-        if (u) storage_.template emplace<just_t<T>>(std::in_place, *std::forward<U>(u));
-    }
+            std::conjunction_v<
+                std::is_constructible<T, U&&>,
+                std::is_convertible<std::decay_t<U>, T>>,
+    bool> = false>
+    maybe(U&& u) : storage_(std::in_place_type<just_t<T>>, std::in_place, std::forward<U>(u)) {}
 
     template <typename U,
         std::enable_if_t<
-            std::is_constructible_v<T, U&&> &&
-            !std::disjunction_v<
-                mitamagic::is_pointer_like<std::remove_reference_t<U>>,
-                std::is_pointer<std::remove_reference_t<U>>>,
-        bool> = false>
-    maybe(U&& u) : storage_(std::in_place_type<just_t<T>>, std::in_place, std::forward<U>(u)) {}
+            std::conjunction_v<
+                std::is_constructible<T, U&&>,
+                std::negation<std::is_convertible<std::decay_t<U>, T>>>,
+    bool> = false>
+    explicit maybe(U&& u) : storage_(std::in_place_type<just_t<T>>, std::in_place, std::forward<U>(u)) {}
 
     template <class... Args,
         std::enable_if_t<
@@ -267,7 +264,7 @@ class maybe
             std::is_constructible_v<T, U&&>,
         bool> = false>
     maybe(just_t<U>&& j)
-        : storage_(std::in_place_type<just_t<T>>, std::in_place, std::move(j).get()) {}
+        : storage_(std::in_place_type<just_t<T>>, std::in_place, static_cast<U&&>(j.get())) {}
 
     explicit operator bool() const {
         return is_just();
@@ -845,10 +842,8 @@ class maybe
 
 };
 
-template <class T, std::enable_if_t<!std::disjunction_v<is_just<T>, mitamagic::is_pointer_like<T>>, bool> = false>
+template <class T>
 maybe(T&&) -> maybe<T>;
-template <class T, std::enable_if_t<mitamagic::is_pointer_like<T>::value, bool> = false>
-maybe(T&&) -> maybe<typename mitamagic::element_type<std::decay_t<T>>::type>;
 
 template <class T, class U>
 std::enable_if_t<meta::is_comparable_with<T, U>::value,
