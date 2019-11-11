@@ -849,7 +849,9 @@ template <class T, class U>
 std::enable_if_t<meta::is_comparable_with<T, U>::value,
 bool>
 operator==(maybe<T> const& lhs, maybe<U> const& rhs) {
-    return lhs && rhs && (lhs.unwrap() == rhs.unwrap());
+    return lhs.is_just() && rhs.is_just()
+        ? (lhs.unwrap() == rhs.unwrap())
+        : lhs.is_nothing() && rhs.is_nothing();
 }
 
 template <class T>
