@@ -33,7 +33,7 @@ public:
   template <class... Args>
   explicit runtime_panic(macro_use_tag_t, const char *func, int line, std::string fmt, Args &&... args) noexcept
       : std::runtime_error(
-            std::string{"runtime panicked at '"} + (boost::format(fmt) % ... % [](auto&& arg [[maybe_unused]]) -> decltype(auto) {
+            std::string{"runtime panicked at '"} + (boost::format(fmt) % ... % [](auto&& arg) -> decltype(auto) {
               using namespace std::string_view_literals;
               if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, std::monostate>) {
                 return "()"sv;

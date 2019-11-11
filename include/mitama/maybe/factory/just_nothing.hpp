@@ -178,7 +178,7 @@ public:
         meta::is_comparable_with<T, U>::value,
     bool>
     operator!=(maybe<U> const& lhs, just_t const& rhs) {
-        return lhs && !(lhs.unwrap() == rhs);
+        return lhs.is_nothing() || !(lhs.unwrap() == rhs.get());
     }
 
     template <class U>
@@ -187,7 +187,7 @@ public:
         meta::is_comparable_with<T, U>::value,
     bool>
     operator!=(just_t const& lhs, maybe<U> const& rhs) {
-        return rhs && !(lhs == rhs.unwrap());
+        return rhs.is_nothing() || !(lhs.get() == rhs.unwrap());
     }
 
     friend constexpr bool
@@ -447,7 +447,7 @@ public:
         meta::is_comparable_with<T, U>::value,
     bool>
     operator!=(maybe<U> const& lhs, just_t const& rhs) {
-        return lhs && !(lhs.unwrap() == rhs);
+        return lhs.is_nothing() || !(lhs.unwrap() == rhs.get());
     }
 
     template <class U>
@@ -456,7 +456,7 @@ public:
         meta::is_comparable_with<T, U>::value,
     bool>
     operator!=(just_t const& lhs, maybe<U> const& rhs) {
-        return rhs && !(lhs == rhs.unwrap());
+        return rhs.is_nothing() || !(lhs.get() == rhs.unwrap());
     }
 
     friend constexpr bool
