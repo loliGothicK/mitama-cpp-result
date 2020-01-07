@@ -150,6 +150,10 @@ TEST_CASE("map() test", "[result][map]"){
       REQUIRE(res.ok().unwrap() % 2 == 0);
     }
   }
+
+  result<int, int> some_num = success(1);
+  result<int, int> z = some_num.map(std::plus{}, 1);
+  REQUIRE(z == success(2));
 }
 
 TEST_CASE("map_or_else(F, M) test", "[result][map_or_else]"){
@@ -185,6 +189,10 @@ TEST_CASE("map_err() test", "[result][map_err]"){
 
   result<u32, u32> y = failure(13);
   REQUIRE(y.map_err(stringify) == failure("error code: 13"s));
+
+  result<int, int> some_num = failure(1);
+  result<int, int> z = some_num.map_err(std::plus{}, 1);
+  REQUIRE(z == failure(2));
 }
 
 TEST_CASE("conj test", "[result][conj]"){
@@ -219,12 +227,15 @@ TEST_CASE("conj test", "[result][conj]"){
 TEST_CASE("and_then() test", "[result][and_then]"){
   auto sq = [](u32 x) -> result<u32, u32> { return success(x * x); };
   auto err = [](u32 x) -> result<u32, u32> { return failure(x); };
+  auto eq = [](u32 x, u32 y) -> result<u32, u32> { return x == y ? result<u32, u32>(success(x)) : failure(x); };
 
   REQUIRE(result<u32, u32>{success(2u)}.and_then(sq).and_then(sq) == success(16u));
   REQUIRE(result<u32, u32>{success(2u)}.and_then(sq).and_then(err) == failure(4u));
   REQUIRE(result<u32, u32>{success(2u)}.and_then(err).and_then(sq) == failure(2u));
   REQUIRE(result<u32, u32>{failure(3u)}.and_then(sq).and_then(sq) == failure(3u));
   REQUIRE(result<u32, u32>{failure(3u)}.and_then(sq).and_then(sq) == failure(3u));
+  REQUIRE(result<u32, u32>{success(3u)}.and_then(eq, 3u) == success(3u));
+  REQUIRE(result<u32, u32>{failure(3u)}.and_then(eq, 1u) == failure(3u));
 }
 
 TEMPLATE_TEST_CASE("is_convertible_result_with meta test", "[is_convertible_result_with][meta]",
@@ -264,11 +275,15 @@ TEST_CASE("disj test", "[result][disj]"){
 TEST_CASE("or_else() test", "[result][or_else]"){
   auto sq = [](u32 x) -> result<u32, u32> { return success(x * x); };
   auto err = [](u32 x) -> result<u32, u32> { return failure(x); };
+  auto eq = [](u32 x, u32 y) -> result<u32, u32> { return x == y ? result<u32, u32>(success(x)) : failure(x); };
 
   REQUIRE(result<u32, u32>{success(2)}.or_else(sq).or_else(sq) ==  success(2u));
   REQUIRE(result<u32, u32>{success(2)}.or_else(err).or_else(sq) ==  success(2u));
   REQUIRE(result<u32, u32>{failure(3)}.or_else(sq).or_else(err) ==  success(9u));
   REQUIRE(result<u32, u32>{failure(3)}.or_else(err).or_else(err) ==  failure(3u));
+  REQUIRE(result<u32, u32>{failure(3)}.or_else(eq, 3u) ==  success(3u));
+  REQUIRE(result<u32, u32>{success(3)}.or_else(eq, 3u) ==  success(3u));
+  REQUIRE(result<u32, u32>{failure(3)}.or_else(eq, 1u) ==  failure(3u));
 }
 
 TEST_CASE("unwrap_or() test", "[result][unwrap_or]"){
@@ -304,7 +319,6 @@ TEST_CASE("unwrap() test", "[result][unwrap]"){
             "runtime panicked at 'called `basic_result::unwrap()` on a value: `failure(\"emergency failure\")`', ") >>
         *_ >> as_xpr(":") >> +range('0', '9') >> 	_n >> _n >> as_xpr("stacktrace:") >> +(_n | ~_n);
     smatch what;
-    std::cout << p.what() << "eos" << std::endl;
     REQUIRE(regex_match(std::string{p.what()}, what, re));
   }
 }
@@ -625,7 +639,6 @@ SCENARIO("test for dangling indirect", "[result][indirect][dangling]"){
       = mut_result<std::unique_ptr<int>, std::unique_ptr<int>>(success{std::make_unique<int>(1)})
         .as_ref()
         .indirect();
-    std::cout << boost::typeindex::type_id_with_cvr<decltype(indirect.unwrap())>().pretty_name() << std::endl;
     REQUIRE( std::is_same_v<decltype(indirect.unwrap()), dangling<std::reference_wrapper<int>>&> );
     // indirect.unwrap().transmute()
     // ^~~~~~~~~~~~~~~~~~~~~~~~~~ Undefined Behavior!
