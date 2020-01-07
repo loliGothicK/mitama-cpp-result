@@ -393,108 +393,108 @@ class maybe
         return is_just() ? std::move(unwrap()) : std::invoke(std::forward<F>(f));
     }
 
-    template <class F,
+    template <class F, class... Args,
         std::enable_if_t<
-            std::is_invocable_v<F&&, value_type&>, bool> = false>
-    auto map(F&& f) & {
-        using result_type = std::invoke_result_t<F&&, value_type&>;
+            std::is_invocable_v<F&&, value_type&, Args&&...>, bool> = false>
+    auto map(F&& f, Args&&... args) & {
+        using result_type = std::invoke_result_t<F&&, value_type&, Args&&...>;
         return is_just()
-            ? maybe<result_type>{just(std::invoke(std::forward<F>(f), unwrap()))}
+            ? maybe<result_type>{just(std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...))}
             : nothing;
     }
 
-    template <class F,
+    template <class F, class... Args,
         std::enable_if_t<
-            std::is_invocable_v<F&&, value_type const&>, bool> = false>
-    auto map(F&& f) const& {
-        using result_type = std::invoke_result_t<F&&, value_type const&>;
+            std::is_invocable_v<F&&, value_type const&, Args&&...>, bool> = false>
+    auto map(F&& f, Args&&... args) const& {
+        using result_type = std::invoke_result_t<F&&, value_type const&, Args&&...>;
         return is_just()
-            ? maybe<result_type>{just(std::invoke(std::forward<F>(f), unwrap()))}
+            ? maybe<result_type>{just(std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...))}
             : nothing;
     }
 
-    template <class F,
+    template <class F, class... Args,
         std::enable_if_t<
-            std::is_invocable_v<F&&, value_type&&>, bool> = false>
-    auto map(F&& f) && {
-        using result_type = std::invoke_result_t<F&&, value_type&&>;
+            std::is_invocable_v<F&&, value_type&&, Args&&...>, bool> = false>
+    auto map(F&& f, Args&&... args) && {
+        using result_type = std::invoke_result_t<F&&, value_type&&, Args&&...>;
         return is_just()
-            ? maybe<result_type>{just(std::invoke(std::forward<F>(f), std::move(unwrap())))}
+            ? maybe<result_type>{just(std::invoke(std::forward<F>(f), std::move(unwrap()), std::forward<Args>(args)...))}
             : nothing;
     }
 
-    template <class U, class F>
+    template <class U, class F, class... Args>
     std::enable_if_t<
         std::conjunction_v<
-            std::is_invocable<F&&, value_type&>,
+            std::is_invocable<F&&, value_type&, Args&&...>,
             meta::has_type<std::common_type<U&&, std::invoke_result_t<F&&, value_type&>>>>,
-    std::common_type_t<U&&, std::invoke_result_t<F&&, value_type&>>>
-    map_or(U&& def, F&& f) & {
+    std::common_type_t<U&&, std::invoke_result_t<F&&, value_type&, Args&&...>>>
+    map_or(U&& def, F&& f, Args&&... args) & {
         return is_just()
-            ? std::invoke(std::forward<F>(f), unwrap())
+            ? std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...)
             : std::forward<U>(def);
     }
 
-    template <class U, class F>
+    template <class U, class F, class... Args>
     std::enable_if_t<
         std::conjunction_v<
-            std::is_invocable<F&&, value_type const&>,
-            meta::has_type<std::common_type<U&&, std::invoke_result_t<F&&, value_type const&>>>>,
-    std::common_type_t<U&&, std::invoke_result_t<F&&, T const&>>>
-    map_or(U&& def, F&& f) const& {
+            std::is_invocable<F&&, value_type const&, Args&&...>,
+            meta::has_type<std::common_type<U&&, std::invoke_result_t<F&&, value_type const&, Args&&...>>>>,
+    std::common_type_t<U&&, std::invoke_result_t<F&&, T const&, Args&&...>>>
+    map_or(U&& def, F&& f, Args&&... args) const& {
         return is_just()
-            ? std::invoke(std::forward<F>(f), unwrap())
+            ? std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...)
             : std::forward<U>(def);
     }
 
-    template <class U, class F>
+    template <class U, class F, class... Args>
     std::enable_if_t<
         std::conjunction_v<
-            std::is_invocable<F&&, T&&>,
-            meta::has_type<std::common_type<U&&, std::invoke_result_t<F&&, value_type&&>>>>,
-    std::common_type_t<U&&, std::invoke_result_t<F&&, value_type&&>>>
-    map_or(U&& def, F&& f) && {
+            std::is_invocable<F&&, T&&, Args&&...>,
+            meta::has_type<std::common_type<U&&, std::invoke_result_t<F&&, value_type&&, Args&&...>>>>,
+    std::common_type_t<U&&, std::invoke_result_t<F&&, value_type&&, Args&&...>>>
+    map_or(U&& def, F&& f, Args&&... args) && {
         return is_just()
-            ? std::invoke(std::forward<F>(f), std::move(unwrap()))
+            ? std::invoke(std::forward<F>(f), std::move(unwrap()), std::forward<Args>(args)...)
             : std::forward<U>(def);
     }
 
-    template <class D, class F>
+    template <class D, class F, class... Args>
     std::enable_if_t<
         std::conjunction_v<
             std::is_invocable<D&&>,
-            std::is_invocable<F&&, T&>,
-            meta::has_type<std::common_type<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type&>>>>,
-    std::common_type_t<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type&>>>
-    map_or_else(D&& def, F&& f) & {
+            std::is_invocable<F&&, T&, Args&&...>,
+            meta::has_type<std::common_type<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type&, Args&&...>>>>,
+    std::common_type_t<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type&, Args&&...>>>
+    map_or_else(D&& def, F&& f, Args&&... args) & {
         return is_just()
-            ? std::invoke(std::forward<F>(f), unwrap())
+            ? std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...)
             : std::invoke(std::forward<D>(def));
     }
 
-    template <class D, class F>
+    template <class D, class F, class... Args>
     std::enable_if_t<
         std::conjunction_v<
             std::is_invocable<D&&>,
-            std::is_invocable<F&&, value_type const&>,
-            meta::has_type<std::common_type<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type const&>>>>,
-    std::common_type_t<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type const&>>>
-    map_or_else(D&& def, F&& f) const& {
+            std::is_invocable<F&&, value_type const&, Args&&...>,
+            meta::has_type<std::common_type<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type const&, Args&&...>>>>,
+    std::common_type_t<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type const&, Args&&...>>>
+    map_or_else(D&& def, F&& f, Args&&... args) const& {
         return is_just()
-            ? std::invoke(std::forward<F>(f), unwrap())
+            ? std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...)
             : std::invoke(std::forward<D>(def));
     }
 
-    template <class D, class F>
+    template <class D, class F, class... Args>
     std::enable_if_t<
         std::conjunction_v<
             std::is_invocable<D&&>,
-            std::is_invocable<F&&, T&&>,
-            meta::has_type<std::common_type<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type&&>>>>,
-    std::common_type_t<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type&&>>>
-    map_or_else(D&& def, F&& f) && {
+            std::is_invocable<F&&, T&&, Args&&...>,
+            meta::has_type<std::common_type<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type&&, Args&&...>>>>,
+    std::common_type_t<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type&&, Args&&...>>>
+    map_or_else(D&& def, F&& f, Args&&... args) && {
         return is_just()
-            ? std::invoke(std::forward<F>(f), std::move(unwrap()))
+            ? std::invoke(std::forward<F>(f), std::move(unwrap()), std::forward<Args>(args)...)
             : std::invoke(std::forward<D>(def));
     }
 
@@ -630,98 +630,98 @@ class maybe
         return this->xdisj(rhs);
     }
 
-    template <class F>
+    template <class F, class... Args>
     std::enable_if_t<
         std::conjunction_v<
-            std::is_invocable<F&&, T&>,
-            is_maybe<std::decay_t<std::invoke_result_t<F&&, T&>>>>,
-    std::invoke_result_t<F&&, T&> >
-    and_then(F&& f) & {
+            std::is_invocable<F&&, T&, Args&&...>,
+            is_maybe<std::decay_t<std::invoke_result_t<F&&, T&, Args&&...>>>>,
+    std::invoke_result_t<F&&, T&, Args&&...>>
+    and_then(F&& f, Args&&... args) & {
         return is_just()
-            ? std::invoke(std::forward<F>(f), unwrap())
+            ? std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...)
             : nothing;
     }
 
-    template <class F>
+    template <class F, class... Args>
     std::enable_if_t<
         std::conjunction_v<
-            std::is_invocable<F&&, T const&>,
-            is_maybe<std::decay_t<std::invoke_result_t<F&&, T const&>>>>,
-    std::invoke_result_t<F&&, T const&> >
-    and_then(F&& f) const& {
+            std::is_invocable<F&&, T const&, Args&&...>,
+            is_maybe<std::decay_t<std::invoke_result_t<F&&, T const&, Args&&...>>>>,
+    std::invoke_result_t<F&&, T const&, Args&&...>>
+    and_then(F&& f, Args&&... args) const& {
         return is_just()
-            ? std::invoke(std::forward<F>(f), unwrap())
+            ? std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...)
             : nothing;
     }
 
-    template <class F>
+    template <class F, class... Args>
     std::enable_if_t<
         std::conjunction_v<
-            std::is_invocable<F&&, T&>,
-            is_maybe<std::decay_t<std::invoke_result_t<F&&, T&&>>>>,
-    std::invoke_result_t<F&&, T&> >
-    and_then(F&& f) && {
+            std::is_invocable<F&&, T&&, Args&&...>,
+            is_maybe<std::decay_t<std::invoke_result_t<F&&, T&&, Args&&...>>>>,
+    std::invoke_result_t<F&&, T&, Args&&...>>
+    and_then(F&& f, Args&&... args) && {
         return is_just()
-            ? std::invoke(std::forward<F>(f), std::move(unwrap()))
+            ? std::invoke(std::forward<F>(f), std::move(unwrap()), std::forward<Args>(args)...)
             : nothing;
     }
 
-    template <class F>
+    template <class F, class... Args>
     std::enable_if_t<
         std::conjunction_v<
-            std::is_invocable<F&&>,
-            is_maybe_with<std::decay_t<std::invoke_result_t<F&&>>, T>>,
+            std::is_invocable<F&&, Args&&...>,
+            is_maybe_with<std::decay_t<std::invoke_result_t<F&&, Args&&...>>, T>>,
     maybe>
-    or_else(F&& f) & {
+    or_else(F&& f, Args&&... args) & {
         return is_just()
             ? just(unwrap())
-            : std::invoke(std::forward<F>(f));
+            : std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
     }
 
-    template <class F>
+    template <class F, class... Args>
     std::enable_if_t<
         std::conjunction_v<
-            std::is_invocable<F&&>,
-            is_maybe_with<std::decay_t<std::invoke_result_t<F&&>>, T>>,
+            std::is_invocable<F&&, Args&&...>,
+            is_maybe_with<std::decay_t<std::invoke_result_t<F&&, Args&&...>>, T>>,
     maybe>
-    or_else(F&& f) const& {
+    or_else(F&& f, Args&&... args) const& {
         return is_just()
             ? just(unwrap())
-            : std::invoke(std::forward<F>(f));
+            : std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
     }
 
-    template <class F>
+    template <class F, class... Args>
     std::enable_if_t<
         std::conjunction_v<
-            std::is_invocable<F&&>,
-            is_maybe_with<std::decay_t<std::invoke_result_t<F&&>>, T>>,
+            std::is_invocable<F&&, Args&&...>,
+            is_maybe_with<std::decay_t<std::invoke_result_t<F&&, Args&&...>>, T>>,
     maybe>
-    or_else(F&& f) && {
+    or_else(F&& f, Args&&... args) && {
         return is_just()
             ? just(std::move(unwrap()))
-            : std::invoke(std::forward<F>(f));
+            : std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
     }
 
-    template <class F>
-    std::enable_if_t<std::is_invocable_v<F&&, value_type&>>
-    and_finally(F&& f) & {
+    template <class F, class... Args>
+    std::enable_if_t<std::is_invocable_v<F&&, value_type&, Args&&...>>
+    and_finally(F&& f, Args&&... args) & {
         if (is_just())
-            std::invoke(std::forward<F>(f), unwrap());
+            std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...);
     }
 
-    template <class F>
+    template <class F, class... Args>
     std::enable_if_t<std::is_invocable_v<F&&, value_type const&>>
-    and_finally(F&& f) const& {
+    and_finally(F&& f, Args&&... args) const& {
         if (is_just())
-            std::invoke(std::forward<F>(f), unwrap());
+            std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...);
     }
 
-    template <class F>
-    void and_finally(F&& f) && {
+    template <class F, class... Args>
+    void and_finally(F&& f, Args&&... args) && {
         if constexpr (std::is_lvalue_reference_v<T>) {
-            static_assert(std::is_invocable_v<F&&, value_type&>);
+            static_assert(std::is_invocable_v<F&&, value_type&, Args&&...>);
             if (is_just())
-                std::invoke(std::forward<F>(f), unwrap());
+                std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...);
         }
         else {
             static_assert(std::is_invocable_v<F&&, value_type&&>);
@@ -730,25 +730,25 @@ class maybe
         }
     }
 
-    template <class F>
-    std::enable_if_t<std::is_invocable_v<F&&>>
-    or_finally(F&& f) & {
+    template <class F, class... Args>
+    std::enable_if_t<std::is_invocable_v<F&&, Args&&...>>
+    or_finally(F&& f, Args&&... args) & {
         if (is_nothing())
-            std::invoke(std::forward<F>(f));
+            std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
     }
 
-    template <class F>
-    std::enable_if_t<std::is_invocable_v<F&&>>
-    or_finally(F&& f) const& {
+    template <class F, class... Args>
+    std::enable_if_t<std::is_invocable_v<F&&, Args&&...>>
+    or_finally(F&& f, Args&&... args) const& {
         if (is_nothing())
-            std::invoke(std::forward<F>(f));
+            std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
     }
 
-    template <class F>
-    std::enable_if_t<std::is_invocable_v<F&&>>
-    or_finally(F&& f) && {
+    template <class F, class... Args>
+    std::enable_if_t<std::is_invocable_v<F&&, Args&&...>>
+    or_finally(F&& f, Args&&... args) && {
         if (is_nothing())
-            std::invoke(std::forward<F>(f));
+            std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
     }
 
     template <class F>

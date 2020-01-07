@@ -104,6 +104,11 @@ TEST_CASE("map()", "[maybe][map]"){
 
   REQUIRE(maybe_some_len == just(13u));
 
+  maybe some_list = just(std::vector<int>{1,2,3,4,5});
+  auto acc = [](auto&& range, auto init) -> double { return std::accumulate(range.begin(), range.end(), init); };
+  maybe sum = some_list.map(acc, 0.0);
+
+  REQUIRE(sum == just(15));
 }
 
 TEST_CASE("map_or()", "[maybe][map_or]"){
@@ -114,10 +119,14 @@ TEST_CASE("map_or()", "[maybe][map_or]"){
   maybe<std::string> y = nothing;
   REQUIRE(y.map_or(42, &std::string::size) == 42);
 
+  maybe some_num = just(1);
+
+  maybe z = some_num.map_or(0, std::plus{}, 1);
+
+  REQUIRE(z == just(2));
 }
 
 TEST_CASE("map_or_else()", "[maybe][map_or_else]"){
-
   int k = 21;
 
   maybe x = just("foo"s);
@@ -125,7 +134,11 @@ TEST_CASE("map_or_else()", "[maybe][map_or_else]"){
 
   maybe<std::string> y = nothing;
   REQUIRE(y.map_or_else([k]{ return 2 * k; }, &std::string::size) == 42);
+  REQUIRE(x.map_or_else([]{ return "default"s; }, std::plus{}, "bar"s) == "foobar"s);
+  REQUIRE(y.map_or_else([]{ return "default"s; }, std::plus{}, "bar"s) == "default"s);
 
+  maybe z = just(1);
+  REQUIRE(z.map_or_else([k]{ return 2 * k; }, std::plus{}, 1) == 2);
 }
 
 TEST_CASE("ok_or()", "[maybe][ok_or]"){
@@ -181,12 +194,15 @@ TEST_CASE("and_then()", "[maybe][and_then]"){
 
   auto sq = [](int x) -> maybe<int> { return just(x * x); };
   auto nope = [](...) -> maybe<int> { return nothing; };
+  auto is_eq = [](int a, int b) { return a == b ? maybe<int>{a} : nothing; };
 
   REQUIRE(maybe{just(2)}.and_then(sq).and_then(sq) == just(16));
   REQUIRE(maybe{just(2)}.and_then(sq).and_then(nope) == nothing);
   REQUIRE(maybe{just(2)}.and_then(nope).and_then(sq) == nothing);
+  REQUIRE(maybe{just(2)}.and_then(is_eq, 2) == just(2));
   REQUIRE(nope().and_then(sq).and_then(sq) == nothing);
 }
+
 
 TEST_CASE("filter()", "[maybe][filter]"){
 
@@ -231,9 +247,11 @@ TEST_CASE("or_else()", "[maybe][or_else]"){
 
   auto nobody = []() -> maybe<std::string> { return nothing; };
   auto vikings = []() -> maybe<std::string> { return just("vikings"s); };
+  auto to_maybe = [](auto&& e) -> maybe<std::decay_t<decltype(e)>> { return just(std::forward<decltype(e)>(e)); };
 
   REQUIRE(maybe{just("barbarians"s)}.or_else(vikings) == just("barbarians"s));
   REQUIRE(maybe<std::string>{}.or_else(vikings) == just("vikings"s));
+  REQUIRE(maybe<std::string>{}.or_else(to_maybe, "vikings"s) == just("vikings"s));
   REQUIRE(maybe<std::string>{}.or_else(nobody) == nothing);
 
 }

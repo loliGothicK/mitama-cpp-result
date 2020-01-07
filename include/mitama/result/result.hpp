@@ -446,15 +446,15 @@ public:
   ///
   /// @note
   ///   This function can be used to compose the results of two functions.
-  template <class O>
-  constexpr auto map(O && op) const &
-    noexcept(std::is_nothrow_invocable_v<O, T>)
-    -> std::enable_if_t<std::is_invocable_v<O, T>,
-    basic_result<_mutability, std::invoke_result_t<O, T>, E>>
+  template <class O, class... Args>
+  constexpr auto map(O && op, Args&&... args) const &
+    noexcept(std::is_nothrow_invocable_v<O, T, Args&&...>)
+    -> std::enable_if_t<std::is_invocable_v<O, T, Args&&...>,
+    basic_result<_mutability, std::invoke_result_t<O, T, Args&&...>, E>>
   {
-    using result_type = basic_result<_mutability, std::invoke_result_t<O, T>, E>;
+    using result_type = basic_result<_mutability, std::invoke_result_t<O, T, Args&&...>, E>;
     return is_ok()
-               ? static_cast<result_type>(success{std::invoke(std::forward<O>(op), std::get<success<T>>(storage_).get())})
+               ? static_cast<result_type>(success{std::invoke(std::forward<O>(op), std::get<success<T>>(storage_).get(), std::forward<Args>(args)...)})
                : static_cast<result_type>(failure{std::get<failure<E>>(storage_).get()});
   }
 
@@ -467,15 +467,15 @@ public:
   ///
   /// @note
   ///   This function can be used to compose the results of two functions.
-  template <class O>
-  constexpr auto map(O && op) &&
-    noexcept(std::is_nothrow_invocable_v<O, T>)
-    -> std::enable_if_t<std::is_invocable_v<O, T>,
-    basic_result<_mutability, std::invoke_result_t<O, T>, E>>
+  template <class O, class... Args>
+  constexpr auto map(O && op, Args &&... args) &&
+    noexcept(std::is_nothrow_invocable_v<O, T, Args&&...>)
+    -> std::enable_if_t<std::is_invocable_v<O, T, Args&&...>,
+    basic_result<_mutability, std::invoke_result_t<O, T, Args&&...>, E>>
   {
-    using result_type = basic_result<_mutability, std::invoke_result_t<O, T>, E>;
+    using result_type = basic_result<_mutability, std::invoke_result_t<O, T, Args&&...>, E>;
     return is_ok()
-               ? static_cast<result_type>(success{std::invoke(std::forward<O>(op), std::move(std::get<success<T>>(storage_).get()))})
+               ? static_cast<result_type>(success{std::invoke(std::forward<O>(op), std::move(std::get<success<T>>(storage_).get(), std::forward<Args>(args)...))})
                : static_cast<result_type>(failure{std::move(std::get<failure<E>>(storage_).get())});
   }
 
@@ -573,15 +573,15 @@ public:
   ///
   /// @note
   ///   This function can be used to pass through a successful result while handling an error.
-  template <class O>
-  constexpr auto map_err(O && op) const &
-    noexcept(std::is_nothrow_invocable_v<O, E>)
-    -> std::enable_if_t<std::is_invocable_v<O, E>,
-    basic_result<_mutability, T, std::invoke_result_t<O, E>>>
+  template <class O, class... Args>
+  constexpr auto map_err(O && op, Args&&... args) const &
+    noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
+    -> std::enable_if_t<std::is_invocable_v<O, E, Args&&...>,
+    basic_result<_mutability, T, std::invoke_result_t<O, E, Args&&...>>>
   {
-    using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E>>;
+    using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E, Args&&...>>;
     return is_err()
-               ? static_cast<result_type>(failure{std::invoke(std::forward<O>(op), std::get<failure<E>>(storage_).get())})
+               ? static_cast<result_type>(failure{std::invoke(std::forward<O>(op), std::get<failure<E>>(storage_).get(), std::forward<Args>(args)...)})
                : static_cast<result_type>(success{std::get<success<T>>(storage_).get()});
   }
 
@@ -594,15 +594,15 @@ public:
   ///
   /// @note
   ///   This function can be used to pass through a successful result while handling an error.
-  template <class O>
-  constexpr auto map_err(O && op) &&
-    noexcept(std::is_nothrow_invocable_v<O, E>)
-    -> std::enable_if_t<std::is_invocable_v<O, E>,
-    basic_result<_mutability, T, std::invoke_result_t<O, E>>>
+  template <class O, class... Args>
+  constexpr auto map_err(O && op, Args&&... args) &&
+    noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
+    -> std::enable_if_t<std::is_invocable_v<O, E, Args&&...>,
+    basic_result<_mutability, T, std::invoke_result_t<O, E, Args&&...>>>
   {
-    using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E>>;
+    using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E, Args&&...>>;
     return is_err()
-               ? static_cast<result_type>(failure{std::invoke(std::forward<O>(op), std::move(std::get<failure<E>>(storage_).get()))})
+               ? static_cast<result_type>(failure{std::invoke(std::forward<O>(op), std::move(std::get<failure<E>>(storage_).get()), std::forward<Args>(args)...)})
                : static_cast<result_type>(success{std::move(std::get<success<T>>(storage_).get())});
   }
 
@@ -614,15 +614,15 @@ public:
   ///
   /// @note
   ///   This function can be used for control flow based on result values.
-  template <class O>
-  constexpr auto and_then(O && op) const &
-    noexcept(std::is_nothrow_invocable_v<O, T>)
-    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T>, failure<E>>,
-    std::invoke_result_t<O, T>>
+  template <class O, class... Args>
+  constexpr auto and_then(O && op, Args&&... args) const &
+    noexcept(std::is_nothrow_invocable_v<O, T, Args&&...>)
+    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T, Args&&...>, failure<E>>,
+    std::invoke_result_t<O, T, Args&&...>>
   {
-    using result_type = std::invoke_result_t<O, T>;
+    using result_type = std::invoke_result_t<O, T, Args&&...>;
     return is_ok()
-               ? std::invoke(std::forward<O>(op), std::get<success<T>>(storage_).get())
+               ? std::invoke(std::forward<O>(op), std::get<success<T>>(storage_).get(), std::forward<Args>(args)...)
                : static_cast<result_type>(failure{std::get<failure<E>>(storage_).get()});
   }
 
@@ -634,15 +634,15 @@ public:
   ///
   /// @note
   ///   This function can be used for control flow based on result values.
-  template <class O>
-  constexpr auto and_then(O && op) &&
-    noexcept(std::is_nothrow_invocable_v<O, T>)
-    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T>, failure<E>>,
-    std::invoke_result_t<O, T>>
+  template <class O, class... Args>
+  constexpr auto and_then(O && op, Args&&... args) &&
+    noexcept(std::is_nothrow_invocable_v<O, T, Args&&...>)
+    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T, Args&&...>, failure<E>>,
+    std::invoke_result_t<O, T, Args&&...>>
   {
-    using result_type = std::invoke_result_t<O, T>;
+    using result_type = std::invoke_result_t<O, T, Args&&...>;
     return is_ok()
-               ? std::invoke(std::forward<O>(op), std::move(std::get<success<T>>(storage_).get()))
+               ? std::invoke(std::forward<O>(op), std::move(std::get<success<T>>(storage_).get()), std::forward<Args>(args)...)
                : static_cast<result_type>(failure{std::move(std::get<failure<E>>(storage_).get())});
   }
 
@@ -654,15 +654,15 @@ public:
   ///
   /// @note
   ///   This function can be used for control flow based on result values.
-  template <class O>
-  constexpr auto or_else(O && op) const &
-    noexcept(std::is_nothrow_invocable_v<O, E>)
-    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T>, success<T>>,
-    std::invoke_result_t<O, E>>
+  template <class O, class... Args>
+  constexpr auto or_else(O && op, Args&&... args) const &
+    noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
+    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T, Args&&...>, success<T>>,
+    std::invoke_result_t<O, E, Args&&...>>
   {
-    using result_type = std::invoke_result_t<O, E>;
+    using result_type = std::invoke_result_t<O, E, Args&&...>;
     return is_err()
-               ? std::invoke(std::forward<O>(op), std::get<failure<E>>(storage_).get())
+               ? std::invoke(std::forward<O>(op), std::get<failure<E>>(storage_).get(), std::forward<Args>(args)...)
                : static_cast<result_type>(success{std::get<success<T>>(storage_).get()});
   }
 
@@ -674,15 +674,15 @@ public:
   ///
   /// @note
   ///   This function can be used for control flow based on result values.
-  template <class O>
-  constexpr auto or_else(O && op) &&
-    noexcept(std::is_nothrow_invocable_v<O, E>)
-    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T>, success<T>>,
-    std::invoke_result_t<O, E>>
+  template <class O, class... Args>
+  constexpr auto or_else(O && op, Args&&... args) &&
+    noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
+    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T, Args&&...>, success<T>>,
+    std::invoke_result_t<O, E, Args&&...>>
   {
-    using result_type = std::invoke_result_t<O, E>;
+    using result_type = std::invoke_result_t<O, E, Args&&...>;
     return is_err()
-               ? std::invoke(std::forward<O>(op), std::get<failure<E>>(std::move(storage_)).get())
+               ? std::invoke(std::forward<O>(op), std::get<failure<E>>(std::move(storage_)).get(), std::forward<Args>(args)...)
                : static_cast<result_type>(success{std::get<success<T>>(std::move(storage_)).get()});
   }
 
