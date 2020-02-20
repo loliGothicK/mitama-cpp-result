@@ -33,18 +33,18 @@ template <class T = std::monostate, class E = std::monostate>
 using mut_result = basic_result<mutability::mut, T, E>;
 
 template <class T = std::monostate>
-class success;
+class success_t;
 
-/// Deduction guide for `success`
+/// Deduction guide for `success_t`
 template <class T>
-success(T&&)->success<T>;
+success_t(T&&)->success_t<T>;
 
 template <class = std::monostate>
-class failure;
+class failure_t;
 
-/// Deduction guide for `failure`
+/// Deduction guide for `failure_t`
 template <class E>
-failure(E&&)->failure<E>;
+failure_t(E&&)->failure_t<E>;
 
 class in_place_ok_t {};
 inline constexpr in_place_ok_t in_place_ok = {};

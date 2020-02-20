@@ -30,11 +30,11 @@ inline constexpr bool is_result_v = is_result<T>::value;
 template <class, class...>
 struct is_convertible_result_with : std::false_type {};
 template <mutability _mut, class T, class E, class U>
-struct is_convertible_result_with<basic_result<_mut, T, E>, success<U>>: std::is_constructible<U, T> {};
+struct is_convertible_result_with<basic_result<_mut, T, E>, success_t<U>>: std::is_constructible<U, T> {};
 template <mutability _mut, class T, class E, class F>
-struct is_convertible_result_with<basic_result<_mut, T, E>, failure<F>>: std::is_constructible<F, E> {};
+struct is_convertible_result_with<basic_result<_mut, T, E>, failure_t<F>>: std::is_constructible<F, E> {};
 template <mutability _mut, class T, class E, class U, class F>
-struct is_convertible_result_with<basic_result<_mut, T, E>, success<U>, failure<F>>
+struct is_convertible_result_with<basic_result<_mut, T, E>, success_t<U>, failure_t<F>>
   : std::conjunction<
       std::is_constructible<U, T>,
       std::is_constructible<F, E>>
@@ -46,11 +46,11 @@ inline constexpr bool is_convertible_result_with_v = is_convertible_result_with<
 template <class>
 struct is_err_type : std::false_type {};
 template <class T>
-struct is_err_type<failure<T>> : std::true_type {};
+struct is_err_type<failure_t<T>> : std::true_type {};
 template <class>
 struct is_ok_type : std::false_type {};
 template <class T>
-struct is_ok_type<success<T>> : std::true_type {};
+struct is_ok_type<success_t<T>> : std::true_type {};
 
 } // !namespace mitama
 
@@ -76,7 +76,7 @@ class [[nodiscard]] basic_result<_mutability, T, E,
   public indirect_friend_injector<basic_result<_mutability, T, E>>
 {
   /// result storage
-  std::variant<success<T>, failure<E>> storage_;
+  std::variant<success_t<T>, failure_t<E>> storage_;
   /// friend accessors
   template <mutability, class, class, class>
   friend class basic_result;
@@ -164,9 +164,9 @@ public:
   {
     static_assert(is_mut_v<_mutability>, "Error: assignment to immutable result");
     if (res.is_ok())
-      { this->storage_ = success<T>(res.unwrap()); }
+      { this->storage_ = success_t<T>(res.unwrap()); }
     else
-      { this->storage_ = failure<E>(res.unwrap_err()); }
+      { this->storage_ = failure_t<E>(res.unwrap_err()); }
     return *this;
   }
 
@@ -180,63 +180,63 @@ public:
   {
     static_assert(is_mut_v<_mutability>, "Error: assignment to immutable result");
     if (res.is_ok())
-      { this->storage_ = success<T>(res.unwrap()); }
+      { this->storage_ = success_t<T>(res.unwrap()); }
     else
-      { this->storage_ = failure<E>(res.unwrap_err()); }
+      { this->storage_ = failure_t<E>(res.unwrap_err()); }
     return *this;
   }
 
   /// @brief
-  ///   copy assignment operator for convertible success
+  ///   copy assignment operator for convertible success_t
   template <class U,
             where<std::is_constructible<T, U>> = required>
-  constexpr basic_result& operator=(success<U> const& _ok)
+  constexpr basic_result& operator=(success_t<U> const& _ok)
   {
     static_assert(is_mut_v<_mutability>, "Error: assignment to immutable result");
-    this->storage_ = success<T>(_ok.get());
+    this->storage_ = success_t<T>(_ok.get());
     return *this;
   }
 
   /// @brief
-  ///   copy assignment operator for convertible failure
+  ///   copy assignment operator for convertible failure_t
   template <class F,
             where<std::is_constructible<E, F>> = required>
-  constexpr basic_result& operator=(failure<F> const& _err)
+  constexpr basic_result& operator=(failure_t<F> const& _err)
   {
     static_assert(is_mut_v<_mutability>, "Error: assignment to immutable result");
-    this->storage_ = failure<E>(_err.get());
+    this->storage_ = failure_t<E>(_err.get());
     return *this;
   }
 
   /// @brief
-  ///   move assignment operator for convertible success
+  ///   move assignment operator for convertible success_t
   template <class U,
             where<std::is_constructible<T, U>> = required>
-  constexpr basic_result& operator=(success<U>&& _ok)
+  constexpr basic_result& operator=(success_t<U>&& _ok)
   {
     static_assert(is_mut_v<_mutability>, "Error: assignment to immutable result");
-    this->storage_ = success<T>(std::move(_ok.get()));
+    this->storage_ = success_t<T>(std::move(_ok.get()));
     return *this;
   }
 
   /// @brief
-  ///   move assignment operator for convertible failure
+  ///   move assignment operator for convertible failure_t
   template <class F,
             where<std::is_constructible<E, F>> = required>
-  constexpr basic_result& operator=(failure<F>&& _err)
+  constexpr basic_result& operator=(failure_t<F>&& _err)
   {
     static_assert(is_mut_v<_mutability>, "Error: assignment to immutable result");
-    this->storage_ = failure<E>(std::move(_err.get()));
+    this->storage_ = failure_t<E>(std::move(_err.get()));
     return *this;
   }
 
   /// @brief
-  ///   non-explicit constructor for successful lvalue
+  ///   non-explicit constructor for success_tful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
-  constexpr basic_result(success<U> const& ok)
-    : storage_{std::in_place_type<success<T>>, std::in_place, ok.get()}
+  constexpr basic_result(success_t<U> const& ok)
+    : storage_{std::in_place_type<success_t<T>>, std::in_place, ok.get()}
   {}
 
   /// @brief
@@ -244,17 +244,17 @@ public:
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  constexpr explicit basic_result(success<U> const& ok)
-    : storage_{std::in_place_type<success<T>>, std::in_place, ok.get()}
+  constexpr explicit basic_result(success_t<U> const& ok)
+    : storage_{std::in_place_type<success_t<T>>, std::in_place, ok.get()}
   {}
 
   /// @brief
-  ///   non-explicit constructor for successful rvalue
+  ///   non-explicit constructor for success_tful rvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
-  constexpr basic_result(success<U> && ok)
-    : storage_{std::in_place_type<success<T>>, std::move(ok)}
+  constexpr basic_result(success_t<U> && ok)
+    : storage_{std::in_place_type<success_t<T>>, std::move(ok)}
   {}
 
   /// @brief
@@ -262,52 +262,52 @@ public:
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  constexpr explicit basic_result(success<U> && ok)
-    : storage_{std::in_place_type<success<T>>, std::move(ok)}
+  constexpr explicit basic_result(success_t<U> && ok)
+    : storage_{std::in_place_type<success_t<T>>, std::move(ok)}
   {}
 
   /// @brief
-  ///   non-explicit constructor for unsuccessful lvalue
+  ///   non-explicit constructor for unsuccess_tful lvalue
   template <class U,
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
-  constexpr basic_result(failure<U> const& err)
-    : storage_{std::in_place_type<failure<E>>, std::in_place, err.get()}
+  constexpr basic_result(failure_t<U> const& err)
+    : storage_{std::in_place_type<failure_t<E>>, std::in_place, err.get()}
   {}
 
   /// @brief
-  ///   explicit constructor for unsuccessful lvalue
+  ///   explicit constructor for unsuccess_tful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  constexpr explicit basic_result(failure<U> const& err)
-    : storage_{std::in_place_type<failure<E>>, std::in_place, err.get()}
+  constexpr explicit basic_result(failure_t<U> const& err)
+    : storage_{std::in_place_type<failure_t<E>>, std::in_place, err.get()}
   {}
 
   /// @brief
-  ///   non-explicit constructor for unsuccessful rvalue
+  ///   non-explicit constructor for unsuccess_tful rvalue
   template <class U,
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
-  constexpr basic_result(failure<U> && err)
-    : storage_{std::in_place_type<failure<E>>, std::move(err)}
+  constexpr basic_result(failure_t<U> && err)
+    : storage_{std::in_place_type<failure_t<E>>, std::move(err)}
   {}
 
   /// @brief
-  ///   explicit constructor for unsuccessful lvalue
+  ///   explicit constructor for unsuccess_tful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
-  constexpr explicit basic_result(failure<U> && err)
-    : storage_{std::in_place_type<failure<E>>, std::move(err)}
+  constexpr explicit basic_result(failure_t<U> && err)
+    : storage_{std::in_place_type<failure_t<E>>, std::move(err)}
   {}
 
-  constexpr basic_result(success<>)
-    : storage_{std::in_place_type<success<>>, std::monostate{}}
+  constexpr basic_result(success_t<>)
+    : storage_{std::in_place_type<success_t<>>, std::monostate{}}
   {}
 
-  constexpr basic_result(failure<>)
-    : storage_{std::in_place_type<failure<>>, std::monostate{}}
+  constexpr basic_result(failure_t<>)
+    : storage_{std::in_place_type<failure_t<>>, std::monostate{}}
   {}
 
   /// @brief
@@ -315,7 +315,7 @@ public:
   template <class... Args,
             where<std::is_constructible<T, Args&&...>> = required>
   constexpr explicit basic_result(in_place_ok_t, Args && ... args)
-    : storage_{std::in_place_type<success<T>>, std::in_place, std::forward<Args>(args)...}
+    : storage_{std::in_place_type<success_t<T>>, std::in_place, std::forward<Args>(args)...}
   {}
 
   /// @brief
@@ -323,7 +323,7 @@ public:
   template <class... Args,
             where<std::is_constructible<E, Args&&...>> = required>
   constexpr explicit basic_result(in_place_err_t, Args && ... args)
-    : storage_{std::in_place_type<failure<E>>, std::in_place, std::forward<Args>(args)...}
+    : storage_{std::in_place_type<failure_t<E>>, std::in_place, std::forward<Args>(args)...}
   {}
 
   /// @brief
@@ -331,7 +331,7 @@ public:
   template <class U, class... Args,
             where<std::is_constructible<T, std::initializer_list<U>, Args&&...>> = required>
   constexpr explicit basic_result(in_place_ok_t, std::initializer_list<U> il, Args && ... args)
-    : storage_{std::in_place_type<success<T>>, std::in_place, il, std::forward<Args>(args)...}
+    : storage_{std::in_place_type<success_t<T>>, std::in_place, il, std::forward<Args>(args)...}
   {}
 
   /// @brief
@@ -339,7 +339,7 @@ public:
   template <class U, class... Args,
             where<std::is_constructible<E, Args&&...>> = required>
   constexpr explicit basic_result(in_place_err_t, std::initializer_list<U> il, Args && ... args)
-    : storage_{std::in_place_type<failure<E>>, std::in_place, il, std::forward<Args>(args)...}
+    : storage_{std::in_place_type<failure_t<E>>, std::in_place, il, std::forward<Args>(args)...}
   {}
 
   /// @brief
@@ -347,28 +347,28 @@ public:
   ///
   /// @note
   ///   Returns true if the result is succsess.
-  constexpr bool is_ok() const noexcept { return std::holds_alternative<success<T>>(storage_); }
+  constexpr bool is_ok() const noexcept { return std::holds_alternative<success_t<T>>(storage_); }
 
   /// @brief
   ///   Checks if self has a failure value.
   ///
   /// @note
   ///   Returns true if the result is failure.
-  constexpr bool is_err() const noexcept { return std::holds_alternative<failure<E>>(storage_); }
+  constexpr bool is_err() const noexcept { return std::holds_alternative<failure_t<E>>(storage_); }
 
   /// @brief
   ///   Converts from basic_result to bool.
   ///
   /// @note
   ///   Covert result to bool and returns true if the result is succsess.
-  explicit constexpr operator bool() const noexcept { return std::holds_alternative<success<T>>(storage_); }
+  explicit constexpr operator bool() const noexcept { return std::holds_alternative<success_t<T>>(storage_); }
 
   /// @brief
   ///   Converts from basic_result to bool.
   ///
   /// @note
   ///   Covert result to bool and returns true if the result is failure.
-  constexpr bool operator !() const noexcept { return std::holds_alternative<failure<E>>(storage_); }
+  constexpr bool operator !() const noexcept { return std::holds_alternative<failure_t<E>>(storage_); }
 
   /// @brief
   ///   Converts from basic_result to `maybe<const T>`.
@@ -390,7 +390,7 @@ public:
   ///   Converts from basic_result to `maybe`.
   ///
   /// @note
-  ///   Converts self into a `maybe<const E>`, and discarding the success, if any.
+  ///   Converts self into a `maybe<const E>`, and discarding the success_t, if any.
   constexpr
   maybe<std::remove_reference_t<err_type>>
   err() const&  noexcept {
@@ -409,9 +409,9 @@ public:
     -> basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>
   {
     if ( is_ok() )
-      return basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>{in_place_ok, std::get<success<T>>(storage_).get()};
+      return basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>{in_place_ok, std::get<success_t<T>>(storage_).get()};
     else
-      return basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>{in_place_err, std::get<failure<E>>(storage_).get()};
+      return basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>{in_place_err, std::get<failure_t<E>>(storage_).get()};
   }
 
   /// @brief
@@ -432,13 +432,13 @@ public:
       "Error: result is immutable");
 
     if ( is_ok() )
-      return basic_result<mutability::immut, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_ok, std::get<success<T>>(storage_).get()};
+      return basic_result<mutability::immut, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_ok, std::get<success_t<T>>(storage_).get()};
     else
-      return basic_result<mutability::immut, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_err, std::get<failure<E>>(storage_).get()};
+      return basic_result<mutability::immut, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_err, std::get<failure_t<E>>(storage_).get()};
   }
 
   /// @brief
-  ///   Maps a basic_result<T, E> to basic_result<U, E> by applying a function to a contained success value,
+  ///   Maps a basic_result<T, E> to basic_result<U, E> by applying a function to a contained success_t value,
   ///   leaving an failure value untouched.
   ///
   /// @requires
@@ -454,8 +454,8 @@ public:
   {
     using result_type = basic_result<_mutability, std::invoke_result_t<O, T, Args&&...>, E>;
     return is_ok()
-               ? static_cast<result_type>(success{std::invoke(std::forward<O>(op), std::get<success<T>>(storage_).get(), std::forward<Args>(args)...)})
-               : static_cast<result_type>(failure{std::get<failure<E>>(storage_).get()});
+               ? static_cast<result_type>(success_t{std::invoke(std::forward<O>(op), std::get<success_t<T>>(storage_).get(), std::forward<Args>(args)...)})
+               : static_cast<result_type>(failure_t{std::get<failure_t<E>>(storage_).get()});
   }
 
   /// @brief
@@ -475,13 +475,13 @@ public:
   {
     using result_type = basic_result<_mutability, std::invoke_result_t<O, T, Args&&...>, E>;
     return is_ok()
-               ? static_cast<result_type>(success{std::invoke(std::forward<O>(op), std::move(std::get<success<T>>(storage_).get(), std::forward<Args>(args)...))})
-               : static_cast<result_type>(failure{std::move(std::get<failure<E>>(storage_).get())});
+               ? static_cast<result_type>(success_t{std::invoke(std::forward<O>(op), std::move(std::get<success_t<T>>(storage_).get(), std::forward<Args>(args)...))})
+               : static_cast<result_type>(failure_t{std::move(std::get<failure_t<E>>(storage_).get())});
   }
 
   /// @brief
   ///   Maps a basic_result<T, E> to U by applying a function to a contained success value,
-  ///   or a fallback function to a contained failure value.
+  ///   or a fallback function to a contained failure_t value.
   ///
   /// @requires
   ///   { std::invoke(_fallback, unwrap_err()) };
@@ -489,7 +489,7 @@ public:
   ///   Common< decltype(std::invoke(_fallback, unwrap_err())), decltype(std::invoke(_map, unwrap())) >;
   ///
   /// @note
-  ///   This function can be used to unpack a successful result while handling an error.
+  ///   This function can be used to unpack a success_tful result while handling an error.
   template <class Map, class Fallback>
   constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) &
     noexcept(std::is_nothrow_invocable_v<Fallback, E> && std::is_nothrow_invocable_v<Map, T>)
@@ -504,13 +504,13 @@ public:
   {
     using result_type = std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
     return is_ok()
-               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), std::get<success<T>>(storage_).get()))
-               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), std::get<failure<E>>(storage_).get()));
+               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), std::get<success_t<T>>(storage_).get()))
+               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), std::get<failure_t<E>>(storage_).get()));
   }
 
   /// @brief
   ///   Maps a basic_result<T, E> to U by applying a function to a contained success value,
-  ///   or a fallback function to a contained failure value.
+  ///   or a fallback function to a contained failure_t value.
   ///
   /// @requires
   ///   { std::invoke(_fallback, unwrap_err()) };
@@ -532,13 +532,13 @@ public:
   {
     using result_type = std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
     return is_ok()
-               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), std::get<success<T>>(storage_).get()))
-               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), std::get<failure<E>>(storage_).get()));
+               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), std::get<success_t<T>>(storage_).get()))
+               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), std::get<failure_t<E>>(storage_).get()));
   }
 
   /// @brief
   ///   Maps a basic_result<T, E> to U by applying a function to a contained success value,
-  ///   or a fallback function to a contained failure value.
+  ///   or a fallback function to a contained failure_t value.
   ///
   /// @requires
   ///   { std::invoke(_fallback, unwrap_err()) };
@@ -560,8 +560,8 @@ public:
   {
     using result_type = std::common_type_t<std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
     return is_ok()
-               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), std::move(std::get<success<T>>(storage_).get())))
-               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), std::move(std::get<failure<E>>(storage_).get())));
+               ? static_cast<result_type>(std::invoke(std::forward<Map>(_map), std::move(std::get<success_t<T>>(storage_).get())))
+               : static_cast<result_type>(std::invoke(std::forward<Fallback>(_fallback), std::move(std::get<failure_t<E>>(storage_).get())));
   }
 
   /// @brief
@@ -572,7 +572,7 @@ public:
   ///   { std::invoke(op, unwrap_err()) }
   ///
   /// @note
-  ///   This function can be used to pass through a successful result while handling an error.
+  ///   This function can be used to pass through a success_tful result while handling an error.
   template <class O, class... Args>
   constexpr auto map_err(O && op, Args&&... args) const &
     noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
@@ -581,8 +581,8 @@ public:
   {
     using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E, Args&&...>>;
     return is_err()
-               ? static_cast<result_type>(failure{std::invoke(std::forward<O>(op), std::get<failure<E>>(storage_).get(), std::forward<Args>(args)...)})
-               : static_cast<result_type>(success{std::get<success<T>>(storage_).get()});
+               ? static_cast<result_type>(failure_t{std::invoke(std::forward<O>(op), std::get<failure_t<E>>(storage_).get(), std::forward<Args>(args)...)})
+               : static_cast<result_type>(success_t{std::get<success_t<T>>(storage_).get()});
   }
 
   /// @brief
@@ -602,68 +602,68 @@ public:
   {
     using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E, Args&&...>>;
     return is_err()
-               ? static_cast<result_type>(failure{std::invoke(std::forward<O>(op), std::move(std::get<failure<E>>(storage_).get()), std::forward<Args>(args)...)})
-               : static_cast<result_type>(success{std::move(std::get<success<T>>(storage_).get())});
+               ? static_cast<result_type>(failure_t{std::invoke(std::forward<O>(op), std::move(std::get<failure_t<E>>(storage_).get()), std::forward<Args>(args)...)})
+               : static_cast<result_type>(success_t{std::move(std::get<success_t<T>>(storage_).get())});
   }
 
   /// @brief
   ///   Calls `op` if the result is success, otherwise; returns the failure value of self.
   ///
   /// @requires
-  ///   requires requires is_convertible_result_with<std::invoke_result_t<O, T>, failure<F>>
+  ///   requires requires is_convertible_result_with<std::invoke_result_t<O, T>, failure_t<F>>
   ///
   /// @note
   ///   This function can be used for control flow based on result values.
   template <class O, class... Args>
   constexpr auto and_then(O && op, Args&&... args) const &
     noexcept(std::is_nothrow_invocable_v<O, T, Args&&...>)
-    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T, Args&&...>, failure<E>>,
+    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T, Args&&...>, failure_t<E>>,
     std::invoke_result_t<O, T, Args&&...>>
   {
     using result_type = std::invoke_result_t<O, T, Args&&...>;
     return is_ok()
-               ? std::invoke(std::forward<O>(op), std::get<success<T>>(storage_).get(), std::forward<Args>(args)...)
-               : static_cast<result_type>(failure{std::get<failure<E>>(storage_).get()});
+               ? std::invoke(std::forward<O>(op), std::get<success_t<T>>(storage_).get(), std::forward<Args>(args)...)
+               : static_cast<result_type>(failure_t{std::get<failure_t<E>>(storage_).get()});
   }
 
   /// @brief
   ///   Calls `op` if the result is success, otherwise; returns the failure value of self.
   ///
   /// @requires
-  ///   requires requires is_convertible_result_with<std::invoke_result_t<O, T>, success<T>>
+  ///   requires requires is_convertible_result_with<std::invoke_result_t<O, T>, success_t<T>>
   ///
   /// @note
   ///   This function can be used for control flow based on result values.
   template <class O, class... Args>
   constexpr auto and_then(O && op, Args&&... args) &&
     noexcept(std::is_nothrow_invocable_v<O, T, Args&&...>)
-    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T, Args&&...>, failure<E>>,
+    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T, Args&&...>, failure_t<E>>,
     std::invoke_result_t<O, T, Args&&...>>
   {
     using result_type = std::invoke_result_t<O, T, Args&&...>;
     return is_ok()
-               ? std::invoke(std::forward<O>(op), std::move(std::get<success<T>>(storage_).get()), std::forward<Args>(args)...)
-               : static_cast<result_type>(failure{std::move(std::get<failure<E>>(storage_).get())});
+               ? std::invoke(std::forward<O>(op), std::move(std::get<success_t<T>>(storage_).get()), std::forward<Args>(args)...)
+               : static_cast<result_type>(failure_t{std::move(std::get<failure_t<E>>(storage_).get())});
   }
 
   /// @brief
   ///   Calls `op` if the result is failure, otherwise; returns the success value of self.
   ///
   /// @requires
-  ///   requires requires is_convertible_result_with<std::invoke_result_t<O, T>, success<T>>
+  ///   requires requires is_convertible_result_with<std::invoke_result_t<O, T>, success_t<T>>
   ///
   /// @note
   ///   This function can be used for control flow based on result values.
   template <class O, class... Args>
   constexpr auto or_else(O && op, Args&&... args) const &
     noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
-    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T, Args&&...>, success<T>>,
+    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T, Args&&...>, success_t<T>>,
     std::invoke_result_t<O, E, Args&&...>>
   {
     using result_type = std::invoke_result_t<O, E, Args&&...>;
     return is_err()
-               ? std::invoke(std::forward<O>(op), std::get<failure<E>>(storage_).get(), std::forward<Args>(args)...)
-               : static_cast<result_type>(success{std::get<success<T>>(storage_).get()});
+               ? std::invoke(std::forward<O>(op), std::get<failure_t<E>>(storage_).get(), std::forward<Args>(args)...)
+               : static_cast<result_type>(success_t{std::get<success_t<T>>(storage_).get()});
   }
 
   /// @brief
@@ -677,25 +677,25 @@ public:
   template <class O, class... Args>
   constexpr auto or_else(O && op, Args&&... args) &&
     noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
-    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T, Args&&...>, success<T>>,
+    -> std::enable_if_t<is_convertible_result_with_v<std::invoke_result_t<O, T, Args&&...>, success_t<T>>,
     std::invoke_result_t<O, E, Args&&...>>
   {
     using result_type = std::invoke_result_t<O, E, Args&&...>;
     return is_err()
-               ? std::invoke(std::forward<O>(op), std::get<failure<E>>(std::move(storage_)).get(), std::forward<Args>(args)...)
-               : static_cast<result_type>(success{std::get<success<T>>(std::move(storage_)).get()});
+               ? std::invoke(std::forward<O>(op), std::get<failure_t<E>>(std::move(storage_)).get(), std::forward<Args>(args)...)
+               : static_cast<result_type>(success_t{std::get<success_t<T>>(std::move(storage_)).get()});
   }
 
   /// @brief
-  ///   Returns `res` if the result is success, otherwise; returns the failure value of self.
+  ///   Returns `res` if the result is success_t, otherwise; returns the failure value of self.
   template <mutability _mu, class U>
   constexpr decltype(auto) conj(basic_result<_mu, U, E> const& res) const& noexcept
   {
     using result_type = basic_result<_mutability && _mu, U, E>;
     return this->is_err()
-               ? static_cast<result_type>(failure{std::get<failure<E>>(storage_).get()})
-               : res.is_err() ? static_cast<result_type>(failure{res.unwrap_err()})
-                              : static_cast<result_type>(success{res.unwrap()});
+               ? static_cast<result_type>(failure_t{std::get<failure_t<E>>(storage_).get()})
+               : res.is_err() ? static_cast<result_type>(failure_t{res.unwrap_err()})
+                              : static_cast<result_type>(success_t{res.unwrap()});
   }
 
   /// @brief
@@ -719,9 +719,9 @@ public:
   {
     using result_type = basic_result<_mutability, T, F>;
     return this->is_ok()
-               ? static_cast<result_type>(success{std::get<success<T>>(storage_).get()})
-               : res.is_ok() ? static_cast<result_type>(success{res.unwrap()})
-                             : static_cast<result_type>(failure{res.unwrap_err()});
+               ? static_cast<result_type>(success_t{std::get<success_t<T>>(storage_).get()})
+               : res.is_ok() ? static_cast<result_type>(success_t{res.unwrap()})
+                             : static_cast<result_type>(failure_t{res.unwrap_err()});
   }
 
   /// @brief
@@ -739,7 +739,7 @@ public:
   }
 
   /// @brief
-  ///   Unwraps a result, yielding the content of an success.
+  ///   Unwraps a result, yielding the content of an success_t.
   ///   Else, it returns optb.
   ///
   /// @requires
@@ -754,7 +754,7 @@ public:
             where<meta::has_common_type<T, U&&>> = required>
   decltype(auto) unwrap_or(U&& optb) const& noexcept
   {
-    return is_ok() ? std::get<success<T>>(storage_).get()
+    return is_ok() ? std::get<success_t<T>>(storage_).get()
                    : std::forward<U>(optb);
   }
 
@@ -773,7 +773,7 @@ public:
   template <class U,
             where<meta::has_common_type<std::remove_reference_t<T>&&, U&&>> = required>
   decltype(auto) unwrap_or(U&& optb) && noexcept {
-    return is_ok() ? std::move(std::get<success<T>>(storage_).get())
+    return is_ok() ? std::move(std::get<success_t<T>>(storage_).get())
                    : std::forward<U>(optb);
   }
 
@@ -810,10 +810,10 @@ public:
     )
   {
     if constexpr (std::is_invocable_r_v<T, O, E>) {
-      return is_ok() ? std::get<success<T>>(storage_).get() : std::invoke(std::forward<O>(op), std::get<failure<E>>(storage_).get());
+      return is_ok() ? std::get<success_t<T>>(storage_).get() : std::invoke(std::forward<O>(op), std::get<failure_t<E>>(storage_).get());
     }
     else if constexpr (std::is_invocable_r_v<T, O>) {
-      return is_ok() ? std::get<success<T>>(storage_).get() : std::invoke(std::forward<O>(op));
+      return is_ok() ? std::get<success_t<T>>(storage_).get() : std::invoke(std::forward<O>(op));
     }
     else {
       static_assert([]{ return false; }(), "invalid argument: designated function object is not invocable");
@@ -829,15 +829,15 @@ public:
   unwrap() const& {
     if constexpr (trait::formattable_element<E>::value) {
       if ( is_ok() ) {
-        return std::get<success<T>>(storage_).get();
+        return std::get<success_t<T>>(storage_).get();
       }
       else {
-        PANIC("called `basic_result::unwrap()` on a value: `%1%`", std::get<failure<E>>(storage_));
+        PANIC("called `basic_result::unwrap()` on a value: `%1%`", std::get<failure_t<E>>(storage_));
       }      
     }
     else {
       if ( is_ok() ) {
-        return std::get<success<T>>(storage_).get();
+        return std::get<success_t<T>>(storage_).get();
       }
       else {
         PANIC("called `basic_result::unwrap()` on a value `failure(?)`");
@@ -854,18 +854,18 @@ public:
   unwrap() & {
     if constexpr (trait::formattable_element<E>::value) {
       if ( is_ok() ) {
-        return std::get<success<T>>(storage_).get();
+        return std::get<success_t<T>>(storage_).get();
       }
       else {
-        PANIC("called `basic_result::unwrap()` on a value: `%1%`", std::get<failure<E>>(storage_));
+        PANIC("called `basic_result::unwrap()` on a value: `%1%`", std::get<failure_t<E>>(storage_));
       }      
     }
     else {
       if ( is_ok() ) {
-        return std::get<success<T>>(storage_).get();
+        return std::get<success_t<T>>(storage_).get();
       }
       else {
-        PANIC("called `basic_result::unwrap()` on a value `failure(?)`");
+        PANIC("called `basic_result::unwrap()` on a value `failure_t(?)`");
       }
     }
   }
@@ -879,18 +879,18 @@ public:
   unwrap_err() const& {
     if constexpr (trait::formattable_element<T>::value) {
       if ( is_err() ) {
-        return std::get<failure<E>>(storage_).get();
+        return std::get<failure_t<E>>(storage_).get();
       }
       else {
-        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", std::get<success<T>>(storage_));
+        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", std::get<success_t<T>>(storage_));
       }
     }
     else {
       if ( is_err() ) {
-        return std::get<failure<E>>(storage_).get();
+        return std::get<failure_t<E>>(storage_).get();
       }
       else {
-        PANIC("called `basic_result::unwrap_err()` on a value `success(?)`");
+        PANIC("called `basic_result::unwrap_err()` on a value `success_t(?)`");
       }
     }
   }
@@ -904,18 +904,18 @@ public:
   unwrap_err() & {
     if constexpr (trait::formattable_element<T>::value) {
       if ( is_err() ) {
-        return std::get<failure<E>>(storage_).get();
+        return std::get<failure_t<E>>(storage_).get();
       }
       else {
-        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", std::get<success<T>>(storage_));
+        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", std::get<success_t<T>>(storage_));
       }
     }
     else {
       if ( is_err() ) {
-        return std::get<failure<E>>(storage_).get();
+        return std::get<failure_t<E>>(storage_).get();
       }
       else {
-        PANIC("called `basic_result::unwrap_err()` on a value `success(?)`)");
+        PANIC("called `basic_result::unwrap_err()` on a value `success_t(?)`)");
       }
     }
   }
@@ -1166,8 +1166,8 @@ public:
   operator==(basic_result<_mut, U, F> const& rhs) const& {
     return std::visit(
       boost::hana::overload(
-        [](success<T> const& l, success<U> const& r) { return l.get() == r.get(); },
-        [](failure<E> const& l, failure<F> const& r) { return l.get() == r.get(); },
+        [](success_t<T> const& l, success_t<U> const& r) { return l.get() == r.get(); },
+        [](failure_t<E> const& l, failure_t<F> const& r) { return l.get() == r.get(); },
         [](auto&&...) { return false; }),
       this->storage_, rhs.storage_);
   }
@@ -1188,8 +1188,8 @@ public:
   operator!=(basic_result<_mut, U, F> const& rhs) const& {
     return std::visit(
       boost::hana::overload(
-        [](success<T> const& l, success<U> const& r) { return !(l.get() == r.get()); },
-        [](failure<E> const& l, failure<F> const& r) { return !(l.get() == r.get()); },
+        [](success_t<T> const& l, success_t<U> const& r) { return !(l.get() == r.get()); },
+        [](failure_t<E> const& l, failure_t<F> const& r) { return !(l.get() == r.get()); },
         [](auto&&...) { return true; }),
       this->storage_, rhs.storage_);
   }
@@ -1206,7 +1206,7 @@ public:
   std::enable_if_t<
     is_comparable_with<T, U>::value,
   bool>
-  operator==(success<U> const& rhs) const {
+  operator==(success_t<U> const& rhs) const {
     return this->is_ok() ? this->unwrap() == rhs.get() : false;
   }
 
@@ -1222,7 +1222,7 @@ public:
   std::enable_if_t<
     is_comparable_with<T, U>::value,
   bool>
-  operator!=(success<U> const& rhs) const {
+  operator!=(success_t<U> const& rhs) const {
     return this->is_ok() ? !(this->unwrap() == rhs.get()) : true;
   }
 
@@ -1238,7 +1238,7 @@ public:
   std::enable_if_t<
     is_comparable_with<E, F>::value,
   bool>
-  operator==(failure<F> const& rhs) const {
+  operator==(failure_t<F> const& rhs) const {
     return this->is_err() ? this->unwrap_err() == rhs.get() : false;
   }
 
@@ -1254,7 +1254,7 @@ public:
   std::enable_if_t<
     is_comparable_with<E, F>::value,
   bool>
-  operator!=(failure<F> const& rhs) const {
+  operator!=(failure_t<F> const& rhs) const {
     return this->is_err() ? !(this->unwrap_err() == rhs.get()) : true;
   }
 
@@ -1267,10 +1267,10 @@ public:
   operator<(basic_result<_, U, F> const& rhs) const {
     return std::visit(
       boost::hana::overload(
-        [](success<T> const& l, success<U> const& r) { return l.get() < r.get(); },
-        [](failure<E> const& l, failure<F> const& r) { return l.get() < r.get(); },
-        [](failure<E> const&, success<U> const&) { return true; },
-        [](success<T> const&, failure<F> const&) { return false; }),
+        [](success_t<T> const& l, success_t<U> const& r) { return l.get() < r.get(); },
+        [](failure_t<E> const& l, failure_t<F> const& r) { return l.get() < r.get(); },
+        [](failure_t<E> const&, success_t<U> const&) { return true; },
+        [](success_t<T> const&, failure_t<F> const&) { return false; }),
       this->storage_, rhs.storage_);
   }
 
@@ -1278,7 +1278,7 @@ public:
   std::enable_if_t<
       meta::is_less_comparable_with<U, T>::value,
   bool>
-  operator<(success<U> const& rhs) const {
+  operator<(success_t<U> const& rhs) const {
     return rhs > *this;
   }
 
@@ -1286,7 +1286,7 @@ public:
   std::enable_if_t<
       meta::is_less_comparable_with<F, E>::value,
   bool>
-  operator<(failure<F> const& rhs) const {
+  operator<(failure_t<F> const& rhs) const {
     return rhs > *this;
   }
 
@@ -1299,10 +1299,10 @@ public:
   operator>(basic_result<_, U, F> const& rhs) const {
     return std::visit(
       boost::hana::overload(
-        [](success<T> const& l, success<U> const& r) { return r.get() < l.get(); },
-        [](failure<E> const& l, failure<F> const& r) { return r.get() < l.get(); },
-        [](failure<E> const&, success<U> const&) { return false; },
-        [](success<T> const&, failure<F> const&) { return true; }),
+        [](success_t<T> const& l, success_t<U> const& r) { return r.get() < l.get(); },
+        [](failure_t<E> const& l, failure_t<F> const& r) { return r.get() < l.get(); },
+        [](failure_t<E> const&, success_t<U> const&) { return false; },
+        [](success_t<T> const&, failure_t<F> const&) { return true; }),
       this->storage_, rhs.storage_);
   }
 
@@ -1310,7 +1310,7 @@ public:
   std::enable_if_t<
       meta::is_less_comparable_with<U, T>::value,
   bool>
-  operator>(success<U> const& rhs) const {
+  operator>(success_t<U> const& rhs) const {
     return rhs < *this;
   }
 
@@ -1318,7 +1318,7 @@ public:
   std::enable_if_t<
       meta::is_less_comparable_with<F, E>::value,
   bool>
-  operator>(failure<F> const& rhs) const {
+  operator>(failure_t<F> const& rhs) const {
     return rhs < *this;
   }
 
@@ -1333,10 +1333,10 @@ public:
   operator<=(basic_result<_, U, F> const& rhs) const {
     return std::visit(
       boost::hana::overload(
-        [](success<T> const& l, success<U> const& r) { return (l.get() == r.get()) || (l.get() < r.get()); },
-        [](failure<E> const& l, failure<F> const& r) { return (l.get() == r.get()) || (l.get() < r.get()); },
-        [](failure<E> const&, success<U> const&) { return true; },
-        [](success<T> const&, failure<F> const&) { return false; }),
+        [](success_t<T> const& l, success_t<U> const& r) { return (l.get() == r.get()) || (l.get() < r.get()); },
+        [](failure_t<E> const& l, failure_t<F> const& r) { return (l.get() == r.get()) || (l.get() < r.get()); },
+        [](failure_t<E> const&, success_t<U> const&) { return true; },
+        [](success_t<T> const&, failure_t<F> const&) { return false; }),
       this->storage_, rhs.storage_);
   }
 
@@ -1346,7 +1346,7 @@ public:
       meta::is_less_comparable_with<U, T>,
       is_comparable_with<U, T>>,
   bool>
-  operator<=(success<U> const& rhs) const {
+  operator<=(success_t<U> const& rhs) const {
     return rhs >= *this;
   }
 
@@ -1356,7 +1356,7 @@ public:
       meta::is_less_comparable_with<F, E>,
       is_comparable_with<F, E>>,
   bool>
-  operator<=(failure<F> const& rhs) const {
+  operator<=(failure_t<F> const& rhs) const {
     return rhs >= *this;
   }
 
@@ -1371,10 +1371,10 @@ public:
   operator>=(basic_result<_, U, F> const& rhs) const {
     return std::visit(
       boost::hana::overload(
-        [](success<T> const& l, success<U> const& r) { return (l.get() == r.get()) || (r.get() < l.get()); },
-        [](failure<E> const& l, failure<F> const& r) { return (l.get() == r.get()) || (r.get() < l.get()); },
-        [](failure<E> const&, success<U> const&) { return false; },
-        [](success<T> const&, failure<F> const&) { return true; }),
+        [](success_t<T> const& l, success_t<U> const& r) { return (l.get() == r.get()) || (r.get() < l.get()); },
+        [](failure_t<E> const& l, failure_t<F> const& r) { return (l.get() == r.get()) || (r.get() < l.get()); },
+        [](failure_t<E> const&, success_t<U> const&) { return false; },
+        [](success_t<T> const&, failure_t<F> const&) { return true; }),
       this->storage_, rhs.storage_);
   }
 
@@ -1384,7 +1384,7 @@ public:
       meta::is_less_comparable_with<U, T>,
       is_comparable_with<U, T>>,
   bool>
-  operator>=(success<U> const& rhs) const {
+  operator>=(success_t<U> const& rhs) const {
     return rhs <= *this;
   }
 
@@ -1394,7 +1394,7 @@ public:
       meta::is_less_comparable_with<F, E>,
       is_comparable_with<F, E>>,
   bool>
-  operator>=(failure<F> const& rhs) const {
+  operator>=(failure_t<F> const& rhs) const {
     return rhs <= *this;
   }
 
@@ -1410,7 +1410,7 @@ public:
     && is_comparable_with<T, U>::value,
   bool>
   operator==(basic_result<_, T, E> const& lhs, U&& rhs) {
-    return lhs == success(std::forward<U>(rhs));
+    return lhs == success_t(std::forward<U>(rhs));
   }
 
   template <mutability _, class T, class E, class U>
@@ -1423,7 +1423,7 @@ public:
     && is_comparable_with<T, U>::value,
   bool>
   operator==(T&& lhs, basic_result<_, U, E> const& rhs) {
-    return success(std::forward<T>(lhs)) == rhs;
+    return success_t(std::forward<T>(lhs)) == rhs;
   }
 
   template <mutability _, class T, class E, class U>
@@ -1436,7 +1436,7 @@ public:
     && is_comparable_with<T, U>::value,
   bool>
   operator!=(basic_result<_, T, E> const& lhs, U&& rhs) {
-    return lhs != success(std::forward<U>(rhs));
+    return lhs != success_t(std::forward<U>(rhs));
   }
 
   template <mutability _, class T, class E, class U>
@@ -1449,7 +1449,7 @@ public:
     && is_comparable_with<T, U>::value,
   bool>
   operator!=(T&& lhs, basic_result<_, U, E> const& rhs) {
-    return success(std::forward<T>(lhs)) != rhs;
+    return success_t(std::forward<T>(lhs)) != rhs;
   }
 
   template <mutability _, class T, class E, class U>
@@ -1462,7 +1462,7 @@ public:
     && meta::is_less_comparable_with<T, U>::value,
   bool>
   operator<(basic_result<_, T, E> const& lhs, U&& rhs) {
-    return lhs < success(std::forward<U>(rhs));
+    return lhs < success_t(std::forward<U>(rhs));
   }
 
   template <mutability _, class T, class E, class U>
@@ -1475,7 +1475,7 @@ public:
     && meta::is_less_comparable_with<T, U>::value,
   bool>
   operator<(T&& lhs, basic_result<_, U, E> const& rhs) {
-    return success(std::forward<T>(lhs)) < rhs;
+    return success_t(std::forward<T>(lhs)) < rhs;
   }
 
   template <mutability _, class T, class E, class U>
@@ -1489,7 +1489,7 @@ public:
     && is_comparable_with<T, U>::value,
   bool>
   operator<=(basic_result<_, T, E> const& lhs, U&& rhs) {
-    return lhs <= success(std::forward<U>(rhs));
+    return lhs <= success_t(std::forward<U>(rhs));
   }
 
   template <mutability _, class T, class E, class U>
@@ -1503,7 +1503,7 @@ public:
     && is_comparable_with<T, U>::value,
   bool>
   operator<=(T&& lhs, basic_result<_, U, E> const& rhs) {
-    return success(std::forward<T>(lhs)) <= rhs;
+    return success_t(std::forward<T>(lhs)) <= rhs;
   }
 
   template <mutability _, class T, class E, class U>
@@ -1516,7 +1516,7 @@ public:
     && meta::is_less_comparable_with<U, T>::value,
   bool>
   operator>(basic_result<_, T, E> const& lhs, U&& rhs) {
-    return lhs > success(std::forward<U>(rhs));
+    return lhs > success_t(std::forward<U>(rhs));
   }
 
   template <mutability _, class T, class E, class U>
@@ -1529,7 +1529,7 @@ public:
     && meta::is_less_comparable_with<U, T>::value,
   bool>
   operator>(T&& lhs, basic_result<_, U, E> const& rhs) {
-    return success(std::forward<T>(lhs)) > rhs;
+    return success_t(std::forward<T>(lhs)) > rhs;
   }
 
   template <mutability _, class T, class E, class U>
@@ -1543,7 +1543,7 @@ public:
     && is_comparable_with<U, T>::value,
   bool>
   operator>=(basic_result<_, T, E> const& lhs, U&& rhs) {
-    return lhs >= success(std::forward<U>(rhs));
+    return lhs >= success_t(std::forward<U>(rhs));
   }
 
   template <mutability _, class T, class E, class U>
@@ -1557,7 +1557,7 @@ public:
     && is_comparable_with<U, T>::value,
   bool>
   operator>=(T&& lhs, basic_result<_, U, E> const& rhs) {
-    return success(std::forward<T>(lhs)) >= rhs;
+    return success_t(std::forward<T>(lhs)) >= rhs;
   }
 
 } // namespace mitama
