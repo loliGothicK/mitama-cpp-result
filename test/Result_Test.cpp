@@ -156,6 +156,12 @@ TEST_CASE("map() test", "[result][map]"){
   REQUIRE(z == success(2));
 }
 
+TEST_CASE("apply_map() test", "[result][apply_map]"){
+  result<std::tuple<int, int>, int> res = success(1, 2);
+  result<int, int> z = res.apply_map(std::plus<>{});
+  REQUIRE(z == success(3));
+}
+
 TEST_CASE("map_or_else(F, M) test", "[result][map_or_else]"){
   auto k = 21;
   {
@@ -193,6 +199,12 @@ TEST_CASE("map_err() test", "[result][map_err]"){
   result<int, int> some_num = failure(1);
   result<int, int> z = some_num.map_err(std::plus{}, 1);
   REQUIRE(z == failure(2));
+}
+
+TEST_CASE("apply_map_err() test", "[result][apply_map_err]"){
+  result<int, std::tuple<int, int>> res = failure(1, 1);
+  result<int, int> z = res.apply_map_err([](auto... a){ return (... + a); }, 1);
+  REQUIRE(z == failure(3));
 }
 
 TEST_CASE("conj test", "[result][conj]"){
@@ -1104,3 +1116,4 @@ TEST_CASE("greater_or_equal compare", "[result][greater_or_equal]"){
   REQUIRE(2 >= err2);
 
 }
+

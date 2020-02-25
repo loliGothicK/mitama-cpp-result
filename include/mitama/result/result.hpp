@@ -73,10 +73,12 @@ class [[nodiscard]] basic_result<_mutability, T, E,
   : /* method injection selectors */ 
   public unwrap_or_default_friend_injector<basic_result<_mutability, T, E>>,
   public transpose_friend_injector<basic_result<_mutability, T, E>>,
-  public indirect_friend_injector<basic_result<_mutability, T, E>>
+  public indirect_friend_injector<basic_result<_mutability, T, E>>,
+  public apply_map_friend_injector<basic_result<_mutability, T, E>>,
+  public apply_map_err_friend_injector<basic_result<_mutability, T, E>>
 {
   /// result storage
-  std::variant<success_t<T>, failure_t<E>> storage_;
+  std::variant<std::monostate, success_t<T>, failure_t<E>> storage_;
   /// friend accessors
   template <mutability, class, class, class>
   friend class basic_result;
@@ -342,6 +344,54 @@ public:
     : storage_{std::in_place_type<failure_t<E>>, std::in_place, il, std::forward<Args>(args)...}
   {}
 
+  template <class... Args,
+    std::enable_if_t<
+      std::is_constructible_v<T, Args...>,
+    bool> = false>
+  basic_result(success_t<_result_detail::forward_mode<T>, Args...> fwd)
+      : storage_()
+  {
+    std::apply([&](auto&&... args){
+      storage_.template emplace<success_t<T>>(std::in_place, std::forward<decltype(args)>(args)...);
+    }, std::move(fwd)());
+  }
+
+  template <class... Args,
+    std::enable_if_t<
+      std::is_constructible_v<T, Args...>,
+    bool> = false>
+  basic_result(success_t<_result_detail::forward_mode<void>, Args...> fwd)
+      : storage_()
+  {
+    std::apply([&](auto&&... args){
+      storage_.template emplace<success_t<T>>(std::in_place, std::forward<decltype(args)>(args)...);
+    }, std::move(fwd)());
+  }
+
+  template <class... Args,
+    std::enable_if_t<
+      std::is_constructible_v<E, Args...>,
+    bool> = false>
+  basic_result(failure_t<_result_detail::forward_mode<E>, Args...> fwd)
+      : storage_()
+  {
+    std::apply([&](auto&&... args){
+      storage_.template emplace<failure_t<E>>(std::in_place, std::forward<decltype(args)>(args)...);
+    }, std::move(fwd)());
+  }
+
+  template <class... Args,
+    std::enable_if_t<
+      std::is_constructible_v<E, Args...>,
+    bool> = false>
+  basic_result(failure_t<_result_detail::forward_mode<void>, Args...> fwd)
+      : storage_()
+  {
+    std::apply([&](auto&&... args){
+      storage_.template emplace<failure_t<E>>(std::in_place, std::forward<decltype(args)>(args)...);
+    }, std::move(fwd)());
+  }
+
   /// @brief
   ///   Checks if self has a success value.
   ///
@@ -438,7 +488,7 @@ public:
   }
 
   /// @brief
-  ///   Maps a basic_result<T, E> to basic_result<U, E> by applying a function to a contained success_t value,
+  ///   Maps a basic_result<T, E> to basic_result<U, E> by applying a function to a contained success value,
   ///   leaving an failure value untouched.
   ///
   /// @requires
@@ -481,7 +531,7 @@ public:
 
   /// @brief
   ///   Maps a basic_result<T, E> to U by applying a function to a contained success value,
-  ///   or a fallback function to a contained failure_t value.
+  ///   or a fallback function to a contained failure value.
   ///
   /// @requires
   ///   { std::invoke(_fallback, unwrap_err()) };
@@ -510,7 +560,7 @@ public:
 
   /// @brief
   ///   Maps a basic_result<T, E> to U by applying a function to a contained success value,
-  ///   or a fallback function to a contained failure_t value.
+  ///   or a fallback function to a contained failure value.
   ///
   /// @requires
   ///   { std::invoke(_fallback, unwrap_err()) };
@@ -538,7 +588,7 @@ public:
 
   /// @brief
   ///   Maps a basic_result<T, E> to U by applying a function to a contained success value,
-  ///   or a fallback function to a contained failure_t value.
+  ///   or a fallback function to a contained failure value.
   ///
   /// @requires
   ///   { std::invoke(_fallback, unwrap_err()) };
@@ -1266,11 +1316,12 @@ public:
   bool>
   operator<(basic_result<_, U, F> const& rhs) const {
     return std::visit(
-      boost::hana::overload(
+      boost::hana::overload_linearly(
         [](success_t<T> const& l, success_t<U> const& r) { return l.get() < r.get(); },
         [](failure_t<E> const& l, failure_t<F> const& r) { return l.get() < r.get(); },
         [](failure_t<E> const&, success_t<U> const&) { return true; },
-        [](success_t<T> const&, failure_t<F> const&) { return false; }),
+        [](success_t<T> const&, failure_t<F> const&) { return false; },
+        [](auto const&, auto const&) { return false; }),
       this->storage_, rhs.storage_);
   }
 
@@ -1298,11 +1349,12 @@ public:
   bool>
   operator>(basic_result<_, U, F> const& rhs) const {
     return std::visit(
-      boost::hana::overload(
+      boost::hana::overload_linearly(
         [](success_t<T> const& l, success_t<U> const& r) { return r.get() < l.get(); },
         [](failure_t<E> const& l, failure_t<F> const& r) { return r.get() < l.get(); },
         [](failure_t<E> const&, success_t<U> const&) { return false; },
-        [](success_t<T> const&, failure_t<F> const&) { return true; }),
+        [](success_t<T> const&, failure_t<F> const&) { return true; },
+        [](auto const&, auto const&) { return false; }),
       this->storage_, rhs.storage_);
   }
 
@@ -1332,11 +1384,12 @@ public:
   bool>
   operator<=(basic_result<_, U, F> const& rhs) const {
     return std::visit(
-      boost::hana::overload(
+      boost::hana::overload_linearly(
         [](success_t<T> const& l, success_t<U> const& r) { return (l.get() == r.get()) || (l.get() < r.get()); },
         [](failure_t<E> const& l, failure_t<F> const& r) { return (l.get() == r.get()) || (l.get() < r.get()); },
         [](failure_t<E> const&, success_t<U> const&) { return true; },
-        [](success_t<T> const&, failure_t<F> const&) { return false; }),
+        [](success_t<T> const&, failure_t<F> const&) { return false; },
+        [](auto const&, auto const&) { return false; }),
       this->storage_, rhs.storage_);
   }
 
@@ -1370,11 +1423,12 @@ public:
   bool>
   operator>=(basic_result<_, U, F> const& rhs) const {
     return std::visit(
-      boost::hana::overload(
+      boost::hana::overload_linearly(
         [](success_t<T> const& l, success_t<U> const& r) { return (l.get() == r.get()) || (r.get() < l.get()); },
         [](failure_t<E> const& l, failure_t<F> const& r) { return (l.get() == r.get()) || (r.get() < l.get()); },
         [](failure_t<E> const&, success_t<U> const&) { return false; },
-        [](success_t<T> const&, failure_t<F> const&) { return true; }),
+        [](success_t<T> const&, failure_t<F> const&) { return true; },
+        [](auto const&, auto const&) { return false; }),
       this->storage_, rhs.storage_);
   }
 

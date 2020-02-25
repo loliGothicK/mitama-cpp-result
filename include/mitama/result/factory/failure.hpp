@@ -17,9 +17,9 @@ namespace mitama {
 /// class failure_t:
 /// The main use of this class is to propagate unsuccessful results to the constructor of the result class.
 template <class E>
-class [[nodiscard]] failure_t
+class [[nodiscard]] failure_t<E>
 {
-  template <class>
+  template <class, class...>
   friend class failure_t;
   E x;
 
@@ -248,7 +248,7 @@ public:
 template <class E>
 class [[nodiscard]] failure_t<E&>
 {
-  template <class>
+  template <class, class...>
   friend class failure_t;
   std::reference_wrapper<E> x;
 
@@ -436,18 +436,35 @@ public:
 
 };
 
+  template <class T, class... Args>
+  class [[nodiscard]] failure_t<_result_detail::forward_mode<T>, Args...>
+  {
+    std::tuple<Args...> args;
+  public:
+    constexpr explicit failure_t(Args... args): args(std::forward<Args>(args)...) {}
+
+    auto operator()() && {
+      return std::apply([](auto&&... fwd){
+        return std::forward_as_tuple(std::forward<decltype(fwd)>(fwd)...);
+      }, args);
+    }
+  };
+
   template <class Target = void, class... Types>
   inline auto failure(Types&&... v) {
     if constexpr (!std::is_void_v<Target>) {
-      return failure_t<Target>{std::forward<Types>(v)...};
+      if constexpr (sizeof...(Types) < 2)
+        return failure_t<Target>{std::forward<Types>(v)...};
+      else
+        return failure_t<_result_detail::forward_mode<Target>, Types&&...>{std::forward<Types>(v)...};
     }
     else {
       if constexpr (sizeof...(Types) == 0)
         return failure_t<>{};
       else if constexpr (sizeof...(Types) == 1)
-        return failure_t{std::forward<Types>(v)...};
+        return failure_t<Types...>{std::forward<Types>(v)...};
       else
-        static_assert(sizeof...(Types) <= 1);
+        return failure_t<_result_detail::forward_mode<>, Types&&...>{std::forward<Types>(v)...};
     }
   }
 
