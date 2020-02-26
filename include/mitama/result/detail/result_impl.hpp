@@ -493,6 +493,73 @@ public:
 
 };
 
+template <class, class = void>
+class apply_map_friend_injector
+{
+public:
+  void apply_map() const = delete;
+};
+
+template <mutability _mu, class T, class E>
+class apply_map_friend_injector<basic_result<_mu, T, E>,
+                                std::enable_if_t<is_tuple_like<T>::value>>
+{
+public:
+  ///   Maps a basic_result<(Ts...), E> to basic_result<U, E> by applying a function to a contained tuple elements if holds success values,
+  ///   otherwise; returns the failure value of self.
+  ///
+  /// @note
+  ///   This function can be used to compose the results of two functions.
+  template <class O, class... Args>
+  constexpr auto apply_map(O && op, Args&&... args) const &
+  {
+    using result_type
+      = basic_result<_mu,
+        decltype(std::apply(
+          std::forward<O>(op),
+          std::tuple_cat(
+            static_cast<basic_result<_mu, T, E> const *>(this)->unwrap(),
+            std::forward_as_tuple(std::forward<Args>(args))...))),
+        E>;
+    return static_cast<basic_result<_mu, T, E> const *>(this)->is_ok()
+               ? static_cast<result_type>(success_t{std::apply(std::forward<O>(op), std::tuple_cat(static_cast<basic_result<_mu, T, E> const *>(this)->unwrap(), std::forward_as_tuple(std::forward<Args>(args))...))})
+               : static_cast<result_type>(failure_t{static_cast<basic_result<_mu, T, E> const *>(this)->unwrap_err()});
+  }
+};
+
+template <class, class = void>
+class apply_map_err_friend_injector
+{
+public:
+  void apply_map_err() const = delete;
+};
+
+template <mutability _mu, class T, class E>
+class apply_map_err_friend_injector<basic_result<_mu, T, E>,
+                                    std::enable_if_t<is_tuple_like<E>::value>>
+{
+public:
+  ///   Maps a basic_result<T, (Ts...)> to basic_result<T, F> by applying a function to a contained tuple elements if holds failure values,
+  ///   otherwise; returns the success value of self.
+  ///
+  /// @note
+  ///   This function can be used to compose the results of two functions.
+  template <class O, class... Args>
+  constexpr auto apply_map_err(O && op, Args&&... args) const &
+  {
+    using result_type
+      = basic_result<_mu, T,
+        decltype(std::apply(
+          std::forward<O>(op),
+          std::tuple_cat(
+            static_cast<basic_result<_mu, T, E> const *>(this)->unwrap_err(),
+            std::forward_as_tuple(std::forward<Args>(args))...)))
+        >;
+    return static_cast<basic_result<_mu, T, E> const *>(this)->is_ok()
+               ? static_cast<result_type>(success_t{static_cast<basic_result<_mu, T, E> const *>(this)->unwrap()})
+               : static_cast<result_type>(failure_t{std::apply(std::forward<O>(op), std::tuple_cat(static_cast<basic_result<_mu, T, E> const *>(this)->unwrap_err(), std::forward_as_tuple(std::forward<Args>(args))...))});
+  }
+};
 
 } // !namespace mitama
 #endif

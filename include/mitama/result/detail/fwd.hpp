@@ -1,8 +1,13 @@
 #ifndef MITAMA_RESULT_FWD
 #define MITAMA_RESULT_FWD
 #include <variant>
-
+#include <tuple>
 namespace mitama {
+
+namespace _result_detail {
+    template <class = void, class...>
+    struct forward_mode {};
+}
 
 /// for mutability control
 enum class mutability: bool {
@@ -32,19 +37,11 @@ using result = basic_result<mutability::immut, T, E>;
 template <class T = std::monostate, class E = std::monostate>
 using mut_result = basic_result<mutability::mut, T, E>;
 
-template <class T = std::monostate>
-class success;
+template <class = std::monostate, class...> class success_t;
+template <class T> success_t(T&&) -> success_t<T>;
 
-/// Deduction guide for `success`
-template <class T>
-success(T&&)->success<T>;
-
-template <class = std::monostate>
-class failure;
-
-/// Deduction guide for `failure`
-template <class E>
-failure(E&&)->failure<E>;
+template <class = std::monostate, class...> class failure_t;
+template <class E> failure_t(E&&)->failure_t<E>;
 
 class in_place_ok_t {};
 inline constexpr in_place_ok_t in_place_ok = {};

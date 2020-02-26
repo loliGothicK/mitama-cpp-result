@@ -64,37 +64,37 @@ auto parse = [](str s) -> result<T, str> {
       };
       if constexpr (std::is_same_v<T, int>)
       {
-        return success{std::stoi(s)};
+        return success(std::stoi(s));
       }
       else if constexpr (std::is_same_v<T, long>)
       {
-        return success{std::stol(s)};
+        return success(std::stol(s));
       }
       else if constexpr (std::is_same_v<T, unsigned long>)
       {
-        return success{std::stoul(s)};
+        return success(std::stoul(s));
       }
       else if constexpr (std::is_same_v<T, long long>)
       {
-        return success{std::stoll(s)};
+        return success(std::stoll(s));
       }
       else if constexpr (std::is_same_v<T, unsigned long long>)
       {
-        return success{std::stoull(s)};
+        return success(std::stoull(s));
       }
     }
     else if constexpr (std::is_floating_point_v<T>){
       if constexpr (std::is_same_v<T, float>)
       {
-        return success{std::stof(s)};
+        return success(std::stof(s));
       }
       else if constexpr (std::is_same_v<T, double>)
       {
-        return success{std::stod(s)};
+        return success(std::stod(s));
       }
       else if constexpr (std::is_same_v<T, long double>)
       {
-        return success{std::stold(s)};
+        return success(std::stold(s));
       }
     }
     else
@@ -104,7 +104,7 @@ auto parse = [](str s) -> result<T, str> {
   }
   catch (std::invalid_argument const &e)
   {
-    return failure{e.what()};
+    return failure(e.what());
   }
 };
 
@@ -156,6 +156,12 @@ TEST_CASE("map() test", "[result][map]"){
   REQUIRE(z == success(2));
 }
 
+TEST_CASE("apply_map() test", "[result][apply_map]"){
+  result<std::tuple<int, int>, int> res = success(1, 2);
+  result<int, int> z = res.apply_map(std::plus<>{});
+  REQUIRE(z == success(3));
+}
+
 TEST_CASE("map_or_else(F, M) test", "[result][map_or_else]"){
   auto k = 21;
   {
@@ -193,6 +199,12 @@ TEST_CASE("map_err() test", "[result][map_err]"){
   result<int, int> some_num = failure(1);
   result<int, int> z = some_num.map_err(std::plus{}, 1);
   REQUIRE(z == failure(2));
+}
+
+TEST_CASE("apply_map_err() test", "[result][apply_map_err]"){
+  result<int, std::tuple<int, int>> res = failure(1, 1);
+  result<int, int> z = res.apply_map_err([](auto... a){ return (... + a); }, 1);
+  REQUIRE(z == failure(3));
 }
 
 TEST_CASE("conj test", "[result][conj]"){
@@ -241,8 +253,8 @@ TEST_CASE("and_then() test", "[result][and_then]"){
 TEMPLATE_TEST_CASE("is_convertible_result_with meta test", "[is_convertible_result_with][meta]",
                     int, unsigned, std::string, std::vector<int>)
 {
-  REQUIRE(is_convertible_result_with_v<mitama::result<int, TestType>, mitama::failure<TestType>>);
-  REQUIRE(!is_convertible_result_with_v<result<unsigned, std::vector<TestType>>, mitama::failure<TestType>>);
+  REQUIRE(is_convertible_result_with_v<mitama::result<int, TestType>, mitama::failure_t<TestType>>);
+  REQUIRE(!is_convertible_result_with_v<result<unsigned, std::vector<TestType>>, mitama::failure_t<TestType>>);
 }
 
 TEST_CASE("disj test", "[result][disj]"){
@@ -508,6 +520,14 @@ TEST_CASE("format test", "[result][format]"){
       REQUIRE(ss.str() == "success(((1,1),1))"s);
     }
   }
+  SECTION("result of range of tuple"){
+    using namespace std::literals;
+    {
+      std::stringstream ss;
+      ss << result<std::vector<std::tuple<int, int>>, int>(success(std::vector{std::tuple{1, 1}, std::tuple{1, 1}}));
+      REQUIRE(ss.str() == "success([(1,1),(1,1)])"s);
+    }
+  }
   SECTION("failure"){
     using namespace std::literals;
     std::stringstream ss;
@@ -526,7 +546,7 @@ TEST_CASE("format test", "[result][format]"){
 TEST_CASE("monostate success test", "[result][monostate]"){
   auto func = []() -> result<std::monostate, std::string> {
     if (false) return failure<std::string>("hoge"s);
-    return success<>{};
+    return success<>();
   };
 
   REQUIRE(func().is_ok());
@@ -534,7 +554,7 @@ TEST_CASE("monostate success test", "[result][monostate]"){
 
 TEST_CASE("monostate failure test", "[result][monostate]"){
   auto func = []() -> result</*defaulted monostate*/> {
-    if (false) return success<>{};
+    if (false) return success<>();
     return failure<>();
   };
   REQUIRE(func().is_err());
@@ -542,12 +562,12 @@ TEST_CASE("monostate failure test", "[result][monostate]"){
 
 TEST_CASE("contextually convertible to bool", "[result]"){
   auto err_func = []() -> result</*defaulted monostate*/> {
-    if (false) return failure<>{};
+    if (false) return failure<>();
     return failure<>();
   };
   auto ok_func = []() -> result<std::monostate, std::string> {
     if (false) return failure<std::string>("hoge"s);
-    return success<>{};
+    return success<>();
   };
   REQUIRE(!err_func());
   REQUIRE(ok_func());
@@ -557,7 +577,7 @@ SCENARIO("test for reference type", "[result][ref]"){
   using namespace std::literals;
   GIVEN( "A result that refer to some string" ) {
     str hoge = "foo";
-    mut_result<str&, str&> res(success<str&>{hoge});
+    mut_result<str&, str&> res(success<str&>(hoge));
 
     REQUIRE( hoge == "foo"s );
     REQUIRE( res.unwrap() == "foo"s );
@@ -576,7 +596,7 @@ SCENARIO("test for reference type", "[result][ref]"){
 SCENARIO("test for as_ref", "[result][as_ref]"){
   using namespace std::literals;
   GIVEN( "A new result, containing a reference into the original" ) {
-    mut_result<str, str> res(success<str>{"foo"s});
+    mut_result<str, str> res(success<str>("foo"s));
     auto ref /* mut_result<str&, str&> */ = res.as_ref();
 
     REQUIRE( res == ref );
@@ -589,7 +609,7 @@ SCENARIO("test for as_mut", "[result][as_mut]"){
   using namespace std::literals;
   GIVEN( "A new result, containing a reference into the original" ) {
     auto ptr = std::make_shared<str>("foo"s);
-    mut_result<Rc<str>, Rc<str>> res(success<Rc<str>>{ptr});
+    mut_result<Rc<str>, Rc<str>> res(success<Rc<str>>(ptr));
     auto ref /* result<str const&, str const&> */ = res.as_mut();
 
     REQUIRE( res == success(ptr) );
@@ -613,7 +633,7 @@ SCENARIO("test for indirect", "[result][indirect]"){
 
   GIVEN( "A new result, containing a indirect reference into the original" ) {
     std::vector<int> vec{1, 2, 3};
-    mut_result<vec_iter, vec_iter> res(success<vec_iter>{vec.begin()});
+    mut_result<vec_iter, vec_iter> res(success<vec_iter>(vec.begin()));
     auto indirect = res.indirect();
 
     REQUIRE( *res.unwrap() == indirect.unwrap() );
@@ -636,7 +656,7 @@ SCENARIO("test for dangling indirect", "[result][indirect][dangling]"){
   using vec_iter = typename std::vector<int>::iterator;
   GIVEN( "A new result which is containing a dangling reference into the discarded unique_ptr" ) {
     auto indirect
-      = mut_result<std::unique_ptr<int>, std::unique_ptr<int>>(success{std::make_unique<int>(1)})
+      = mut_result<std::unique_ptr<int>, std::unique_ptr<int>>(success(std::make_unique<int>(1)))
         .as_ref()
         .indirect();
     REQUIRE( std::is_same_v<decltype(indirect.unwrap()), dangling<std::reference_wrapper<int>>&> );
@@ -645,7 +665,7 @@ SCENARIO("test for dangling indirect", "[result][indirect][dangling]"){
   }
   GIVEN( "A new result which is containing a reference into the living vector" ) {
     std::vector<int> vec{1,3};
-    auto indirect = result<vec_iter, vec_iter>(success{vec.begin()}).indirect();
+    auto indirect = result<vec_iter, vec_iter>(success(vec.begin())).indirect();
 
     REQUIRE( indirect.unwrap().transmute() == 1 );
     //       ^~~~~~~~~~~~~~~~~~~~~~~~~~ OK! 
@@ -1096,3 +1116,4 @@ TEST_CASE("greater_or_equal compare", "[result][greater_or_equal]"){
   REQUIRE(2 >= err2);
 
 }
+

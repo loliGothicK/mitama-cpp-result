@@ -72,7 +72,7 @@ public:
     basic_result<_, maybe<T>, E>
     transpose() const& {
         return static_cast<maybe<basic_result<_, T, E>>const*>(this)->is_nothing()
-            ? basic_result<_, maybe<T>, E>{success{nothing}}
+            ? basic_result<_, maybe<T>, E>{success_t{nothing}}
             : static_cast<maybe<basic_result<_, T, E>>const*>(this)->unwrap().is_ok()
                 ? basic_result<_, maybe<T>, E>{in_place_ok, std::in_place, static_cast<maybe<basic_result<_, T, E>>const*>(this)->unwrap().unwrap()}
                 : basic_result<_, maybe<T>, E>{in_place_err, static_cast<maybe<basic_result<_, T, E>>const*>(this)->unwrap().unwrap_err()};
@@ -558,27 +558,27 @@ class maybe
     template <class E>
     auto ok_or(E&& err) const& {
         return is_just()
-            ? result<T, E>{success{unwrap()}}
-            : result<T, E>{failure{std::forward<E>(err)}};
+            ? result<T, E>{success_t{unwrap()}}
+            : result<T, E>{failure_t{std::forward<E>(err)}};
     }
 
     template <class E>
     auto ok_or(E&& err) && {
         return is_just()
-            ? result<T, E>{success{std::move(unwrap())}}
-            : result<T, E>{failure{std::forward<E>(err)}};
+            ? result<T, E>{success_t{std::move(unwrap())}}
+            : result<T, E>{failure_t{std::forward<E>(err)}};
     }
 
     auto ok_or() const& {
         return is_just()
-            ? result<T>{success{unwrap()}}
-            : result<T>{failure<>{}};
+            ? result<T>{success_t{unwrap()}}
+            : result<T>{failure_t<>{}};
     }
 
     auto ok_or() && {
         return is_just()
-            ? result<T>{success{std::move(unwrap())}}
-            : result<T>{failure<>{}};
+            ? result<T>{success_t{std::move(unwrap())}}
+            : result<T>{failure_t<>{}};
     }
 
     template <class F>
@@ -587,8 +587,8 @@ class maybe
     result<T, std::invoke_result_t<F&&>>>
     ok_or_else(F&& err) const& {
         return is_just()
-            ? result<T, std::invoke_result_t<F&&>>{success{unwrap()}}
-            : result<T, std::invoke_result_t<F&&>>{failure{std::invoke(std::forward<F>(err))}};
+            ? result<T, std::invoke_result_t<F&&>>{success_t{unwrap()}}
+            : result<T, std::invoke_result_t<F&&>>{failure_t{std::invoke(std::forward<F>(err))}};
     }
 
     template <class F>
@@ -597,8 +597,8 @@ class maybe
     result<T, std::invoke_result_t<F&&>>>
     ok_or_else(F&& err) && {
         return is_just()
-            ? result<T, std::invoke_result_t<F&&>>{success{std::move(unwrap())}}
-            : result<T, std::invoke_result_t<F&&>>{failure{std::invoke(std::forward<F>(err))}};
+            ? result<T, std::invoke_result_t<F&&>>{success_t{std::move(unwrap())}}
+            : result<T, std::invoke_result_t<F&&>>{failure_t{std::invoke(std::forward<F>(err))}};
     }
 
     template <class U>
