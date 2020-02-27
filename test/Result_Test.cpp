@@ -156,9 +156,9 @@ TEST_CASE("map() test", "[result][map]"){
   REQUIRE(z == success(2));
 }
 
-TEST_CASE("apply_map() test", "[result][apply_map]"){
+TEST_CASE("map_apply() test", "[result][map_apply]"){
   result<std::tuple<int, int>, int> res = success(1, 2);
-  result<int, int> z = res.apply_map(std::plus<>{});
+  result<int, int> z = res.map_apply(std::plus<>{});
   REQUIRE(z == success(3));
 }
 
@@ -201,9 +201,9 @@ TEST_CASE("map_err() test", "[result][map_err]"){
   REQUIRE(z == failure(2));
 }
 
-TEST_CASE("apply_map_err() test", "[result][apply_map_err]"){
+TEST_CASE("map_apply_err() test", "[result][map_apply_err]"){
   result<int, std::tuple<int, int>> res = failure(1, 1);
-  result<int, int> z = res.apply_map_err([](auto... a){ return (... + a); }, 1);
+  result<int, int> z = res.map_apply_err([](auto... a){ return (... + a); }, 1);
   REQUIRE(z == failure(3));
 }
 
@@ -248,6 +248,32 @@ TEST_CASE("and_then() test", "[result][and_then]"){
   REQUIRE(result<u32, u32>{failure(3u)}.and_then(sq).and_then(sq) == failure(3u));
   REQUIRE(result<u32, u32>{success(3u)}.and_then(eq, 3u) == success(3u));
   REQUIRE(result<u32, u32>{failure(3u)}.and_then(eq, 1u) == failure(3u));
+}
+
+TEST_CASE("and_then_apply() test", "[result][and_then_apply]"){
+  auto fn = [](u32 x, u32 y) -> result<u32, u32> {
+    if ( (x + y) % 2 == 0 ) return success(x+y);
+    else return failure(x+y); 
+  };
+  result<std::tuple<u32,u32>, u32> ok1 = success(1u, 2u);
+  result<std::tuple<u32,u32>, u32> ok2 = success(1u, 1u);
+  result<std::tuple<u32,u32>, u32> err = failure(1u);
+  REQUIRE(ok1.and_then_apply(fn) == failure(3u));
+  REQUIRE(ok2.and_then_apply(fn) == success(2u));
+  REQUIRE(err.and_then_apply(fn) == failure(1u));
+}
+
+TEST_CASE("or_else_apply() test", "[result][or_else_apply]"){
+  auto fn = [](u32 x, u32 y) -> result<u32, u32> {
+    if ( (x + y) % 2 == 0 ) return success(x+y);
+    else return failure(x+y); 
+  };
+  result<u32, std::tuple<u32,u32>> ok = success(1u);
+  result<u32, std::tuple<u32,u32>> err1 = failure(1u, 1u);
+  result<u32, std::tuple<u32,u32>> err2 = failure(1u, 2u);
+  REQUIRE(ok.or_else_apply(fn) == success(1u));
+  REQUIRE(err1.or_else_apply(fn) == success(2u));
+  REQUIRE(err2.or_else_apply(fn) == failure(3u));
 }
 
 TEMPLATE_TEST_CASE("is_convertible_result_with meta test", "[is_convertible_result_with][meta]",
