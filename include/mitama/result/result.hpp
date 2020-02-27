@@ -74,8 +74,10 @@ class [[nodiscard]] basic_result<_mutability, T, E,
   public unwrap_or_default_friend_injector<basic_result<_mutability, T, E>>,
   public transpose_friend_injector<basic_result<_mutability, T, E>>,
   public indirect_friend_injector<basic_result<_mutability, T, E>>,
-  public apply_map_friend_injector<basic_result<_mutability, T, E>>,
-  public apply_map_err_friend_injector<basic_result<_mutability, T, E>>
+  public map_apply_friend_injector<basic_result<_mutability, T, E>>,
+  public map_err_apply_friend_injector<basic_result<_mutability, T, E>>,
+  public and_then_apply_friend_injector<basic_result<_mutability, T, E>>,
+  public or_else_apply_friend_injector<basic_result<_mutability, T, E>>
 {
   /// result storage
   std::variant<std::monostate, success_t<T>, failure_t<E>> storage_;
@@ -853,8 +855,8 @@ public:
           std::is_nothrow_invocable_r<T, O, E>
         >,
         std::conjunction<
-          std::is_invocable_r<T, O, E>,
-          std::is_nothrow_invocable_r<T, O, E>
+          std::is_invocable_r<T, O>,
+          std::is_nothrow_invocable_r<T, O>
         >
       >
     )

@@ -494,14 +494,14 @@ public:
 };
 
 template <class, class = void>
-class apply_map_friend_injector
+class map_apply_friend_injector
 {
 public:
-  void apply_map() const = delete;
+  void map_apply() const = delete;
 };
 
 template <mutability _mu, class T, class E>
-class apply_map_friend_injector<basic_result<_mu, T, E>,
+class map_apply_friend_injector<basic_result<_mu, T, E>,
                                 std::enable_if_t<is_tuple_like<T>::value>>
 {
 public:
@@ -511,7 +511,7 @@ public:
   /// @note
   ///   This function can be used to compose the results of two functions.
   template <class O, class... Args>
-  constexpr auto apply_map(O && op, Args&&... args) const &
+  constexpr auto map_apply(O && op, Args&&... args) const &
   {
     using result_type
       = basic_result<_mu,
@@ -528,14 +528,14 @@ public:
 };
 
 template <class, class = void>
-class apply_map_err_friend_injector
+class map_err_apply_friend_injector
 {
 public:
-  void apply_map_err() const = delete;
+  void map_apply_err() const = delete;
 };
 
 template <mutability _mu, class T, class E>
-class apply_map_err_friend_injector<basic_result<_mu, T, E>,
+class map_err_apply_friend_injector<basic_result<_mu, T, E>,
                                     std::enable_if_t<is_tuple_like<E>::value>>
 {
 public:
@@ -545,7 +545,7 @@ public:
   /// @note
   ///   This function can be used to compose the results of two functions.
   template <class O, class... Args>
-  constexpr auto apply_map_err(O && op, Args&&... args) const &
+  constexpr auto map_apply_err(O && op, Args&&... args) const &
   {
     using result_type
       = basic_result<_mu, T,
@@ -560,6 +560,81 @@ public:
                : static_cast<result_type>(failure_t{std::apply(std::forward<O>(op), std::tuple_cat(static_cast<basic_result<_mu, T, E> const *>(this)->unwrap_err(), std::forward_as_tuple(std::forward<Args>(args))...))});
   }
 };
+
+template <class, class = void>
+class and_then_apply_friend_injector
+{
+public:
+  void and_then_apply() const = delete;
+};
+
+
+template <mutability _mu, class T, class E>
+class and_then_apply_friend_injector<basic_result<_mu, T, E>,
+                                     std::enable_if_t<is_tuple_like<T>::value>>
+{
+public:
+  template <class O, class... Args,
+    std::enable_if_t<is_convertible_result_with_v<
+      decltype(std::apply(
+          std::declval<O>(),
+          std::tuple_cat(
+            std::declval<const T&>(),
+            std::forward_as_tuple(std::declval<Args&&>()...)))),
+      failure_t<E>>,
+    bool> = false>
+  constexpr auto and_then_apply(O && op, Args&&... args) const &
+  {
+    using result_type
+      = decltype(std::apply(
+          std::forward<O>(op),
+          std::tuple_cat(
+            std::declval<const T&>(),
+            std::forward_as_tuple(std::forward<Args>(args))...)));
+
+    return static_cast<basic_result<_mu, T, E> const *>(this)->is_ok()
+      ? static_cast<result_type>(std::apply(std::forward<O>(op), std::tuple_cat(static_cast<basic_result<_mu, T, E> const *>(this)->unwrap(), std::forward_as_tuple(std::forward<Args>(args))...)))
+      : static_cast<result_type>(failure(static_cast<basic_result<_mu, T, E> const *>(this)->unwrap_err()));
+  }
+};
+
+template <class, class = void>
+class or_else_apply_friend_injector
+{
+public:
+  void or_else_apply() const = delete;
+};
+
+
+template <mutability _mu, class T, class E>
+class or_else_apply_friend_injector<basic_result<_mu, T, E>,
+                                    std::enable_if_t<is_tuple_like<E>::value>>
+{
+public:
+  template <class O, class... Args,
+    std::enable_if_t<is_convertible_result_with_v<
+      decltype(std::apply(
+          std::declval<O>(),
+          std::tuple_cat(
+            std::declval<const E&>(),
+            std::forward_as_tuple(std::declval<Args&&>()...)))),
+      success_t<T>>,
+    bool> = false>
+  constexpr auto or_else_apply(O && op, Args&&... args) const &
+  {
+    using result_type
+      = decltype(std::apply(
+          std::forward<O>(op),
+          std::tuple_cat(
+            std::declval<const E&>(),
+            std::forward_as_tuple(std::forward<Args>(args))...)));
+
+    return static_cast<basic_result<_mu, T, E> const *>(this)->is_err()
+      ? static_cast<result_type>(std::apply(std::forward<O>(op), std::tuple_cat(static_cast<basic_result<_mu, T, E> const *>(this)->unwrap_err(), std::forward_as_tuple(std::forward<Args>(args))...)))
+      : static_cast<result_type>(success(static_cast<basic_result<_mu, T, E> const *>(this)->unwrap()));
+  }
+};
+
 
 } // !namespace mitama
 #endif
