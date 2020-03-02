@@ -545,6 +545,22 @@ public:
   /// @note
   ///   This function can be used to compose the results of two functions.
   template <class O, class... Args>
+  constexpr auto map_apply_err(O && op, Args&&... args) &
+  {
+    using result_type
+      = basic_result<_mu, T,
+        decltype(std::apply(
+          std::forward<O>(op),
+          std::tuple_cat(
+            std::declval<E&>(),
+            std::forward_as_tuple(std::forward<Args>(args))...)))
+        >;
+    return static_cast<basic_result<_mu, T, E>*>(this)->is_ok()
+      ? static_cast<result_type>(success_t{static_cast<basic_result<_mu, T, E>*>(this)->unwrap()})
+      : static_cast<result_type>(failure_t{std::apply(std::forward<O>(op), std::tuple_cat(static_cast<basic_result<_mu, T, E>*>(this)->unwrap_err(), std::forward_as_tuple(std::forward<Args>(args))...))});
+  }
+
+  template <class O, class... Args>
   constexpr auto map_apply_err(O && op, Args&&... args) const &
   {
     using result_type
@@ -552,12 +568,28 @@ public:
         decltype(std::apply(
           std::forward<O>(op),
           std::tuple_cat(
-            static_cast<basic_result<_mu, T, E> const *>(this)->unwrap_err(),
+            std::declval<E const&>(),
             std::forward_as_tuple(std::forward<Args>(args))...)))
         >;
     return static_cast<basic_result<_mu, T, E> const *>(this)->is_ok()
-               ? static_cast<result_type>(success_t{static_cast<basic_result<_mu, T, E> const *>(this)->unwrap()})
-               : static_cast<result_type>(failure_t{std::apply(std::forward<O>(op), std::tuple_cat(static_cast<basic_result<_mu, T, E> const *>(this)->unwrap_err(), std::forward_as_tuple(std::forward<Args>(args))...))});
+      ? static_cast<result_type>(success_t{static_cast<basic_result<_mu, T, E> const *>(this)->unwrap()})
+      : static_cast<result_type>(failure_t{std::apply(std::forward<O>(op), std::tuple_cat(static_cast<basic_result<_mu, T, E> const *>(this)->unwrap_err(), std::forward_as_tuple(std::forward<Args>(args))...))});
+  }
+
+  template <class O, class... Args>
+  constexpr auto map_apply_err(O && op, Args&&... args) &&
+  {
+    using result_type
+      = basic_result<_mu, T,
+        decltype(std::apply(
+          std::forward<O>(op),
+          std::tuple_cat(
+            std::declval<E>(),
+            std::forward_as_tuple(std::forward<Args>(args))...)))
+        >;
+    return static_cast<basic_result<_mu, T, E>*>(this)->is_ok()
+      ? static_cast<result_type>(success_t{static_cast<basic_result<_mu, T, E>*>(this)->unwrap()})
+      : static_cast<result_type>(failure_t{std::apply(std::forward<O>(op), std::tuple_cat(std::move(static_cast<basic_result<_mu, T, E>*>(this)->unwrap_err()), std::forward_as_tuple(std::forward<Args>(args))...))});
   }
 };
 
@@ -583,6 +615,29 @@ public:
             std::forward_as_tuple(std::declval<Args&&>()...)))),
       failure_t<E>>,
     bool> = false>
+  constexpr auto and_then_apply(O && op, Args&&... args) &
+  {
+    using result_type
+      = decltype(std::apply(
+          std::forward<O>(op),
+          std::tuple_cat(
+            std::declval<T&>(),
+            std::forward_as_tuple(std::forward<Args>(args))...)));
+
+    return static_cast<basic_result<_mu, T, E>*>(this)->is_ok()
+      ? static_cast<result_type>(std::apply(std::forward<O>(op), std::tuple_cat(static_cast<basic_result<_mu, T, E>*>(this)->unwrap(), std::forward_as_tuple(std::forward<Args>(args))...)))
+      : static_cast<result_type>(failure(static_cast<basic_result<_mu, T, E>*>(this)->unwrap_err()));
+  }
+
+  template <class O, class... Args,
+    std::enable_if_t<is_convertible_result_with_v<
+      decltype(std::apply(
+          std::declval<O>(),
+          std::tuple_cat(
+            std::declval<const T&>(),
+            std::forward_as_tuple(std::declval<Args&&>()...)))),
+      failure_t<E>>,
+    bool> = false>
   constexpr auto and_then_apply(O && op, Args&&... args) const &
   {
     using result_type
@@ -595,6 +650,36 @@ public:
     return static_cast<basic_result<_mu, T, E> const *>(this)->is_ok()
       ? static_cast<result_type>(std::apply(std::forward<O>(op), std::tuple_cat(static_cast<basic_result<_mu, T, E> const *>(this)->unwrap(), std::forward_as_tuple(std::forward<Args>(args))...)))
       : static_cast<result_type>(failure(static_cast<basic_result<_mu, T, E> const *>(this)->unwrap_err()));
+  }
+
+  template <class O, class... Args,
+    std::enable_if_t<is_convertible_result_with_v<
+      decltype(std::apply(
+          std::declval<O>(),
+          std::tuple_cat(
+            std::declval<T>(),
+            std::forward_as_tuple(std::declval<Args&&>()...)))),
+      failure_t<E>>,
+    bool> = false>
+  constexpr auto and_then_apply(O && op, Args&&... args) &&
+  {
+    using result_type
+      = decltype(std::apply(
+          std::forward<O>(op),
+          std::tuple_cat(
+            std::declval<T>(),
+            std::forward_as_tuple(std::forward<Args>(args))...)));
+
+    return static_cast<basic_result<_mu, T, E>*>(this)->is_ok()
+      ? static_cast<result_type>(
+        std::apply(
+          std::forward<O>(op),
+          std::tuple_cat(
+            std::move(static_cast<basic_result<_mu, T, E>*>(this)->unwrap()),
+            std::forward_as_tuple(std::forward<Args>(args)...)
+          )
+        ))
+      : static_cast<result_type>(failure(std::move(static_cast<basic_result<_mu, T, E>*>(this)->unwrap_err())));
   }
 };
 
