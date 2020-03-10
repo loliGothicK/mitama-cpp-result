@@ -671,14 +671,7 @@ public:
             std::forward_as_tuple(std::forward<Args>(args))...)));
 
     return static_cast<basic_result<_mu, T, E>*>(this)->is_ok()
-      ? static_cast<result_type>(
-        std::apply(
-          std::forward<O>(op),
-          std::tuple_cat(
-            std::move(static_cast<basic_result<_mu, T, E>*>(this)->unwrap()),
-            std::forward_as_tuple(std::forward<Args>(args)...)
-          )
-        ))
+      ? static_cast<result_type>(std::apply(std::forward<O>(op), std::tuple_cat(std::move(static_cast<basic_result<_mu, T, E>*>(this)->unwrap()), std::forward_as_tuple(std::forward<Args>(args)...))))
       : static_cast<result_type>(failure(std::move(static_cast<basic_result<_mu, T, E>*>(this)->unwrap_err())));
   }
 };
