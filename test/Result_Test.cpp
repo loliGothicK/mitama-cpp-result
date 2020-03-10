@@ -1143,3 +1143,39 @@ TEST_CASE("greater_or_equal compare", "[result][greater_or_equal]"){
 
 }
 
+#include <mitama/boolinators.hpp>
+
+TEST_CASE("as_ok test", "[result][as_ok][boolinators]"){
+  basic_result x = as_ok(true, 1);
+  REQUIRE(x == success(1));
+  basic_result y = as_ok(false, 1);
+  REQUIRE(y == failure());
+}
+
+TEST_CASE("as_result test", "[result][as_result][boolinators]"){
+  basic_result x = as_result(true, 1, "err"s);
+  REQUIRE(x == success(1));
+  basic_result y = as_result(false, 1, "err"s);
+  REQUIRE(y == failure("err"));
+}
+
+TEST_CASE("as_result_from test", "[result][as_result_from][boolinators]"){
+  basic_result x = as_result_from(true, []{ return 1; }, []{ return "err"s; });
+  REQUIRE(x == success(1));
+  basic_result y = as_result_from(false, []{ return 1; }, []{ return "err"s; });
+  REQUIRE(y == failure("err"));
+}
+
+TEST_CASE("ok_or test", "[result][ok_or][boolinators]"){
+  basic_result x = ok_or(true, "err"s);
+  REQUIRE(x == success(std::monostate{}));
+  basic_result y = ok_or(false, "err"s);
+  REQUIRE(y == failure("err"s));
+}
+
+TEST_CASE("ok_or_else test", "[result][ok_or_else][boolinators]"){
+  basic_result x = ok_or_else(true, []{ return "err"s; });
+  REQUIRE(x == success(std::monostate{}));
+  basic_result y = ok_or_else(false, []{ return "err"s; });
+  REQUIRE(y == failure("err"s));
+}
