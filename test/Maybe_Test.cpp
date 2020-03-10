@@ -984,3 +984,26 @@ TEST_CASE("range_to_maybe test", "[maybe][range_to_maybe]"){
   maybe z = range_to_maybe(a);
   REQUIRE(z == 1);
 }
+
+#include <mitama/boolinators.hpp>
+
+TEST_CASE("as_maybe test", "[maybe][as_maybe][boolinators]"){
+  maybe x = as_maybe(true);
+  REQUIRE(x == just(std::monostate{}));
+  maybe y = as_maybe(false);
+  REQUIRE(y == nothing);
+}
+
+TEST_CASE("as_just test", "[maybe][as_just][boolinators]"){
+  maybe x = as_just(true, 1);
+  REQUIRE(x == just(1));
+  maybe y = as_just(false, 1);
+  REQUIRE(y == nothing);
+}
+
+TEST_CASE("as_just_from test", "[maybe][as_just_from][boolinators]"){
+  maybe x = as_just_from(true, []{ return 1; });
+  REQUIRE(x == just(1));
+  maybe y = as_just_from(false, []{ return 1; });
+  REQUIRE(y == nothing);
+}
