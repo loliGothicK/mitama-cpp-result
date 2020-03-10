@@ -427,6 +427,8 @@ TEST_CASE("or_finally()", "[maybe][or_finally]"){
 TEST_CASE("and_peek() test", "[maybe][and_peek]"){
   maybe x = just(42);
   REQUIRE(x.and_peek([](int& v){ v = 57; }) == just(57));
+  int y = 0;
+  REQUIRE((std::as_const(x).and_peek([&y](auto&& v){ y = v; }), y) == x.unwrap());
 }
 
 TEST_CASE("or_peek() test", "[maybe][and_peek]"){

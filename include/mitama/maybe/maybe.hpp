@@ -779,32 +779,15 @@ class maybe
     maybe const&>
     and_peek(F&& f) const&
     {
-        if constexpr (std::is_invocable_v<F&&, value_type const&>) {
-            return is_just() ? std::invoke(std::forward<F>(f), unwrap())
-                             : *this;
+        if (is_just()) {
+            if constexpr (std::is_invocable_v<F, value_type&>) {
+                std::invoke(std::forward<F>(f), unwrap());
+            }
+            else {
+                std::invoke(std::forward<F>(f));
+            }
         }
-        else {
-            return is_just() ? std::invoke(std::forward<F>(f))
-                             : *this;
-        }
-    }
-
-    template <class F>
-    std::enable_if_t<
-        std::disjunction_v<
-            std::is_invocable<F&&, value_type&&>,
-            std::is_invocable<F&&>>,
-    maybe&&>
-    and_peek(F&& f) &&
-    {
-        if constexpr (std::is_invocable_v<F&&, value_type&&>) {
-            return is_just() ? std::invoke(std::forward<F>(f), std::move(unwrap()))
-                             : *this;
-        }
-        else {
-            return is_just() ? std::invoke(std::forward<F>(f))
-                             : *this;
-        }
+        return *this;
     }
 
     template <class F>
@@ -827,17 +810,6 @@ class maybe
     {
         if (is_nothing()) std::invoke(std::forward<F>(f));
         return *this;
-    }
-
-    template <class F>
-    constexpr
-    std::enable_if_t<
-        std::is_invocable_v<F&&>,
-    maybe&&>
-    or_peek(F&& f) &&
-    {
-        if (is_nothing()) std::invoke(std::forward<F>(f));
-        return std::move(*this);
     }
 
 };
