@@ -21,6 +21,23 @@ namespace mitama {
         { return b ? maybe{std::invoke(std::forward<F>(some))} : nothing; }
 
     template <class T>
+    inline maybe<T>
+    and_maybe(bool b, maybe<T> const &may)
+        { return b ? may : nothing; }
+
+    template <class F>
+    inline auto
+    and_maybe_from(bool b, F &&may)
+        -> std::enable_if_t<
+            std::conjunction_v<
+                std::is_invocable<F&&>,
+                is_maybe<std::invoke_result_t<F&&>>
+            >,
+            std::invoke_result_t<F&&>
+        >
+        { return b ? std::invoke(std::forward<F>(may)) : nothing; }
+
+    template <class T>
     inline result<T>
     as_ok(bool b, T&& ok) {
         return b ? result<T>(success(std::forward<T>(ok))) : failure();
