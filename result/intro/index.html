@@ -42,7 +42,7 @@
     
     
       
-        <title>Result 101 - Mitama.Result | User Manual</title>
+        <title>Result 101 - Mitama.Result User Manual</title>
       
     
     
@@ -104,7 +104,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="https://loligothick.github.io/mitama-cpp-result/" title="Mitama.Result | User Manual" class="md-header-nav__button md-logo">
+        <a href="https://loligothick.github.io/mitama-cpp-result/" title="Mitama.Result User Manual" class="md-header-nav__button md-logo">
           
             <i class="md-icon">donut_small</i>
           
@@ -117,7 +117,7 @@
         <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           
             <span class="md-header-nav__topic">
-              Mitama.Result | User Manual
+              Mitama.Result User Manual
             </span>
             <span class="md-header-nav__topic">
               
@@ -244,12 +244,12 @@
                   <div class="md-sidebar__inner">
                     <nav class="md-nav md-nav--primary" data-md-level="0">
   <label class="md-nav__title md-nav__title--site" for="__drawer">
-    <a href="https://loligothick.github.io/mitama-cpp-result/" title="Mitama.Result | User Manual" class="md-nav__button md-logo">
+    <a href="https://loligothick.github.io/mitama-cpp-result/" title="Mitama.Result User Manual" class="md-nav__button md-logo">
       
         <i class="md-icon">donut_small</i>
       
     </a>
-    Mitama.Result | User Manual
+    Mitama.Result User Manual
   </label>
   
     <div class="md-nav__source">
@@ -1328,13 +1328,18 @@
 <p>You should use <code class="codehilite"><span class="n">mut_result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code> if you want to resubstitute,
 <code class="codehilite"><span class="k">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code> do not provides assignment operators or mutable accessors.</p>
 <h2 id="successfailure_the_in-place_factory_classes">success/failure the in-place factory classes<a class="headerlink" href="#successfailure_the_in-place_factory_classes" title="Permanent link">&para;</a></h2>
-<p><code class="codehilite"><span class="n">success</span></code> and <code class="codehilite"><span class="n">failure</span></code> are in-place factory classes for <code class="codehilite"><span class="n">basic_result</span></code>.</p>
-<p>If you want to initialize <code class="codehilite"><span class="k">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code> with successful value of <code class="codehilite"><span class="n">T</span></code>, initialize with <code class="codehilite"><span class="n">success</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code>.</p>
-<div class="codehilite"><pre><span></span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">res</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+<p><code class="codehilite"><span class="n">success_t</span></code> and <code class="codehilite"><span class="n">failure_t</span></code> are in-place factory classes for <code class="codehilite"><span class="n">basic_result</span></code>.</p>
+<p>If you want to initialize <code class="codehilite"><span class="k">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code> with successful value of <code class="codehilite"><span class="n">T</span></code>, initialize with <code class="codehilite"><span class="n">success_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span></code>.</p>
+<div class="codehilite"><pre><span></span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">res</span> <span class="o">=</span> <span class="n">success_t</span><span class="p">{</span><span class="mi">42</span><span class="p">};</span>
 </pre></div>
 
-<p>Similarly, if you want to initialize <code class="codehilite"><span class="k">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code> with unsuccessful value of <code class="codehilite"><span class="n">E</span></code>, initialize with <code class="codehilite"><span class="n">failure</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span></code>.</p>
-<div class="codehilite"><pre><span></span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">res</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;error&quot;</span><span class="n">s</span><span class="p">);</span>
+<p>Similarly, if you want to initialize <code class="codehilite"><span class="k">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span></code> with unsuccessful value of <code class="codehilite"><span class="n">E</span></code>, initialize with <code class="codehilite"><span class="n">failure_t</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span></code>.</p>
+<div class="codehilite"><pre><span></span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">res</span> <span class="o">=</span> <span class="n">failure_t</span><span class="p">{</span><span class="s">&quot;error&quot;</span><span class="p">};</span>
+</pre></div>
+
+<p>However, using <code class="codehilite"><span class="n">success</span></code> and <code class="codehilite"><span class="n">failure</span></code> (factory methods) is recommended.</p>
+<div class="codehilite"><pre><span></span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+<span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">ng</span> <span class="o">=</span> <span class="n">failure</span><span class="p">(</span><span class="s">&quot;error&quot;</span><span class="p">);</span>
 </pre></div>
 
 <h2 id="result_with_reference_types">Result with reference types<a class="headerlink" href="#result_with_reference_types" title="Permanent link">&para;</a></h2>

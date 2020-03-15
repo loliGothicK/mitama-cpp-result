@@ -2,87 +2,87 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/intro/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/special_members/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/APIs/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/comparisons/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/metafunctions/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_Internal/comparisons/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/is_just/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/is_nothing/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/as_ref/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/expect/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/unwrap/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/unwrap_or/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/unwrap_or_else/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/map/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/map_or/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/map_or_else/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
@@ -92,242 +92,242 @@
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/ok_or/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/ok_or_else/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/conj/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/and_then/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/filter/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/disj/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/or_else/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/get_or_emplace/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/get_or_emplace_with/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/replace/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/replace_with/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/cloned/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/unwrap_or_default/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/transpose/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/flatten/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/and_finally/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/or_finally/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/and_peek/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/maybe/_APIs/or_peek/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/intro/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/special_members/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/APIs/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/metafunctions/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/comparisons/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/is_ok/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/is_err/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/ok/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/err/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/map/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/map_or_else/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/map_err/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/conj/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/and_then/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/disj/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/or_else/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/unwrap_or/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/unwrap_or_else/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/unwrap/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/unwrap_err/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/unwrap_or_default/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/transpose/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_metafunctions/is_result/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_metafunctions/is_result_with/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/and_finally/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/or_finally/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/and_peek/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
     <url>
      <loc>https://loligothick.github.io/mitama-cpp-result/result/_APIs/or_peek/</loc>
-     <lastmod>2019-09-20</lastmod>
+     <lastmod>2020-03-15</lastmod>
      <changefreq>daily</changefreq>
     </url>
 </urlset>
