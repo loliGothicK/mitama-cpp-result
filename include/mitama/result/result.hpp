@@ -423,6 +423,13 @@ public:
   constexpr bool operator !() const noexcept { return std::holds_alternative<failure_t<E>>(storage_); }
 
   /// @brief
+  ///   Returns result storage.
+  std::variant<std::monostate, success_t<T>, failure_t<E>>
+  into_storage() const {
+    return storage_;
+  }
+
+  /// @brief
   ///   Converts from basic_result to `maybe<const T>`.
   ///
   /// @note
@@ -1617,5 +1624,22 @@ public:
   }
 
 } // namespace mitama
+
+// MSVC does not implement compound statements (ref: https://stackoverflow.com/q/5291532)
+#if defined(__GNUC__) || defined(__clang__)
+#  define MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC true
+#  define TRY( result )                                                \
+    ({                                                                 \
+        if (result.is_err()) {                                         \
+            using Err = mitama::failure_t<decltype(result)::err_type>; \
+            return std::get<Err>(result.into_storage());               \
+        }                                                              \
+        using Ok = mitama::success_t<decltype(result)::ok_type>;       \
+        std::get<Ok>(result.into_storage()).get();                     \
+    })
+#else
+#  define MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC false
+#  define TRY( result ) result.unwrap()
+#endif
 
 #endif
