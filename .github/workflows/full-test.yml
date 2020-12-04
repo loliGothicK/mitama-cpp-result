@@ -59,6 +59,9 @@ jobs:
       - name: Run tests
         run: |
           mkdir build && cd build
-          cmake .. -DBOOST_ROOT=${{ runner.temp }}/libs/boost -DBOOST_LIBRARYDIR=${{ runner.temp }}/libs/boost/lib
-          cmake --build .
-          find -type f -name "*-tests" | bash
+          cmake ..                                     \
+            -DBUILD_TESTING=ON                         \
+            -DBOOST_ROOT=${{ runner.temp }}/libs/boost \
+            -DBOOST_LIBRARYDIR=${{ runner.temp }}/libs/boost/lib
+          make
+          make test
