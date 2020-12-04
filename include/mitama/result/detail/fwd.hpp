@@ -25,7 +25,7 @@ inline constexpr bool is_mut_v = !static_cast<bool>(Mut);
 template <mutability,
           class = std::monostate,   // success type
           class = std::monostate,   // failure type
-          class = decltype(nullptr) // for detection idiom
+          class = std::nullptr_t    // for detection idiom
 >
 class basic_result;
 
