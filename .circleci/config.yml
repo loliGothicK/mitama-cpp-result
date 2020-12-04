@@ -35,14 +35,32 @@ workflows:
   build:
     jobs:
       - full-test:
+          filters:
+            branches:
+              only: staging
           compiler: clang-8.0.0
       - full-test:
+          filters:
+            branches:
+              only: staging
           compiler: clang-7.1.0
       - full-test:
+          filters:
+            branches:
+              only: staging
           compiler: clang-7.0.1
       - full-test:
+          filters:
+            branches:
+              only: staging
           compiler: clang-7.0.0
       - full-test:
+          filters:
+            branches:
+              only: staging
           compiler: gcc-9.1
       - full-test:
+          filters:
+            branches:
+              only: staging
           compiler: gcc-8.3
