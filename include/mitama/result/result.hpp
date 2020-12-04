@@ -1628,7 +1628,7 @@ public:
 // MSVC does not implement compound statements (ref: https://stackoverflow.com/q/5291532)
 #if defined(__GNUC__) || defined(__clang__)
 #  define MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC true
-#  define TRY( result )                                                \
+#  define MITAMA_TRY( result )                                         \
     ({                                                                 \
         if (result.is_err()) {                                         \
             using Err = mitama::failure_t<decltype(result)::err_type>; \
@@ -1639,7 +1639,7 @@ public:
     })
 #else
 #  define MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC false
-#  define TRY( result ) result.unwrap()
+#  define MITAMA_TRY( result ) result.unwrap()
 #endif
 
 #endif
