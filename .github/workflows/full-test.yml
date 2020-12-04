@@ -1,0 +1,64 @@
+name: Full Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  BOOST_VERSION: 1.73.0
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        compiler: [ clang, gcc ]
+        compiler_version: [ 7, 8, 9, 10 ]
+        exclude:
+          - compiler: gcc
+            compiler_version: 7
+        include:
+          - compiler: clang
+            cc_prefix: clang-
+            cxx_prefix: clang++-
+            package_prefix: clang-
+          - compiler: gcc
+            cc_prefix: gcc-
+            cxx_prefix: g++-
+            package_prefix: g++-
+    env:
+      CC: ${{ matrix.cc_prefix }}${{ matrix.compiler_version }}
+      CXX: ${{ matrix.cxx_prefix }}${{ matrix.compiler_version }}
+      CACHE_KEY_PREFIX: ${{ github.job }}-${{ matrix.package_prefix }}${{ matrix.compiler_version }}-${{ matrix.build_type }}
+    steps:
+      - uses: actions/checkout@v1
+      - run: git submodule update --init --recursive
+
+      - run: sudo apt-get -qq update
+      - name: Install ${{ matrix.package_prefix }}${{ matrix.compiler_version }}
+        run: sudo apt-get install -y -qq pkg-config cmake ${{ matrix.package_prefix }}${{ matrix.compiler_version }}
+
+      - name: Restore & Cache boost (${{ env.BOOST_VERSION }})
+        uses: actions/cache@v1
+        id: boost-cache
+        with:
+          path: ${{ runner.temp }}/libs/boost
+          key: ${{ env.CACHE_KEY_PREFIX }}-boost-${{ env.BOOST_VERSION }}
+      - name: Install boost (${{ env.BOOST_VERSION }}) as static
+        if: steps.boost-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ${{ runner.temp }}/libs/boost
+          git clone -q -b boost-${{ env.BOOST_VERSION }} --recursive https://github.com/boostorg/boost.git
+          cd boost
+          ./bootstrap.sh
+          sudo ./b2 link=static install -j2 --prefix=${{ runner.temp }}/libs/boost || exit 0
+        working-directory: ${{ runner.temp }}
+
+      - name: Run tests
+        run: |
+          mkdir build && cd build
+          cmake .. -DBOOST_ROOT=${{ runner.temp }}/libs/boost -DBOOST_LIBRARYDIR=${{ runner.temp }}/libs/boost/lib
+          cmake --build .
+          find -type f -name "*-tests" | bash
