@@ -41,7 +41,7 @@ template <class = std::monostate, class...> class success_t;
 template <class T> success_t(T&&) -> success_t<T>;
 
 template <class = std::monostate, class...> class failure_t;
-template <class E> failure_t(E&&)->failure_t<E>;
+template <class E> failure_t(E&&) -> failure_t<E>;
 
 class in_place_ok_t {};
 inline constexpr in_place_ok_t in_place_ok = {};
