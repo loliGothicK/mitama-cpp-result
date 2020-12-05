@@ -1220,7 +1220,7 @@ TEST_CASE("map(F(void) -> u32)", "[result][map][void][u32]"){
 
 TEST_CASE("map(F(void) -> void)", "[result][map][void][void]"){
     u32 val = 3;
-    auto lambda = [&]() { val += 1; };
+    auto lambda = [&]{ val += 1; };
 
     result<void, str> x = success();
     result<void, str> y = x.map(lambda);
@@ -1256,7 +1256,7 @@ TEST_CASE("map_err(F(void) -> u32)", "[result][map_err][void][u32]"){
 
 TEST_CASE("map_err(F(void) -> void)", "[result][map_err][void][void]"){
     u32 val = 3;
-    auto lambda = [&](){ val += 1; };
+    auto lambda = [&]{ val += 1; };
 
     result<str, void> x = failure();
     result<str, void> y = x.map_err(lambda);
@@ -1268,7 +1268,7 @@ TEST_CASE("map_err(F(void) -> void)", "[result][map_err][void][void]"){
 
 TEST_CASE("map & map_err with void", "[result][map][map_err][void]"){
     u32 val = 3;
-    auto add_one_val = [&](){ val += 1; };
+    auto add_one_val = [&]{ val += 1; };
     auto add_one_arg = [&](u32 e){ e += 1; };
 
     result<void, u32> x = success();
