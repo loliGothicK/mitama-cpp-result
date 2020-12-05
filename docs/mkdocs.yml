@@ -65,7 +65,7 @@ nav:
   - Result Module:
     - Result 101: result/intro.md
     - Special Members: result/special_members.md
-    - APIs: result/APIs.md
+    - API Reference: result/APIs.md
     - Meta Functions: result/metafunctions.md
     - Comparisons: result/comparisons.md
-    - CHANGELOG: result/_APIs/README.md
+    - CHANGELOG: result/CHANGELOG.md
