@@ -150,6 +150,7 @@ TEST_CASE("ok_or()", "[maybe][ok_or]"){
   REQUIRE(y.ok_or(0) == failure(0));
 
   REQUIRE(y.ok_or() == failure<>());
+  REQUIRE(y.ok_or<int>() == failure(int{}));
 
 }
 
