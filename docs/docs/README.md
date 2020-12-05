@@ -32,7 +32,26 @@ And requires a Boost supporting the following libraries:
 
 ### Installation
 
-- First, cloning mitama-cpp-result repository.
+#### CMake
+
+- First, clone mitama-cpp-result repository.
+
+```shell
+$ git clone https://github.com/LoliGothick/mitama-cpp-result.git
+```
+
+- Second, run CMake and Make commands:
+
+```shell
+$ cd mitama-cpp-result
+$ cmake ..
+$ make install
+```
+
+
+#### Manually
+
+- First, clone mitama-cpp-result repository.
 
 ```shell
 $ git clone https://github.com/LoliGothick/mitama-cpp-result.git
