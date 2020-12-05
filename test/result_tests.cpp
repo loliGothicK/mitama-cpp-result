@@ -1179,3 +1179,109 @@ TEST_CASE("ok_or_else test", "[result][ok_or_else][boolinators]"){
   basic_result y = ok_or_else(false, []{ return "err"s; });
   REQUIRE(y == failure("err"s));
 }
+
+TEST_CASE("result with void", "[result][void]"){
+  result<void, str> ok1 = success();
+  REQUIRE(ok1.is_ok() == true);
+
+  result<void, void> ok2 = success(std::monostate{});
+  REQUIRE(ok2.is_ok() == true);
+
+  result<u32, void> err1 = failure(std::monostate{});
+  REQUIRE(err1.is_ok() == false);
+
+  result<void, void> err2 = failure();
+  REQUIRE(err2.is_ok() == false);
+}
+
+TEST_CASE("map(F(u32) -> void)", "[result][map][u32][void]"){
+    u32 val = 3;
+    auto lambda = [&](u32 y){ val += y; };
+
+    result<u32, str> x = success(1);
+    result<void, str> y = x.map(lambda);
+
+    REQUIRE(y.is_ok() == true);
+    REQUIRE(x.map(lambda).is_ok() == true);
+    REQUIRE(val == 5);
+}
+
+TEST_CASE("map(F(void) -> u32)", "[result][map][void][u32]"){
+    u32 val = 3;
+    auto lambda = [&]() -> u32 { return val + 1; };
+
+    result<void, str> x = success();
+    result<u32, str> y = x.map(lambda);
+
+    REQUIRE(y.is_ok() == true);
+    REQUIRE(x.map(lambda).is_ok() == true);
+    REQUIRE(y.unwrap() == 4);
+}
+
+TEST_CASE("map(F(void) -> void)", "[result][map][void][void]"){
+    u32 val = 3;
+    auto lambda = [&]{ val += 1; };
+
+    result<void, str> x = success();
+    result<void, str> y = x.map(lambda);
+
+    REQUIRE(y.is_ok() == true);
+    REQUIRE(x.map(lambda).is_ok() == true);
+    REQUIRE(val == 5);
+}
+
+TEST_CASE("map_err(F(u32) -> void)", "[result][map_err][u32][void]"){
+    u32 val = 3;
+    auto lambda = [&](u32 y){ val += y; };
+
+    result<str, u32> x = failure(1);
+    result<str, void> y = x.map_err(lambda);
+
+    REQUIRE(y.is_ok() == false);
+    REQUIRE(x.map_err(lambda).is_ok() == false);
+    REQUIRE(val == 5);
+}
+
+TEST_CASE("map_err(F(void) -> u32)", "[result][map_err][void][u32]"){
+    u32 val = 3;
+    auto lambda = [&]() -> u32 { return val += 1; };
+
+    result<str, void> x = failure();
+    result<str, u32> y = x.map_err(lambda);
+
+    REQUIRE(y.is_ok() == false);
+    REQUIRE(x.map_err(lambda).is_ok() == false);
+    REQUIRE(y.unwrap_err() == 4);
+}
+
+TEST_CASE("map_err(F(void) -> void)", "[result][map_err][void][void]"){
+    u32 val = 3;
+    auto lambda = [&]{ val += 1; };
+
+    result<str, void> x = failure();
+    result<str, void> y = x.map_err(lambda);
+
+    REQUIRE(y.is_ok() == false);
+    REQUIRE(x.map_err(lambda).is_ok() == false);
+    REQUIRE(val == 5);
+}
+
+TEST_CASE("map & map_err with void", "[result][map][map_err][void]"){
+    u32 val = 3;
+    auto add_one_val = [&]{ val += 1; };
+    auto add_one_arg = [&](u32 e){ e += 1; };
+
+    result<void, u32> x = success();
+    result<void, void> y =
+            x
+            .map(add_one_val) // 4
+            .map(add_one_val) // 5
+            .map(add_one_val) // 6
+            .map_err(add_one_arg) // does not affect
+//          .map_err(add_one_arg)
+//          ^~~~~~~~~~~~~~~~~~~~~ Compile Error!
+            .map_err(add_one_val); // does not affect
+
+    REQUIRE(y.is_ok() == true);
+    REQUIRE(val == 6);
+}
