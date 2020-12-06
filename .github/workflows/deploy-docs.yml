@@ -1,68 +1,96 @@
-name: Deploy Documets with MkDocs
+name: Deploy Document
 
 on:
   push:
     branches: [ master ]
-    paths:
-      - 'docs'
+
+env:
+  BOOST_VERSION: 1.73.0
 
 jobs:
-  deploy:
-    runs-on: ubuntu-20.04
-
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+            name: "Ubuntu Latest GCC"
+            os: ubuntu-latest,
+            build_type: "Release", cc: "gcc", cxx: "g++"
+          }
+          - {
+            name: "Ubuntu Latest Clang"
+            os: ubuntu-latest,
+            build_type: "Release", cc: "clang", cxx: "clang++"
+          }
     steps:
-      - name: Git config
+      - uses: actions/checkout@v1
+      - run: git submodule update --init --recursive
+      - run: |
+          set(ENV{CC} ${{ matrix.config.cc }})
+          set(ENV{CXX} ${{ matrix.config.cxx }})
+          echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+
+      - name: Install ${{ matrix.config.cc }}
         run: |
-          git config --global core.symlinks true
-          git config --global user.name "github-actions"
-          git config --global user.email actions@github.com
+          sudo apt-get -qq update
+          sudo apt-get install -y -qq jq pkg-config cmake ${{ matrix.config.cc }} ${{ matrix.config.cxx }}
 
-      # リポジトリをチェックアウトする
-      # MkDocsでgit-revision-dateプラグインを利用している場合は、
-      # 全てのコミット履歴をfetchする(fetch-depth: 0)
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      # Python3.8をセットアップ
       - name: Set up Python
         uses: actions/setup-python@v1
         with:
           python-version: '3.8'
 
-      # poetry.lockのハッシュ値が一致する場合は、
-      # 以前に実行した際のキャッシュを復元する
-      - name: Get pip cache
-        id: cache-pip
-        uses: actions/cache@v2
+      - name: Restore & Cache Poetry and Dependences
+        uses: actions/cache@v1
+        id: poetry-cache
         with:
-          path: ~/cache/poetry/
-          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
-            ${{ runner.os }}-poetry-
-
-      # Poetryをインストールする
-      - name: Install Poetry
+          path: |
+            ~/.poetry
+            ~/.cache/pypoetry
+          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('docs/poetry.lock') }}
+      - name: poetry install
+        if: steps.poetry-cache.outputs.cache-hit != 'true'
         run: |
-          python -m pip install --upgrade pip
-          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
-          echo "::set-env name=PATH::$env:PATH;$HOME/.poetry/bin"
-
-      # poetry.lockから依存関係をインストールする
-      - name: Install dependencies
-        run: |
+          curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python3
           poetry install --no-root
+        working-directory: docs
 
-      # AWK芸でテストを実行する
-      - name: Test with pytest
+      - name: Restore & Cache boost (${{ env.BOOST_VERSION }})
+        uses: actions/cache@v1
+        id: boost-cache
+        with:
+          path: ${{ runner.temp }}/libs/boost
+          key: ${{ env.CACHE_KEY_PREFIX }}-boost-${{ env.BOOST_VERSION }}
+      - name: Install boost (${{ env.BOOST_VERSION }}) as static
+        if: steps.boost-cache.outputs.cache-hit != 'true'
         run: |
-          find docs -type f -name \*.md | xargs awk -v i='0' '/\/\/ begin example$/,/\/\/ end example$/ { if($0 !~ "\/\/ .* example$") { print $0 >> FILENAME "-" i ".cpp" } else if ($0 ~ "\/\/ begin example$") { i++ } }'
-          find docs -type f -name \*.cpp | xargs -I@ bash -c "$CXX -I./mitama-cpp-result/include/ @ -std=c++17 && ./a.out"
+          mkdir -p ${{ runner.temp }}/libs/boost
+          git clone -q -b boost-${{ env.BOOST_VERSION }} --recursive https://github.com/boostorg/boost.git
+          cd boost
+          ./bootstrap.sh
+          sudo ./b2 link=static install -j2 --prefix=${{ runner.temp }}/libs/boost || exit 0
+        working-directory: ${{ runner.temp }}
 
-      # MkDocsでGitHubへデプロイする
-      - name: MkDocs Deploy
+      - name: Document test
         run: |
-          git fetch --depth=1 origin master
+          cd docs
+          curl -s https://api.github.com/repos/LoliGothick/mkdocs-smoke-test/releases \
+            | jq -r '.[0].assets[] | select(.name | test("x86_64-unknown-linux-musl.zip")) | .browser_download_url' \
+            | xargs -n1 curl -LOk
+          unzip x86_64-unknown-linux-musl.zip
+          sed -i 's#__COMPILER__#${{ matrix.cxx_prefix }}${{ matrix.compiler_version }}#g' config.toml
+          sed -i 's#__BOOST_ROOT__#${{ runner.temp }}/libs/boost#g' config.toml
+          x86_64-unknown-linux-musl/release/mkdocs-smoke-test --directory=docs --config=./config.toml
+
+      - name: Build Document
+        run: |
+          poetry run mkdocs build
+        working-directory: docs
+
+      - name: Deploy Document
+        run: |
           poetry run mkdocs gh-deploy
+        working-directory: docs
