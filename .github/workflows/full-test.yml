@@ -2,7 +2,7 @@ name: Full Test
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master, develop, feature/renovate-docs ]
   pull_request:
     branches: [ develop ]
 
@@ -35,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - run: git submodule update --init --recursive
-
+      - run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
       - run: sudo apt-get -qq update
       - name: Install ${{ matrix.package_prefix }}${{ matrix.compiler_version }}
         run: sudo apt-get install -y -qq pkg-config cmake ${{ matrix.package_prefix }}${{ matrix.compiler_version }}
@@ -56,7 +56,7 @@ jobs:
           sudo ./b2 link=static install -j2 --prefix=${{ runner.temp }}/libs/boost || exit 0
         working-directory: ${{ runner.temp }}
 
-      - name: Run tests
+      - name: Build and test
         run: |
           mkdir build && cd build
           cmake ..             \
@@ -64,3 +64,14 @@ jobs:
             -DBOOST_ROOT=${{ runner.temp }}/libs/boost
           make
           make test
+
+      - name: Document test
+        run: |
+          cd docs
+          curl -s https://api.github.com/repos/LoliGothick/mkdocs-smoke-test/releases \
+            | jq -r '.[0].assets[] | select(.name | test("x86_64-unknown-linux-musl.zip")) | .browser_download_url' \
+            | xargs -n1 curl -LOk
+          unzip x86_64-unknown-linux-musl.zip
+          sed -i 's#__COMPILER__#${{ matrix.cxx_prefix }}${{ matrix.compiler_version }}#g' config.toml
+          sed -i 's#__BOOST_ROOT__#${{ runner.temp }}/libs/boost#g' config.toml
+          x86_64-unknown-linux-musl/release/mkdocs-smoke-test --directory=docs --config=./config.toml
