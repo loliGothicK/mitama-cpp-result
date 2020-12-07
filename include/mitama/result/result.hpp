@@ -9,6 +9,7 @@
 #include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
 #include <boost/hana/functional/fix.hpp>
+#include <boost/hana/functional/id.hpp>
 #include <boost/format.hpp>
 
 #include <functional>
@@ -424,10 +425,23 @@ public:
 
   /// @brief
   ///   Returns result storage.
-  std::variant<std::monostate, success_t<T>, failure_t<E>>
-  into_storage() const {
+  decltype(auto) into_storage() & {
     return storage_;
   }
+
+  /// @brief
+  ///   Returns result storage.
+  decltype(auto) into_storage() const& {
+    return storage_;
+  }
+
+  /// @brief
+  ///   Returns result storage.
+  decltype(auto) into_storage() && {
+    return std::move(storage_);
+  }
+
+  void into_storage() const&& = delete;
 
   /// @brief
   ///   Converts from basic_result to `maybe<const T>`.
@@ -1776,23 +1790,23 @@ public:
 // MSVC does not implement compound statements (ref: https://stackoverflow.com/q/5291532)
 #if defined(__clang__) || defined(__GNUC__)
 #  define MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC true
-#  define MITAMA_TRY_IMPL( ... )                                                   \
-    ({                                                                             \
-        auto&& result = [&]()->decltype(auto){ return (__VA_ARGS__); }();          \
-        static_assert(                                                             \
-            ::mitama::is_result_v<::mitama::meta::remove_cvr_t<decltype(result)>>, \
-            "You should pass mitama::result type to this MITAMA_TRY macro."        \
-        );                                                                         \
-        if (result.is_err()) {                                                     \
-            using Err = ::mitama::failure_t<                                       \
-                ::mitama::meta::remove_cvr_t<decltype(result)>::err_type           \
-            >;                                                                     \
-            return ::std::get<Err>(result.into_storage());                         \
-        }                                                                          \
-        using Ok = ::mitama::success_t<                                            \
-            ::mitama::meta::remove_cvr_t<decltype(result)>::ok_type                \
-        >;                                                                         \
-        ::std::get<Ok>(result.into_storage()).get();                               \
+#  define MITAMA_TRY_IMPL( ... )                                                          \
+    ({                                                                                    \
+        auto&& result = boost::hana::id(__VA_ARGS__);                                     \
+        static_assert(                                                                    \
+            ::mitama::is_result_v<::mitama::meta::remove_cvr_t<decltype(result)>>,        \
+            "You should pass mitama::result type to this MITAMA_TRY macro."               \
+        );                                                                                \
+        if (result.is_err()) {                                                            \
+            using Err = ::mitama::failure_t<                                              \
+                ::mitama::meta::remove_cvr_t<decltype(result)>::err_type                  \
+            >;                                                                            \
+            return ::std::get<Err>(std::forward<decltype(result)>(result).into_storage());\
+        }                                                                                 \
+        using Ok = ::mitama::success_t<                                                   \
+            ::mitama::meta::remove_cvr_t<decltype(result)>::ok_type                       \
+        >;                                                                                \
+        ::std::get<Ok>(std::forward<decltype(result)>(result).into_storage()).get();      \
     })
 #  ifdef __clang__
 #    define MITAMA_TRY( ... )                                                      \
@@ -1805,7 +1819,7 @@ public:
 #  endif
 #else
 #  define MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC false
-#  define MITAMA_TRY( ... ) (__VA_ARGS__).unwrap()
+#  define MITAMA_TRY( ... ) boost::hana::id(__VA_ARGS__).unwrap()
 #endif
 
 #endif
