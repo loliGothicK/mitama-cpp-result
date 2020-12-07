@@ -1,6 +1,6 @@
 # Contribution Guide
 
-Any contribution to Mitama.Dimensional is more than welcome!
+Any contribution to Mitama.Result is more than welcome!
 
 ## Reporting Issues
 -------------------
@@ -20,7 +20,7 @@ However, any significant improvements should be related to the existing feature 
 ----------
 
 Clone this repository locally.
-Initialize submodule with command as follows:
+Initialize submodules with command as follows:
 
 ```shell
 $ git sbumodule update --init --recursive
@@ -36,7 +36,7 @@ Please install CMake-3.1 or later which can specify C++17.
 ## Unit tests
 -------------------
 
-Test is located under `tests` directory in the repository root.
+Test is located under `test` directory in the repository root.
 
 There is a CMakeLists.txt file in repository root.
 
@@ -45,20 +45,19 @@ Perform an outsource build as follows:
 ```shell
 $ mkdir build
 $ cd build
-$ cmake ..
+$ cmake .. -DBUILD_TESTING=ON
 $ make -j10
 $ ctest
 ```
-
-## Examples
-------------
-
-If you are implementing a new feature, add sample code to `examples/`. This will help us understand the changes a lot and help Mitama.Dimensional users understand your well-organized features.
-
 
 ## Documentation
 -----------------
 
 If you add a new feature, you will probably want to change the document.
-Please send PR to `docs` branch.
+Please send PR to `docs` directory.
 Of course, typo and minor wording fixes are also welcome.
+
+## Document Test
+-----------------
+
+Integrated by GitHub Actions on every push.
