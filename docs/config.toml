@@ -1,0 +1,15 @@
+# Config example
+language = "cpp" # Follow github flavered markdown
+compilers = ["__COMPILER__"] # Compilers for doc test
+compiler_options = [
+    "-std=c++17",
+    "-Wall",
+    "-Wextra",
+    "-pedantic-errors",
+    "-I__BOOST_ROOT__/include",
+    "-I../include",
+]
+# A keyword for test code extraction.
+# By writing the keywords at the beginning,
+# the tool will extract only the code that needs to be tested from all the code blocks.
+dogear = "// begin example"
