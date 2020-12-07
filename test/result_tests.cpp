@@ -1306,3 +1306,12 @@ TEST_CASE("MITAMA_TRY", "[result][mitama_try]"){
     REQUIRE(x.is_ok() == true);
     REQUIRE(x.unwrap() == 6);
 }
+
+TEST_CASE("MITAMA_TRY2", "[result][mitama_try]"){
+  (void)[]{
+    auto res = mut_result<std::unique_ptr<u32>>{mitama::in_place_ok, new auto(42u)};
+
+    auto&& ret = MITAMA_TRY(std::move(res));
+    return mitama::failure();
+  }();
+}
