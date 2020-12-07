@@ -1285,3 +1285,24 @@ TEST_CASE("map & map_err with void", "[result][map][map_err][void]"){
     REQUIRE(y.is_ok() == true);
     REQUIRE(val == 6);
 }
+
+TEST_CASE("MITAMA_TRY", "[result][mitama_try]"){
+    auto func =
+        []() -> result<u32, str> {
+            result<u32, str> a = success(1);
+            u32 b = 2, c = 3;
+            u32 d = MITAMA_TRY(
+                [&a, &b, &c]() -> ::result<u32, str> {
+                    return a.map(
+                        [&b, &c](u32 x) -> u32 { return x + b + c; }
+                    );
+                }()
+            );
+            return success(d);
+        };
+
+    result<u32, str> x = func();
+    REQUIRE(MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC == true);
+    REQUIRE(x.is_ok() == true);
+    REQUIRE(x.unwrap() == 6);
+}

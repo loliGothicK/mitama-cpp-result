@@ -1774,21 +1774,38 @@ public:
 } // namespace mitama
 
 // MSVC does not implement compound statements (ref: https://stackoverflow.com/q/5291532)
-#if defined(__GNUC__) || defined(__clang__)
+#if defined(__clang__) || defined(__GNUC__)
 #  define MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC true
-#  define MITAMA_TRY( RESULT )                                         \
-    ({                                                                 \
-        const auto result = RESULT;                                    \
-        if (result.is_err()) {                                         \
-            using Err = mitama::failure_t<decltype(result)::err_type>; \
-            return std::get<Err>(result.into_storage());               \
-        }                                                              \
-        using Ok = mitama::success_t<decltype(result)::ok_type>;       \
-        std::get<Ok>(result.into_storage()).get();                     \
+#  define MITAMA_TRY_IMPL( ... )                                                   \
+    ({                                                                             \
+        auto&& result = [&]()->decltype(auto){ return (__VA_ARGS__); }();          \
+        static_assert(                                                             \
+            ::mitama::is_result_v<::mitama::meta::remove_cvr_t<decltype(result)>>, \
+            "You should pass mitama::result type to this MITAMA_TRY macro."        \
+        );                                                                         \
+        if (result.is_err()) {                                                     \
+            using Err = ::mitama::failure_t<                                       \
+                ::mitama::meta::remove_cvr_t<decltype(result)>::err_type           \
+            >;                                                                     \
+            return ::std::get<Err>(result.into_storage());                         \
+        }                                                                          \
+        using Ok = ::mitama::success_t<                                            \
+            ::mitama::meta::remove_cvr_t<decltype(result)>::ok_type                \
+        >;                                                                         \
+        ::std::get<Ok>(result.into_storage()).get();                               \
     })
+#  ifdef __clang__
+#    define MITAMA_TRY( ... )                                                      \
+      _Pragma("GCC diagnostic push")                                               \
+      _Pragma("GCC diagnostic ignored \"-Wgnu-statement-expression\"")             \
+      MITAMA_TRY_IMPL(__VA_ARGS__)                                                 \
+      _Pragma("GCC diagnostic pop")
+#  else
+#    define MITAMA_TRY( ... ) MITAMA_TRY_IMPL(__VA_ARGS__)
+#  endif
 #else
 #  define MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC false
-#  define MITAMA_TRY( RESULT ) RESULT.unwrap()
+#  define MITAMA_TRY( ... ) (__VA_ARGS__).unwrap()
 #endif
 
 #endif
