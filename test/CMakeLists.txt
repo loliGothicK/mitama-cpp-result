@@ -17,8 +17,11 @@ message($CMAKE)
 foreach(TEST_NAME ${TEST_NAMES})
   add_executable(${TEST_NAME} ${TEST_NAME}.cpp)
   target_compile_features(${TEST_NAME} PRIVATE cxx_std_17)
-  target_compile_options(${TEST_NAME} PRIVATE -Wall -Wextra -pedantic-errors -ftemplate-backtrace-limit=0)
-  # -Wall -Wextra -Werror -pedantic-errors
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(${TEST_NAME} PRIVATE -Wall -Wextra -ftemplate-backtrace-limit=0)
+  else()
+    target_compile_options(${TEST_NAME} PRIVATE -Wall -Wextra -pedantic-errors -ftemplate-backtrace-limit=0)
+  endif()
 
   if(APPLE)
     target_compile_definitions(${TEST_NAME} PRIVATE _GNU_SOURCE)
