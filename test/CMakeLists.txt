@@ -5,6 +5,7 @@ set(TEST_NAMES
 
 find_package(Threads REQUIRED)
 set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
+set(Boost_USE_STATIC_LIBS ON)
 
 # Find Boost
 find_package(Boost 1.67.0 REQUIRED
