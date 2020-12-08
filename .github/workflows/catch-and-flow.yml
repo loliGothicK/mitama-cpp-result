@@ -1,132 +1,51 @@
-name: Catch and Flow
+name: Full Test
 
 on:
   push:
-    branches: [ master, develop, feature/new-docs ]
+    branches: [ master, develop ]
   pull_request:
-    branches: [ develop, master ]
+    branches: [ develop ]
 
 env:
   BOOST_VERSION: 1.73.0
 
 jobs:
-  build:
-    name: ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
+  test:
+    runs-on: ubuntu-20.04
     strategy:
-      fail-fast: false
       matrix:
-        config:
-          - {
-            name: "Windows Latest MSVC",
-            os: windows-latest,
-            build_type: "Release", cc: "cl", cxx: "cl",
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
-          }
-          - {
-            name: "Windows Latest MinGW",
-            os: windows-latest,
-            build_type: "Release", cc: "gcc", cxx: "g++"
-          }
-          - {
-            name: "macOS Latest Clang",
-            os: macos-latest,
-            build_type: "Release", cc: "clang", cxx: "clang++"
-          }
-          - {
-            name: "Ubuntu GCC",
-            os: ubuntu-latest,
-            build_type: "Release", cc: "gcc", cxx: "g++"
-          }
-          - {
-            name: "Ubuntu Clang",
-            os: ubuntu-latest,
-            build_type: "Release", cc: "clang", cxx: "clang++"
-          }
+        compiler: [ clang, gcc ]
+        compiler_version: [ 7, 8, 9, 10 ]
+        exclude:
+          - compiler: gcc
+            compiler_version: 7
+        include:
+          - compiler: clang
+            cc_prefix: clang-
+            cxx_prefix: clang++-
+            package_prefix: clang-
+          - compiler: gcc
+            cc_prefix: gcc-
+            cxx_prefix: g++-
+            package_prefix: g++-
+    env:
+      CC: ${{ matrix.cc_prefix }}${{ matrix.compiler_version }}
+      CXX: ${{ matrix.cxx_prefix }}${{ matrix.compiler_version }}
+      CACHE_KEY_PREFIX: ${{ github.job }}-${{ matrix.package_prefix }}${{ matrix.compiler_version }}-${{ matrix.build_type }}
     steps:
-      - name: Download Ninja and CMake
-        id: cmake_and_ninja
-        shell: cmake -P {0}
-        run: |
-          set(ninja_version "1.10.2")
-          set(cmake_version "3.19.1")
-
-          message(STATUS "Using host CMake version: ${CMAKE_VERSION}")
-
-          if ("${{ runner.os }}" STREQUAL "Windows")
-            set(ninja_suffix "win.zip")
-            set(cmake_suffix "win64-x64.zip")
-            set(cmake_dir "cmake-${cmake_version}-win64-x64/bin")
-          elseif ("${{ runner.os }}" STREQUAL "Linux")
-            set(ninja_suffix "linux.zip")
-            set(cmake_suffix "Linux-x86_64.tar.gz")
-            set(cmake_dir "cmake-${cmake_version}-Linux-x86_64/bin")
-          elseif ("${{ runner.os }}" STREQUAL "macOS")
-            set(ninja_suffix "mac.zip")
-            set(cmake_suffix "Darwin-x86_64.tar.gz")
-            set(cmake_dir "cmake-${cmake_version}-Darwin-x86_64/CMake.app/Contents/bin")
-          endif()
-
-          set(ninja_url "https://github.com/ninja-build/ninja/releases/download/v${ninja_version}/ninja-${ninja_suffix}")
-          file(DOWNLOAD "${ninja_url}" ./ninja.zip SHOW_PROGRESS)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf ./ninja.zip)
-
-          set(cmake_url "https://github.com/Kitware/CMake/releases/download/v${cmake_version}/cmake-${cmake_version}-${cmake_suffix}")
-          file(DOWNLOAD "${cmake_url}" ./cmake.zip SHOW_PROGRESS)
-          execute_process(COMMAND ${CMAKE_COMMAND} -E tar xvf ./cmake.zip)
-
-          # Save the path for other steps
-          file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/${cmake_dir}" cmake_dir)
-          message("::set-output name=cmake_dir::${cmake_dir}")
-
-          if (NOT "${{ runner.os }}" STREQUAL "Windows")
-            execute_process(
-              COMMAND chmod +x ninja
-              COMMAND chmod +x ${cmake_dir}/cmake
-            )
-          endif()
-
-      - name: Configure
-        id: configure
-        shell: cmake -P {0}
-        run: |
-          set(ENV{CC} ${{ matrix.config.cc }})
-          set(ENV{CXX} ${{ matrix.config.cxx }})
-
-          if ("${{ runner.os }}" STREQUAL "Windows" AND NOT "x${{ matrix.config.environment_script }}" STREQUAL "x")
-            execute_process(
-              COMMAND "${{ matrix.config.environment_script }}" && set
-              OUTPUT_FILE environment_script_output.txt
-            )
-            file(STRINGS environment_script_output.txt output_lines)
-            foreach(line IN LISTS output_lines)
-              if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
-                set(ENV{${CMAKE_MATCH_1}} "${CMAKE_MATCH_2}")
-              endif()
-            endforeach()
-          endif()
-
-          file(TO_CMAKE_PATH "$ENV{GITHUB_WORKSPACE}/ninja" ninja_program)
-
-          execute_process(
-            COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/cmake
-              -S .
-              -B build
-              -D CMAKE_BUILD_TYPE=${{ matrix.config.build_type }}
-              -G Ninja
-              -D CMAKE_MAKE_PROGRAM=${ninja_program}
-            RESULT_VARIABLE result
-          )
-          if (NOT result EQUAL 0)
-            message(FATAL_ERROR "Bad exit status")
-          endif()
+      - uses: actions/checkout@v1
+      - run: git submodule update --init --recursive
+      - run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+      - run: sudo apt-get -qq update
+      - name: Install ${{ matrix.package_prefix }}${{ matrix.compiler_version }}
+        run: sudo apt-get install -y -qq pkg-config cmake ${{ matrix.package_prefix }}${{ matrix.compiler_version }}
 
       - name: Restore & Cache boost (${{ env.BOOST_VERSION }})
         uses: actions/cache@v1
         id: boost-cache
         with:
           path: ${{ runner.temp }}/libs/boost
-          key: ${{ matrix.config.name }}-boost-${{ env.BOOST_VERSION }}
+          key: ${{ env.CACHE_KEY_PREFIX }}-boost-${{ env.BOOST_VERSION }}
       - name: Install boost (${{ env.BOOST_VERSION }}) as static
         if: steps.boost-cache.outputs.cache-hit != 'true'
         run: |
@@ -137,58 +56,22 @@ jobs:
           sudo ./b2 link=static install -j2 --prefix=${{ runner.temp }}/libs/boost || exit 0
         working-directory: ${{ runner.temp }}
 
-      - name: Build
-        id: build
-        shell: cmake -P {0}
+      - name: Build and test
         run: |
-          set(ENV{NINJA_STATUS} "[%f/%t %o/sec] ")
+          mkdir build && cd build
+          cmake ..             \
+            -DBUILD_TESTING=ON \
+            -DBOOST_ROOT=${{ runner.temp }}/libs/boost
+          make
+          make test
 
-          if ("${{ runner.os }}" STREQUAL "Windows" AND NOT "x${{ matrix.config.environment_script }}" STREQUAL "x")
-            file(STRINGS environment_script_output.txt output_lines)
-            foreach(line IN LISTS output_lines)
-              if (line MATCHES "^([a-zA-Z0-9_-]+)=(.*)$")
-                set(ENV{${CMAKE_MATCH_1}} "${CMAKE_MATCH_2}")
-              endif()
-            endforeach()
-          endif()
-
-          execute_process(
-            COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/cmake --build build
-            RESULT_VARIABLE result
-          )
-          if (NOT result EQUAL 0)
-            message(FATAL_ERROR "Bad exit status")
-          endif()
-
-      - name: Run tests
-        id: test
-        shell: cmake -P {0}
+      - name: Document test
         run: |
-          include(ProcessorCount)
-          ProcessorCount(N)
-
-          execute_process(
-            COMMAND ${{ steps.cmake_and_ninja.outputs.cmake_dir }}/ctest -j ${N}
-            WORKING_DIRECTORY build
-            RESULT_VARIABLE result
-          )
-          if (NOT result EQUAL 0)
-            message(FATAL_ERROR "Running tests failed!")
-          endif()
-
-#      release:
-#        if: contains(github.ref, 'tags/v')
-#        runs-on: ubuntu-latest
-#        needs: build
-#
-#        steps:
-#          - name: Create Release
-#            id: create_release
-#            uses: actions/create-release@v1
-#            env:
-#              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#            with:
-#              tag_name: ${{ github.ref }}
-#              release_name: Release ${{ github.ref }}
-#              draft: false
-#              prerelease: false
+          cd docs
+          curl -s https://api.github.com/repos/LoliGothick/mkdocs-smoke-test/releases \
+            | jq -r '.[0].assets[] | select(.name | test("x86_64-unknown-linux-musl.zip")) | .browser_download_url' \
+            | xargs -n1 curl -LOk
+          unzip x86_64-unknown-linux-musl.zip
+          sed -i 's#__COMPILER__#${{ matrix.cxx_prefix }}${{ matrix.compiler_version }}#g' config.toml
+          sed -i 's#__BOOST_ROOT__#${{ runner.temp }}/libs/boost#g' config.toml
+          x86_64-unknown-linux-musl/release/mkdocs-smoke-test --directory=docs --config=./config.toml
