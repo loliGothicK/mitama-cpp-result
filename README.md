@@ -23,9 +23,9 @@ mitama-cpp-result/docs> $ poetry install --no-root
 mitama-cpp-result/docs> $ poetry run mkdocs serve
 ```
 
-## Build dependency
+## Dependencies
 
-To use this library, you need at least 1.61.0 or higher version of the boost library (for Boost.Hana).
+To use this library, you need at least 1.67.0 or higher version of the boost library.
 
 ## OS / Compiler / Language Standard
 
