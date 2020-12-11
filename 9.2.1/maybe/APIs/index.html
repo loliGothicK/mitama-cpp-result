@@ -1,0 +1,2954 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Mitama.Result C++17 Library">
+      
+      
+      
+        <link rel="canonical" href="https://loligothick.github.io/mitama-cpp-result/maybe/APIs/">
+      
+      
+        <meta name="author" content="mitama">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.1.7">
+    
+    
+      
+        <title>API Reference - Mitama.Result User Manual</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.19753c6b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.196e0c26.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#009485">
+        
+      
+    
+    
+    
+      
+        
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    
+      <link rel="stylesheet" href="../../cppmap_styles.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="teal" data-md-color-accent="teal">
+      
+  
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#implementations" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="https://loligothick.github.io/mitama-cpp-result/" title="Mitama.Result User Manual" class="md-header-nav__button md-logo" aria-label="Mitama.Result User Manual">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.35 10.03A7.49 7.49 0 0012 4C9.11 4 6.6 5.64 5.35 8.03A6.004 6.004 0 000 14a6 6 0 006 6h13a5 5 0 005-5c0-2.64-2.05-4.78-4.65-4.97z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Mitama.Result User Manual
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              API Reference
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/loligothick/mitama-cpp-result" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    loligothick/mitama-cpp-result
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+
+  
+
+<nav class="md-tabs md-tabs--active" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  <li class="md-tabs__item">
+    
+    
+    <a href="../.." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+      
+        
+      
+      <a href="../intro/" class="md-tabs__link md-tabs__link--active">
+        Maybe Mudule
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+      
+      <a href="../../result/intro/" class="md-tabs__link">
+        Result Module
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://loligothick.github.io/mitama-cpp-result/" title="Mitama.Result User Manual" class="md-nav__button md-logo" aria-label="Mitama.Result User Manual">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.35 10.03A7.49 7.49 0 0012 4C9.11 4 6.6 5.64 5.35 8.03A6.004 6.004 0 000 14a6 6 0 006 6h13a5 5 0 005-5c0-2.64-2.05-4.78-4.65-4.97z"/></svg>
+
+    </a>
+    Mitama.Result User Manual
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/loligothick/mitama-cpp-result" title="Go to repository" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 512"><path d="M186.1 328.7c0 20.9-10.9 55.1-36.7 55.1s-36.7-34.2-36.7-55.1 10.9-55.1 36.7-55.1 36.7 34.2 36.7 55.1zM480 278.2c0 31.9-3.2 65.7-17.5 95-37.9 76.6-142.1 74.8-216.7 74.8-75.8 0-186.2 2.7-225.6-74.8-14.6-29-20.2-63.1-20.2-95 0-41.9 13.9-81.5 41.5-113.6-5.2-15.8-7.7-32.4-7.7-48.8 0-21.5 4.9-32.3 14.6-51.8 45.3 0 74.3 9 108.8 36 29-6.9 58.8-10 88.7-10 27 0 54.2 2.9 80.4 9.2 34-26.7 63-35.2 107.8-35.2 9.8 19.5 14.6 30.3 14.6 51.8 0 16.4-2.6 32.7-7.7 48.2 27.5 32.4 39 72.3 39 114.2zm-64.3 50.5c0-43.9-26.7-82.6-73.5-82.6-18.9 0-37 3.4-56 6-14.9 2.3-29.8 3.2-45.1 3.2-15.2 0-30.1-.9-45.1-3.2-18.7-2.6-37-6-56-6-46.8 0-73.5 38.7-73.5 82.6 0 87.8 80.4 101.3 150.4 101.3h48.2c70.3 0 150.6-13.4 150.6-101.3zm-82.6-55.1c-25.8 0-36.7 34.2-36.7 55.1s10.9 55.1 36.7 55.1 36.7-34.2 36.7-55.1-10.9-55.1-36.7-55.1z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    loligothick/mitama-cpp-result
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    <label class="md-nav__link" for="nav-2">
+      Maybe Mudule
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Maybe Mudule" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        <span class="md-nav__icon md-icon"></span>
+        Maybe Mudule
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../intro/" class="md-nav__link">
+      Maybe 101
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        API Reference
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" class="md-nav__link md-nav__link--active">
+      API Reference
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#is_just" class="md-nav__link">
+    is_just
+  </a>
+  
+    <nav class="md-nav" aria-label="is_just">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#is_nothing" class="md-nav__link">
+    is_nothing
+  </a>
+  
+    <nav class="md-nav" aria-label="is_nothing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#as_ref" class="md-nav__link">
+    as_ref
+  </a>
+  
+    <nav class="md-nav" aria-label="as_ref">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_2" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#expect" class="md-nav__link">
+    expect
+  </a>
+  
+    <nav class="md-nav" aria-label="expect">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_3" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unwrap" class="md-nav__link">
+    unwrap
+  </a>
+  
+    <nav class="md-nav" aria-label="unwrap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_4" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unwrap_or" class="md-nav__link">
+    unwrap_or
+  </a>
+  
+    <nav class="md-nav" aria-label="unwrap_or">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_5" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unwrap_or_else" class="md-nav__link">
+    unwrap_or_else
+  </a>
+  
+    <nav class="md-nav" aria-label="unwrap_or_else">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_6" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#map" class="md-nav__link">
+    map
+  </a>
+  
+    <nav class="md-nav" aria-label="map">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_7" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#map_or" class="md-nav__link">
+    map_or
+  </a>
+  
+    <nav class="md-nav" aria-label="map_or">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_8" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#map_or_else" class="md-nav__link">
+    map_or_else
+  </a>
+  
+    <nav class="md-nav" aria-label="map_or_else">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_9" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ok_or" class="md-nav__link">
+    ok_or
+  </a>
+  
+    <nav class="md-nav" aria-label="ok_or">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_10" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ok_or_else" class="md-nav__link">
+    ok_or_else
+  </a>
+  
+    <nav class="md-nav" aria-label="ok_or_else">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_11" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conj" class="md-nav__link">
+    conj
+  </a>
+  
+    <nav class="md-nav" aria-label="conj">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_12" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#and_then" class="md-nav__link">
+    and_then
+  </a>
+  
+    <nav class="md-nav" aria-label="and_then">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_13" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    filter
+  </a>
+  
+    <nav class="md-nav" aria-label="filter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_14" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disj" class="md-nav__link">
+    disj
+  </a>
+  
+    <nav class="md-nav" aria-label="disj">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_15" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#or_else" class="md-nav__link">
+    or_else
+  </a>
+  
+    <nav class="md-nav" aria-label="or_else">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_16" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get_or_emplace" class="md-nav__link">
+    get_or_emplace
+  </a>
+  
+    <nav class="md-nav" aria-label="get_or_emplace">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_17" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get_or_emplace_with" class="md-nav__link">
+    get_or_emplace_with
+  </a>
+  
+    <nav class="md-nav" aria-label="get_or_emplace_with">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_18" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replace" class="md-nav__link">
+    replace
+  </a>
+  
+    <nav class="md-nav" aria-label="replace">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_19" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replace_with" class="md-nav__link">
+    replace_with
+  </a>
+  
+    <nav class="md-nav" aria-label="replace_with">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_20" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloned" class="md-nav__link">
+    cloned
+  </a>
+  
+    <nav class="md-nav" aria-label="cloned">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_21" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unwrap_or_default" class="md-nav__link">
+    unwrap_or_default
+  </a>
+  
+    <nav class="md-nav" aria-label="unwrap_or_default">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_22" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transpose" class="md-nav__link">
+    transpose
+  </a>
+  
+    <nav class="md-nav" aria-label="transpose">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_23" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flatten" class="md-nav__link">
+    flatten
+  </a>
+  
+    <nav class="md-nav" aria-label="flatten">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_24" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#and_finally" class="md-nav__link">
+    and_finally
+  </a>
+  
+    <nav class="md-nav" aria-label="and_finally">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_25" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#or_finally" class="md-nav__link">
+    or_finally
+  </a>
+  
+    <nav class="md-nav" aria-label="or_finally">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_26" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#and_peek" class="md-nav__link">
+    and_peek
+  </a>
+  
+    <nav class="md-nav" aria-label="and_peek">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_27" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#or_peek" class="md-nav__link">
+    or_peek
+  </a>
+  
+    <nav class="md-nav" aria-label="or_peek">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_28" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#range_to_maybe" class="md-nav__link">
+    range_to_maybe
+  </a>
+  
+    <nav class="md-nav" aria-label="range_to_maybe">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_29" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../special_members/" class="md-nav__link">
+      Special Members
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../comparisons/" class="md-nav__link">
+      Comparisons
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../metafunctions/" class="md-nav__link">
+      Meta Functions
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" >
+    <label class="md-nav__link" for="nav-3">
+      Result Module
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="Result Module" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon"></span>
+        Result Module
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../result/intro/" class="md-nav__link">
+      Result 101
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../result/special_members/" class="md-nav__link">
+      Special Members
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../result/APIs/" class="md-nav__link">
+      API Reference
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../result/metafunctions/" class="md-nav__link">
+      Meta Functions
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../result/comparisons/" class="md-nav__link">
+      Comparisons
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../result/CHANGELOG/" class="md-nav__link">
+      CHANGELOG
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#is_just" class="md-nav__link">
+    is_just
+  </a>
+  
+    <nav class="md-nav" aria-label="is_just">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#is_nothing" class="md-nav__link">
+    is_nothing
+  </a>
+  
+    <nav class="md-nav" aria-label="is_nothing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_1" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#as_ref" class="md-nav__link">
+    as_ref
+  </a>
+  
+    <nav class="md-nav" aria-label="as_ref">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_2" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#expect" class="md-nav__link">
+    expect
+  </a>
+  
+    <nav class="md-nav" aria-label="expect">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_3" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unwrap" class="md-nav__link">
+    unwrap
+  </a>
+  
+    <nav class="md-nav" aria-label="unwrap">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_4" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unwrap_or" class="md-nav__link">
+    unwrap_or
+  </a>
+  
+    <nav class="md-nav" aria-label="unwrap_or">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_5" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unwrap_or_else" class="md-nav__link">
+    unwrap_or_else
+  </a>
+  
+    <nav class="md-nav" aria-label="unwrap_or_else">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_6" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#map" class="md-nav__link">
+    map
+  </a>
+  
+    <nav class="md-nav" aria-label="map">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_7" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#map_or" class="md-nav__link">
+    map_or
+  </a>
+  
+    <nav class="md-nav" aria-label="map_or">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_8" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#map_or_else" class="md-nav__link">
+    map_or_else
+  </a>
+  
+    <nav class="md-nav" aria-label="map_or_else">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_9" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ok_or" class="md-nav__link">
+    ok_or
+  </a>
+  
+    <nav class="md-nav" aria-label="ok_or">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_10" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ok_or_else" class="md-nav__link">
+    ok_or_else
+  </a>
+  
+    <nav class="md-nav" aria-label="ok_or_else">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_11" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conj" class="md-nav__link">
+    conj
+  </a>
+  
+    <nav class="md-nav" aria-label="conj">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_12" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#and_then" class="md-nav__link">
+    and_then
+  </a>
+  
+    <nav class="md-nav" aria-label="and_then">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_13" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#filter" class="md-nav__link">
+    filter
+  </a>
+  
+    <nav class="md-nav" aria-label="filter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_14" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#disj" class="md-nav__link">
+    disj
+  </a>
+  
+    <nav class="md-nav" aria-label="disj">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_15" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#or_else" class="md-nav__link">
+    or_else
+  </a>
+  
+    <nav class="md-nav" aria-label="or_else">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_16" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get_or_emplace" class="md-nav__link">
+    get_or_emplace
+  </a>
+  
+    <nav class="md-nav" aria-label="get_or_emplace">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_17" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get_or_emplace_with" class="md-nav__link">
+    get_or_emplace_with
+  </a>
+  
+    <nav class="md-nav" aria-label="get_or_emplace_with">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_18" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replace" class="md-nav__link">
+    replace
+  </a>
+  
+    <nav class="md-nav" aria-label="replace">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_19" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#replace_with" class="md-nav__link">
+    replace_with
+  </a>
+  
+    <nav class="md-nav" aria-label="replace_with">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_20" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloned" class="md-nav__link">
+    cloned
+  </a>
+  
+    <nav class="md-nav" aria-label="cloned">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_21" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#unwrap_or_default" class="md-nav__link">
+    unwrap_or_default
+  </a>
+  
+    <nav class="md-nav" aria-label="unwrap_or_default">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_22" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#transpose" class="md-nav__link">
+    transpose
+  </a>
+  
+    <nav class="md-nav" aria-label="transpose">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_23" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#flatten" class="md-nav__link">
+    flatten
+  </a>
+  
+    <nav class="md-nav" aria-label="flatten">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_24" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#and_finally" class="md-nav__link">
+    and_finally
+  </a>
+  
+    <nav class="md-nav" aria-label="and_finally">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_25" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#or_finally" class="md-nav__link">
+    or_finally
+  </a>
+  
+    <nav class="md-nav" aria-label="or_finally">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_26" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#and_peek" class="md-nav__link">
+    and_peek
+  </a>
+  
+    <nav class="md-nav" aria-label="and_peek">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_27" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#or_peek" class="md-nav__link">
+    or_peek
+  </a>
+  
+    <nav class="md-nav" aria-label="or_peek">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_28" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#range_to_maybe" class="md-nav__link">
+    range_to_maybe
+  </a>
+  
+    <nav class="md-nav" aria-label="range_to_maybe">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#examples_29" class="md-nav__link">
+    Examples
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="implementations">Implementations<a class="headerlink" href="#implementations" title="Permanent link">&para;</a></h1>
+<h2 id="is_just">is_just<a class="headerlink" href="#is_just" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; bool</p>
+<p>Returns <code>true</code> if the maybe has some value.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declaration</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">is_just</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span> <span class="n">x</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span> <span class="p">);</span>
+
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span> <span class="n">not</span> <span class="n">y</span><span class="p">.</span><span class="n">is_just</span><span class="p">()</span> <span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="is_nothing">is_nothing<a class="headerlink" href="#is_nothing" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; bool</p>
+<p>Returns <code>true</code> if the <code>maybe</code> is a <code>nothing</code> value.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">constexpr</span> <span class="kt">bool</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">is_nothing</span><span class="p">()</span> <span class="k">const</span> <span class="k">noexcept</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_1">Examples<a class="headerlink" href="#examples_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span> <span class="o">!</span> <span class="n">x</span><span class="p">.</span><span class="n">is_nothing</span><span class="p">()</span> <span class="p">);</span>
+
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span> <span class="n">y</span><span class="p">.</span><span class="n">is_nothing</span><span class="p">()</span> <span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="as_ref">as_ref<a class="headerlink" href="#as_ref" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt;&amp; &rarr; maybe&lt;T&amp;&gt;</p>
+<p>Converts from <code>maybe&lt;T&gt;&amp;</code> to <code>maybe&lt;T&amp;&gt;</code>.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">as_ref</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&gt;</span> <span class="p">;</span>
+
+    <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">as_ref</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_2">Examples<a class="headerlink" href="#examples_2" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">maybe</span> <span class="n">text</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;Hello, world!&quot;</span><span class="n">s</span><span class="p">);</span>
+    <span class="c1">// First, cast `maybe&lt;T&gt;` to `maybe&lt;T&amp;&gt;` with `as_ref`,</span>
+    <span class="k">auto</span> <span class="n">text_length</span> <span class="o">=</span> <span class="n">text</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span><span class="p">);</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;still can print text: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">text</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="expect">expect<a class="headerlink" href="#expect" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; string_view &rarr; T</p>
+<p>Unwraps a maybe, yielding the content of a <code>just</code>.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">expect</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string_view</span> <span class="n">msg</span><span class="p">)</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">T</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">}</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Exceptions</p>
+<p>Raise <code>mitama::runtime_panic</code> if the value is a <code>nothing</code> with a custom panic message provided by <code>msg</code>.</p>
+</div>
+<h3 id="examples_3">Examples<a class="headerlink" href="#examples_3" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">{</span>
+    <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;value&quot;</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span> <span class="n">x</span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;the world is ending&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;value&quot;</span><span class="n">s</span> <span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+    <span class="n">x</span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;the world is ending&quot;</span><span class="p">);</span> <span class="c1">// panics with `the world is ending`</span>
+  <span class="p">}</span>
+  <span class="k">catch</span> <span class="p">(</span> <span class="n">mitama</span><span class="o">::</span><span class="n">runtime_panic</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">panic</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="n">panic</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="c1">// runtime panicked at &#39;the world is ending&#39;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="unwrap">unwrap<a class="headerlink" href="#unwrap" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; T</p>
+<p>Unwraps a maybe, yielding the content of a <code>just</code>.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap</span><span class="p">()</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">}</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Exceptions</p>
+<p>Raise <code>mitama::runtime_panic</code> if a maybe has not <code>just</code> value.</p>
+</div>
+<h3 id="examples_4">Examples<a class="headerlink" href="#examples_4" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">{</span>
+    <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;air&quot;</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;air&quot;</span><span class="n">s</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">try</span> <span class="p">{</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+    <span class="n">x</span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span> <span class="c1">// raise an exception</span>
+  <span class="p">}</span>
+  <span class="k">catch</span> <span class="p">(</span> <span class="n">mitama</span><span class="o">::</span><span class="n">runtime_panic</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">panic</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="n">panic</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="c1">// runtime panicked at &#39;called `maybe::unwrap()` on a `nothing` value&#39;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="unwrap_or">unwrap_or<a class="headerlink" href="#unwrap_or" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; T &rarr; T</p>
+<p>Returns the contained value or a default.</p>
+<p>Arguments passed to <code>unwrap_or</code> are eagerly evaluated; if you are passing the result of a function call, it is recommended to use <code>unwrap_or_else</code>, which is lazily evaluated.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+        <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">},</span> <span class="n">U</span><span class="o">&amp;&amp;&gt;&gt;::</span><span class="n">value</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">},</span> <span class="n">U</span><span class="o">&amp;&amp;&gt;&gt;</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or</span><span class="p">(</span><span class="n">U</span><span class="o">&amp;&amp;</span> <span class="n">def</span><span class="p">)</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">}</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_5">Examples<a class="headerlink" href="#examples_5" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="p">{</span><span class="n">just</span><span class="p">(</span><span class="s">&quot;car&quot;</span><span class="n">s</span><span class="p">)}.</span><span class="n">unwrap_or</span><span class="p">(</span><span class="s">&quot;bike&quot;</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;car&quot;</span><span class="n">s</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">{</span><span class="n">nothing</span><span class="p">}.</span><span class="n">unwrap_or</span><span class="p">(</span><span class="s">&quot;bike&quot;</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="s">&quot;bike&quot;</span><span class="n">s</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="unwrap_or_else">unwrap_or_else<a class="headerlink" href="#unwrap_or_else" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; F &rarr; T</p>
+<p>Returns the contained value or computes it from a invocable object <code>op: F</code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">constraints</p>
+<div class="highlight"><pre><span></span><code><span class="k">requires</span> <span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">{</span> <span class="n">f</span><span class="p">()</span> <span class="p">}</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">convertible_to</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+        <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span><span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">},</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;&gt;</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">},</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">}</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_6">Examples<a class="headerlink" href="#examples_6" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="p">{</span><span class="n">just</span><span class="p">(</span><span class="mi">4</span><span class="p">)}.</span><span class="n">unwrap_or_else</span><span class="p">([</span><span class="n">k</span><span class="p">]{</span> <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="mi">4</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">{}.</span><span class="n">unwrap_or_else</span><span class="p">([</span><span class="n">k</span><span class="p">]{</span> <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="mi">20</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="map">map<a class="headerlink" href="#map" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; F &rarr; Args... &rarr; maybe&lt;U&gt;</p>
+<p>Maps a <code>maybe&lt;T&gt;</code> to <code>maybe&lt;U&gt;</code> by applying a function to a contained value.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">constraints</p>
+<div class="highlight"><pre><span></span><code><span class="k">requires</span> <span class="p">{</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span> <span class="k">class</span><span class="p">...</span> <span class="n">Args</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">},</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span><span class="p">,</span> <span class="kt">bool</span><span class="o">&gt;</span> <span class="o">=</span> <span class="nb">false</span><span class="o">&gt;</span>
+    <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">map</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...)</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">},</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_7">Examples<a class="headerlink" href="#examples_7" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span> <span class="n">maybe_some_string</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;Hello, World!&quot;</span><span class="n">s</span><span class="p">);</span>
+  <span class="c1">// `maybe::map` takes self *by ref*,</span>
+  <span class="c1">// *not* consuming `maybe_some_string`</span>
+  <span class="n">maybe</span> <span class="n">maybe_some_len</span> <span class="o">=</span> <span class="n">maybe_some_string</span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span><span class="p">);</span>
+
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe_some_len</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">13u</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="map_or">map_or<a class="headerlink" href="#map_or" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; U &rarr; F &rarr; Args... &rarr; U</p>
+<p>Applies a function to the contained value (if any), or returns the provided default (if not).</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="p">,</span> <span class="k">class</span> <span class="nc">F</span><span class="p">,</span> <span class="k">class</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">},</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span><span class="p">,</span>
+            <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span>
+                <span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span>
+                    <span class="n">U</span><span class="o">&amp;&amp;</span><span class="p">,</span>
+                    <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">}</span><span class="o">&gt;</span>
+        <span class="o">&gt;&gt;&gt;</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">},</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;&gt;&gt;</span>
+    <span class="n">map_or</span><span class="p">(</span><span class="n">U</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...)</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">};</span>
+
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_8">Examples<a class="headerlink" href="#examples_8" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">map_or</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">);</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">y</span><span class="p">.</span><span class="n">map_or</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="map_or_else">map_or_else<a class="headerlink" href="#map_or_else" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; D &rarr;  F &rarr; Args... &rarr; U</p>
+<p>Applies a function to the contained value (if any), or computes a default (if not).</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">constraints</p>
+<div class="highlight"><pre><span></span><code><span class="k">requires</span> <span class="p">{</span>
+    <span class="n">maybe</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span>
+        <span class="o">&gt;</span>
+    <span class="o">&gt;&gt;</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code>    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">D</span><span class="p">,</span> <span class="k">class</span> <span class="nc">F</span><span class="p">,</span> <span class="k">class</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
+                <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+                <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">},</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span><span class="p">,</span>
+                <span class="n">meta</span><span class="o">::</span><span class="n">has_type</span><span class="o">&lt;</span>
+                    <span class="n">std</span><span class="o">::</span><span class="n">common_type</span><span class="o">&lt;</span>
+                        <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+                        <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">},</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span>
+        <span class="o">&gt;&gt;&gt;</span><span class="p">,</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">common_type_t</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">D</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">},</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span>
+    <span class="o">&gt;&gt;</span>
+    <span class="n">map_or_else</span><span class="p">(</span><span class="n">D</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...)</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_9">Examples<a class="headerlink" href="#examples_9" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">21</span><span class="p">;</span>
+  <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">map_or_else</span><span class="p">([</span><span class="n">k</span><span class="p">]{</span> <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">;</span> <span class="p">},</span> <span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">);</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">y</span><span class="p">.</span><span class="n">map_or_else</span><span class="p">([</span><span class="n">k</span><span class="p">]{</span> <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">;</span> <span class="p">},</span> <span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="ok_or">ok_or<a class="headerlink" href="#ok_or" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; E [default=std::monostate] &rarr; result&lt;T, E&gt;</p>
+<p>Transforms the <code>maybe&lt;T&gt;</code> into a <code>result&lt;T, E&gt;</code>, mapping <code>just(v)</code> to <code>success(v)</code> and <code>nothing</code> to <code>failure(err)</code>.</p>
+<p>Arguments passed to ok_or are eagerly evaluated; if you are passing the result of a function call, it is recommended to use ok_or_else, which is lazily evaluated.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">E</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">monostate</span><span class="o">&gt;</span>
+    <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ok_or</span><span class="p">(</span><span class="n">E</span><span class="o">&amp;&amp;</span> <span class="n">err</span> <span class="o">=</span> <span class="p">{})</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_10">Examples<a class="headerlink" href="#examples_10" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">ok_or</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">success</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">));</span>
+
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">y</span><span class="p">.</span><span class="n">ok_or</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">failure</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">y</span><span class="p">.</span><span class="n">ok_or</span><span class="p">()</span> <span class="o">==</span> <span class="n">failure</span><span class="o">&lt;&gt;</span><span class="p">());</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="ok_or_else">ok_or_else<a class="headerlink" href="#ok_or_else" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; F &rarr; result&lt;T, E&gt;</p>
+<p>Transforms the <code>maybe&lt;T&gt;</code> into a <code>result&lt;T, E&gt;</code>, mapping <code>just(v)</code> to <code>success(v)</code> and <code>nothing</code> to <code>failure(err())</code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">constraints</p>
+<div class="highlight"><pre><span></span><code><span class="k">requires</span> <span class="p">{</span>
+    <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">Args</span><span class="p">...</span><span class="o">&gt;&gt;</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+    <span class="n">result</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;&gt;</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">ok_or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">err</span><span class="p">)</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_11">Examples<a class="headerlink" href="#examples_11" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">ok_or_else</span><span class="p">([]{</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">success</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">));</span>
+
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">y</span><span class="p">.</span><span class="n">ok_or_else</span><span class="p">([]{</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">failure</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="conj">conj<a class="headerlink" href="#conj" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; maybe&lt;U&gt; &rarr; maybe&lt;U&gt;</p>
+<p>Returns <code>nothing</code> if the <code>lhs</code> is <code>nothing</code>, otherwise returns <code>rhs</code>.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">U</span><span class="o">&gt;</span>
+    <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">conj</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_12">Examples<a class="headerlink" href="#examples_12" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">{</span>
+    <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">conj</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="p">{</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+    <span class="n">maybe</span> <span class="n">y</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">conj</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="p">{</span>
+    <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">maybe</span> <span class="n">y</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">conj</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="p">{</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">conj</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="and_then">and_then<a class="headerlink" href="#and_then" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; F &rarr; maybe&lt;U&gt;</p>
+<p>Returns <code>nothing</code> if the option is <code>nothing</code>, otherwise invokes <code>f</code> with the wrapped value and returns the result.</p>
+<p>Some languages call this operation flatmap.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">constraints</p>
+<div class="highlight"><pre><span></span><code><span class="k">requires</span> <span class="p">(</span><span class="n">is_maybe_v</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Args</span><span class="p">...</span><span class="o">&gt;&gt;</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span> <span class="k">class</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">},</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="n">is_maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">},</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;&gt;&gt;&gt;</span><span class="p">,</span>
+<span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">},</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;&gt;</span>
+<span class="n">and_then</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">}</span>
+</code></pre></div>
+</div>
+<h3 id="examples_13">Examples<a class="headerlink" href="#examples_13" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">auto</span> <span class="n">sq</span> <span class="o">=</span> <span class="p">[](</span><span class="kt">int</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">return</span> <span class="n">just</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">);</span> <span class="p">};</span>
+    <span class="k">auto</span> <span class="n">nope</span> <span class="o">=</span> <span class="p">[](...)</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">return</span> <span class="n">nothing</span><span class="p">;</span> <span class="p">};</span>
+
+    <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="p">{</span><span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">)}.</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">)</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">16</span><span class="p">));</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="p">{</span><span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">)}.</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">nope</span><span class="p">)</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="p">{</span><span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">)}.</span><span class="n">and_then</span><span class="p">(</span><span class="n">nope</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">)</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">nope</span><span class="p">().</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">).</span><span class="n">and_then</span><span class="p">(</span><span class="n">sq</span><span class="p">)</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="filter">filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; Pred &rarr; maybe&lt;T&gt;</p>
+<p>Returns <code>nothing</code> if the option is <code>nothing</code>, otherwise invokes predicate with the wrapped value and returns:</p>
+<ul>
+<li><code>just(t)</code> if predicate returns true (where t is the wrapped value), and</li>
+<li><code>nothing</code> if predicate returns false.</li>
+</ul>
+</div>
+<div class="admonition note">
+<p class="admonition-title">constraints</p>
+<div class="highlight"><pre><span></span><code><span class="k">requires</span> <span class="n">std</span><span class="o">::</span><span class="n">predicate</span><span class="o">&lt;</span><span class="n">Pred</span><span class="o">&gt;</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_r_v</span><span class="o">&lt;</span><span class="kt">bool</span><span class="p">,</span> <span class="n">Pred</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">filter</span><span class="p">(</span><span class="n">Pred</span><span class="o">&amp;&amp;</span> <span class="n">predicate</span><span class="p">)</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_14">Examples<a class="headerlink" href="#examples_14" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">is_even</span> <span class="o">=</span> <span class="p">[](</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">bool</span> <span class="p">{</span> <span class="k">return</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">;</span> <span class="p">};</span>
+
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">{}.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_even</span><span class="p">)</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="p">{</span><span class="n">just</span><span class="p">(</span><span class="mi">3</span><span class="p">)}.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_even</span><span class="p">)</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="p">{</span><span class="n">just</span><span class="p">(</span><span class="mi">4</span><span class="p">)}.</span><span class="n">filter</span><span class="p">(</span><span class="n">is_even</span><span class="p">)</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">4</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="disj">disj<a class="headerlink" href="#disj" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; maybe&lt;T&gt; &rarr; maybe&lt;T&gt;</p>
+<p>Returns the maybe if it contains a value, otherwise returns rhs.</p>
+<p>Arguments passed to or are eagerly evaluated; if you are passing the result of a function call, it is recommended to use or_else, which is lazily evaluated.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">disj</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_15">Examples<a class="headerlink" href="#examples_15" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">{</span>
+    <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">disj</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="p">{</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+    <span class="n">maybe</span> <span class="n">y</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">disj</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">100</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="p">{</span>
+    <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">maybe</span> <span class="n">y</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">disj</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="p">{</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">disj</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="or_else">or_else<a class="headerlink" href="#or_else" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; F &rarr; maybe&lt;T&gt;</p>
+<p>Returns the maybe if it contains a value, otherwise invokes <code>f</code> and returns the result.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">constraints</p>
+<div class="highlight"><pre><span></span><code><span class="k">requires</span> <span class="p">{</span>
+    <span class="p">{</span> <span class="n">f</span><span class="p">()</span> <span class="p">}</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">convertible_to</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
+<span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;</span><span class="p">,</span>
+        <span class="n">is_maybe_with</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">decay_t</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;&gt;&gt;</span><span class="p">,</span> <span class="n">T</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">or_else</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_16">Examples<a class="headerlink" href="#examples_16" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">auto</span> <span class="n">nobody</span> <span class="o">=</span> <span class="p">[]()</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">return</span> <span class="n">nothing</span><span class="p">;</span> <span class="p">};</span>
+  <span class="k">auto</span> <span class="n">vikings</span> <span class="o">=</span> <span class="p">[]()</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">return</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;vikings&quot;</span><span class="n">s</span><span class="p">);</span> <span class="p">};</span>
+
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="p">{</span><span class="n">just</span><span class="p">(</span><span class="s">&quot;barbarians&quot;</span><span class="n">s</span><span class="p">)}.</span><span class="n">or_else</span><span class="p">(</span><span class="n">vikings</span><span class="p">)</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;barbarians&quot;</span><span class="n">s</span><span class="p">));</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">{}.</span><span class="n">or_else</span><span class="p">(</span><span class="n">vikings</span><span class="p">)</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="s">&quot;vikings&quot;</span><span class="n">s</span><span class="p">));</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">{}.</span><span class="n">or_else</span><span class="p">(</span><span class="n">nobody</span><span class="p">)</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="get_or_emplace">get_or_emplace<a class="headerlink" href="#get_or_emplace" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; Args... &rarr; T&amp;</p>
+<p>Emplace constructs <code>T</code> into the maybe with expression <code>std::forward&lt;Args&gt;(args)...</code> if it is <code>nothing</code>, then returns a mutable reference to the contained value.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">constraints</p>
+<div class="highlight"><pre><span></span><code><span class="k">requires</span> <span class="n">std</span><span class="o">::</span><span class="n">constructible</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_constructible_v</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="n">T</span><span class="o">&amp;&gt;</span>
+    <span class="n">get_or_emplace</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_17">Examples<a class="headerlink" href="#examples_17" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="nc">noncopyable</span> <span class="p">{</span>
+  <span class="n">noncopyable</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+  <span class="n">noncopyable</span><span class="p">(</span><span class="n">noncopyable</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+  <span class="n">noncopyable</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">noncopyable</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+  <span class="n">noncopyable</span><span class="p">(</span><span class="n">noncopyable</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+  <span class="n">noncopyable</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">noncopyable</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+
+  <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="n">noncopyable</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">true</span><span class="p">;</span> <span class="p">}</span>
+  <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="n">noncopyable</span><span class="o">&amp;&amp;</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">true</span><span class="p">;</span> <span class="p">}</span>
+  <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="n">noncopyable</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">true</span><span class="p">;</span> <span class="p">}</span>
+  <span class="kt">bool</span> <span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="n">noncopyable</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span> <span class="k">const</span><span class="o">&amp;</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">true</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">noncopyable</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="k">auto</span><span class="o">&amp;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">get_or_emplace</span><span class="p">(</span><span class="n">noncopyable</span><span class="p">{});</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">y</span> <span class="o">==</span> <span class="n">noncopyable</span><span class="p">{});</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="get_or_emplace_with">get_or_emplace_with<a class="headerlink" href="#get_or_emplace_with" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; F &rarr; Args... &rarr; T&amp;</p>
+<p>Emplace constructs <code>T</code> into the maybe with expression <code>std::invoke(std::forward&lt;F&gt;(f), std::forward&lt;Args&gt;(args)...)</code> if it is <code>nothing</code>, then returns a mutable reference to the contained value.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">constraints</p>
+<div class="highlight"><pre><span></span><code><span class="k">requires</span> <span class="n">std</span><span class="o">::</span><span class="n">invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span><span class="p">,</span>
+      <span class="o">&amp;&amp;</span> <span class="n">std</span><span class="o">::</span><span class="n">constructible</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;&gt;&gt;</span><span class="p">,</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span> <span class="k">class</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">conjunction_v</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_constructible</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;&gt;&gt;</span><span class="p">,</span>
+    <span class="n">T</span><span class="o">&amp;&gt;</span>
+    <span class="n">get_or_emplace_with</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_18">Examples<a class="headerlink" href="#examples_18" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">ignore</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">get_or_emplace_with</span><span class="p">([]{</span> <span class="k">return</span> <span class="mi">5</span><span class="p">;</span> <span class="p">});</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">ignore</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">get_or_emplace_with</span><span class="p">([](</span><span class="k">auto</span> <span class="n">x</span><span class="p">){</span> <span class="k">return</span> <span class="n">x</span><span class="p">;</span> <span class="p">},</span> <span class="mi">5</span><span class="p">);</span>
+  <span class="k">auto</span><span class="o">&amp;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">get_or_emplace_with</span><span class="p">(</span><span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span> <span class="p">,</span> <span class="s">&quot;12345&quot;</span><span class="n">s</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">y</span> <span class="o">==</span> <span class="mi">5</span><span class="p">);</span>
+  <span class="n">y</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">7</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="replace">replace<a class="headerlink" href="#replace" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; Args... &rarr; maybe&lt;T&gt;</p>
+<p>Replaces the actual value in the maybe by expression <code>std::forward&lt;Args&gt;(args)...</code>, returning the old value if present, leaving a <code>just</code> value in its place without deinitializing either one.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">constraints</p>
+<div class="highlight"><pre><span></span><code><span class="k">requires</span> <span class="n">std</span><span class="o">::</span><span class="n">constructible</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">replace</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_19">Examples<a class="headerlink" href="#examples_19" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">{</span>
+    <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="k">auto</span> <span class="n">old</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">old</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="p">{</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+    <span class="k">auto</span> <span class="n">old</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">old</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="replace_with">replace_with<a class="headerlink" href="#replace_with" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; F &rarr; Args... &rarr; maybe&lt;T&gt;</p>
+<p>Replaces the actual value in the maybe by expression <code>std::invoke(std::forward&lt;F&gt;(f), std::forward&lt;Args&gt;(args)...)</code>, returning the old value if present, leaving a <code>just</code> value in its place without deinitializing either one.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">constraints</p>
+<div class="highlight"><pre><span></span><code><span class="k">requires</span> <span class="n">std</span><span class="o">::</span><span class="n">invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;</span>
+      <span class="o">&amp;&amp;</span> <span class="n">std</span><span class="o">::</span><span class="n">constructible</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">invoke_result_t</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&amp;&amp;</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="o">&gt;&gt;</span>  
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+<span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="p">,</span> <span class="k">class</span><span class="p">...</span> <span class="n">Args</span><span class="o">&gt;</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">replace_with</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">,</span> <span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span> <span class="n">args</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_20">Examples<a class="headerlink" href="#examples_20" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">{</span>
+    <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+    <span class="k">auto</span> <span class="n">old</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">replace_with</span><span class="p">([]{</span> <span class="k">return</span> <span class="mi">5</span><span class="p">;</span> <span class="p">});</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">old</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="p">{</span>
+    <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+    <span class="k">auto</span> <span class="n">old</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="n">replace_with</span><span class="p">(</span><span class="o">&amp;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">::</span><span class="n">size</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span><span class="n">s</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">old</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="cloned">cloned<a class="headerlink" href="#cloned" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&amp;&gt; &rarr; maybe&lt;T&gt;</p>
+<p>Maps a <code>maybe&lt;T&amp;&gt;</code> to a <code>maybe&lt;T&gt;</code> by deep copying the contents of the maybe.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">constraints</p>
+<div class="highlight"><pre><span></span><code><span class="k">requires</span> <span class="n">std</span><span class="o">::</span><span class="n">copyable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&amp;&gt;::</span><span class="n">cloned</span><span class="p">()</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_21">Examples<a class="headerlink" href="#examples_21" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">12</span><span class="p">;</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&amp;&gt;</span> <span class="n">opt_x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">opt_x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">12</span><span class="p">));</span>
+  <span class="n">assert</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">opt_x</span><span class="p">.</span><span class="n">unwrap</span><span class="p">())</span> <span class="o">==</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">);</span>
+
+  <span class="k">auto</span> <span class="n">shallow_copied</span> <span class="o">=</span> <span class="n">opt_x</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">shallow_copied</span><span class="p">.</span><span class="n">unwrap</span><span class="p">())</span> <span class="o">==</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">);</span>
+
+  <span class="k">auto</span> <span class="n">cloned</span> <span class="o">=</span> <span class="n">opt_x</span><span class="p">.</span><span class="n">cloned</span><span class="p">();</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">cloned</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">12</span><span class="p">));</span>
+  <span class="n">assert</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">cloned</span><span class="p">.</span><span class="n">unwrap</span><span class="p">())</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="unwrap_or_default">unwrap_or_default<a class="headerlink" href="#unwrap_or_default" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; T</p>
+<p>Returns the contained value or a default.</p>
+<p>If <code>just</code>, returns the contained value, otherwise if <code>nothing</code>, returns the default value for that type.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">constraints</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">unwrap_or_default</span><span class="p">()</span> <span class="k">const</span> <span class="o">&amp;</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<p><strong>Remarks</strong></p>
+<p>This operator shall be defined as deleted unless <code>is_default_constructible_v&lt;T&gt;</code> is true.</p>
+<h3 id="examples_22">Examples<a class="headerlink" href="#examples_22" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">unwrap_or_default</span><span class="p">()</span> <span class="o">==</span> <span class="s">&quot;&quot;</span><span class="n">s</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="transpose">transpose<a class="headerlink" href="#transpose" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;basic_result&lt;_, T, E&gt;&gt; &rarr; basic_result&lt;_, maybe&lt;T&gt;, E&gt;</p>
+<p>Transposes a <code>maybe</code> of a <code>result</code> into a <code>result</code> of a <code>maybe</code>.</p>
+<p><code>nothing</code> will be mapped to <code>success(nothing)</code>.
+<code>just(success(_))</code> and <code>just(failure(_))</code> will be mapped to <code>success(just(_))</code> and <code>failure(_)</code>　(_ is a placeholder).</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;&gt;::</span><span class="n">transpose</span><span class="p">()</span> <span class="k">const</span><span class="o">&amp;</span>
+    <span class="o">-&gt;</span> <span class="n">basic_result</span><span class="o">&lt;</span><span class="n">_</span><span class="p">,</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">E</span><span class="o">&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+<h3 id="examples_23">Examples<a class="headerlink" href="#examples_23" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/result/result.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="o">::</span><span class="n">string_literals</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">result</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">success</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="n">success</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">y</span><span class="p">.</span><span class="n">transpose</span><span class="p">());</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="flatten">flatten<a class="headerlink" href="#flatten" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;maybe&lt;T&gt;&gt; &rarr; maybe&lt;T&gt;</p>
+<p>Converts from <code>maybe&lt;maybe&lt;T&gt;&gt;</code> to <code>maybe&lt;T&gt;</code>.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">auto</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;::</span><span class="n">flatten</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_24">Examples<a class="headerlink" href="#examples_24" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">6</span><span class="p">));</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="o">==</span> <span class="n">x</span><span class="p">.</span><span class="n">flatten</span><span class="p">());</span>
+
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="n">nothing</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">nothing</span> <span class="o">==</span> <span class="n">y</span><span class="p">.</span><span class="n">flatten</span><span class="p">());</span>
+
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">z</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">nothing</span> <span class="o">==</span> <span class="n">z</span><span class="p">.</span><span class="n">flatten</span><span class="p">());</span>
+
+  <span class="c1">// Flattening once only removes one level of nesting:</span>
+  <span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="n">maybe</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span> <span class="n">nest</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">6</span><span class="p">)));</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">just</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span> <span class="o">==</span> <span class="n">nest</span><span class="p">.</span><span class="n">flatten</span><span class="p">().</span><span class="n">flatten</span><span class="p">());</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="and_finally">and_finally<a class="headerlink" href="#and_finally" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; void</p>
+<p>Invokes the provided function with following conditions:
+- if <code>std::invocable&lt;F, T&gt;</code>, the provided function with contained value,
+- else if <code>std::invocable&lt;F, T&gt;</code>, the provided function without contained value,
+- otherwise, doing nothing.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+    <span class="k">constexpr</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">}</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;&gt;</span>
+    <span class="n">and_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">}</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_25">Examples<a class="headerlink" href="#examples_25" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+  <span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">and_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="kt">int</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">){</span> <span class="n">hook</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="or_finally">or_finally<a class="headerlink" href="#or_finally" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; F &rarr; void</p>
+<p>Invokes the provided function (if nothing), or doing nothing (if any).</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">constraints</p>
+<div class="highlight"><pre><span></span><code><span class="k">requires</span> <span class="n">std</span><span class="o">::</span><span class="n">invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+    <span class="k">constexpr</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span>
+    <span class="n">or_finally</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_26">Examples<a class="headerlink" href="#examples_26" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">or_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="n">hook</span><span class="p">]{</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="and_peek">and_peek<a class="headerlink" href="#and_peek" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; F &rarr; maybe&lt;T&gt;</p>
+<p>Peeks the contained value if self is <code>just</code>, then returns self.</p>
+<p>Invokes the provided function with the contained value and then returns self (if any), or returns self without doing anything (if not).</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">constraints</p>
+<div class="highlight"><pre><span></span><code><span class="k">requires</span> <span class="n">std</span><span class="o">::</span><span class="n">invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span>
+</code></pre></div>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+    <span class="k">constexpr</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">disjunction_v</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span> <span class="n">value_type</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">}</span><span class="o">&gt;</span><span class="p">,</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+    <span class="n">maybe</span><span class="o">&amp;&gt;</span>
+    <span class="n">and_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">};</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_27">Examples<a class="headerlink" href="#examples_27" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">just</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">and_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="kt">int</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">v</span><span class="p">){</span> <span class="n">hook</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="or_peek">or_peek<a class="headerlink" href="#or_peek" title="Permanent link">&para;</a></h2>
+<div class="admonition summary">
+<p class="admonition-title">maybe&lt;T&gt; &rarr; F &rarr; maybe&lt;T&gt;</p>
+<p>Invokes the provided function and then returns self (if nothing), or returns self without doing anything (if any).</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">maybe</span> <span class="p">{</span>
+    <span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">F</span><span class="o">&gt;</span>
+    <span class="k">constexpr</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">enable_if_t</span><span class="o">&lt;</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">is_invocable_v</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">,</span>
+    <span class="n">maybe</span><span class="o">&amp;&gt;</span>
+    <span class="n">or_peek</span><span class="p">(</span><span class="n">F</span><span class="o">&amp;&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="n">$</span><span class="p">{</span><span class="n">CVREF</span><span class="p">}</span> <span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div>
+</div>
+<h3 id="examples_28">Examples<a class="headerlink" href="#examples_28" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">nothing</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">or_peek</span><span class="p">([</span><span class="o">&amp;</span><span class="n">hook</span><span class="p">]{</span> <span class="n">hook</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span> <span class="p">})</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">hook</span> <span class="o">==</span> <span class="mi">42</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+<h2 id="range_to_maybe">range_to_maybe<a class="headerlink" href="#range_to_maybe" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In header <code>&lt;mitama/maybe/range_to_maybe.hpp&gt;</code>.</p>
+</div>
+<div class="admonition summary">
+<p class="admonition-title">Range &rarr; maybe&lt;typename Range::value_type&gt;</p>
+<p>The <code>range_to_maybe</code> function returns <code>nothing</code> on an empty range or <code>just(v)</code> where <code>v</code> is the first element of the <code>range</code>.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">declarations</p>
+<div class="highlight"><pre><span></span><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Range</span><span class="o">&gt;</span>
+<span class="k">auto</span> <span class="n">range_to_maybe</span><span class="p">(</span><span class="n">Range</span><span class="o">&amp;&amp;</span> <span class="n">range</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">&lt;</span><span class="k">decltype</span><span class="p">(</span><span class="o">*</span><span class="n">begin</span><span class="p">(</span><span class="n">range</span><span class="p">))</span><span class="o">&gt;</span> <span class="p">;</span>
+</code></pre></div>
+</div>
+<h3 id="examples_29">Examples<a class="headerlink" href="#examples_29" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1">// begin example</span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;mitama/maybe/range_to_maybe.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">mitama</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span> <span class="n">v</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">};</span>
+  <span class="n">maybe</span> <span class="n">x</span> <span class="o">=</span> <span class="n">range_to_maybe</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="n">just</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+
+  <span class="n">maybe</span> <span class="n">y</span> <span class="o">=</span> <span class="n">range_to_maybe</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">{});</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">y</span> <span class="o">==</span> <span class="n">nothing</span><span class="p">);</span>
+
+  <span class="kt">int</span> <span class="n">a</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+  <span class="n">maybe</span> <span class="n">z</span> <span class="o">=</span> <span class="n">range_to_maybe</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+  <span class="n">assert</span><span class="p">(</span><span class="n">z</span> <span class="o">==</span> <span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// end example</span>
+</code></pre></div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../intro/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Maybe 101
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../special_members/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Special Members
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/vendor.0ac82a11.min.js"></script>
+      <script src="../../assets/javascripts/bundle.f81dfb4d.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "../..",
+          features: ['navigation.tabs', 'navigation.instant'],
+          search: Object.assign({
+            worker: "../../assets/javascripts/worker/search.4ac00218.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+        <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+      
+        <script src="../../mathjaxhelper.js"></script>
+      
+    
+  </body>
+</html>
