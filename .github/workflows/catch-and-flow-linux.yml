@@ -1,0 +1,98 @@
+name: Catch and Flow for Linux
+
+on:
+  push:
+    paths-ignore:
+      - 'docs/**'
+    branches: [ 'feature/*' ]
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+    branches: [ develop ]
+
+env:
+  BOOST_VERSION: 1.74.0
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        config:
+          - {
+            name: "Latest Version of GCC 8.x",
+            cc: "gcc-8", cxx: "g++-8",
+          }
+          - {
+            name: "Latest Version of GCC 9.x",
+            cc: "gcc-9", cxx: "g++-9",
+          }
+          - {
+            name: "Latest Version of GCC 10.x",
+            cc: "gcc-10", cxx: "g++-10",
+          }
+          - {
+            name: "Latest Version of Clang 7.x",
+            cc: "clang-7", cxx: "clang++-7",
+          }
+          - {
+            name: "Latest Version of Clang 8.x",
+            cc: "clang-8", cxx: "clang++-8",
+          }
+          - {
+            name: "Latest Version of Clang 9.x",
+            cc: "clang-9", cxx: "clang++-9",
+          }
+          - {
+            name: "Latest Version of Clang 10.x",
+            cc: "clang-10", cxx: "clang++-10",
+          }
+    env:
+      CC: ${{ matrix.config.cc }}
+      CXX: ${{ matrix.config.cxx }}
+    steps:
+      - uses: actions/checkout@v1
+      - run: git submodule update --init --recursive
+      - run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+      - run: sudo apt-get -qq update
+      - name: Install ${{ matrix.config.cc }}
+        run: sudo apt-get install -y -qq pkg-config cmake ${{ matrix.config.cc }}
+
+      - name: Clang Version
+        run: ${{ matrix.config.cxx }} --version
+
+      - name: Restore & Cache boost (${{ env.BOOST_VERSION }})
+        uses: actions/cache@v1
+        id: boost-cache
+        with:
+          path: ${{ runner.temp }}/libs/boost
+          key: ${{ env.CACHE_KEY_PREFIX }}-boost-${{ env.BOOST_VERSION }}
+      - name: Install boost (${{ env.BOOST_VERSION }}) as static
+        if: steps.boost-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ${{ runner.temp }}/libs/boost
+          git clone -q -b boost-${{ env.BOOST_VERSION }} --recursive https://github.com/boostorg/boost.git
+          cd boost
+          ./bootstrap.sh
+          sudo ./b2 link=static install -j2 --prefix=${{ runner.temp }}/libs/boost || exit 0
+        working-directory: ${{ runner.temp }}
+
+      - name: Build and test
+        run: |
+          mkdir build && cd build
+          cmake ..             \
+            -DBUILD_TESTING=ON \
+            -DBOOST_ROOT=${{ runner.temp }}/libs/boost
+          make
+          make test
+
+      - name: Document test
+        run: |
+          cd docs
+          curl -s https://api.github.com/repos/LoliGothick/mkdocs-smoke-test/releases \
+            | jq -r '.[0].assets[] | select(.name | test("x86_64-unknown-linux-musl.zip")) | .browser_download_url' \
+            | xargs -n1 curl -LOk
+          unzip x86_64-unknown-linux-musl.zip
+          sed -i 's#__COMPILER__#${{ matrix.config.cxx }}#g' config.toml
+          sed -i 's#__BOOST_ROOT__#${{ runner.temp }}/libs/boost#g' config.toml
+          x86_64-unknown-linux-musl/release/mkdocs-smoke-test --directory=docs --config=./config.toml
