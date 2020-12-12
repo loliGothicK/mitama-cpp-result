@@ -65,7 +65,7 @@ jobs:
         id: boost-cache
         with:
           path: ${{ runner.temp }}/libs/boost
-          key: ${{ env.CACHE_KEY_PREFIX }}-boost-${{ env.BOOST_VERSION }}
+          key: ${{ matrix.config.name }}-boost-${{ env.BOOST_VERSION }}
       - name: Install boost (${{ env.BOOST_VERSION }}) as static
         if: steps.boost-cache.outputs.cache-hit != 'true'
         run: |
@@ -81,6 +81,7 @@ jobs:
           mkdir build && cd build
           cmake ..             \
             -DBUILD_TESTING=ON \
+            -DBoost_USE_STATIC_LIBS=ON \
             -DBOOST_ROOT=${{ runner.temp }}/libs/boost
           make
           make test

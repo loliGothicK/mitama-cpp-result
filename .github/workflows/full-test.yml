@@ -72,6 +72,7 @@ jobs:
           mkdir build && cd build
           cmake ..             \
             -DBUILD_TESTING=ON \
+            -DBoost_USE_STATIC_LIBS=ON \
             -DBOOST_ROOT=${{ runner.temp }}/libs/boost
           make
           make test
