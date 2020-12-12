@@ -11,7 +11,7 @@ env:
   BOOST_VERSION: 1.74.0
 
 jobs:
-  test:
+  doc_test:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
