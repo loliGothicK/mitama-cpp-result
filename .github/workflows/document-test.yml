@@ -5,7 +5,6 @@ on:
     paths:
       - 'include/**'
       - 'docs/**'
-    tags: [ v* ]
     branches: [ develop, master, 'feature/*' ]
   pull_request:
     branches: [ develop, master ]

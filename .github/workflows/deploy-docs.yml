@@ -2,8 +2,6 @@ name: Deploy Document
 
 on:
   workflow_run:
-    paths:
-      - 'docs/**'
     workflows: [ "Document Test" ]
     tags: [ v* ]
     types: [ completed ]
