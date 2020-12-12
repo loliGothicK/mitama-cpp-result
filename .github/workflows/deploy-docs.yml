@@ -2,95 +2,40 @@ name: Deploy Document
 
 on:
   push:
-    branches: [ master ]
-
-env:
-  BOOST_VERSION: 1.73.0
+    tags: [ v* ]
 
 jobs:
-  build:
-    name: ${{ matrix.config.name }}
-    runs-on: ${{ matrix.config.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        config:
-          - {
-            name: "Ubuntu Latest GCC",
-            os: ubuntu-latest,
-            build_type: "Release", cc: "gcc", cxx: "g++"
-          }
-          - {
-            name: "Ubuntu Latest Clang",
-            os: ubuntu-latest,
-            build_type: "Release", cc: "clang", cxx: "clang++"
-          }
+  deploy_docs:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - run: git submodule update --init --recursive
-      - run: |
-          set(ENV{CC} ${{ matrix.config.cc }})
-          set(ENV{CXX} ${{ matrix.config.cxx }})
-          echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+    - uses: actions/checkout@v1
+    - run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
 
-      - name: Install ${{ matrix.config.cc }}
-        run: |
-          sudo apt-get -qq update
-          sudo apt-get install -y -qq jq pkg-config cmake ${{ matrix.config.cc }} ${{ matrix.config.cxx }}
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.8'
 
-      - name: Set up Python
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.8'
+    - name: Restore & Cache Poetry and Dependences
+      uses: actions/cache@v1
+      id: poetry-cache
+      with:
+        path: |
+          ~/.poetry
+          ~/.cache/pypoetry
+        key: ${{ hashFiles('docs/poetry.lock') }}
+    - name: poetry install
+      if: steps.poetry-cache.outputs.cache-hit != 'true'
+      run: |
+        curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python3
+        poetry install --no-root
+      working-directory: docs
 
-      - name: Restore & Cache Poetry and Dependences
-        uses: actions/cache@v1
-        id: poetry-cache
-        with:
-          path: |
-            ~/.poetry
-            ~/.cache/pypoetry
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('docs/poetry.lock') }}
-      - name: poetry install
-        if: steps.poetry-cache.outputs.cache-hit != 'true'
-        run: |
-          curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python3
-          poetry install --no-root
-        working-directory: docs
+    - name: Build Document
+      run: |
+        poetry run mkdocs build
+      working-directory: docs
 
-      - name: Restore & Cache boost (${{ env.BOOST_VERSION }})
-        uses: actions/cache@v1
-        id: boost-cache
-        with:
-          path: ${{ runner.temp }}/libs/boost
-          key: ${{ env.CACHE_KEY_PREFIX }}-boost-${{ env.BOOST_VERSION }}
-      - name: Install boost (${{ env.BOOST_VERSION }}) as static
-        if: steps.boost-cache.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p ${{ runner.temp }}/libs/boost
-          git clone -q -b boost-${{ env.BOOST_VERSION }} --recursive https://github.com/boostorg/boost.git
-          cd boost
-          ./bootstrap.sh
-          sudo ./b2 link=static install -j2 --prefix=${{ runner.temp }}/libs/boost || exit 0
-        working-directory: ${{ runner.temp }}
-
-      - name: Document test
-        run: |
-          cd docs
-          curl -s https://api.github.com/repos/LoliGothick/mkdocs-smoke-test/releases \
-            | jq -r '.[0].assets[] | select(.name | test("x86_64-unknown-linux-musl.zip")) | .browser_download_url' \
-            | xargs -n1 curl -LOk
-          unzip x86_64-unknown-linux-musl.zip
-          sed -i 's#__COMPILER__#${{ matrix.cxx_prefix }}${{ matrix.compiler_version }}#g' config.toml
-          sed -i 's#__BOOST_ROOT__#${{ runner.temp }}/libs/boost#g' config.toml
-          x86_64-unknown-linux-musl/release/mkdocs-smoke-test --directory=docs --config=./config.toml
-
-      - name: Build Document
-        run: |
-          poetry run mkdocs build
-        working-directory: docs
-
-      - name: Deploy Document
-        run: |
-          poetry run mkdocs gh-deploy
-        working-directory: docs
+    - name: Deploy Document
+      run: echo $GITHUB_REF | cut -b 2- | xargs -I{} poetry run mike deploy --push --update-aliases {} latest
+      working-directory: docs
