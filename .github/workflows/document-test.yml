@@ -2,6 +2,9 @@ name: Document Test
 
 on:
   push:
+    paths:
+      - 'include/**'
+      - 'docs/**'
     tags: [ v* ]
     branches: [ develop, master, 'feature/*' ]
   pull_request:

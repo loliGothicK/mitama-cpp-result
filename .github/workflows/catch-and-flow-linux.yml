@@ -2,12 +2,11 @@ name: Catch and Flow for Linux
 
 on:
   push:
-    paths-ignore:
-      - 'docs/**'
+    paths:
+      - 'include/**'
+      - 'test/**'
     branches: [ 'feature/*' ]
   pull_request:
-    paths-ignore:
-      - 'docs/**'
     branches: [ develop ]
 
 env:
