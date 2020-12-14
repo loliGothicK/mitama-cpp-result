@@ -1,0 +1,71 @@
+site_name: Mitama.Result User Manual
+site_dir: 'user_manual'
+
+# Project information
+site_description: Mitama.Result C++17 Library
+site_author: mitama
+site_url: https://loligothick.github.io/mitama-cpp-result/
+
+# Repository
+repo_name: loligothick/mitama-cpp-result
+repo_url: https://github.com/loligothick/mitama-cpp-result
+edit_uri: ""
+
+# Theme
+theme:
+  name: 'material'
+  language: 'en'
+  icon:
+    logo: material/cloud
+    repo: fontawesome/brands/github-alt
+  palette:
+    primary: 'teal'
+    accent: 'teal'
+  features:
+    - navigation.tabs
+    - navigation.instant
+  extra:
+    social:
+      - icon: fontawesome/brands/twitter
+        link: https://twitter.com/mitama_rs
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - fontawesome_markdown
+  - footnotes
+  - meta
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.superfences
+  - pymdownx.smartsymbols
+  - mdx_math:
+      enable_dollar_delimiter: true
+  - toc:
+      permalink: True
+      separator: "_"
+      baselevel: 1
+
+extra_javascript: 
+  - https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML
+  - mathjaxhelper.js
+extra_css:
+  - "https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"
+  - cppmap_styles.css
+
+# Page tree
+nav:
+  - Home: README.md
+  - Maybe Mudule:
+    - Maybe 101: maybe/intro.md
+    - API Reference: maybe/APIs.md
+    - Special Members: maybe/special_members.md
+    - Comparisons: maybe/comparisons.md
+    - Meta Functions: maybe/metafunctions.md
+  - Result Module:
+    - Result 101: result/intro.md
+    - Special Members: result/special_members.md
+    - API Reference: result/APIs.md
+    - Meta Functions: result/metafunctions.md
+    - Comparisons: result/comparisons.md
+    - CHANGELOG: result/CHANGELOG.md

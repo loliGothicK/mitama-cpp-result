@@ -4,7 +4,7 @@
 #include <mitama/result/detail/meta.hpp>
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
-#include <mitama/result/traits/Deref.hpp>
+#include <mitama/result/traits/deref.hpp>
 #include <mitama/result/detail/dangling.hpp>
 #include <mitama/maybe/maybe.hpp>
 #include <optional>
@@ -108,15 +108,15 @@ class indirect_friend_injector<basic_result<_mutability, T, E>,
                                 traits::is_dereferencable<E>
                             >>>
 {
-  using indirect_ok_result = basic_result<_mutability, std::remove_reference_t<typename traits::Deref<T>::Target>&, std::remove_reference_t<E>&>;
-  using indirect_err_result = basic_result<_mutability, std::remove_reference_t<T>&, std::remove_reference_t<typename traits::Deref<E>::Target>&>;
-  using indirect_result = basic_result<_mutability, std::remove_reference_t<typename traits::Deref<T>::Target>&, std::remove_reference_t<typename traits::Deref<E>::Target>&>;
-  using const_indirect_ok_result = basic_result<_mutability, meta::remove_cvr_t<typename traits::Deref<T>::Target> const&, meta::remove_cvr_t<E> const&>;
-  using const_indirect_err_result = basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<typename traits::Deref<E>::Target> const&>;
-  using const_indirect_result = basic_result<_mutability, meta::remove_cvr_t<typename traits::Deref<T>::Target> const&, meta::remove_cvr_t<typename traits::Deref<E>::Target> const&>;
-  using dangling_indirect_ok_result = basic_result<_mutability, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::Deref<T>::Target>>>, dangling<std::reference_wrapper<std::remove_reference_t<E>>>>;
-  using dangling_indirect_err_result = basic_result<_mutability, dangling<std::remove_reference_t<T>&>, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::Deref<E>::Target>>>>;
-  using dangling_indirect_result = basic_result<_mutability, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::Deref<T>::Target>>>, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::Deref<E>::Target>>>>;
+  using indirect_ok_result = basic_result<_mutability, std::remove_reference_t<typename traits::deref<T>::Target>&, std::remove_reference_t<E>&>;
+  using indirect_err_result = basic_result<_mutability, std::remove_reference_t<T>&, std::remove_reference_t<typename traits::deref<E>::Target>&>;
+  using indirect_result = basic_result<_mutability, std::remove_reference_t<typename traits::deref<T>::Target>&, std::remove_reference_t<typename traits::deref<E>::Target>&>;
+  using const_indirect_ok_result = basic_result<_mutability, meta::remove_cvr_t<typename traits::deref<T>::Target> const&, meta::remove_cvr_t<E> const&>;
+  using const_indirect_err_result = basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<typename traits::deref<E>::Target> const&>;
+  using const_indirect_result = basic_result<_mutability, meta::remove_cvr_t<typename traits::deref<T>::Target> const&, meta::remove_cvr_t<typename traits::deref<E>::Target> const&>;
+  using dangling_indirect_ok_result = basic_result<_mutability, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::deref<T>::Target>>>, dangling<std::reference_wrapper<std::remove_reference_t<E>>>>;
+  using dangling_indirect_err_result = basic_result<_mutability, dangling<std::remove_reference_t<T>&>, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::deref<E>::Target>>>>;
+  using dangling_indirect_result = basic_result<_mutability, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::deref<T>::Target>>>, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::deref<E>::Target>>>>;
 public:
   /// @brief
   ///   Converts from basic_result<T, E> &` to basic_result<T::Target&, E&>.
@@ -321,9 +321,9 @@ class indirect_friend_injector<basic_result<_mutability, T, E>,
                                 std::negation<traits::is_dereferencable<E>>
                             >>>
 {
-  using indirect_ok_result = basic_result<_mutability, std::remove_reference_t<typename traits::Deref<T>::Target>&, std::remove_reference_t<E>&>;
-  using const_indirect_ok_result = basic_result<_mutability, meta::remove_cvr_t<typename traits::Deref<T>::Target> const&, meta::remove_cvr_t<E> const&>;
-  using dangling_indirect_ok_result = basic_result<_mutability, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::Deref<T>::Target>>>, dangling<std::reference_wrapper<std::remove_reference_t<E>>>>;
+  using indirect_ok_result = basic_result<_mutability, std::remove_reference_t<typename traits::deref<T>::Target>&, std::remove_reference_t<E>&>;
+  using const_indirect_ok_result = basic_result<_mutability, meta::remove_cvr_t<typename traits::deref<T>::Target> const&, meta::remove_cvr_t<E> const&>;
+  using dangling_indirect_ok_result = basic_result<_mutability, dangling<std::reference_wrapper<std::remove_reference_t<typename traits::deref<T>::Target>>>, dangling<std::reference_wrapper<std::remove_reference_t<E>>>>;
 public:
   /// @brief
   ///   Converts from basic_result<T, E> &` to basic_result<T::Target&, E&>.
@@ -413,9 +413,9 @@ class indirect_friend_injector<basic_result<_mutability, T, E>,
                                 traits::is_dereferencable<E>
                             >>>
 {
-  using indirect_err_result = basic_result<_mutability, std::remove_reference_t<T>&, std::remove_reference_t<typename traits::Deref<E>::Target>&>;
-  using const_indirect_err_result = basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<typename traits::Deref<E>::Target> const&>;
-  using dangling_indirect_err_result = basic_result<_mutability, dangling<std::remove_reference_t<T>&>, dangling<std::remove_reference_t<typename traits::Deref<E>::Target>&>>;
+  using indirect_err_result = basic_result<_mutability, std::remove_reference_t<T>&, std::remove_reference_t<typename traits::deref<E>::Target>&>;
+  using const_indirect_err_result = basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<typename traits::deref<E>::Target> const&>;
+  using dangling_indirect_err_result = basic_result<_mutability, dangling<std::remove_reference_t<T>&>, dangling<std::remove_reference_t<typename traits::deref<E>::Target>&>>;
 public:
   constexpr void indirect_ok() & = delete;
   /// @brief

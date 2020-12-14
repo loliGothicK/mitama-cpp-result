@@ -190,7 +190,7 @@ class maybe
     template<class, class> friend class maybe_replace_injector;
     template <class> friend class maybe;
 
-  public:
+public:
     using value_type = std::remove_reference_t<T>;
     using reference_type = std::add_lvalue_reference_t<value_type>;
 
@@ -463,7 +463,7 @@ class maybe
     std::enable_if_t<
         std::conjunction_v<
             std::is_invocable<D&&>,
-            std::is_invocable<F&&, T&, Args&&...>,
+            std::is_invocable<F&&, value_type&, Args&&...>,
             meta::has_type<std::common_type<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type&, Args&&...>>>>,
     std::common_type_t<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type&, Args&&...>>>
     map_or_else(D&& def, F&& f, Args&&... args) & {
@@ -489,7 +489,7 @@ class maybe
     std::enable_if_t<
         std::conjunction_v<
             std::is_invocable<D&&>,
-            std::is_invocable<F&&, T&&, Args&&...>,
+            std::is_invocable<F&&, value_type&&, Args&&...>,
             meta::has_type<std::common_type<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type&&, Args&&...>>>>,
     std::common_type_t<std::invoke_result_t<D&&>, std::invoke_result_t<F&&, value_type&&, Args&&...>>>
     map_or_else(D&& def, F&& f, Args&&... args) && {
@@ -555,30 +555,28 @@ class maybe
             : nothing;
     }
 
-    template <class E>
-    auto ok_or(E&& err) const& {
+    template <class E = std::monostate>
+    auto ok_or(E&& err = {}) & {
+        using ret_t = result<value_type, std::remove_reference_t<E>>;
         return is_just()
-            ? result<T, E>{success_t{unwrap()}}
-            : result<T, E>{failure_t{std::forward<E>(err)}};
+            ? ret_t{success_t{unwrap()}}
+            : ret_t{failure_t{std::forward<E>(std::forward<E>(err))}};
     }
 
-    template <class E>
-    auto ok_or(E&& err) && {
+    template <class E = std::monostate>
+    auto ok_or(E&& err = {}) const& {
+        using ret_t = result<value_type, std::remove_reference_t<E>>;
         return is_just()
-            ? result<T, E>{success_t{std::move(unwrap())}}
-            : result<T, E>{failure_t{std::forward<E>(err)}};
+             ? ret_t{success_t{unwrap()}}
+             : ret_t{failure_t{std::forward<E>(std::forward<E>(err))}};
     }
 
-    auto ok_or() const& {
+    template <class E = std::monostate>
+    auto ok_or(E&& err = {}) && {
+        using ret_t = result<value_type, std::remove_reference_t<E>>;
         return is_just()
-            ? result<T>{success_t{unwrap()}}
-            : result<T>{failure_t<>{}};
-    }
-
-    auto ok_or() && {
-        return is_just()
-            ? result<T>{success_t{std::move(unwrap())}}
-            : result<T>{failure_t<>{}};
+             ? ret_t{success_t{std::move(unwrap())}}
+             : ret_t{failure_t{std::forward<E>(std::forward<E>(err))}};
     }
 
     template <class F>
