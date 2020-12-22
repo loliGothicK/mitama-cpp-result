@@ -23,9 +23,7 @@ template < mutability Mut >
 inline constexpr bool is_mut_v = !static_cast<bool>(Mut);
 
 template <class T>
-struct void_to_monostate {
-    using type = std::conditional_t<std::is_void_v<T>, std::monostate, T>;
-};
+struct void_to_monostate: std::conditional<std::is_void_v<T>, std::monostate, T> {};
 
 template <class T>
 using void_to_monostate_t = typename void_to_monostate<T>::type;

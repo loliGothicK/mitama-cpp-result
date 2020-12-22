@@ -5,6 +5,7 @@
 #include <mitama/panic.hpp>
 #include <mitama/result/factory/success.hpp>
 #include <mitama/result/factory/failure.hpp>
+#include <mitama/anyhow/error.hpp>
 
 #include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
@@ -1623,6 +1624,16 @@ public:
     return rhs <= *this;
   }
 
+  template <class Ctx>
+  auto with_context(Ctx ctx)
+    -> std::enable_if_t<
+            std::is_invocable_r_v<std::shared_ptr<anyhow::error>, Ctx>,
+            basic_result<_mutability, T, std::shared_ptr<anyhow::error>>>
+  {
+    return this->map_err([ctx = std::move(ctx)](auto err) mutable -> std::shared_ptr<anyhow::error> {
+      return std::make_shared<anyhow::errors>(std::move(err), std::invoke(ctx));
+    });
+  }
 };
 
   template <mutability _, class T, class E, class U>
