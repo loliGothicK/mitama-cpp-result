@@ -4,6 +4,7 @@
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
 #include <mitama/anyhow/anyhow.hpp>
+#include <mitama/thiserror/thiserror.hpp>
 
 namespace anyhow = mitama::anyhow;
 using namespace std::literals;
@@ -33,5 +34,53 @@ TEST_CASE("try with context", "[anyhow][context]") {
     return mitama::success(ok);
   }();
   REQUIRE(res.is_err());
+  std::cout << res << std::endl;
+}
+
+class data_store_error {
+  template <class S, class ...T>
+  using error = mitama::thiserror::error<S, T...>;
+
+public:
+  using disconnect
+    = error<MITAMA_ERROR("data store disconnected")>;
+  using redaction
+    = error<MITAMA_ERROR("for key `{0}` isn't available"), std::string>;
+  using invalid_header
+    = error<MITAMA_ERROR("(expected {0}, found {1})"), std::string, std::string>;
+  using unknown
+    = error<MITAMA_ERROR("unknown data store error")>;
+
+  template <class Source>
+  explicit constexpr data_store_error(Source const& src): storage(src) {}
+
+  auto anyhow() const {
+    return std::visit([&](auto const& inner) -> std::shared_ptr<anyhow::error> {
+      return std::make_shared<std::decay_t<decltype(inner)>>(inner);
+    }, storage);
+  }
+
+  friend std::ostream& operator<<(std::ostream& os, data_store_error const& self) {
+    auto to_string = [](auto const& a) { std::stringstream ss; ss << a; return ss.str(); };
+    return os << std::visit(boost::hana::overload(
+            [&](disconnect const& err) { return "data_store_error(disconnect("s + to_string(err); },
+            [&](redaction const& err) { return "data_store_error(redaction("s + to_string(err); },
+            [&](invalid_header const& err) { return "data_store_error(invalid_header("s + to_string(err); },
+            [&](unknown const& err) { return "data_store_error(unknown("s + to_string(err); }
+      ), self.storage) << ")";
+  }
+private:
+  std::variant<disconnect, redaction, invalid_header, unknown> storage;
+};
+
+TEST_CASE("thiserror", "[anyhow][thiserror]") {
+  mitama::result<int, data_store_error> data{
+    mitama::in_place_err,
+    data_store_error::invalid_header{"field-name"s, "invalid"s}
+  };
+  auto res = data
+          .map_err(&data_store_error::anyhow)
+          .with_context([] { return anyhow::anyhow("data store failed."s); });
+  REQUIRE(data.is_err());
   std::cout << res << std::endl;
 }

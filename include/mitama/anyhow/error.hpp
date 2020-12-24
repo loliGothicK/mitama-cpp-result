@@ -16,11 +16,11 @@ namespace mitama::anyhow {
     std::shared_ptr<error>  src_;
     std::shared_ptr<error> ctx_;
   public:
-    errors() noexcept = default;
-    errors(const errors &) noexcept = default;
-    errors &operator=(const errors &) noexcept = default;
-    errors(errors &&) noexcept = default;
-    errors &operator=(errors &&) noexcept = default;
+    errors() = default;
+    errors(const errors &) = default;
+    errors &operator=(const errors &) = default;
+    errors(errors &&) = default;
+    errors &operator=(errors &&) = default;
     virtual ~errors() = default;
 
     errors(std::shared_ptr<error> src, std::shared_ptr<error> ctx)
@@ -38,11 +38,9 @@ namespace mitama::anyhow {
   class cause : public error {
     E err;
   public:
-    cause() noexcept = default;
-
-    cause(const cause &) noexcept = default;
-
-    cause &operator=(const cause &) noexcept = default;
+    cause() = default;
+    cause(const cause &) = default;
+    cause &operator=(const cause &) = default;
 
     virtual ~cause() = default;
 
