@@ -237,7 +237,7 @@ public:
   }
 
   /// @brief
-  ///   non-explicit constructor for success_tful lvalue
+  ///   non-explicit constructor for successful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
@@ -255,7 +255,7 @@ public:
   {}
 
   /// @brief
-  ///   non-explicit constructor for success_tful rvalue
+  ///   non-explicit constructor for successful rvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
@@ -273,7 +273,7 @@ public:
   {}
 
   /// @brief
-  ///   non-explicit constructor for unsuccess_tful lvalue
+  ///   non-explicit constructor for unsuccessful lvalue
   template <class U,
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
@@ -282,7 +282,7 @@ public:
   {}
 
   /// @brief
-  ///   explicit constructor for unsuccess_tful lvalue
+  ///   explicit constructor for unsuccessful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
@@ -291,7 +291,7 @@ public:
   {}
 
   /// @brief
-  ///   non-explicit constructor for unsuccess_tful rvalue
+  ///   non-explicit constructor for unsuccessful rvalue
   template <class U,
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
@@ -300,7 +300,7 @@ public:
   {}
 
   /// @brief
-  ///   explicit constructor for unsuccess_tful lvalue
+  ///   explicit constructor for unsuccessful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
@@ -637,7 +637,7 @@ public:
   ///   Common< decltype(std::invoke(_fallback, unwrap_err())), decltype(std::invoke(_map, unwrap())) >;
   ///
   /// @note
-  ///   This function can be used to unpack a success_tful result while handling an error.
+  ///   This function can be used to unpack a successful result while handling an error.
   template <class Map, class Fallback>
   constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) &
     noexcept(std::is_nothrow_invocable_v<Fallback, E> && std::is_nothrow_invocable_v<Map, T>)
@@ -720,7 +720,7 @@ public:
   ///   { std::invoke(op, unwrap_err()) }
   ///
   /// @note
-  ///   This function can be used to pass through a success_tful result while handling an error.
+  ///   This function can be used to pass through a successful result while handling an error.
   ///   result<T, E> -> result<T, F>
   template <class O, class... Args>
   constexpr auto map_err(O && op, Args&&... args) const &
@@ -747,7 +747,7 @@ public:
   ///   { std::invoke(op, unwrap_err()) }
   ///
   /// @note
-  ///   This function can be used to pass through a success_tful result while handling an error.
+  ///   This function can be used to pass through a successful result while handling an error.
   ///   result<T, void> -> result<T, F>
   template <class O, class... Args>
   constexpr auto map_err(O && op, Args&&... args) const &
