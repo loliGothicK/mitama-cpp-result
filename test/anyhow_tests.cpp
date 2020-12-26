@@ -1,6 +1,7 @@
 #define CATCH_CONFIG_MAIN
 
 #include <catch2/catch.hpp>
+
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
 #include <mitama/anyhow/anyhow.hpp>
@@ -61,23 +62,20 @@ public:
   }
 
   friend std::ostream& operator<<(std::ostream& os, data_store_error const& self) {
-    auto to_string = [](auto const& a) { std::stringstream ss; ss << a; return ss.str(); };
     return os << std::visit(boost::hana::overload(
-            [&](disconnect const& err) { return "data_store_error(disconnect("s + to_string(err); },
-            [&](redaction const& err) { return "data_store_error(redaction("s + to_string(err); },
-            [&](invalid_header const& err) { return "data_store_error(invalid_header("s + to_string(err); },
-            [&](unknown const& err) { return "data_store_error(unknown("s + to_string(err); }
-      ), self.storage) << ")";
+            [&](disconnect const& err) { return fmt::format("data_store_error(disconnect({})", err); },
+            [&](redaction const& err) { return fmt::format("data_store_error(redaction({})", err); },
+            [&](invalid_header const& err) { return fmt::format("data_store_error(invalid_header({})", err); },
+            [&](unknown const& err) { return fmt::format("data_store_error(unknown({})", err); }
+      ), self.storage);
   }
 private:
   std::variant<disconnect, redaction, invalid_header, unknown> storage;
 };
 
 TEST_CASE("thiserror", "[anyhow][thiserror]") {
-  mitama::result<int, data_store_error> data{
-    mitama::in_place_err,
-    data_store_error::invalid_header{"field-name"s, "invalid"s}
-  };
+  mitama::result<int, data_store_error> data = mitama::failure<data_store_error>(
+          data_store_error::invalid_header{"field-name"s, "invalid"s});
   auto res = data
           .map_err(&data_store_error::anyhow)
           .with_context([] { return anyhow::anyhow("data store failed."s); });
