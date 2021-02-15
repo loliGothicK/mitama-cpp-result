@@ -1,4 +1,4 @@
-# Implementations
+# API reference
 
 ## is_just
 
