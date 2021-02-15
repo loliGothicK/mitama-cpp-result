@@ -1,6 +1,8 @@
 #ifndef MITAMA_ANYHOW_ERROR_HPP
 #define MITAMA_ANYHOW_ERROR_HPP
 
+#include <mitama/result/factory/failure.hpp>
+
 #include <exception>
 #include <string>
 #include <sstream>
@@ -28,7 +30,7 @@ namespace mitama::anyhow {
 
     std::string what() const override {
       std::stringstream ss;
-      ss << "cause: " << ctx_->what() << '\n'
+      ss << "cause: " << ctx_->what() << ' '
          << "source: " << src_->what();
       return ss.str();
     }
@@ -63,6 +65,11 @@ namespace mitama::anyhow {
   std::ostream& operator<<(std::ostream& os, std::shared_ptr<::mitama::anyhow::error> const & err) {
     return os << err->what();
   }
+
+  template <class Err, class ...Args>
+  auto failure(Args&&... args)
+    -> std::enable_if_t<std::is_base_of_v<mitama::anyhow::error, Err>, mitama::failure_t<std::shared_ptr<Err>>>
+    { return mitama::failure(std::make_shared<Err>(std::forward<Args>(args)...)); }
 }
 
 #endif
