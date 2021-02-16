@@ -15,7 +15,7 @@ namespace mitama::anyhow {
   };
 
   class errors: public error {
-    std::shared_ptr<error>  src_;
+    std::shared_ptr<error> src_;
     std::shared_ptr<error> ctx_;
   public:
     errors() = default;
