@@ -55,7 +55,7 @@ Use the `anyhow::errors` class for error chaining.
 ```cpp
 namespace mitama::anyhow {
   class errors: public error {
-    std::shared_ptr<error>  src_;
+    std::shared_ptr<error> src_;
     std::shared_ptr<error> ctx_;
   public:
     // constructors
@@ -71,7 +71,7 @@ namespace mitama::anyhow {
 }
 ```
 
-The new function `with_context` will be added to `mitama::result` for error chaining.
+You can chaining error with `mitama::result::with_context()`.
 
 ```cpp
 #include <mitama/result/result.hpp>
@@ -81,7 +81,7 @@ The new function `with_context` will be added to `mitama::result` for error chai
 namespace anyhow = mitama::anyhow;
 using namespace std::literals::string_literals;
 
-struct database_t {};
+struct database_t {}; // dummy
 
 auto connect_to_db() -> anyhow::result<database_t> {
   return mitama::failure(anyhow::anyhow("Failed to connect to the database."s));
