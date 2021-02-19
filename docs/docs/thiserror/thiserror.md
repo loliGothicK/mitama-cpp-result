@@ -13,13 +13,13 @@ class data_store_error {
   using error = mitama::thiserror::error<S, T...>;
 public:
   using disconnect
-    = error<MITAMA_ERROR("data store disconnected")>;
+      = error<MITAMA_ERROR("data store disconnected")>;
   using redaction
-    = error<MITAMA_ERROR("for key `{0}` isn't available"), std::string>;
+      = error<MITAMA_ERROR("for key `{0}` isn't available"), std::string>;
   using invalid_header
-    = error<MITAMA_ERROR("(expected {0}, found {1})"), std::string, std::string>;
+      = error<MITAMA_ERROR("(expected {0}, found {1})"), std::string, std::string>;
   using unknown
-    = error<MITAMA_ERROR("unknown data store error")>;
+      = error<MITAMA_ERROR("unknown data store error")>;
 };
 ```
 
@@ -32,12 +32,13 @@ The factory function `anyhow::failure` is used to create a `shared_ptr` for `thi
 
 ```cpp
 anyhow::result<int> data
-          = anyhow::failure<data_store_error::disconnect>();
+    = anyhow::failure<data_store_error::disconnect>();
 ```
 
 Examples:
 
 ```cpp
+// begin example
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
 #include <mitama/anyhow/anyhow.hpp>
@@ -46,10 +47,24 @@ Examples:
 namespace anyhow = mitama::anyhow;
 using namespace std::literals;
 
+class data_store_error {
+  template <class S, class ...T>
+  using error = mitama::thiserror::error<S, T...>;
+public:
+  using disconnect
+        = error<MITAMA_ERROR("data store disconnected")>;
+  using redaction
+        = error<MITAMA_ERROR("for key `{0}` isn't available"), std::string>;
+  using invalid_header
+        = error<MITAMA_ERROR("(expected {0}, found {1})"), std::string, std::string>;
+  using unknown
+        = error<MITAMA_ERROR("unknown data store error")>;
+};  
+
 int main() {
   anyhow::result<int> data
-          = anyhow::failure<data_store_error::redaction>("invalid key");
+      = anyhow::failure<data_store_error::redaction>("invalid key");
   auto res = data
-          .with_context([] { return anyhow::anyhow("data store failed."s); });
+      .with_context([] { return anyhow::anyhow("data store failed."s); });
 }
 ```
