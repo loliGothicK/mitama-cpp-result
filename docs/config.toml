@@ -8,6 +8,7 @@ compiler_options = [
     "-pedantic-errors",
     "-I__BOOST_ROOT__/include",
     "-I../include",
+    "/usr/lib/libfmt.so",
 ]
 # A keyword for test code extraction.
 # By writing the keywords at the beginning,
