@@ -20,6 +20,7 @@ Examples:
 In the first example, we replace `mitama::result` with `anyhow::result`.
 
 ```cpp
+// begin example
 #include <mitama/result/result.hpp>
 #include <mitama/anyhow/anyhow.hpp>
 
@@ -35,6 +36,7 @@ In the second example, we make a error with `anyhow::anyhow`.
 An expression `mitama::failure(anyhow::anyhow("error "s))` can be converted to `anyhow::result` since `anyhow::cause` inherits from `anyhow::error`.
 
 ```cpp
+// begin example
 #include <mitama/result/result.hpp>
 #include <mitama/anyhow/anyhow.hpp>
 
@@ -74,6 +76,7 @@ namespace mitama::anyhow {
 You can chaining error with `mitama::result::with_context()`.
 
 ```cpp
+// begin example
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
 #include <mitama/anyhow/anyhow.hpp>
@@ -89,13 +92,12 @@ auto connect_to_db() -> anyhow::result<database_t> {
 
 auto read_db() -> anyhow::result<int> {
   auto conn = connect_to_db();
-  if (conn.is_err()) {
-   // error chaining
-    return conn.with_context([] {
-      return anyhow::anyhow("Failed to read the database.");
-    });
-  }
-  // read the database and returns a value.
+  return conn.map([] (auto const&) {
+    // read the database and returns value
+    return 42;
+  }).with_context([] {
+    return anyhow::anyhow("Failed to read the database.");
+  });
 }
 
 int main() {
