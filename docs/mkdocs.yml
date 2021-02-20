@@ -69,4 +69,4 @@ nav:
   - Anyhow Module:
     - anyhow 101: anyhow/anyhow.md
   - Thiserror Module:
-    - anyhow 101: thiserror/thiserror.md
+    - thiserror 101: thiserror/thiserror.md
