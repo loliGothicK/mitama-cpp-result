@@ -1,6 +1,7 @@
 set(TEST_NAMES
         result_tests
         maybe_tests
+        anyhow_tests
 )
 
 find_package(Threads REQUIRED)
@@ -34,7 +35,7 @@ foreach(TEST_NAME ${TEST_NAMES})
     PRIVATE ${CMAKE_SOURCE_DIR}/mitama-utest-utilities/include
   )
 
-  target_link_libraries(${TEST_NAME} ${Boost_LIBRARIES} dl)
+  target_link_libraries(${TEST_NAME} ${Boost_LIBRARIES} dl fmt)
   add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME} WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 endforeach ()
 

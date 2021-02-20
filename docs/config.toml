@@ -7,7 +7,11 @@ compiler_options = [
     "-Wextra",
     "-pedantic-errors",
     "-I__BOOST_ROOT__/include",
+    "-I__FMT_INCLUDE_DIR__",
     "-I../include",
+]
+target_link_libraries = [
+    "__LIBFMT_SO__",
 ]
 # A keyword for test code extraction.
 # By writing the keywords at the beginning,

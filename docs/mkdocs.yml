@@ -66,3 +66,7 @@ nav:
     - Meta Functions: result/metafunctions.md
     - Comparisons: result/comparisons.md
     - CHANGELOG: result/CHANGELOG.md
+  - Anyhow Module:
+    - anyhow 101: anyhow/anyhow.md
+  - Thiserror Module:
+    - thiserror 101: thiserror/thiserror.md
