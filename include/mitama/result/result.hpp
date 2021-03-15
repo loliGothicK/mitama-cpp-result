@@ -1630,8 +1630,8 @@ public:
             std::is_invocable_r_v<std::shared_ptr<anyhow::error>, Ctx>,
             basic_result<_mutability, T, std::shared_ptr<anyhow::error>>>
   {
-    return this->map_err([ctx = std::move(ctx)](auto err) mutable -> std::shared_ptr<anyhow::error> {
-      return std::make_shared<anyhow::errors>(std::move(err), std::invoke(ctx));
+    return this->map_err([&](auto err) -> std::shared_ptr<anyhow::error> {
+      return err->context(std::invoke(ctx));
     });
   }
 };
