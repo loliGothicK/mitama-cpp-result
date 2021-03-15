@@ -7,46 +7,69 @@
 #include <string>
 #include <sstream>
 #include <memory>
+#include <functional>
 
 namespace mitama::anyhow {
 
   struct error {
+    virtual ~error() = default;
     virtual std::string what() const = 0;
+    virtual std::shared_ptr<error> context(std::shared_ptr<error>) = 0;
   };
 
-  class errors: public error {
-    std::shared_ptr<error> src_;
-    std::shared_ptr<error> ctx_;
+  class errors final : public error, public std::enable_shared_from_this<errors> {
+    std::vector<std::shared_ptr<error>> errs_;
   public:
     errors() = default;
     errors(const errors &) = default;
     errors &operator=(const errors &) = default;
     errors(errors &&) = default;
     errors &operator=(errors &&) = default;
-    virtual ~errors() = default;
 
-    errors(std::shared_ptr<error> src, std::shared_ptr<error> ctx)
-      : src_(std::move(src)), ctx_(std::move(ctx)) {}
+    ~errors() override = default;
+    template <class ...Errors>
+    errors(Errors&&... errs)
+      : errs_{ std::forward<Errors>(errs)... } {}
+
+    std::shared_ptr<error> context(std::shared_ptr<error> ctx) override {
+      errs_.emplace_back(std::move(ctx));
+      return std::enable_shared_from_this<errors>::shared_from_this();
+    }
+
+    auto chain() const {
+      return std::vector{ errs_.crbegin(), errs_.crend() };
+    }
+
+    auto root_cause() const -> std::shared_ptr<mitama::anyhow::error> {
+      if (errs_.empty())
+        { return nullptr; }
+      else
+        { return errs_.back(); }
+    }
 
     std::string what() const override {
       std::stringstream ss;
-      ss << "cause: " << ctx_->what() << ' '
-         << "source: " << src_->what();
+      for (auto iter = errs_.crbegin(); iter != errs_.crend(); ++iter)
+        { ss << (*iter)->what() << "\n"; }
       return ss.str();
     }
   };
 
   template<class E>
-  class cause : public error {
+  class cause final : public error, public std::enable_shared_from_this<cause<E>> {
     E err;
   public:
     cause() = default;
     cause(const cause &) = default;
     cause &operator=(const cause &) = default;
 
-    virtual ~cause() = default;
+    ~cause() override = default;
 
     explicit cause(E err) noexcept : err(err) {}
+
+    std::shared_ptr<error> context(std::shared_ptr<error> ctx) override {
+      return std::make_shared<errors>(std::enable_shared_from_this<cause<E>>::shared_from_this(), std::move(ctx));
+    }
 
     std::string what() const override {
       std::stringstream ss;
