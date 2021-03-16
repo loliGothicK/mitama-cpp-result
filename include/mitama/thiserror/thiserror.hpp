@@ -1,9 +1,7 @@
 #ifndef MITAMA_THISERROR_THISERROR_HPP
 #define MITAMA_THISERROR_THISERROR_HPP
 #include <mitama/anyhow/error.hpp>
-
-#include <boost/metaparse/string.hpp>
-#include <fmt/format.h>
+#include <mitama/mitamagic/format.hpp>
 
 #include <cstddef>
 #include <string_view>
@@ -12,10 +10,14 @@
 #include <iostream>
 #include <utility>
 
+#if __cplusplus >= 202002L
+namespace mitama::thiserror::v1 {
+#else
+#include <boost/metaparse/string.hpp>
 #define MITAMA_ERROR(MSG) BOOST_METAPARSE_STRING(MSG)
-
 namespace mitama::thiserror { inline namespace v1 {
-    
+#endif
+
   template <class String, class ...Sources>
   struct error;
 
@@ -52,8 +54,8 @@ namespace mitama::thiserror { inline namespace v1 {
     }
   };
 }}
-#if __cplusplus > 202000
-namespace mitama::thiserror::v2 {
+#if __cplusplus >= 202002L
+namespace mitama::thiserror:: ineline v2 {
   template<unsigned N>
   struct fixed_string {
     char buf[N + 1]{}; // null-terminated string
