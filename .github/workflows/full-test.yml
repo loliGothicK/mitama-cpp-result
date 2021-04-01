@@ -12,11 +12,11 @@ jobs:
     strategy:
       matrix: # 13 boost version * 7 compiler version = 91 jobs
         boost_version: [ 1.67.0, 1.68.0, 1.69.0, 1.70.0,
-                         1.71.0, 1.72.0, 1.73.0, 1.74.0 ]
+                         1.71.0, 1.72.0, 1.73.0, 1.74.0, 1.75.0 ]
         config:
           - {
             name: "Latest Version of GCC 8.x",
-            cc: "gcc-8", cxx: "g++-8",
+            cc: "gcc", cxx: "g++",
           }
           - {
             name: "Latest Version of GCC 9.x",
