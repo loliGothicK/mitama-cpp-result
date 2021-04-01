@@ -1,0 +1,41 @@
+name: Deploy Document
+
+on:
+  push:
+    tags: [ v* ]
+
+jobs:
+  deploy_docs:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.8'
+
+    - name: Restore & Cache Poetry and Dependences
+      uses: actions/cache@v1
+      id: poetry-cache
+      with:
+        path: |
+          ~/.poetry
+          ~/.cache/pypoetry
+        key: ${{ hashFiles('docs/poetry.lock') }}
+    - name: poetry install
+      if: steps.poetry-cache.outputs.cache-hit != 'true'
+      run: |
+        curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python3
+        poetry install --no-root
+      working-directory: docs
+
+    - name: Build Document
+      run: |
+        poetry run mkdocs build
+      working-directory: docs
+
+    - name: Deploy Document
+      run: echo $GITHUB_REF | cut -b 2- | xargs -I{} poetry run mike deploy --push --update-aliases {} latest
+      working-directory: docs

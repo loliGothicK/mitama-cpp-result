@@ -1,36 +1,45 @@
-cmake_minimum_required(VERSION 3.1)
-enable_language(CXX)
-set(CMAKE_CXX_STANDARD 17) # C++17...
-set(CMAKE_CXX_STANDARD_REQUIRED ON) #...is required...
-set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
-find_package(Threads REQUIRED)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic-errors -ftemplate-backtrace-limit=0")
-# set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -pedantic-errors")
-
+cmake_minimum_required(VERSION 3.8)
 ## Set our project name
-project(mitama-cpp-result)
-
-# Find Boost
-# Find Boost
-find_package(Boost 1.67.0 REQUIRED
-  COMPONENTS
-  stacktrace_addr2line
+project(mitama-cpp-result
+  VERSION 9.2.1
+  LANGUAGES CXX
 )
 
-include_directories(
-  PUBLIC ${Boost_INCLUDE_DIRS}
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/tests
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Catch2/single_include
-  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/mitama-utest-utilities/include
-  )
+include(GNUInstallDirs)
+set(CMAKE_VERBOSE_MAKEFILE ON)
 
-add_executable(result-tests test/Result_Test.cpp)
-add_executable(maybe-tests test/Maybe_Test.cpp)
+message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
+add_library(${PROJECT_NAME} INTERFACE)
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
+target_include_directories(${PROJECT_NAME} INTERFACE
+  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+)
 
-target_link_libraries(result-tests ${Boost_LIBRARIES} dl)
-target_link_libraries(maybe-tests ${Boost_LIBRARIES} dl)
+set(CONFIG_VERSION_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake)
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+  ${CONFIG_VERSION_FILE} COMPATIBILITY AnyNewerVersion
+)
 
-add_test(result-tests "${EXECUTABLE_OUTPUT_PATH}/result-tests")
-add_test(maybe-tests "${EXECUTABLE_OUTPUT_PATH}/maybe-tests")
-enable_testing()
+install(DIRECTORY include/
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  FILES_MATCHING PATTERN "*.hpp"
+)
+install(TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}-config
+)
+install(EXPORT ${PROJECT_NAME}-config
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}
+  NAMESPACE ${PROJECT_NAME}::
+)
+install(FILES ${CONFIG_VERSION_FILE}
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}
+)
+
+option(BUILD_TESTING "Do not build tests by default" OFF)
+include(CTest)
+if(BUILD_TESTING AND ${CMAKE_SOURCE_DIR} STREQUAL ${PROJECT_SOURCE_DIR})
+  add_subdirectory(test)
+endif()

@@ -5,10 +5,12 @@
 #include <mitama/panic.hpp>
 #include <mitama/result/factory/success.hpp>
 #include <mitama/result/factory/failure.hpp>
+#include <mitama/anyhow/error.hpp>
 
 #include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
 #include <boost/hana/functional/fix.hpp>
+#include <boost/hana/functional/id.hpp>
 #include <boost/format.hpp>
 
 #include <functional>
@@ -235,7 +237,7 @@ public:
   }
 
   /// @brief
-  ///   non-explicit constructor for success_tful lvalue
+  ///   non-explicit constructor for successful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
@@ -253,7 +255,7 @@ public:
   {}
 
   /// @brief
-  ///   non-explicit constructor for success_tful rvalue
+  ///   non-explicit constructor for successful rvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::is_convertible<U, T>> = required>
@@ -271,7 +273,7 @@ public:
   {}
 
   /// @brief
-  ///   non-explicit constructor for unsuccess_tful lvalue
+  ///   non-explicit constructor for unsuccessful lvalue
   template <class U,
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
@@ -280,7 +282,7 @@ public:
   {}
 
   /// @brief
-  ///   explicit constructor for unsuccess_tful lvalue
+  ///   explicit constructor for unsuccessful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
@@ -289,7 +291,7 @@ public:
   {}
 
   /// @brief
-  ///   non-explicit constructor for unsuccess_tful rvalue
+  ///   non-explicit constructor for unsuccessful rvalue
   template <class U,
             where<std::is_constructible<E, U>,
                   std::is_convertible<U, E>> = required>
@@ -298,7 +300,7 @@ public:
   {}
 
   /// @brief
-  ///   explicit constructor for unsuccess_tful lvalue
+  ///   explicit constructor for unsuccessful lvalue
   template <class U,
             where<std::is_constructible<T, U>,
                   std::negation<std::is_convertible<U, T>>> = required>
@@ -423,6 +425,26 @@ public:
   constexpr bool operator !() const noexcept { return std::holds_alternative<failure_t<E>>(storage_); }
 
   /// @brief
+  ///   Returns result storage.
+  decltype(auto) into_storage() & {
+    return storage_;
+  }
+
+  /// @brief
+  ///   Returns result storage.
+  decltype(auto) into_storage() const& {
+    return storage_;
+  }
+
+  /// @brief
+  ///   Returns result storage.
+  decltype(auto) into_storage() && {
+    return std::move(storage_);
+  }
+
+  void into_storage() const&& = delete;
+
+  /// @brief
   ///   Converts from basic_result to `maybe<const T>`.
   ///
   /// @note
@@ -494,20 +516,57 @@ public:
   ///   leaving an failure value untouched.
   ///
   /// @requires
-  ///   { std::invoke(op, unwrap()) }
+  ///   { std::invoke(op, unwrap()) };
   ///
   /// @note
   ///   This function can be used to compose the results of two functions.
+  ///   result<T, E> -> result<U, E>
   template <class O, class... Args>
   constexpr auto map(O && op, Args&&... args) const &
     noexcept(std::is_nothrow_invocable_v<O, T, Args&&...>)
     -> std::enable_if_t<std::is_invocable_v<O, T, Args&&...>,
-    basic_result<_mutability, std::invoke_result_t<O, T, Args&&...>, E>>
+    basic_result<_mutability, void_to_monostate_t<std::invoke_result_t<O, T, Args&&...>>, E>>
   {
-    using result_type = basic_result<_mutability, std::invoke_result_t<O, T, Args&&...>, E>;
-    return is_ok()
-               ? static_cast<result_type>(success_t{std::invoke(std::forward<O>(op), std::get<success_t<T>>(storage_).get(), std::forward<Args>(args)...)})
-               : static_cast<result_type>(failure_t{std::get<failure_t<E>>(storage_).get()});
+    using result_type = basic_result<_mutability, void_to_monostate_t<std::invoke_result_t<O, T, Args&&...>>, E>;
+    if constexpr (std::is_void_v<std::invoke_result_t<O, T, Args&&...>>)
+      return is_ok()
+                 ? std::invoke(std::forward<O>(op), std::get<success_t<T>>(storage_).get(), std::forward<Args>(args)...), static_cast<result_type>(success_t{})
+                 : static_cast<result_type>(failure_t{std::get<failure_t<E>>(storage_).get()});
+    else
+      return is_ok()
+                 ? static_cast<result_type>(success_t{std::invoke(std::forward<O>(op), std::get<success_t<T>>(storage_).get(), std::forward<Args>(args)...)})
+                 : static_cast<result_type>(failure_t{std::get<failure_t<E>>(storage_).get()});
+  }
+
+  /// @brief
+  ///   Maps a basic_result<T, E> to basic_result<U, E> by applying a function to a contained success value,
+  ///   leaving an failure value untouched.
+  ///
+  /// @requires
+  ///   { std::invoke(op, unwrap()) };
+  ///
+  /// @note
+  ///   This function can be used to compose the results of two functions.
+  ///   result<void, E> -> result<U, E>
+  template <class O, class... Args>
+  constexpr auto map(O && op, Args&&... args) const &
+    noexcept(std::is_nothrow_invocable_v<O, Args&&...>)
+    -> std::enable_if_t<
+         std::conjunction_v<
+           std::is_same<T, std::monostate>,
+           std::is_invocable<O, Args&&...>
+         >,
+    basic_result<_mutability, void_to_monostate_t<std::invoke_result_t<O, Args&&...>>, E>>
+  {
+    using result_type = basic_result<_mutability, void_to_monostate_t<std::invoke_result_t<O, Args&&...>>, E>;
+    if constexpr (std::is_void_v<std::invoke_result_t<O, Args&&...>>)
+      return is_ok()
+                 ? std::invoke(std::forward<O>(op), std::forward<Args>(args)...), static_cast<result_type>(success_t{})
+                 : static_cast<result_type>(failure_t{std::get<failure_t<E>>(storage_).get()});
+    else
+      return is_ok()
+                 ? static_cast<result_type>(success_t{std::invoke(std::forward<O>(op), std::forward<Args>(args)...)})
+                 : static_cast<result_type>(failure_t{std::get<failure_t<E>>(storage_).get()});
   }
 
   /// @brief
@@ -519,16 +578,53 @@ public:
   ///
   /// @note
   ///   This function can be used to compose the results of two functions.
+  ///   result<T, E> -> result<U, E>
   template <class O, class... Args>
   constexpr auto map(O && op, Args &&... args) &&
     noexcept(std::is_nothrow_invocable_v<O, T, Args&&...>)
     -> std::enable_if_t<std::is_invocable_v<O, T, Args&&...>,
-    basic_result<_mutability, std::invoke_result_t<O, T, Args&&...>, E>>
+    basic_result<_mutability, void_to_monostate_t<std::invoke_result_t<O, T, Args&&...>>, E>>
   {
-    using result_type = basic_result<_mutability, std::invoke_result_t<O, T, Args&&...>, E>;
-    return is_ok()
-               ? static_cast<result_type>(success_t{std::invoke(std::forward<O>(op), std::move(std::get<success_t<T>>(storage_).get(), std::forward<Args>(args)...))})
-               : static_cast<result_type>(failure_t{std::move(std::get<failure_t<E>>(storage_).get())});
+    using result_type = basic_result<_mutability, void_to_monostate_t<std::invoke_result_t<O, T, Args&&...>>, E>;
+    if constexpr (std::is_void_v<std::invoke_result_t<O, T, Args&&...>>)
+      return is_ok()
+                 ? std::invoke(std::forward<O>(op), std::move(std::get<success_t<T>>(storage_).get(), std::forward<Args>(args)...)), static_cast<result_type>(success_t{})
+                 : static_cast<result_type>(failure_t{std::move(std::get<failure_t<E>>(storage_).get())});
+    else
+      return is_ok()
+                 ? static_cast<result_type>(success_t{std::invoke(std::forward<O>(op), std::move(std::get<success_t<T>>(storage_).get(), std::forward<Args>(args)...))})
+                 : static_cast<result_type>(failure_t{std::move(std::get<failure_t<E>>(storage_).get())});
+  }
+
+  /// @brief
+  ///   Maps a basic_result<T, E> to basic_result<U, E> by applying a function to a contained success value,
+  ///   leaving an failure value untouched.
+  ///
+  /// @requires
+  ///   { std::invoke(op, unwrap()) }
+  ///
+  /// @note
+  ///   This function can be used to compose the results of two functions.
+  ///   result<void, E> -> result<U, E>
+  template <class O, class... Args>
+  constexpr auto map(O && op, Args &&... args) &&
+    noexcept(std::is_nothrow_invocable_v<O, Args&&...>)
+    -> std::enable_if_t<
+         std::conjunction_v<
+           std::is_same<T, std::monostate>,
+           std::is_invocable<O, Args&&...>
+         >,
+    basic_result<_mutability, void_to_monostate_t<std::invoke_result_t<O, Args&&...>>, E>>
+  {
+    using result_type = basic_result<_mutability, void_to_monostate_t<std::invoke_result_t<O, Args&&...>>, E>;
+    if constexpr (std::is_void_v<std::invoke_result_t<O, Args&&...>>)
+      return is_ok()
+                 ? std::invoke(std::forward<O>(op), std::forward<Args>(args)...), static_cast<result_type>(success_t{})
+                 : static_cast<result_type>(failure_t{std::move(std::get<failure_t<E>>(storage_).get())});
+    else
+      return is_ok()
+                 ? static_cast<result_type>(success_t{std::invoke(std::forward<O>(op), std::forward<Args>(args)...)})
+                 : static_cast<result_type>(failure_t{std::move(std::get<failure_t<E>>(storage_).get())});
   }
 
   /// @brief
@@ -541,7 +637,7 @@ public:
   ///   Common< decltype(std::invoke(_fallback, unwrap_err())), decltype(std::invoke(_map, unwrap())) >;
   ///
   /// @note
-  ///   This function can be used to unpack a success_tful result while handling an error.
+  ///   This function can be used to unpack a successful result while handling an error.
   template <class Map, class Fallback>
   constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) &
     noexcept(std::is_nothrow_invocable_v<Fallback, E> && std::is_nothrow_invocable_v<Map, T>)
@@ -624,17 +720,23 @@ public:
   ///   { std::invoke(op, unwrap_err()) }
   ///
   /// @note
-  ///   This function can be used to pass through a success_tful result while handling an error.
+  ///   This function can be used to pass through a successful result while handling an error.
+  ///   result<T, E> -> result<T, F>
   template <class O, class... Args>
   constexpr auto map_err(O && op, Args&&... args) const &
     noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
     -> std::enable_if_t<std::is_invocable_v<O, E, Args&&...>,
-    basic_result<_mutability, T, std::invoke_result_t<O, E, Args&&...>>>
+    basic_result<_mutability, T, void_to_monostate_t<std::invoke_result_t<O, E, Args&&...>>>>
   {
-    using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E, Args&&...>>;
-    return is_err()
-               ? static_cast<result_type>(failure_t{std::invoke(std::forward<O>(op), std::get<failure_t<E>>(storage_).get(), std::forward<Args>(args)...)})
-               : static_cast<result_type>(success_t{std::get<success_t<T>>(storage_).get()});
+    using result_type = basic_result<_mutability, T, void_to_monostate_t<std::invoke_result_t<O, E, Args&&...>>>;
+    if constexpr (std::is_void_v<std::invoke_result_t<O, E, Args&&...>>)
+      return is_err()
+                 ? std::invoke(std::forward<O>(op), std::get<failure_t<E>>(storage_).get(), std::forward<Args>(args)...), static_cast<result_type>(failure_t{})
+                 : static_cast<result_type>(success_t{std::get<success_t<T>>(storage_).get()});
+    else
+      return is_err()
+                 ? static_cast<result_type>(failure_t{std::invoke(std::forward<O>(op), std::get<failure_t<E>>(storage_).get(), std::forward<Args>(args)...)})
+                 : static_cast<result_type>(success_t{std::get<success_t<T>>(storage_).get()});
   }
 
   /// @brief
@@ -646,16 +748,84 @@ public:
   ///
   /// @note
   ///   This function can be used to pass through a successful result while handling an error.
+  ///   result<T, void> -> result<T, F>
+  template <class O, class... Args>
+  constexpr auto map_err(O && op, Args&&... args) const &
+    noexcept(std::is_nothrow_invocable_v<O, Args&&...>)
+    -> std::enable_if_t<
+         std::conjunction_v<
+           std::is_same<E, std::monostate>,
+           std::is_invocable<O, Args&&...>
+         >,
+    basic_result<_mutability, T, void_to_monostate_t<std::invoke_result_t<O, Args&&...>>>>
+  {
+    using result_type = basic_result<_mutability, T, void_to_monostate_t<std::invoke_result_t<O, Args&&...>>>;
+    if constexpr (std::is_void_v<std::invoke_result_t<O, Args&&...>>)
+      return is_err()
+                 ? std::invoke(std::forward<O>(op), std::forward<Args>(args)...), static_cast<result_type>(failure_t{})
+                 : static_cast<result_type>(success_t{std::get<success_t<T>>(storage_).get()});
+    else
+      return is_err()
+                 ? static_cast<result_type>(failure_t{std::invoke(std::forward<O>(op), std::forward<Args>(args)...)})
+                 : static_cast<result_type>(success_t{std::get<success_t<T>>(storage_).get()});
+  }
+
+  /// @brief
+  ///   Maps a basic_result<T, E> to basic_result<T, F> by applying a function to a contained failure value,
+  ///   leaving an success value untouched.
+  ///
+  /// @requires
+  ///   { std::invoke(op, unwrap_err()) }
+  ///
+  /// @note
+  ///   This function can be used to pass through a successful result while handling an error.
+  ///   result<T, E> -> result<T, F>
   template <class O, class... Args>
   constexpr auto map_err(O && op, Args&&... args) &&
     noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
     -> std::enable_if_t<std::is_invocable_v<O, E, Args&&...>,
-    basic_result<_mutability, T, std::invoke_result_t<O, E, Args&&...>>>
+    basic_result<_mutability, T, void_to_monostate_t<std::invoke_result_t<O, E, Args&&...>>>>
   {
-    using result_type = basic_result<_mutability, T, std::invoke_result_t<O, E, Args&&...>>;
-    return is_err()
-               ? static_cast<result_type>(failure_t{std::invoke(std::forward<O>(op), std::move(std::get<failure_t<E>>(storage_).get()), std::forward<Args>(args)...)})
-               : static_cast<result_type>(success_t{std::move(std::get<success_t<T>>(storage_).get())});
+    using result_type = basic_result<_mutability, T, void_to_monostate_t<std::invoke_result_t<O, E, Args&&...>>>;
+    if constexpr (std::is_void_v<std::invoke_result_t<O, E, Args&&...>>)
+      return is_err()
+                 ? std::invoke(std::forward<O>(op), std::move(std::get<failure_t<E>>(storage_).get()), std::forward<Args>(args)...), static_cast<result_type>(failure_t{})
+                 : static_cast<result_type>(success_t{std::move(std::get<success_t<T>>(storage_).get())});
+    else
+      return is_err()
+                 ? static_cast<result_type>(failure_t{std::invoke(std::forward<O>(op), std::move(std::get<failure_t<E>>(storage_).get()), std::forward<Args>(args)...)})
+                 : static_cast<result_type>(success_t{std::move(std::get<success_t<T>>(storage_).get())});
+  }
+
+  /// @brief
+  ///   Maps a basic_result<T, E> to basic_result<T, F> by applying a function to a contained failure value,
+  ///   leaving an success value untouched.
+  ///
+  /// @requires
+  ///   { std::invoke(op, unwrap_err()) }
+  ///
+  /// @note
+  ///   This function can be used to pass through a successful result while handling an error.
+  ///   result<T, void> -> result<T, F>
+  template <class O, class... Args>
+  constexpr auto map_err(O && op, Args&&... args) &&
+    noexcept(std::is_nothrow_invocable_v<O, Args&&...>)
+    -> std::enable_if_t<
+         std::conjunction_v<
+           std::is_same<E, std::monostate>,
+           std::is_invocable<O, Args&&...>
+         >,
+    basic_result<_mutability, T, void_to_monostate_t<std::invoke_result_t<O, Args&&...>>>>
+  {
+    using result_type = basic_result<_mutability, T, void_to_monostate_t<std::invoke_result_t<O, Args&&...>>>;
+    if constexpr (std::is_void_v<std::invoke_result_t<O, Args&&...>>)
+      return is_err()
+                 ? std::invoke(std::forward<O>(op), std::forward<Args>(args)...), static_cast<result_type>(failure_t{})
+                 : static_cast<result_type>(success_t{std::move(std::get<success_t<T>>(storage_).get())});
+    else
+      return is_err()
+                 ? static_cast<result_type>(failure_t{std::invoke(std::forward<O>(op), std::forward<Args>(args)...)})
+                 : static_cast<result_type>(success_t{std::move(std::get<success_t<T>>(storage_).get())});
   }
 
   /// @brief
@@ -1454,6 +1624,16 @@ public:
     return rhs <= *this;
   }
 
+  template <class Ctx>
+  auto with_context(Ctx ctx)
+    -> std::enable_if_t<
+            std::is_invocable_r_v<std::shared_ptr<anyhow::error>, Ctx>,
+            basic_result<_mutability, T, std::shared_ptr<anyhow::error>>>
+  {
+    return this->map_err([&](auto err) -> std::shared_ptr<anyhow::error> {
+      return err->context(std::invoke(ctx));
+    });
+  }
 };
 
   template <mutability _, class T, class E, class U>
@@ -1617,5 +1797,40 @@ public:
   }
 
 } // namespace mitama
+
+// MSVC does not implement compound statements (ref: https://stackoverflow.com/q/5291532)
+#if defined(__clang__) || defined(__GNUC__)
+#  define MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC true
+#  define MITAMA_TRY_IMPL( ... )                                                          \
+    ({                                                                                    \
+        auto&& result = boost::hana::id(__VA_ARGS__);                                     \
+        static_assert(                                                                    \
+            ::mitama::is_result_v<::mitama::meta::remove_cvr_t<decltype(result)>>,        \
+            "You should pass mitama::result type to this MITAMA_TRY macro."               \
+        );                                                                                \
+        if (result.is_err()) {                                                            \
+            using Err = ::mitama::failure_t<                                              \
+                ::mitama::meta::remove_cvr_t<decltype(result)>::err_type                  \
+            >;                                                                            \
+            return ::std::get<Err>(std::forward<decltype(result)>(result).into_storage());\
+        }                                                                                 \
+        using Ok = ::mitama::success_t<                                                   \
+            ::mitama::meta::remove_cvr_t<decltype(result)>::ok_type                       \
+        >;                                                                                \
+        ::std::get<Ok>(std::forward<decltype(result)>(result).into_storage()).get();      \
+    })
+#  ifdef __clang__
+#    define MITAMA_TRY( ... )                                                      \
+      _Pragma("GCC diagnostic push")                                               \
+      _Pragma("GCC diagnostic ignored \"-Wgnu-statement-expression\"")             \
+      MITAMA_TRY_IMPL(__VA_ARGS__)                                                 \
+      _Pragma("GCC diagnostic pop")
+#  else
+#    define MITAMA_TRY( ... ) MITAMA_TRY_IMPL(__VA_ARGS__)
+#  endif
+#else
+#  define MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC false
+#  define MITAMA_TRY( ... ) boost::hana::id(__VA_ARGS__).unwrap()
+#endif
 
 #endif

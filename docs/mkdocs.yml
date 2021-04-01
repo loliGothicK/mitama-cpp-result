@@ -1,0 +1,125 @@
+site_name: Mitama.Result User Manual
+site_url: https://loligothick.github.io/mitama-cpp-result/
+site_description: Mitama.Result C++17 Library
+site_author: mitama
+
+# Repository
+repo_name: loligothick/mitama-cpp-result
+repo_url: https://github.com/loligothick/mitama-cpp-result
+edit_uri: ""
+
+# Theme
+theme:
+  name: 'material'
+  language: 'en'
+  icon:
+    logo: material/cloud
+    repo: fontawesome/brands/github-alt
+  palette:
+    primary: 'teal'
+    accent: 'teal'
+  features:
+    - navigation.tabs
+    - navigation.instant
+  extra:
+    social:
+      - icon: fontawesome/brands/twitter
+        link: https://twitter.com/mitama_rs
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - fontawesome_markdown
+  - footnotes
+  - meta
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.superfences
+  - pymdownx.smartsymbols
+  - mdx_math:
+      enable_dollar_delimiter: true
+  - toc:
+      permalink: True
+      separator: "_"
+      baselevel: 1
+
+extra_javascript: 
+  - https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML
+  - mathjaxhelper.js
+extra_css:
+  - "https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"
+  - cppmap_styles.css
+
+# Page tree
+nav:
+  - Home: README.md
+  - Maybe Mudule:
+    - Maybe 101: maybe/intro.md
+    - API Reference: maybe/APIs.md
+    - Special Members: maybe/special_members.md
+    - Comparisons: maybe/comparisons.md
+    - Meta Functions: maybe/metafunctions.md
+  - Result Module:
+    - Result 101: result/intro.md
+    - Special Members: result/special_members.md
+    - API Reference: result/APIs.md
+    - Meta Functions: result/metafunctions.md
+    - Comparisons: result/comparisons.md
+    - CHANGELOG: result/CHANGELOG.md
+  - Anyhow Module:
+    - anyhow 101: anyhow/anyhow.md
+  - Thiserror Module:
+    - thiserror 101: thiserror/thiserror.md
+  - Release Notes:
+    - version 9.3.0: release_notes/v9_3_0.md
+    - version 9.2.1: release_notes/v9_2_1.md
+    - version 9.2.0: release_notes/v9_2_0.md
+    - version 9.1.2: release_notes/v9_1_2.md
+    - version 9.1.1: release_notes/v9_1_1.md
+    - version 9.1.0: release_notes/v9_1_0.md
+    - version 9.0.3: release_notes/v9_0_3.md
+    - version 9.0.2: release_notes/v9_0_2.md
+    - version 9.0.1: release_notes/v9_0_1.md
+    - version 9.0.0: release_notes/v9_0_0.md
+    - version 8.1.3: release_notes/v8_1_3.md
+    - version 8.1.2: release_notes/v8_1_2.md
+    - version 8.1.1: release_notes/v8_1_1.md
+    - version 8.1.0: release_notes/v8_1_0.md
+    - version 8.0.0: release_notes/v8_0_0.md
+    - version 7.8.0: release_notes/v7_8_0.md
+    - version 7.7.0: release_notes/v7_7_0.md
+    - version 7.6.0: release_notes/v7_6_0.md
+    - version 7.5.1: release_notes/v7_5_1.md
+    - version 7.5.0: release_notes/v7_5_0.md
+    - version 7.4.0: release_notes/v7_4_0.md
+    - version 7.3.2: release_notes/v7_3_2.md
+    - version 7.3.1: release_notes/v7_3_1.md
+    - version 7.3.0: release_notes/v7_3_0.md
+    - version 7.2.0: release_notes/v7_2_0.md
+    - version 7.1.0: release_notes/v7_1_0.md
+    - version 7.0.1: release_notes/v7_0_1.md
+    - version 7.0.0: release_notes/v7_0_0.md
+    - version 6.4.1: release_notes/v6_4_1.md
+    - version 6.4.0: release_notes/v6_4_0.md
+    - version 6.3.0: release_notes/v6_3_0.md
+    - version 6.2.0: release_notes/v6_2_0.md
+    - version 6.1.0: release_notes/v6_1_0.md
+    - version 6.0.0: release_notes/v6_0_0.md
+    - version 5.0.3: release_notes/v5_0_3.md
+    - version 5.0.2: release_notes/v5_0_2.md
+    - version 5.0.1: release_notes/v5_0_1.md
+    - version 5.0.0: release_notes/v5_0_0.md
+    - version 4.1.0: release_notes/v4_1_0.md
+    - version 4.0.2: release_notes/v4_0_2.md
+    - version 4.0.1: release_notes/v4_0_1.md
+    - version 4.0.0: release_notes/v4_0_0.md
+    - version 3.0.0: release_notes/v3_0_0.md
+    - version 2.1.1: release_notes/v2_1_1.md
+    - version 2.1.0: release_notes/v2_1_0.md
+    - version 2.0.1: release_notes/v2_0_1.md
+    - version 1.2.0: release_notes/v1_2_0.md
+    - version 1.1.2: release_notes/v1_1_2.md
+    - version 1.1.1: release_notes/v1_1_1.md
+    - version 1.1.0: release_notes/v1_1_0.md
+    - version 1.0.1: release_notes/v1_0_1.md
+    - version 1.0.0: release_notes/v1_0_0.md
