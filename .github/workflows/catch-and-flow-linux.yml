@@ -10,7 +10,7 @@ on:
     branches: [ develop ]
 
 env:
-  BOOST_VERSION: 1.74.0
+  BOOST_VERSION: 1.75.0
 
 jobs:
   catch_and_flow:
@@ -20,7 +20,7 @@ jobs:
         config:
           - {
             name: "Latest Version of GCC 8.x",
-            cc: "gcc-8", cxx: "g++-8",
+            cc: "gcc", cxx: "g++",
           }
           - {
             name: "Latest Version of GCC 9.x",
@@ -63,7 +63,7 @@ jobs:
         run: ${{ matrix.config.cxx }} --version
 
       - name: Restore & Cache boost (${{ env.BOOST_VERSION }})
-        uses: actions/cache@v1
+        uses: actions/cache@v2.1.4
         id: boost-cache
         with:
           path: ${{ runner.temp }}/libs/boost
