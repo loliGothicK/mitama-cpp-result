@@ -2,7 +2,7 @@
 #define MITAMA_PANIC_HPP
 
 #include <stdexcept>
-#include <boost/format.hpp>
+#include <format>
 #include <variant>
 #include <utility>
 #include <string>
@@ -27,37 +27,38 @@ class runtime_panic : public std::runtime_error
 {
 public:
   template <class... Args>
-  runtime_panic(boost::format fmt, Args &&... args) noexcept
-      : std::runtime_error((fmt % ... % args).str()) {}
+  runtime_panic(std::string_view fmt, Args &&... args) noexcept
+      : std::runtime_error(std::format(fmt, std::forward<Args>(args)...).str()) {}
 
   template <class... Args>
-  explicit runtime_panic(macro_use_tag_t, const char *func, int line, std::string fmt, Args &&... args) noexcept
-      : std::runtime_error(
-            std::string{"runtime panicked at '"} + (boost::format(fmt) % ... % [](auto&& arg) -> decltype(auto) {
-              using namespace std::string_view_literals;
-              if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, std::monostate>) {
-                return "()"sv;
-              }
-              else {
-                return std::forward<decltype(arg)>(arg);
-              }
-            }(std::forward<Args>(args))).str() +
-            (boost::format("', %1%:%2%") % std::string{func} % line).str()) {}
-
+  explicit runtime_panic(macro_use_tag_t, const char *func, int line, std::string_view fmt, Args &&... args) noexcept
+       : std::runtime_error(
+         std::format("runtime panicked at {}, {}:\n{}", func, line, std::format(fmt,
+           ([](auto&& arg [[maybe_unused]] ) -> decltype(auto) {
+             using namespace std::string_view_literals;
+             if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, std::monostate>) {
+               return "()"sv;
+             }
+             else {
+               return std::forward<decltype(arg)>(arg);
+             }
+             }(std::forward<Args>(args)))...)))
+  {}
 #if defined(MITAMA_PANIC_WITH_STACKTRACE)
   template <class StackTrace, class... Args>
-  explicit runtime_panic(stacktarce_use_tag_t, const char *func, int line, StackTrace&& st, std::string fmt, Args &&... args) noexcept
-      : std::runtime_error(
-            std::string{"runtime panicked at '"} + (boost::format(fmt) % ... % [](auto&& arg [[maybe_unused]]) -> decltype(auto) {
-              using namespace std::string_view_literals;
-              if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, std::monostate>) {
-                return "()"sv;
-              }
-              else {
-                return std::forward<decltype(arg)>(arg);
-              }
-            }(std::forward<Args>(args))).str() +
-            (boost::format("', %1%:%2%\n\nstacktrace:\n%3%") % std::string{func} % line % std::forward<StackTrace>(st)).str()) {}
+  explicit runtime_panic(stacktarce_use_tag_t, const char *func, int line, StackTrace&& st, std::string_view fmt, Args &&... args) noexcept
+    : std::runtime_error(
+      std::format("runtime panicked at {}, {}:\n{}\n\nstacktraec:\n{}", func, line, std::format(fmt,
+        ([](auto&& arg [[maybe_unused]] ) -> decltype(auto) {
+          using namespace std::string_view_literals;
+          if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, std::monostate>) {
+            return "()"sv;
+          }
+          else {
+            return std::forward<decltype(arg)>(arg);
+          }
+          }(std::forward<Args>(args)))...), [&] { std::stringstream ss; ss << st; return ss.str(); }()))
+  {}
 #endif
 };
 }

@@ -91,8 +91,12 @@ namespace mitama::anyhow {
 
   template <class Err, class ...Args>
   auto failure(Args&&... args)
-    -> std::enable_if_t<std::is_base_of_v<mitama::anyhow::error, Err>, mitama::failure_t<std::shared_ptr<Err>>>
-    { return mitama::failure(std::make_shared<Err>(std::forward<Args>(args)...)); }
+    -> std::enable_if_t<std::is_base_of_v<mitama::anyhow::error, Err>,
+        mitama::failure_t<std::shared_ptr<::mitama::anyhow::error>>>
+    {
+      auto err = std::make_shared<Err>(std::forward<Args>(args)...);
+      return mitama::failure(std::static_pointer_cast<::mitama::anyhow::error>(err));
+    }
 }
 
 #endif

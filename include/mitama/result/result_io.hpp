@@ -28,17 +28,20 @@ operator<<(std::ostream& os, basic_result<_, T, E> const& res) {
       [](auto, auto const& x) -> std::enable_if_t<trait::formattable_element<std::decay_t<decltype(x)>>::value, std::string> {
         return boost::hana::overload_linearly(
           [](std::monostate) { return "()"s; },
-          [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
-          [](auto const& x) { return (boost::format("%1%") % x).str(); })
+          [](std::string_view x) { return std::format("\"{}\"", x); },
+          [](auto const& x) {
+            std::stringstream ss; ss << x;
+            return std::format("{}", ss.str());
+          })
         (x);        
       },
       [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_dictionary<std::decay_t<decltype(x)>>::value, std::string> {
         if (x.empty()) return "{}"s;
         using std::begin, std::end;
         auto iter = begin(x);
-        std::string str = "{"s + (boost::format("%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
+        std::string str = "{"s + std::format("{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
         while (++iter != end(x)) {
-          str += (boost::format(",%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
+          str += std::format(",{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
         }
         return str += "}";
       },
@@ -48,7 +51,7 @@ operator<<(std::ostream& os, basic_result<_, T, E> const& res) {
         auto iter = begin(x);
         std::string str = "["s + _fmt(*iter);
         while (++iter != end(x)) {
-          str += (boost::format(",%1%") % _fmt(*iter)).str();
+          str += std::format(",{}", _fmt(*iter));
         }
         return str += "]";
       },
@@ -63,8 +66,8 @@ operator<<(std::ostream& os, basic_result<_, T, E> const& res) {
             }, x);
         }
       }));
-  return res.is_ok() ? os << boost::format("success(%1%)") % inner_format( res.unwrap() )
-                     : os << boost::format("failure(%1%)") % inner_format( res.unwrap_err() );
+  return res.is_ok() ? os << std::format("success({})", inner_format(res.unwrap()))
+                     : os << std::format("failure({})", inner_format(res.unwrap_err()));
 }
 
 }
