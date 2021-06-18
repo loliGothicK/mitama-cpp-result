@@ -632,17 +632,20 @@ operator<<(std::ostream& os, just_t<T> const& j) {
     [](auto, auto const& x) -> std::enable_if_t<trait::formattable_element<std::decay_t<decltype(x)>>::value, std::string> {
       return boost::hana::overload_linearly(
       [](std::monostate) { return "()"s; },
-      [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
-      [](auto const& x) { return (boost::format("%1%") % x).str(); })
-      (x);
+      [](std::string_view x) { return std::format("\"{}\"", x); },
+        [](auto const& x) {
+          std::stringstream ss; ss << x;
+          return std::format("{}", ss.str());
+        })
+        (x);
     },
     [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_dictionary<std::decay_t<decltype(x)>>::value, std::string> {
       if (x.empty()) return "{}"s;
       using std::begin, std::end;
       auto iter = begin(x);
-      std::string str = "{"s + (boost::format("%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
+      std::string str = "{"s + std::format("{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
       while (++iter != end(x)) {
-      str += (boost::format(",%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
+      str += std::format(",{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
       }
       return str += "}";
     },
@@ -652,22 +655,22 @@ operator<<(std::ostream& os, just_t<T> const& j) {
       auto iter = begin(x);
       std::string str = "["s + _fmt(*iter);
       while (++iter != end(x)) {
-      str += (boost::format(",%1%") % _fmt(*iter)).str();
+        str += std::format(",{}", _fmt(*iter));
       }
       return str += "]";
     },
     [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_tuple<std::decay_t<decltype(x)>>::value, std::string> {
       if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0) {
-      return "()"s;
+        return "()"s;
       }
       else {
-      return std::apply(
-        [_fmt](auto const& head, auto const&... tail) {
-        return "("s + _fmt(head) + ((("," + _fmt(tail))) + ...) + ")"s;
-        }, x);
+        return std::apply(
+          [_fmt](auto const& head, auto const&... tail) {
+            return "("s + _fmt(head) + ((","s + _fmt(tail)) + ...) + ")"s;
+          }, x);
       }
     }));
-  return os << boost::format("just(%1%)") % inner_format(j.get());
+  return os << std::format("just({})", inner_format(j.get()));
 }
 
 template <class Target = void, class... Types>

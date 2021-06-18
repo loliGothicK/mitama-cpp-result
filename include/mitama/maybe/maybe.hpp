@@ -10,7 +10,6 @@
 #include <mitama/maybe/fwd/maybe_fwd.hpp>
 #include <mitama/maybe/factory/just_nothing.hpp>
 
-#include <boost/format.hpp>
 #include <boost/hana/functional/fix.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
@@ -24,6 +23,7 @@
 #include <utility>
 #include <string_view>
 #include <cassert>
+#include <format>
 
 namespace mitama::mitamagic {
 template <class, class=void> struct is_pointer_like: std::false_type {};
@@ -503,7 +503,7 @@ public:
 			return unwrap();
 		}
 		else {
-			PANIC("%1%", msg);
+			PANIC("{}", msg);
 		}
 	}
 
@@ -512,7 +512,7 @@ public:
 			return unwrap();
 		}
 		else {
-			PANIC("%1%", msg);
+			PANIC("{}", msg);
 		}
 	}
 
@@ -521,7 +521,7 @@ public:
 			return std::move(unwrap());
 		}
 		else {
-			PANIC("%1%", msg);
+			PANIC("{}", msg);
 		}
 	}
 
@@ -1055,22 +1055,24 @@ std::enable_if_t<trait::formattable<T>::value,
 std::ostream&>
 operator<<(std::ostream& os, maybe<T> const& may) {
   using namespace std::string_literals;
-  using namespace std::string_view_literals;
   auto inner_format = boost::hana::fix(boost::hana::overload_linearly(
 	  [](auto, auto const& x) -> std::enable_if_t<trait::formattable_element<std::decay_t<decltype(x)>>::value, std::string> {
 		return boost::hana::overload_linearly(
 		  [](std::monostate) { return "()"s; },
-		  [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
-		  [](auto const& x) { return (boost::format("%1%") % x).str(); })
-		(x);
+		  [](std::string_view x) { return std::format("\"{}\"", x); },
+			[](auto const& x) {
+				std::stringstream ss; ss << x;
+				return std::format("{}", ss.str());
+			})
+			(x);
 	  },
 	  [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_dictionary<std::decay_t<decltype(x)>>::value, std::string> {
 		if (x.empty()) return "{}"s;
 		using std::begin, std::end;
 		auto iter = begin(x);
-		std::string str = "{"s + (boost::format("%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
+		std::string str = "{"s + std::format("{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
 		while (++iter != end(x)) {
-		  str += (boost::format(",%1%: %2%") % _fmt(std::get<0>(*iter)) % _fmt(std::get<1>(*iter))).str();
+		  str += std::format(",{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
 		}
 		return str += "}";
 	  },
@@ -1080,7 +1082,7 @@ operator<<(std::ostream& os, maybe<T> const& may) {
 		auto iter = begin(x);
 		std::string str = "["s + _fmt(*iter);
 		while (++iter != end(x)) {
-		  str += (boost::format(",%1%") % _fmt(*iter)).str();
+		  str += std::format(",{}", _fmt(*iter));
 		}
 		return str += "]";
 	  },
@@ -1096,8 +1098,8 @@ operator<<(std::ostream& os, maybe<T> const& may) {
 		}
 	  }));
   return may.is_just()
-    ? os << boost::format("just(%1%)") % inner_format( may.unwrap() )
-		: os << "nothing"sv;
+    ? os << std::format("just({})", inner_format(may.unwrap()))
+		: os << "nothing"s;
 }
 
 }

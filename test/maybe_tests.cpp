@@ -4,10 +4,8 @@
 #include <mitama/result/result_io.hpp>
 #include <mitama/maybe/maybe.hpp>
 #include <mitama/maybe/range_to_maybe.hpp>
-
-#include <boost/xpressive/xpressive.hpp>
-
 #include <string>
+#include <numeric>
 
 using namespace mitama;
 using namespace std::string_literals;
@@ -39,13 +37,8 @@ TEST_CASE("unwrap()", "[maybe][unwrap]"){
   }
   catch (runtime_panic const &p)
   {
-    using namespace boost::xpressive;
-    sregex re =
-        as_xpr(
-            "runtime panicked at 'called `maybe::unwrap()` on a `nothing` value', ") >>
-        *_ >> as_xpr(":") >> +range('0', '9');
-    smatch what;
-    REQUIRE(regex_match(std::string{p.what()}, what, re));
+    std::regex re(R"(runtime panicked at 'called `maybe::unwrap()` on a `nothing` value', .*:[0-9]+)");
+    REQUIRE(std::regex_match(std::string{p.what()}, re));
   }
 }
 
@@ -60,13 +53,8 @@ TEST_CASE("expect()", "[maybe][expect]"){
   }
   catch (runtime_panic const &p)
   {
-    using namespace boost::xpressive;
-    sregex re =
-        as_xpr(
-            "runtime panicked at 'the world is ending', ") >>
-        *_ >> as_xpr(":") >> +range('0', '9');
-    smatch what;
-    REQUIRE(regex_match(std::string{p.what()}, what, re));
+    std::regex re("runtime panicked at 'the world is ending', .*:[0-9]+");
+    REQUIRE(std::regex_match(std::string{p.what()}, re));
   }
 }
 

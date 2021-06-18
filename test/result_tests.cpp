@@ -6,29 +6,26 @@
 #include <mitama/result/result_io.hpp>
 #include <utest_utility/is_invalid_expr.hpp>
 
-#include <boost/hana/assert.hpp>
 #include <boost/hana/functional/overload.hpp>
-#include <boost/lambda/lambda.hpp>
-#include <boost/xpressive/xpressive.hpp>
 #include <boost/type_index.hpp>
+#include <boost/lambda/lambda.hpp>
 #include <functional>
-#include <cstdint>
-#include <iostream>
-#include <regex>
 #include <stdexcept>
-#include <string>
+#include <iostream>
 #include <cassert>
+#include <cstdint>
+#include <format>
 #include <memory>
+#include <string>
+#include <regex>
 #include <array>
 #include <map>
 
-using namespace boost::xpressive;
 using namespace mitama;
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 namespace hana = boost::hana;
-using boost::lambda::_1;
-using boost::lambda::_2;
+using boost::lambda::_1, boost::lambda::_2;
 
 using str = std::string;
 using u32 = std::uint32_t;
@@ -52,14 +49,12 @@ auto parse = [](str s) -> result<T, str> {
   try
   {
     if (std::is_integral_v<T>){
-      using namespace boost::xpressive;
-      sregex re1 = +range('0', '9');
-      smatch what;
-      if (!regex_match(s, what, re1))
+      std::regex re1("[0-9]");
+      if (!std::regex_match(s, re1))
         return failure("parse error at string: "s + s);
       if constexpr (std::is_unsigned_v<T>) {
-        sregex re2 = as_xpr("-") >> +range('0', '9');
-        if (regex_match(s, what, re1))
+        std::regex re2("-[0-9]");
+        if (!std::regex_match(s, re2))
           return failure("negative value: "s + s);
       };
       if constexpr (std::is_same_v<T, int>)
@@ -351,13 +346,8 @@ TEST_CASE("unwrap() test", "[result][unwrap]"){
   }
   catch (runtime_panic const &p)
   {
-    using namespace boost::xpressive;
-    sregex re =
-        as_xpr(
-            "runtime panicked at 'called `basic_result::unwrap()` on a value: `failure(\"emergency failure\")`', ") >>
-        *_ >> as_xpr(":") >> +range('0', '9') >> 	_n >> _n >> as_xpr("stacktrace:") >> +(_n | ~_n);
-    smatch what;
-    REQUIRE(regex_match(std::string{p.what()}, what, re));
+    std::regex re(R"(runtime panicked at 'called `basic_result::unwrap()` on a value: `failure("emergency failure")`', .*:[0-9]+\n\nstacktrace: .*)");
+    REQUIRE(std::regex_match(std::string{p.what()}, re));
   }
 }
 
@@ -368,13 +358,8 @@ TEST_CASE("unwrap_err() test", "[result][unwrap_err]"){
   }
   catch (runtime_panic const &p)
   {
-    using namespace boost::xpressive;
-    sregex re =
-        as_xpr(
-            R"(runtime panicked at 'called `basic_result::unwrap_err()` on a value: `success(2)`', )") >>
-        *_ >> as_xpr(":") >> +range('0', '9') >> 	_n >> _n >> as_xpr("stacktrace:") >> +(_n | ~_n);
-    smatch what;
-    REQUIRE(regex_match(std::string{p.what()}, what, re));
+    std::regex re(R"(runtime panicked at 'called `basic_result::unwrap()` on a value: `success(2)`', .*:[0-9]+\n\nstacktrace: .*)");
+    REQUIRE(std::regex_match(std::string{ p.what() }, re));
   }
 
   {
@@ -562,10 +547,18 @@ TEST_CASE("format test", "[result][format]"){
   }
   SECTION("replace"){
     using namespace std::literals;
-    auto res = mut_result<int, std::vector<int>>{in_place_err, {1,2,3}};
-    REQUIRE((boost::format("%1%") % res).str() == "failure([1,2,3])"s);
-    res = success(1);
-    REQUIRE((boost::format("%1%") % res).str() ==  "success(1)"s);
+    {
+      auto res = mut_result<int, std::vector<int>>{ in_place_err, {1,2,3} };
+      std::stringstream ss;
+      ss << res;
+      REQUIRE(ss.str() == "failure([1,2,3])"s);
+    }
+    {
+      auto res = success(1);
+      std::stringstream ss;
+      ss << res;
+      REQUIRE(ss.str() == "success(1)"s);
+    }
   }
 }
 

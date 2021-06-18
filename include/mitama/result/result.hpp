@@ -11,7 +11,6 @@
 #include <boost/hana/functional/overload_linearly.hpp>
 #include <boost/hana/functional/fix.hpp>
 #include <boost/hana/functional/id.hpp>
-#include <boost/format.hpp>
 
 #include <functional>
 #include <optional>
@@ -19,6 +18,7 @@
 #include <type_traits>
 #include <utility>
 #include <string_view>
+#include <format>
 
 namespace mitama {
 
@@ -1054,7 +1054,8 @@ public:
         return std::get<success_t<T>>(storage_).get();
       }
       else {
-        PANIC("called `basic_result::unwrap()` on a value: `%1%`", std::get<failure_t<E>>(storage_));
+        std::stringstream ss; ss << std::get<failure_t<E>>(storage_);
+        PANIC("called `basic_result::unwrap()` on a value: `{}`", ss.str());
       }      
     }
     else {
@@ -1079,7 +1080,8 @@ public:
         return std::get<success_t<T>>(storage_).get();
       }
       else {
-        PANIC("called `basic_result::unwrap()` on a value: `%1%`", std::get<failure_t<E>>(storage_));
+        std::stringstream ss; ss << std::get<failure_t<E>>(storage_);
+        PANIC("called `basic_result::unwrap()` on a value: `{}`", ss.str());
       }      
     }
     else {
@@ -1104,7 +1106,8 @@ public:
         return std::get<failure_t<E>>(storage_).get();
       }
       else {
-        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", std::get<success_t<T>>(storage_));
+        std::stringstream ss; ss << std::get<success_t<T>>(storage_);
+        PANIC("called `basic_result::unwrap_err()` on a value: `{}`", ss.str());
       }
     }
     else {
@@ -1129,7 +1132,8 @@ public:
         return std::get<failure_t<E>>(storage_).get();
       }
       else {
-        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", std::get<success_t<T>>(storage_));
+        std::stringstream ss; ss << std::get<success_t<T>>(storage_);
+        PANIC("called `basic_result::unwrap_err()` on a value: `{}`", ss.str());
       }
     }
     else {
@@ -1149,8 +1153,10 @@ public:
   ///   Panics if the value is an failure, with a panic message including the passed message, and the content of the failure.
   force_add_const_t<T>&
   expect(std::string_view msg) const& {
-    if ( is_err() )
-      PANIC("%1%: %2%", msg, unwrap_err());
+    if (is_err()) {
+      std::stringstream ss; ss << unwrap_err();
+      PANIC("{}: {}", msg, ss.str());
+    }
     else
       return unwrap();
   }
@@ -1162,8 +1168,10 @@ public:
   ///   Panics if the value is an failure, with a panic message including the passed message, and the content of the failure.
   decltype(auto)
   expect(std::string_view msg) & {
-    if ( is_err() )
-      PANIC("%1%: %2%", msg, unwrap_err());
+    if (is_err()) {
+      std::stringstream ss; ss << unwrap_err();
+      PANIC("{}: {}", msg, ss.str());
+    }
     else
       return unwrap();
   }
@@ -1175,8 +1183,10 @@ public:
   ///   Panics if the value is an success, with a panic message including the passed message, and the content of the success.
   force_add_const_t<E>&
   expect_err(std::string_view msg) const& {
-    if ( is_ok() )
-      PANIC("%1%: %2%", msg, unwrap());
+    if (is_ok()) {
+      std::stringstream ss; ss << unwrap();
+      PANIC("{}: {}", msg, ss.str());
+    }
     else
       return unwrap_err();
   }
@@ -1188,8 +1198,10 @@ public:
   ///   Panics if the value is an success, with a panic message including the passed message, and the content of the success.
   decltype(auto)
   expect_err(std::string_view msg) & {
-    if ( is_ok() )
-      PANIC("%1%: %2%", msg, unwrap());
+    if (is_ok()) {
+      std::stringstream ss; ss << unwrap();
+      PANIC("{}: {}", msg, ss.str());
+    }
     else
       return unwrap_err();
   }
