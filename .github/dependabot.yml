@@ -21,11 +21,4 @@ updates:
       - LoliGothick
     assignees:
       - LoliGothick
-  - package-ecosystem: "pip" # poetry
-    directory: "/docs"
-    schedule:
-      interval: "daily"
-    reviewers:
-      - LoliGothick
-    assignees:
-      - LoliGothick
+

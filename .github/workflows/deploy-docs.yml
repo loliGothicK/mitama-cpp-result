@@ -12,12 +12,12 @@ jobs:
     - run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
 
     - name: Set up Python
-      uses: actions/setup-python@v2.2.1
+      uses: actions/setup-python@v2.2.2
       with:
         python-version: '3.8'
 
     - name: Restore & Cache Poetry and Dependences
-      uses: actions/cache@v2.1.4
+      uses: actions/cache@v2.1.6
       id: poetry-cache
       with:
         path: |
