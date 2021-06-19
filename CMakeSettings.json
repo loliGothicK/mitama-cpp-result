@@ -1,0 +1,50 @@
+﻿{
+  "configurations": [
+    {
+      "name": "x64-Debug",
+      "generator": "Ninja",
+      "configurationType": "Release",
+      "inheritEnvironments": [ "msvc_x64" ],
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "buildCommandArgs": "-v",
+      "ctestCommandArgs": "",
+      "variables": [
+        {
+          "name": "Boost_INCLUDE_DIR",
+          "value": "C:/local/boost_1_71_0",
+          "type": "PATH"
+        },
+        {
+          "name": "Boost_LIBRARY_DIR",
+          "value": "C:/local/boost_1_71_0/lib64-msvc-14.2",
+          "type": "UNINITIALIZED"
+        },
+        {
+          "name": "BUILD_TESTING",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ],
+      "cmakeCommandArgs": "-DMSVC=TRUE"
+    },
+    {
+      "name": "x64-Release",
+      "generator": "Ninja",
+      "configurationType": "RelWithDebInfo",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "-DMSVC=TRUE",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "variables": [
+        {
+          "name": "BUILD_TESTING",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
+    }
+  ]
+}

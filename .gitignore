@@ -31,5 +31,13 @@
 *.out
 *.app
 
+# Manual build output directories
 /build/
 /site/
+
+# Visual Studio output directories
+/out/
+
+# Clion output directories
+/cmake-*/
+/.idea/
