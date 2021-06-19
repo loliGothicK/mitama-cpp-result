@@ -20,6 +20,7 @@
 #include <regex>
 #include <array>
 #include <map>
+#include "actual.hpp"
 
 using namespace mitama;
 using namespace std::string_literals;
@@ -49,11 +50,11 @@ auto parse = [](str s) -> result<T, str> {
   try
   {
     if (std::is_integral_v<T>){
-      std::regex re1("[0-9]");
+      std::regex re1("[0-9]+");
       if (!std::regex_match(s, re1))
         return failure("parse error at string: "s + s);
       if constexpr (std::is_unsigned_v<T>) {
-        std::regex re2("-[0-9]");
+        std::regex re2("-[0-9]+");
         if (!std::regex_match(s, re2))
           return failure("negative value: "s + s);
       };
@@ -346,8 +347,13 @@ TEST_CASE("unwrap() test", "[result][unwrap]"){
   }
   catch (runtime_panic const &p)
   {
-    std::regex re(R"(runtime panicked at 'called `basic_result::unwrap()` on a value: `failure("emergency failure")`', .*:[0-9]+\n\nstacktrace: .*)");
-    REQUIRE(std::regex_match(std::string{p.what()}, re));
+    std::regex re(
+        R"(runtime panicked at 'called `basic_result::unwrap\(\)` on a value: `failure\("emergency failure"\)`', )"
+        R"(.*hpp:[0-9]+[\r\n|\r|\n]{2})"
+        R"(stacktrace:[\s\S]*)"
+    );
+    mitama::actual act = { std::regex_match(std::string{p.what()}, re), p.what() };
+    REQUIRE(act);
   }
 }
 
@@ -358,7 +364,11 @@ TEST_CASE("unwrap_err() test", "[result][unwrap_err]"){
   }
   catch (runtime_panic const &p)
   {
-    std::regex re(R"(runtime panicked at 'called `basic_result::unwrap()` on a value: `success(2)`', .*:[0-9]+\n\nstacktrace: .*)");
+    std::regex re(
+        R"(runtime panicked at 'called `basic_result::unwrap_err\(\)` on a value: `success\(2\)`', )"
+        R"(.*hpp:[0-9]+[\r\n|\r|\n]{2})"
+        R"(stacktrace:[\s\S]*)"
+    );
     REQUIRE(std::regex_match(std::string{ p.what() }, re));
   }
 
@@ -1279,6 +1289,7 @@ TEST_CASE("map & map_err with void", "[result][map][map_err][void]"){
     REQUIRE(val == 6);
 }
 
+#ifndef _MSC_VER
 TEST_CASE("MITAMA_TRY", "[result][mitama_try]"){
     auto func =
         []() -> result<u32, str> {
@@ -1308,3 +1319,4 @@ TEST_CASE("MITAMA_TRY2", "[result][mitama_try]"){
     return mitama::failure();
   }();
 }
+#endif
