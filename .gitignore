@@ -35,9 +35,10 @@
 /build/
 /site/
 
-# Visual Studio output directories
+# Visual Studio
 /out/
+/.vs/
 
-# Clion output directories
+# Clion
 /cmake-*/
 /.idea/
