@@ -6,6 +6,7 @@
 #include <mitama/maybe/range_to_maybe.hpp>
 #include <string>
 #include <numeric>
+#include "actual.hpp"
 
 using namespace mitama;
 using namespace std::string_literals;
@@ -37,8 +38,9 @@ TEST_CASE("unwrap()", "[maybe][unwrap]"){
   }
   catch (runtime_panic const &p)
   {
-    std::regex re(R"(runtime panicked at 'called `maybe::unwrap()` on a `nothing` value', .*:[0-9]+)");
-    REQUIRE(std::regex_match(std::string{p.what()}, re));
+    std::regex re(R"(runtime panicked at called '`maybe::unwrap\(\)` on a `nothing` value', .+[0-9]+)");
+    mitama::actual act = { std::regex_match(std::string{p.what()}, re), p.what() };
+    REQUIRE(act);
   }
 }
 
@@ -53,8 +55,9 @@ TEST_CASE("expect()", "[maybe][expect]"){
   }
   catch (runtime_panic const &p)
   {
-    std::regex re("runtime panicked at 'the world is ending', .*:[0-9]+");
-    REQUIRE(std::regex_match(std::string{p.what()}, re));
+    std::regex re(R"(runtime panicked at 'the world is ending', .+hpp:[0-9]+)");
+    mitama::actual act = {std::regex_match(std::string{p.what()}, re), p.what()};
+    REQUIRE(act);
   }
 }
 

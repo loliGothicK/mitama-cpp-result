@@ -288,20 +288,20 @@ public:
 
 	value_type& unwrap() & {
 		if (is_nothing())
-			PANIC("called `maybe::unwrap()` on a `nothing` value");
+			PANIC("called '`maybe::unwrap()` on a `nothing` value'");
 		return std::get<just_t<T>>(storage_).get();
 	}
 
 	std::add_const_t<std::remove_reference_t<T>>&
 	unwrap() const& {
 		if (is_nothing())
-			PANIC("called `maybe::unwrap()` on a `nothing` value");
+			PANIC("called '`maybe::unwrap()` on a `nothing` value'");
 		return std::get<just_t<T>>(storage_).get();
 	}
 
 	value_type unwrap() && {
 		if (is_nothing())
-			PANIC("called `maybe::unwrap()` on a `nothing` value");
+			PANIC("called '`maybe::unwrap()` on a `nothing` value'");
 		return std::move(std::get<just_t<T>>(storage_).get());
 	}
 
@@ -503,7 +503,7 @@ public:
 			return unwrap();
 		}
 		else {
-			PANIC("{}", msg);
+			PANIC("'{}'", msg);
 		}
 	}
 
@@ -512,7 +512,7 @@ public:
 			return unwrap();
 		}
 		else {
-			PANIC("{}", msg);
+			PANIC("'{}'", msg);
 		}
 	}
 
@@ -521,7 +521,7 @@ public:
 			return std::move(unwrap());
 		}
 		else {
-			PANIC("{}", msg);
+			PANIC("'{}'", msg);
 		}
 	}
 

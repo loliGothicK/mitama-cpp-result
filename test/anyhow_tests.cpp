@@ -26,6 +26,7 @@ TEST_CASE("with context", "[anyhow][context]") {
   REQUIRE(ctx.is_err());
 }
 
+#ifndef _MSC_VER
 TEST_CASE("try with context", "[anyhow][context]") {
   auto res = []() -> anyhow::result<int> {
     anyhow::result<int> res = mitama::failure(anyhow::anyhow("unknown error occurred"s));
@@ -37,6 +38,7 @@ TEST_CASE("try with context", "[anyhow][context]") {
   REQUIRE(res.is_err());
   std::cout << res << std::endl;
 }
+#endif
 
 class data_store_error {
 public:

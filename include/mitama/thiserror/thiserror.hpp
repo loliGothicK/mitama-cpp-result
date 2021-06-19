@@ -35,7 +35,7 @@ namespace mitama::thiserror {
   template<fixed_string Fmt, class ...Sources>
   class error
     : public anyhow::error
-    , std::enable_shared_from_this<error<Fmt, Sources...>>
+    , public std::enable_shared_from_this<error<Fmt, Sources...>>
   {
     using Self = error<Fmt, Sources...>;
   public:

@@ -33,7 +33,7 @@ public:
   template <class... Args>
   explicit runtime_panic(macro_use_tag_t, const char *func, int line, std::string_view fmt, Args &&... args) noexcept
        : std::runtime_error(
-         std::format("runtime panicked at {}, {}:\n{}", func, line, std::format(fmt,
+         std::format("runtime panicked at {2}, {0}:{1}", func, line, std::format(fmt,
            ([](auto&& arg [[maybe_unused]] ) -> decltype(auto) {
              using namespace std::string_view_literals;
              if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, std::monostate>) {
@@ -48,16 +48,17 @@ public:
   template <class StackTrace, class... Args>
   explicit runtime_panic(stacktarce_use_tag_t, const char *func, int line, StackTrace&& st, std::string_view fmt, Args &&... args) noexcept
     : std::runtime_error(
-      std::format("runtime panicked at {}, {}:\n{}\n\nstacktraec:\n{}", func, line, std::format(fmt,
-        ([](auto&& arg [[maybe_unused]] ) -> decltype(auto) {
-          using namespace std::string_view_literals;
-          if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, std::monostate>) {
-            return "()"sv;
-          }
-          else {
-            return std::forward<decltype(arg)>(arg);
-          }
-          }(std::forward<Args>(args)))...), [&] { std::stringstream ss; ss << st; return ss.str(); }()))
+      std::format("runtime panicked at '{2}', {0}:{1}\n\nstacktrace:\n{3}", func, line, std::format(fmt,
+        ([](auto&& arg [[maybe_unused]] ) -> decltype(auto)
+            {
+              using namespace std::string_view_literals;
+              if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, std::monostate>) {
+                return "()"sv;
+              } else {
+                return std::forward<decltype(arg)>(arg);
+              }
+            }(std::forward<Args>(args)))...),
+          [&] { std::stringstream ss; ss << st; return ss.str(); }()))
   {}
 #endif
 };
