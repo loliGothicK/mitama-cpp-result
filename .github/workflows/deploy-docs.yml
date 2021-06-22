@@ -24,6 +24,7 @@ jobs:
           ~/.poetry
           ~/.cache/pypoetry
         key: ${{ hashFiles('docs/poetry.lock') }}
+
     - name: poetry install
       if: steps.poetry-cache.outputs.cache-hit != 'true'
       run: |

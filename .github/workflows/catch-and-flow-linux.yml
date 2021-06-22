@@ -11,6 +11,7 @@ on:
 
 env:
   BOOST_VERSION: 1.75.0
+  FMTLIB_VERSION: 8.0.0
 
 jobs:
   catch_and_flow:
@@ -53,22 +54,24 @@ jobs:
       - uses: actions/checkout@v1
       - run: git submodule update --init --recursive
       - run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+
       - name: Install ${{ matrix.config.cc }}
         run: |
           sudo add-apt-repository universe
           sudo apt-get -qq update
-          sudo apt-get install -y -qq pkg-config cmake libfmt-dev ${{ matrix.config.cc }}
+          sudo apt-get install -y -qq pkg-config cmake ${{ matrix.config.cc }}
 
-      - name: Clang Version
+      - name: Compiler Version
         run: ${{ matrix.config.cxx }} --version
 
-      - name: Restore & Cache boost (${{ env.BOOST_VERSION }})
+      - name: Restore & Cache boost-${{ env.BOOST_VERSION }}
         uses: actions/cache@v1
         id: boost-cache
         with:
           path: ${{ runner.temp }}/libs/boost
           key: ${{ matrix.config.name }}-boost-${{ env.BOOST_VERSION }}
-      - name: Install boost (${{ env.BOOST_VERSION }}) as static
+
+      - name: Install boost$-{{ env.BOOST_VERSION }} as static
         if: steps.boost-cache.outputs.cache-hit != 'true'
         run: |
           mkdir -p ${{ runner.temp }}/libs/boost
@@ -78,12 +81,31 @@ jobs:
           sudo ./b2 link=static install -j2 --prefix=${{ runner.temp }}/libs/boost || exit 0
         working-directory: ${{ runner.temp }}
 
+      - name: Restore & Cache {fmt}-${{ env.FMTLIB_VERSION }}
+        uses: actions/cache@v1
+        id: fmtlib-cache
+        with:
+          path: ${{ runner.temp }}/libs/fmtlib
+          key: ${{ matrix.config.name }}-fmtlib-${{ env.FMTLIB_VERSION }}
+
+      - name: Install {fmt}-${{ env.FMTLIB_VERSION }}
+        if: steps.fmtlib-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ${{ runner.temp }}/libs/fmtlib
+          git clone -q --recursive https://github.com/fmtlib/fmt
+          cd fmt && git checkout ${{ env.FMTLIB_VERSION }}
+          mkdir build -p && cd build
+          cmake -DBUILD_SHARED_LIBS=TRUE -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/libs/fmtlib ..
+          make -j4 && sudo make install || exit 0
+        working-directory: ${{ runner.temp }}
+
       - name: Build and test
         run: |
           mkdir build && cd build
           cmake ..             \
             -DBUILD_TESTING=ON \
             -DBoost_USE_STATIC_LIBS=ON \
-            -DBOOST_ROOT=${{ runner.temp }}/libs/boost
+            -DBOOST_ROOT=${{ runner.temp }}/libs/boost \
+            -DFMT_ROOT=${{ runner.temp }}/libs/fmtlib
           make
           make test

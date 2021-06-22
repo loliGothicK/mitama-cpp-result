@@ -6,13 +6,17 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  FMTLIB_VERSION: 8.0.0
+
 jobs:
   full_test:
     runs-on: ubuntu-20.04
     strategy:
-      matrix: # 13 boost version * 7 compiler version = 91 jobs
-        boost_version: [ 1.67.0, 1.68.0, 1.69.0, 1.70.0,
-                         1.71.0, 1.72.0, 1.73.0, 1.74.0, 1.75.0 ]
+      matrix:
+        boost_version: [         1.67.0, 1.68.0, 1.69.0, 1.70.0,
+                         1.71.0, 1.72.0, 1.73.0, 1.74.0, 1.75.0,
+                         1.76.0 ]
         config:
           - {
             name: "Latest Version of GCC 8.x",
@@ -50,8 +54,8 @@ jobs:
       - run: git submodule update --init --recursive
       - run: sudo apt-get -qq update
 
-      - name: Install Specific Compiler (${{ matrix.config.cc }})
-        run: sudo apt-get install -y -qq pkg-config cmake libfmt-dev ${{ matrix.config.cc }}
+      - name: Install ${{ matrix.config.cc }}
+        run: sudo apt-get install -y -qq pkg-config cmake ${{ matrix.config.cc }}
 
       - name: Restore & Cache boost (${{ matrix.boost_version }})
         uses: actions/cache@v1
@@ -69,12 +73,31 @@ jobs:
           sudo ./b2 link=static install -j2 --prefix=${{ runner.temp }}/libs/boost || exit 0
         working-directory: ${{ runner.temp }}
 
+      - name: Restore & Cache {fmt}
+        uses: actions/cache@v1
+        id: fmtlib-cache
+        with:
+          path: ${{ runner.temp }}/libs/fmtlib
+          key: ${{ matrix.config.name }}-fmtlib-${{ env.FMTLIB_VERSION }}
+
+      - name: Install {fmt}
+        if: steps.fmtlib-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ${{ runner.temp }}/libs/fmtlib
+          git clone -q --recursive https://github.com/fmtlib/fmt
+          cd fmt && git checkout ${{ env.FMTLIB_VERSION }}
+          mkdir build -p && cd build
+          cmake -DBUILD_SHARED_LIBS=TRUE -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/libs/fmtlib ..
+          make -j4 && sudo make install || exit 0
+        working-directory: ${{ runner.temp }}
+
       - name: Build and test
         run: |
           mkdir build && cd build
           cmake ..             \
             -DBUILD_TESTING=ON \
             -DBoost_USE_STATIC_LIBS=ON \
-            -DBOOST_ROOT=${{ runner.temp }}/libs/boost
+            -DBOOST_ROOT=${{ runner.temp }}/libs/boost \
+            -DFMT_ROOT=${{ runner.temp }}/libs/fmtlib
           make
           make test

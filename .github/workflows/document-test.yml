@@ -11,7 +11,7 @@ on:
 
 env:
   BOOST_VERSION: 1.75.0
-  FMT_VERSION: 7.1.3
+  FMTLIB_VERSION: 8.0.0
 
 jobs:
   doc_test:
@@ -35,36 +35,39 @@ jobs:
       - run: git submodule update --init --recursive
       - run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
       - run: sudo apt-get -qq update
+ 
       - name: Install ${{ matrix.config.cc }}
         run: sudo apt-get install -y -qq pkg-config cmake ${{ matrix.config.cc }}
 
-      - name: Clang Version
+      - name: Compiler Version
         run: ${{ matrix.config.cxx }} --version
 
       - name: Restore & Cache {fmt}
         uses: actions/cache@v1
-        id: fmt-cache
+        id: fmtlib-cache
         with:
-          path: ${{ runner.temp }}/libs/fmt
-          key: ${{ matrix.config.name }}-fmt-${{ env.FMT_VERSION }}
-      - name: Install fmt
-        if: steps.fmt-cache.outputs.cache-hit != 'true'
+          path: ${{ runner.temp }}/libs/fmtlib
+          key: ${{ matrix.config.name }}-fmtlib-${{ env.FMTLIB_VERSION }}
+
+      - name: Install {fmt}-${{ env.FMTLIB_VERSION }}
+        if: steps.fmtlib-cache.outputs.cache-hit != 'true'
         run: |
-          mkdir -p ${{ runner.temp }}/libs/fmt
-          git clone -q -b ${{ env.FMT_VERSION }} --recursive https://github.com/fmtlib/fmt.git
-          cd fmt
-          mkdir build && cd build
-          cmake -DBUILD_SHARED_LIBS=TRUE -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/libs/fmt ..
+          mkdir -p ${{ runner.temp }}/libs/fmtlib
+          git clone -q --recursive https://github.com/fmtlib/fmt
+          cd fmt && git checkout ${{ env.FMTLIB_VERSION }}
+          mkdir build -p && cd build
+          cmake -DBUILD_SHARED_LIBS=TRUE -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/libs/fmtlib ..
           make -j4 && sudo make install || exit 0
         working-directory: ${{ runner.temp }}
 
-      - name: Restore & Cache boost (${{ env.BOOST_VERSION }})
+      - name: Restore & Cache boost-${{ env.BOOST_VERSION }}
         uses: actions/cache@v1
         id: boost-cache
         with:
           path: ${{ runner.temp }}/libs/boost
           key: ${{ matrix.config.name }}-boost-${{ env.BOOST_VERSION }}
-      - name: Install boost (${{ env.BOOST_VERSION }}) as static
+
+      - name: Install boost-${{ env.BOOST_VERSION }} as static
         if: steps.boost-cache.outputs.cache-hit != 'true'
         run: |
           mkdir -p ${{ runner.temp }}/libs/boost
@@ -83,7 +86,7 @@ jobs:
           unzip x86_64-unknown-linux-musl.zip
           sed -i 's#__COMPILER__#${{ matrix.config.cxx }}#g' config.toml
           sed -i 's#__BOOST_ROOT__#${{ runner.temp }}/libs/boost#g' config.toml
-          sed -i 's#__LIBFMT_SO__#${{ runner.temp }}/libs/fmt/lib/libfmt.so#g' config.toml
+          sed -i 's#__LIBFMT_SO__#${{ runner.temp }}/libs/fmtlib/lib/libfmt.so#g' config.toml
           sed -i 's#__FMT_INCLUDE_DIR__#${{ runner.temp }}/libs/fmt/include#g' config.toml
           export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${{ runner.temp }}/libs/fmt/lib/
           x86_64-unknown-linux-musl/release/mkdocs-smoke-test --directory=docs --config=./config.toml
