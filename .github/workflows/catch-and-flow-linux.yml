@@ -12,6 +12,7 @@ on:
 env:
   BOOST_VERSION: 1.75.0
   FMTLIB_VERSION: 8.0.0
+  CATCH2_VERSION: v3.0.0-preview3
 
 jobs:
   catch_and_flow:
@@ -99,13 +100,32 @@ jobs:
           make -j4 && sudo make install || exit 0
         working-directory: ${{ runner.temp }}
 
+      - name: Restore & Cache Catch2-${{ env.CATCH2_VERSION }}
+        uses: actions/cache@v1
+        id: catch2-cache
+        with:
+          path: ${{ runner.temp }}/libs/catch2
+          key: ${{ matrix.config.name }}-catch2-${{ env.CATCH2_VERSION }}
+
+      - name: Install Catch2-${{ env.CATCH2_VERSION }}
+        if: steps.catch2-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ${{ runner.temp }}/libs/catch2
+          git clone -q --recursive https://github.com/catchorg/Catch2
+          cd Catch2 && git checkout ${{ env.CATCH2_VERSION }}
+          mkdir build -p && cd build
+          cmake -DCMAKE_INSTALL_PREFIX=${{ runner.temp }}/libs/catch2 ..
+          make -j4 && sudo make install || exit 0
+        working-directory: ${{ runner.temp }}
+
       - name: Build and test
         run: |
           mkdir build && cd build
-          cmake ..             \
-            -DBUILD_TESTING=ON \
+          cmake ..                   \
+            -DBUILD_TESTING=ON        \
             -DBoost_USE_STATIC_LIBS=ON \
-            -DBOOST_ROOT=${{ runner.temp }}/libs/boost \
-            -DFMT_ROOT=${{ runner.temp }}/libs/fmtlib
+            -DFMT_ROOT=${{ runner.temp }}/libs/fmtlib  \
+            -DBOOST_ROOT=${{ runner.temp }}/libs/boost  \
+            -DCATCH2_ROOT=${{ runner.temp }}/libs/catch2 \
           make
           make test
