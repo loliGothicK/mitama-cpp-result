@@ -1,7 +1,9 @@
+#ifdef _MSC_VER
 #define CATCH_CONFIG_MAIN
-
 #include <catch2/catch.hpp>
-
+#else
+#include <catch2/catch_all.hpp>
+#endif
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
 #include <mitama/anyhow/anyhow.hpp>
@@ -40,17 +42,33 @@ TEST_CASE("try with context", "[anyhow][context]") {
 }
 #endif
 
+#if CPP20_THISERROR
 class data_store_error {
 public:
-  using disconnect
-    = mitama::thiserror::error<"data store disconnected">;
-  using redaction
-    = mitama::thiserror::error<"for key `{0}` isn't available", std::string>;
-  using invalid_header
-    = mitama::thiserror::error<"(expected {0}, found {1})", std::string, std::string>;
-  using unknown
-    = mitama::thiserror::error<"unknown data store error">;
+    using disconnect
+        = mitama::thiserror::error<"data store disconnected">;
+    using redaction
+        = mitama::thiserror::error<"for key `{0}` isn't available", std::string>;
+    using invalid_header
+        = mitama::thiserror::error<"(expected {0}, found {1})", std::string, std::string>;
+    using unknown
+        = mitama::thiserror::error<"unknown data store error">;
 };
+#else
+class data_store_error {
+    template <class S, class ...T>
+    using error = mitama::thiserror::error<S, T...>;
+public:
+    using disconnect
+        = error<MITAMA_ERROR("data store disconnected")>;
+    using redaction
+        = error<MITAMA_ERROR("for key `{0}` isn't available"), std::string>;
+    using invalid_header
+        = error<MITAMA_ERROR("(expected {0}, found {1})"), std::string, std::string>;
+    using unknown
+        = error<MITAMA_ERROR("unknown data store error")>;
+};
+#endif
 
 TEST_CASE("data_store_error::disconnect", "[anyhow][thiserror]") {
   anyhow::result<int> data

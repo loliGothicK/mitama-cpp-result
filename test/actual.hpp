@@ -3,12 +3,14 @@
 
 namespace mitama {
 	template <class T>
-	requires requires (T value) { std::cout << value; }
 	struct actual {
 		bool cond;
 		T value;
 		operator bool() const { return cond; }
 	};
+
+	template <class T>
+	actual(bool, T)->actual<T>;
 
 	template <class T>
 	inline std::ostream& operator<<(std::ostream& os, actual<T> const& act) {

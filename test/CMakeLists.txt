@@ -3,11 +3,8 @@ set(TEST_NAMES
         maybe_tests
         anyhow_tests
 )
-
-find_package(Threads REQUIRED)
 set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
-
-# Find Boost
+find_package(Threads REQUIRED)
 find_package(Boost 1.67.0 REQUIRED)
 
 message($CMAKE)
@@ -17,6 +14,7 @@ message($CMAKE)
 # Microsoft .NET Framework
 # Version 4.8.04084
 if(MSVC)
+    find_package(Catch2 CONFIG REQUIRED)
     foreach(TEST_NAME ${TEST_NAMES})
         add_executable(${TEST_NAME} ${TEST_NAME}.cpp)
         set(COMMOM_FLAGS "/std:c++latest /experimental:module /Zc:__cplusplus /bigobj")
@@ -27,14 +25,14 @@ if(MSVC)
         target_include_directories(${TEST_NAME}
             PRIVATE ${Boost_INCLUDE_DIRS}
             PRIVATE ${CMAKE_SOURCE_DIR}/include
-            PRIVATE ${CMAKE_SOURCE_DIR}/Catch2/single_include
             PRIVATE ${CMAKE_SOURCE_DIR}/mitama-utest-utilities/include
         )
 
-        target_link_libraries(${TEST_NAME} ${Boost_LIBRARIES})
+        target_link_libraries(${TEST_NAME} ${Boost_LIBRARIES} Catch2::Catch2)
         add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME} WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
     endforeach ()
 else()
+    find_package(Catch2 REQUIRED)
     foreach(TEST_NAME ${TEST_NAMES})
     add_executable(${TEST_NAME} ${TEST_NAME}.cpp)
     target_compile_features(${TEST_NAME} PRIVATE cxx_std_17)
@@ -52,11 +50,10 @@ else()
     target_include_directories(${TEST_NAME}
         PRIVATE ${Boost_INCLUDE_DIRS}
         PRIVATE ${CMAKE_SOURCE_DIR}/include
-        PRIVATE ${CMAKE_SOURCE_DIR}/Catch2/single_include
         PRIVATE ${CMAKE_SOURCE_DIR}/mitama-utest-utilities/include
     )
 
-    target_link_libraries(${TEST_NAME} ${Boost_LIBRARIES} dl fmt)
+  target_link_libraries(${TEST_NAME} ${Boost_LIBRARIES} dl fmt Catch2Main Catch2)
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME} WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
     endforeach ()
 endif()

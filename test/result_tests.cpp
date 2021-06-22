@@ -1,10 +1,13 @@
+#ifdef _MSC_VER
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
+#else
+#include <catch2/catch_all.hpp>
+#endif
 #define MITAMA_PANIC_WITH_STACKTRACE
 #include <mitama/maybe/maybe.hpp>
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
-#include <utest_utility/is_invalid_expr.hpp>
 
 #include <boost/hana/functional/overload.hpp>
 #include <boost/type_index.hpp>
@@ -95,7 +98,7 @@ auto parse = [](str s) -> result<T, str> {
     }
     else
     {
-      static_assert(mitama::always_true_v<T>);
+      static_assert([]{ return true; }());
     }
   }
   catch (std::invalid_argument const &e)

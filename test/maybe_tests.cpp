@@ -1,11 +1,16 @@
+#ifdef _MSC_VER
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
+#else
+#include <catch2/catch_all.hpp>
+#endif
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
 #include <mitama/maybe/maybe.hpp>
 #include <mitama/maybe/range_to_maybe.hpp>
 #include <string>
 #include <numeric>
+#include <regex>
 #include "actual.hpp"
 
 using namespace mitama;
