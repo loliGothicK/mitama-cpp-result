@@ -632,10 +632,9 @@ operator<<(std::ostream& os, just_t<T> const& j) {
     [](auto, auto const& x) -> std::enable_if_t<trait::formattable_element<std::decay_t<decltype(x)>>::value, std::string> {
       return boost::hana::overload_linearly(
       [](std::monostate) { return "()"s; },
-      [](std::string_view x) { return std::format("\"{}\"", x); },
+      [](std::string_view x) { return ::mitama::fmt::format("\"{}\"", x); },
         [](auto const& x) {
-          std::stringstream ss; ss << x;
-          return std::format("{}", ss.str());
+          return ::mitama::fmt::format("{}", display{ x });
         })
         (x);
     },
@@ -643,9 +642,9 @@ operator<<(std::ostream& os, just_t<T> const& j) {
       if (x.empty()) return "{}"s;
       using std::begin, std::end;
       auto iter = begin(x);
-      std::string str = "{"s + std::format("{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
+      std::string str = "{"s + ::mitama::fmt::format("{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
       while (++iter != end(x)) {
-      str += std::format(",{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
+      str += ::mitama::fmt::format(",{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
       }
       return str += "}";
     },
@@ -655,7 +654,7 @@ operator<<(std::ostream& os, just_t<T> const& j) {
       auto iter = begin(x);
       std::string str = "["s + _fmt(*iter);
       while (++iter != end(x)) {
-        str += std::format(",{}", _fmt(*iter));
+        str += ::mitama::fmt::format(",{}", _fmt(*iter));
       }
       return str += "]";
     },
@@ -670,7 +669,7 @@ operator<<(std::ostream& os, just_t<T> const& j) {
           }, x);
       }
     }));
-  return os << std::format("just({})", inner_format(j.get()));
+  return os << ::mitama::fmt::format("just({})", inner_format(j.get()));
 }
 
 template <class Target = void, class... Types>

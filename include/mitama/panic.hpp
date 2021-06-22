@@ -1,8 +1,8 @@
 #ifndef MITAMA_PANIC_HPP
 #define MITAMA_PANIC_HPP
 
+#include <mitama/mitamagic/format.hpp>
 #include <stdexcept>
-#include <format>
 #include <variant>
 #include <utility>
 #include <string>
@@ -28,12 +28,12 @@ class runtime_panic : public std::runtime_error
 public:
   template <class... Args>
   runtime_panic(std::string_view fmt, Args &&... args) noexcept
-      : std::runtime_error(std::format(fmt, std::forward<Args>(args)...).str()) {}
+      : std::runtime_error(::mitama::fmt::format(fmt, std::forward<Args>(args)...).str()) {}
 
   template <class... Args>
   explicit runtime_panic(macro_use_tag_t, const char *func, int line, std::string_view fmt, Args &&... args) noexcept
        : std::runtime_error(
-         std::format("runtime panicked at {2}, {0}:{1}", func, line, std::format(fmt,
+         ::mitama::fmt::format("runtime panicked at {2}, {0}:{1}", func, line, ::mitama::fmt::format(fmt,
            ([](auto&& arg [[maybe_unused]] ) -> decltype(auto) {
              using namespace std::string_view_literals;
              if constexpr (std::is_same_v<std::decay_t<decltype(arg)>, std::monostate>) {
@@ -48,7 +48,7 @@ public:
   template <class StackTrace, class... Args>
   explicit runtime_panic(stacktarce_use_tag_t, const char *func, int line, StackTrace&& st, std::string_view fmt, Args &&... args) noexcept
     : std::runtime_error(
-      std::format("runtime panicked at '{2}', {0}:{1}\n\nstacktrace:\n{3}", func, line, std::format(fmt,
+      ::mitama::fmt::format("runtime panicked at '{2}', {0}:{1}\n\nstacktrace:\n{3}", func, line, ::mitama::fmt::format(fmt,
         ([](auto&& arg [[maybe_unused]] ) -> decltype(auto)
             {
               using namespace std::string_view_literals;

@@ -1,5 +1,6 @@
 #ifndef MITAMA_RESULT_FACTORY_SUCCESS_HPP
 #define MITAMA_RESULT_FACTORY_SUCCESS_HPP
+#include <mitama/mitamagic/format.hpp>
 #include <mitama/mitamagic/is_interface_of.hpp>
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
@@ -12,7 +13,6 @@
 #include <string_view>
 #include <type_traits>
 #include <utility>
-#include <format>
 
 namespace mitama {
 /// class success_t:
@@ -477,10 +477,9 @@ public:
         [](auto, auto const& x) -> std::enable_if_t<trait::formattable_element<std::decay_t<decltype(x)>>::value, std::string> {
           return boost::hana::overload_linearly(
             [](std::monostate) { return "()"s; },
-            [](std::string_view x) { return std::format("\"{}\"", x); },
+            [](std::string_view x) { return ::mitama::fmt::format("\"{}\"", x); },
             [](auto const& x) {
-              std::stringstream ss; ss << x;
-              return std::format("{}", ss.str());
+              return ::mitama::fmt::format("{}", display{ x });
             })
             (x);
         },
@@ -488,9 +487,9 @@ public:
           if (x.empty()) return "{}"s;
           using std::begin, std::end;
           auto iter = begin(x);
-          std::string str = "{"s + std::format("{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
+          std::string str = "{"s + ::mitama::fmt::format("{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
           while (++iter != end(x)) {
-            str += std::format(",{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
+            str += ::mitama::fmt::format(",{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
           }
           return str += "}";
         },
@@ -500,7 +499,7 @@ public:
           auto iter = begin(x);
           std::string str = "["s + _fmt(*iter);
           while (++iter != end(x)) {
-            str += std::format(",{}", _fmt(*iter));
+            str += ::mitama::fmt::format(",{}", _fmt(*iter));
           }
           return str += "]";
         },
@@ -515,7 +514,7 @@ public:
               }, x);
           }
         }));
-    return os << std::format("success({})", inner_format(ok.get()));
+    return os << ::mitama::fmt::format("success({})", inner_format(ok.get()));
   }
 
 }

@@ -1,5 +1,6 @@
 #ifndef MITAMA_RESULT_RESULT_IO_HPP
 #define MITAMA_RESULT_RESULT_IO_HPP
+#include <mitama/mitamagic/format.hpp>
 #include <mitama/result/result.hpp>
 #include <boost/hana/functional/fix.hpp>
 #include <boost/hana/functional/overload.hpp>
@@ -28,10 +29,9 @@ operator<<(std::ostream& os, basic_result<_, T, E> const& res) {
       [](auto, auto const& x) -> std::enable_if_t<trait::formattable_element<std::decay_t<decltype(x)>>::value, std::string> {
         return boost::hana::overload_linearly(
           [](std::monostate) { return "()"s; },
-          [](std::string_view x) { return std::format("\"{}\"", x); },
+          [](std::string_view x) { return ::mitama::fmt::format("\"{}\"", x); },
           [](auto const& x) {
-            std::stringstream ss; ss << x;
-            return std::format("{}", ss.str());
+            return ::mitama::fmt::format("{}", display{ x });
           })
         (x);        
       },
@@ -39,9 +39,9 @@ operator<<(std::ostream& os, basic_result<_, T, E> const& res) {
         if (x.empty()) return "{}"s;
         using std::begin, std::end;
         auto iter = begin(x);
-        std::string str = "{"s + std::format("{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
+        std::string str = "{"s + ::mitama::fmt::format("{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
         while (++iter != end(x)) {
-          str += std::format(",{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
+          str += ::mitama::fmt::format(",{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter)));
         }
         return str += "}";
       },
@@ -51,7 +51,7 @@ operator<<(std::ostream& os, basic_result<_, T, E> const& res) {
         auto iter = begin(x);
         std::string str = "["s + _fmt(*iter);
         while (++iter != end(x)) {
-          str += std::format(",{}", _fmt(*iter));
+          str += ::mitama::fmt::format(",{}", _fmt(*iter));
         }
         return str += "]";
       },
@@ -66,8 +66,8 @@ operator<<(std::ostream& os, basic_result<_, T, E> const& res) {
             }, x);
         }
       }));
-  return res.is_ok() ? os << std::format("success({})", inner_format(res.unwrap()))
-                     : os << std::format("failure({})", inner_format(res.unwrap_err()));
+  return res.is_ok() ? os << ::mitama::fmt::format("success({})", inner_format(res.unwrap()))
+                     : os << ::mitama::fmt::format("failure({})", inner_format(res.unwrap_err()));
 }
 
 }

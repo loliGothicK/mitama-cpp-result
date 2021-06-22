@@ -2,6 +2,7 @@
 #define MITAMA_RESULT_HPP
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
+#include <mitama/mitamagic/format.hpp>
 #include <mitama/panic.hpp>
 #include <mitama/result/factory/success.hpp>
 #include <mitama/result/factory/failure.hpp>
@@ -18,7 +19,6 @@
 #include <type_traits>
 #include <utility>
 #include <string_view>
-#include <format>
 
 namespace mitama {
 
