@@ -5,27 +5,25 @@
 namespace mitama {
 
 namespace _result_detail {
-    template <class = void, class...>
-    struct forward_mode {};
+  template <class = void, class...>
+  struct forward_mode {};
 }
 
 /// for mutability control
 enum class mutability: bool {
-    mut = false,
-    immut = true,
+  mut = false,
+  immut = true,
 };
 
 constexpr mutability operator&&(mutability _1, mutability _2) {
-    return mutability{ !(!static_cast<bool>(_1) && !static_cast<bool>(_2)) };
+  return mutability{ !(!static_cast<bool>(_1) && !static_cast<bool>(_2)) };
 }
 
 template < mutability Mut >
 inline constexpr bool is_mut_v = !static_cast<bool>(Mut);
 
 template <class T>
-struct void_to_monostate {
-    using type = std::conditional_t<std::is_void_v<T>, std::monostate, T>;
-};
+struct void_to_monostate: std::conditional<std::is_void_v<T>, std::monostate, T> {};
 
 template <class T>
 using void_to_monostate_t = typename void_to_monostate<T>::type;
