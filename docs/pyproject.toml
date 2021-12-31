@@ -9,7 +9,7 @@ python = "^3.8"
 markdown-include = "^0.6.0"
 python-markdown-math = "^0.8"
 fontawesome-markdown = "^0.2.6"
-Pygments = "^2.7.2"
+Pygments = "^2.11.0"
 mkdocs-material = "^6.1.6"
 mkdocs-awesome-pages-plugin = "^2.4.0"
 
