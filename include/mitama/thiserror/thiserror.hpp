@@ -11,6 +11,16 @@
 #include <utility>
 
 #if __cplusplus >= 202002L
+#  ifndef MITAMA_THISERROR_ENABLE_V1
+// Disable v1 by default on C++20
+#    define MITAMA_THISERROR_ENABLE_V1 false
+#  endif
+#else
+// Enforce enabling v1 before C++20
+#  define MITAMA_THISERROR_ENABLE_V1 true
+#endif
+
+#if __cplusplus >= 202002L
 namespace mitama::thiserror { namespace v1 {
 #else
 #include <boost/metaparse/string.hpp>
@@ -18,6 +28,7 @@ namespace mitama::thiserror { namespace v1 {
 namespace mitama::thiserror { inline namespace v1 {
 #endif
 
+#if MITAMA_THISERROR_ENABLE_V1
   template <class String, class ...Sources>
   struct error;
 
@@ -53,7 +64,10 @@ namespace mitama::thiserror { inline namespace v1 {
       return ss.str();
     }
   };
+#endif
+
 }}
+
 #if __cplusplus >= 202002L
 namespace mitama::thiserror:: inline v2 {
   template<unsigned N>
