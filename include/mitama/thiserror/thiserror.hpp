@@ -11,7 +11,7 @@
 #include <utility>
 
 #if __cplusplus >= 202002L
-namespace mitama::thiserror::v1 {
+namespace mitama::thiserror { namespace v1 {
 #else
 #include <boost/metaparse/string.hpp>
 #define MITAMA_ERROR(MSG) BOOST_METAPARSE_STRING(MSG)
