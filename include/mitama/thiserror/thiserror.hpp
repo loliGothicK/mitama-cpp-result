@@ -55,7 +55,7 @@ namespace mitama::thiserror { inline namespace v1 {
   };
 }}
 #if __cplusplus >= 202002L
-namespace mitama::thiserror:: ineline v2 {
+namespace mitama::thiserror:: inline v2 {
   template<unsigned N>
   struct fixed_string {
     char buf[N + 1]{}; // null-terminated string
