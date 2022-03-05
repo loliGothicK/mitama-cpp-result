@@ -77,7 +77,7 @@ namespace mitama::thiserror:: inline v2 {
 
   // any string literal in non-template argument
   template<fixed_string Fmt, class ...Sources>
-  struct error {
+  struct error final : anyhow::error {
     static constexpr char const* fmt = Fmt;
     std::tuple<Sources...> sources;
 
