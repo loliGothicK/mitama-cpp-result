@@ -452,12 +452,10 @@ public:
   constexpr
   maybe<std::remove_reference_t<ok_type>>
   ok() const&  noexcept {
-    if (is_ok()) {
-      return maybe<std::remove_reference_t<ok_type>>(std::in_place, unwrap());
-    }
-    else {
-      return nothing;
-    }
+    if (is_ok())
+      { return maybe<std::remove_reference_t<ok_type>>(std::in_place, unwrap()); }
+    else
+      { return nothing; }
   }
 
   /// @brief
@@ -468,12 +466,10 @@ public:
   constexpr
   maybe<std::remove_reference_t<err_type>>
   err() const&  noexcept {
-    if (is_err()) {
-      return maybe<std::remove_reference_t<err_type>>(std::in_place, unwrap_err());
-    }
-    else {
-      return nothing;
-    }
+    if (is_err())
+      { return maybe<std::remove_reference_t<err_type>>(std::in_place, unwrap_err()); }
+    else
+      { return nothing; }
   }
 
   /// @brief
@@ -483,9 +479,9 @@ public:
     -> basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>
   {
     if ( is_ok() )
-      return basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>{in_place_ok, std::get<success_t<T>>(storage_).get()};
+      { return basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>{in_place_ok, std::get<success_t<T>>(storage_).get()}; }
     else
-      return basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>{in_place_err, std::get<failure_t<E>>(storage_).get()};
+      { return basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>{in_place_err, std::get<failure_t<E>>(storage_).get()}; }
   }
 
   /// @brief
@@ -506,9 +502,9 @@ public:
       "Error: result is immutable");
 
     if ( is_ok() )
-      return basic_result<mutability::immut, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_ok, std::get<success_t<T>>(storage_).get()};
+      { return basic_result<mutability::immut, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_ok, std::get<success_t<T>>(storage_).get()}; }
     else
-      return basic_result<mutability::immut, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_err, std::get<failure_t<E>>(storage_).get()};
+      { return basic_result<mutability::immut, std::remove_reference_t<T>&, std::remove_reference_t<E>&>{in_place_err, std::get<failure_t<E>>(storage_).get()}; }
   }
 
   /// @brief
@@ -1031,15 +1027,12 @@ public:
       >
     )
   {
-    if constexpr (std::is_invocable_r_v<T, O, E>) {
-      return is_ok() ? std::get<success_t<T>>(storage_).get() : std::invoke(std::forward<O>(op), std::get<failure_t<E>>(storage_).get());
-    }
-    else if constexpr (std::is_invocable_r_v<T, O>) {
-      return is_ok() ? std::get<success_t<T>>(storage_).get() : std::invoke(std::forward<O>(op));
-    }
-    else {
-      static_assert([]{ return false; }(), "invalid argument: designated function object is not invocable");
-    }
+    if constexpr (std::is_invocable_r_v<T, O, E>)
+      { return is_ok() ? std::get<success_t<T>>(storage_).get() : std::invoke(std::forward<O>(op), std::get<failure_t<E>>(storage_).get()); }
+    else if constexpr (std::is_invocable_r_v<T, O>)
+      { return is_ok() ? std::get<success_t<T>>(storage_).get() : std::invoke(std::forward<O>(op)); }
+    else
+      { static_assert([]{ return false; }(), "invalid argument: designated function object is not invocable"); }
   }
 
   /// @brief
@@ -1050,20 +1043,16 @@ public:
   force_add_const_t<T>&
   unwrap() const& {
     if constexpr (trait::formattable_element<E>::value) {
-      if ( is_ok() ) {
-        return std::get<success_t<T>>(storage_).get();
-      }
-      else {
-        PANIC("called `basic_result::unwrap()` on a value: `%1%`", std::get<failure_t<E>>(storage_));
-      }      
+      if ( is_ok() )
+        { return std::get<success_t<T>>(storage_).get(); }
+      else
+        { PANIC("called `basic_result::unwrap()` on a value: `%1%`", std::get<failure_t<E>>(storage_)); }
     }
     else {
-      if ( is_ok() ) {
-        return std::get<success_t<T>>(storage_).get();
-      }
-      else {
-        PANIC("called `basic_result::unwrap()` on a value `failure(?)`");
-      }
+      if ( is_ok() )
+        { return std::get<success_t<T>>(storage_).get(); }
+      else
+        { PANIC("called `basic_result::unwrap()` on a value `failure(?)`"); }
     }
   }
 
@@ -1075,20 +1064,16 @@ public:
   std::conditional_t<is_mut_v<_mutability>, T&, force_add_const_t<T>&>
   unwrap() & {
     if constexpr (trait::formattable_element<E>::value) {
-      if ( is_ok() ) {
-        return std::get<success_t<T>>(storage_).get();
-      }
-      else {
-        PANIC("called `basic_result::unwrap()` on a value: `%1%`", std::get<failure_t<E>>(storage_));
-      }      
+      if ( is_ok() )
+        { return std::get<success_t<T>>(storage_).get(); }
+      else
+        { PANIC("called `basic_result::unwrap()` on a value: `%1%`", std::get<failure_t<E>>(storage_)); }
     }
     else {
-      if ( is_ok() ) {
-        return std::get<success_t<T>>(storage_).get();
-      }
-      else {
-        PANIC("called `basic_result::unwrap()` on a value `failure_t(?)`");
-      }
+      if ( is_ok() )
+        { return std::get<success_t<T>>(storage_).get(); }
+      else
+        { PANIC("called `basic_result::unwrap()` on a value `failure_t(?)`"); }
     }
   }
 
@@ -1100,20 +1085,16 @@ public:
   force_add_const_t<E>&
   unwrap_err() const& {
     if constexpr (trait::formattable_element<T>::value) {
-      if ( is_err() ) {
-        return std::get<failure_t<E>>(storage_).get();
-      }
-      else {
-        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", std::get<success_t<T>>(storage_));
-      }
+      if ( is_err() )
+        { return std::get<failure_t<E>>(storage_).get(); }
+      else
+        { PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", std::get<success_t<T>>(storage_)); }
     }
     else {
-      if ( is_err() ) {
-        return std::get<failure_t<E>>(storage_).get();
-      }
-      else {
-        PANIC("called `basic_result::unwrap_err()` on a value `success_t(?)`");
-      }
+      if ( is_err() )
+        { return std::get<failure_t<E>>(storage_).get(); }
+      else
+        { PANIC("called `basic_result::unwrap_err()` on a value `success_t(?)`"); }
     }
   }
 
@@ -1125,20 +1106,16 @@ public:
   std::conditional_t<is_mut_v<_mutability>, E&, force_add_const_t<E>&>
   unwrap_err() & {
     if constexpr (trait::formattable_element<T>::value) {
-      if ( is_err() ) {
-        return std::get<failure_t<E>>(storage_).get();
-      }
-      else {
-        PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", std::get<success_t<T>>(storage_));
-      }
+      if ( is_err() )
+        { return std::get<failure_t<E>>(storage_).get(); }
+      else
+        { PANIC("called `basic_result::unwrap_err()` on a value: `%1%`", std::get<success_t<T>>(storage_)); }
     }
     else {
-      if ( is_err() ) {
-        return std::get<failure_t<E>>(storage_).get();
-      }
-      else {
-        PANIC("called `basic_result::unwrap_err()` on a value `success_t(?)`)");
-      }
+      if ( is_err() )
+        { return std::get<failure_t<E>>(storage_).get(); }
+      else
+        { PANIC("called `basic_result::unwrap_err()` on a value `success_t(?)`)"); }
     }
   }
 
@@ -1150,9 +1127,9 @@ public:
   force_add_const_t<T>&
   expect(std::string_view msg) const& {
     if ( is_err() )
-      PANIC("%1%: %2%", msg, unwrap_err());
+      { PANIC("%1%: %2%", msg, unwrap_err()); }
     else
-      return unwrap();
+      { return unwrap(); }
   }
 
   /// @brief
@@ -1163,9 +1140,9 @@ public:
   decltype(auto)
   expect(std::string_view msg) & {
     if ( is_err() )
-      PANIC("%1%: %2%", msg, unwrap_err());
+      { PANIC("%1%: %2%", msg, unwrap_err()); }
     else
-      return unwrap();
+      { return unwrap(); }
   }
 
   /// @brief
@@ -1176,9 +1153,9 @@ public:
   force_add_const_t<E>&
   expect_err(std::string_view msg) const& {
     if ( is_ok() )
-      PANIC("%1%: %2%", msg, unwrap());
+      { PANIC("%1%: %2%", msg, unwrap()); }
     else
-      return unwrap_err();
+      { return unwrap_err(); }
   }
 
   /// @brief
@@ -1189,9 +1166,9 @@ public:
   decltype(auto)
   expect_err(std::string_view msg) & {
     if ( is_ok() )
-      PANIC("%1%: %2%", msg, unwrap());
+      { PANIC("%1%: %2%", msg, unwrap()); }
     else
-      return unwrap_err();
+      { return unwrap_err(); }
   }
 
   template <class F>
