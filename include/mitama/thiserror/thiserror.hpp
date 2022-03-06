@@ -91,7 +91,11 @@ namespace mitama::thiserror:: inline v2 {
 }
 #endif
 
+#if __cplusplus >= 202002L
+template <mitama::thiserror::fixed_string Fmt, class... Sources>
+#else
 template <class Fmt, class... Sources>
+#endif
 struct fmt::formatter<mitama::thiserror::error<Fmt, Sources...>> {
   using type = mitama::thiserror::error<Fmt, Sources...>;
 
