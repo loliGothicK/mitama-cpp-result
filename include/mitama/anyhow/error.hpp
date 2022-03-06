@@ -70,7 +70,11 @@ namespace mitama::anyhow {
     // ```
     std::string what() const override {
       std::stringstream ss;
-      if (!errs_.empty() && errs_.size() == 1) {
+      if (errs_.empty()) {
+          return ss.str();
+      }
+
+      if (errs_.size() == 1) {
           ss << (*errs_.crbegin())->what() << "\n";
       } else {
           auto iter = errs_.crbegin();
