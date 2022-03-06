@@ -8,6 +8,7 @@
 #include <sstream>
 #include <memory>
 #include <functional>
+#include <vector>
 
 namespace mitama::anyhow {
 
