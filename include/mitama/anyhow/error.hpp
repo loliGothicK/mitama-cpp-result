@@ -34,7 +34,7 @@ namespace mitama::anyhow {
 
     std::shared_ptr<error> context(std::shared_ptr<error> ctx) override {
       errs_.emplace_back(std::move(ctx));
-      return std::enable_shared_from_this<errors>::shared_from_this();
+      return shared_from_this();
     }
 
     auto chain() const {
