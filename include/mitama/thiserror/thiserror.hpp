@@ -77,15 +77,36 @@ namespace mitama::thiserror:: inline v2 {
 
   // any string literal in non-template argument
   template<fixed_string Fmt, class ...Sources>
-  struct error {
+  struct error final
+      : anyhow::error
+      , std::enable_shared_from_this<error<Fmt, Sources...>>
+  {
+  private:
+      using Self = error<Fmt, Sources...>;
+
+  public:
     static constexpr char const* fmt = Fmt;
     std::tuple<Sources...> sources;
+
+    explicit error(Sources const&... sources): sources{sources...} {}
+
+    ~error() override = default;
 
     // impl Display for thiserror::error
     friend std::ostream& operator<<(std::ostream& os, error const& err) {
       return os << std::apply([&](auto&&... src){
         return fmt::format(fmt, std::forward<decltype(src)>(src)...);
       }, err.sources);
+    }
+
+    std::shared_ptr<mitama::anyhow::error> context(std::shared_ptr<mitama::anyhow::error> ctx) override {
+        return std::make_shared<mitama::anyhow::errors>(std::enable_shared_from_this<Self>::shared_from_this(), std::move(ctx));
+    }
+
+    std::string what() const override {
+        std::stringstream ss;
+        ss << *this;
+        return ss.str();
     }
   };
 }
