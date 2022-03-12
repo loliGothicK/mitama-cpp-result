@@ -46,7 +46,7 @@ jobs:
       CC: ${{ matrix.config.cc }}
       CXX: ${{ matrix.config.cxx }}
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3
       - run: git submodule update --init --recursive
       - run: sudo apt-get -qq update
 
@@ -54,7 +54,7 @@ jobs:
         run: sudo apt-get install -y -qq pkg-config cmake libfmt-dev ${{ matrix.config.cc }}
 
       - name: Restore & Cache boost (${{ matrix.boost_version }})
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2.1.7
         id: boost-cache
         with:
           path: ${{ runner.temp }}/libs/boost

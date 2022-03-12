@@ -8,6 +8,7 @@
 #include <sstream>
 #include <memory>
 #include <functional>
+#include <vector>
 
 namespace mitama::anyhow {
 
@@ -33,7 +34,7 @@ namespace mitama::anyhow {
 
     std::shared_ptr<error> context(std::shared_ptr<error> ctx) override {
       errs_.emplace_back(std::move(ctx));
-      return std::enable_shared_from_this<errors>::shared_from_this();
+      return shared_from_this();
     }
 
     auto chain() const {
@@ -47,10 +48,47 @@ namespace mitama::anyhow {
         { return errs_.back(); }
     }
 
+    // 1.
+    // ```
+    // Failed to read the database.
+    // ```
+    //
+    // 2.
+    // ```
+    // Failed to read the database.
+    //
+    // Caused by:
+    //     Failed to connect to the database.
+    // ```
+    //
+    // 3.
+    // ```
+    // Failed to read the database.
+    //
+    // Caused by:
+    //     0: Failed to write the database.
+    //     1: Failed to connect to the database.
+    // ```
     std::string what() const override {
       std::stringstream ss;
-      for (auto iter = errs_.crbegin(); iter != errs_.crend(); ++iter)
-        { ss << (*iter)->what() << "\n"; }
+      if (errs_.empty()) {
+          return ss.str();
+      }
+
+      if (errs_.size() == 1) {
+          ss << (*errs_.crbegin())->what() << "\n";
+      } else {
+          auto iter = errs_.crbegin();
+          ss << (*iter)->what() << "\n\n" << "Caused by:\n";
+          ++iter;
+
+          if (errs_.size() == 2) {
+              ss << "    " << (*iter)->what() << "\n";
+          } else {
+              for (int i = 0; iter != errs_.crend(); ++iter, ++i)
+              { ss << "    " << i << ": " << (*iter)->what() << "\n"; }
+          }
+      }
       return ss.str();
     }
   };

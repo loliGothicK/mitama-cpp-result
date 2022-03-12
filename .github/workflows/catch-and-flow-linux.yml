@@ -50,7 +50,7 @@ jobs:
       CC: ${{ matrix.config.cc }}
       CXX: ${{ matrix.config.cxx }}
     steps:
-      - uses: actions/checkout@v2.3.4
+      - uses: actions/checkout@v3
       - run: git submodule update --init --recursive
       - run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
       - name: Install ${{ matrix.config.cc }}
@@ -63,7 +63,7 @@ jobs:
         run: ${{ matrix.config.cxx }} --version
 
       - name: Restore & Cache boost (${{ env.BOOST_VERSION }})
-        uses: actions/cache@v2.1.6
+        uses: actions/cache@v2.1.7
         id: boost-cache
         with:
           path: ${{ runner.temp }}/libs/boost
