@@ -38,6 +38,10 @@ TEST_CASE("try with context", "[anyhow][context]") {
   std::cout << res << std::endl;
 }
 
+#if not MITAMA_THISERROR_ENABLE_V1
+#define MITAMA_ERROR(x) x
+#endif
+
 class data_store_error : mitama::thiserror::derive_error
 {
 public:
