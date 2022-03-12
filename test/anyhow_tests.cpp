@@ -29,7 +29,7 @@ TEST_CASE("with context", "[anyhow][context]") {
 TEST_CASE("try with context", "[anyhow][context]") {
   auto res = []() -> anyhow::result<int> {
     anyhow::result<int> res = mitama::failure(anyhow::anyhow("unknown error occurred"s));
-    auto ok = MITAMA_TRY(res.with_context([]{ return anyhow::anyhow("internal error"s); }));
+    auto ok = MITAMA_TRY(res.with_context([] { return anyhow::anyhow("internal error"s); }));
     // early return
     REQUIRE(false);
     return mitama::success(ok);
@@ -38,9 +38,8 @@ TEST_CASE("try with context", "[anyhow][context]") {
   std::cout << res << std::endl;
 }
 
-class data_store_error {
-  template <class S, class ...T>
-  using error = mitama::thiserror::error<S, T...>;
+class data_store_error : mitama::thiserror::derive_error
+{
 public:
   using disconnect
     = error<MITAMA_ERROR("data store disconnected")>;
@@ -54,18 +53,18 @@ public:
 
 TEST_CASE("data_store_error::disconnect", "[anyhow][thiserror]") {
   anyhow::result<int> data
-          = anyhow::failure<data_store_error::disconnect>();
+    = anyhow::failure<data_store_error::disconnect>();
   auto res = data
-          .with_context([] { return anyhow::anyhow("data store failed."s); });
+    .with_context([] { return anyhow::anyhow("data store failed."s); });
   REQUIRE(data.is_err());
   std::cout << res << std::endl;
 }
 
 TEST_CASE("data_store_error::redaction", "[anyhow][thiserror]") {
   anyhow::result<int> data
-          = anyhow::failure<data_store_error::redaction>("invalid key");
+    = anyhow::failure<data_store_error::redaction>("invalid key");
   auto res = data
-          .with_context([] { return anyhow::anyhow("data store failed."s); });
+    .with_context([] { return anyhow::anyhow("data store failed."s); });
   REQUIRE(data.is_err());
   std::cout << res << std::endl;
 }
