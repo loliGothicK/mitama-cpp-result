@@ -178,7 +178,7 @@ struct fmt::formatter<mitama::thiserror::error<Fmt, Sources...>> {
       throw format_error(
         fmt::format(
           "invalid format for thiserror: (expected {{}}, found {{:{})",
-          std::string_view{ it, end })
+          std::string_view{ it, static_cast<std::size_t>(std::distance(it, end)) })
       );
     }
 
