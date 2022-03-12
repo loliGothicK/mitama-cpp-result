@@ -77,7 +77,7 @@ namespace mitama::thiserror {
     };
 
   }
-}
+  }
 #endif
 
 #if __cplusplus >= 202002L
@@ -141,16 +141,6 @@ namespace mitama::thiserror:: inline v2{
       return os << std::apply([&](auto &&...src) {
           return fmt::format(fmt, std::forward<decltype(src)>(src)...);
       }, err.sources);
-    }
-
-    std::shared_ptr<mitama::anyhow::error> context(std::shared_ptr<mitama::anyhow::error> ctx) override {
-        return std::make_shared<mitama::anyhow::errors>(std::enable_shared_from_this<Self>::shared_from_this(), std::move(ctx));
-    }
-
-    std::string what() const override {
-        std::stringstream ss;
-        ss << *this;
-        return ss.str();
     }
   };
 
