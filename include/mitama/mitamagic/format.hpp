@@ -1,6 +1,6 @@
 #ifndef MITAMA_CPP_RESULT_FORMAT_HPP
 #define MITAMA_CPP_RESULT_FORMAT_HPP
-#if __has_include(<format>)
+#if __has_include(<format>) && !__has_include(<fmt/format.h>)
 #include <format>
 namespace fmt = std;
 #else
