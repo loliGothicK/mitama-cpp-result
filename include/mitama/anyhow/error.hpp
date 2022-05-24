@@ -119,16 +119,16 @@ namespace mitama::anyhow {
   template<class E> cause(E) -> cause<std::decay_t<E>>;
 
   template<class E>
-  auto anyhow(E &&err) -> std::shared_ptr<mitama::anyhow::error> {
+  inline auto anyhow(E &&err) -> std::shared_ptr<mitama::anyhow::error> {
     return std::make_shared<mitama::anyhow::cause<std::decay_t<E>>>(std::forward<E>(err));
   }
 
-  std::ostream& operator<<(std::ostream& os, std::shared_ptr<::mitama::anyhow::error> const & err) {
+  inline std::ostream& operator<<(std::ostream& os, std::shared_ptr<::mitama::anyhow::error> const & err) {
     return os << err->what();
   }
 
   template <class Err, class ...Args>
-  auto failure(Args&&... args)
+  inline auto failure(Args&&... args)
     -> std::enable_if_t<std::is_base_of_v<mitama::anyhow::error, Err>, mitama::failure_t<std::shared_ptr<Err>>>
     { return mitama::failure(std::make_shared<Err>(std::forward<Args>(args)...)); }
 }
