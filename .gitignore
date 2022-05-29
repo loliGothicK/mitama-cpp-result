@@ -33,3 +33,6 @@
 
 /build/
 /site/
+
+# mkdocs
+docs/site
