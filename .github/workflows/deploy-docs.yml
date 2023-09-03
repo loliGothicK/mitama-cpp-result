@@ -15,10 +15,10 @@ jobs:
       with:
         python-version: '3.8'
 
-    - name: Set up Poetry 1.1.11
+    - name: Set up Poetry 1.6.1
       uses: abatilo/actions-poetry@v2.3.0
       with:
-        poetry-version: 1.1.11
+        poetry-version: 1.6.1
 
     - name: Restore & Cache Poetry and Dependences
       uses: actions/cache@v3
