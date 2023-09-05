@@ -31,7 +31,7 @@ jobs:
       CC: ${{ matrix.config.cc }}
       CXX: ${{ matrix.config.cxx }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: git submodule update --init --recursive
       - run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
       - run: sudo apt-get -qq update
