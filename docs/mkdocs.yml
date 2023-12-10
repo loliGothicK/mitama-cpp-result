@@ -29,7 +29,6 @@ theme:
 markdown_extensions:
   - admonition
   - codehilite
-  - fontawesome_markdown
   - footnotes
   - meta
   - pymdownx.inlinehilite
