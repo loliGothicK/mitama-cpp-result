@@ -1,11 +1,12 @@
-name: Deploy Document
+name: Documents
 
 on:
   push:
     branches: [ master ]
+  pull_request:
 
 jobs:
-  deploy_docs:
+  build_and_deploy:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -39,6 +40,7 @@ jobs:
       working-directory: docs
 
     - name: Deploy to GitHub Pages
+      if: github.event_name == 'push'
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
