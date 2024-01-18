@@ -22,7 +22,7 @@ jobs:
         poetry-version: 1.6.1
 
     - name: Restore & Cache Poetry and Dependences
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: poetry-cache
       with:
         path: |
