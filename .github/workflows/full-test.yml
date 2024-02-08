@@ -2,9 +2,8 @@ name: Full Test
 
 on:
   push:
-    branches: [ develop ]
-  pull_request:
     branches: [ master ]
+  pull_request:
 
 jobs:
   full_test:
