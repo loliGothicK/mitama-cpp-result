@@ -7,7 +7,7 @@
 #include <utility>
 #include <string>
 #include <string_view>
-#if defined(MITAMA_PANIC_WITH_STACKTRACE) 
+#if defined(MITAMA_PANIC_WITH_STACKTRACE)
   #ifdef _WIN32
   #else
     #define BOOST_STACKTRACE_USE_ADDR2LINE
@@ -28,7 +28,7 @@ class runtime_panic : public std::runtime_error
 public:
   template <class... Args>
   runtime_panic(boost::format fmt, Args &&... args) noexcept
-      : std::runtime_error((fmt % ... % args).str()) {}
+      : std::runtime_error((fmt % ... % std::forward<Args>(args)).str()) {}
 
   template <class... Args>
   explicit runtime_panic(macro_use_tag_t, const char *func, int line, std::string fmt, Args &&... args) noexcept
@@ -62,7 +62,7 @@ public:
 };
 }
 
-#if !defined(MITAMA_PANIC_WITH_STACKTRACE) 
+#if !defined(MITAMA_PANIC_WITH_STACKTRACE)
 #define PANIC(...) \
   throw ::mitama::runtime_panic { ::mitama::macro_use, __FILE__, __LINE__, __VA_ARGS__ }
 #else
