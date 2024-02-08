@@ -1,10 +1,8 @@
 #ifndef MITAMA_RESULT_DETAIL_META_HPP
 #define MITAMA_RESULT_DETAIL_META_HPP
 #include <type_traits>
-#include <optional>
 #include <utility>
 #include <tuple>
-#include <boost/optional/optional_fwd.hpp>
 
 namespace mitama {
 inline namespace meta {
@@ -95,29 +93,6 @@ struct is_tuple_like
       detail::is_tuple_like_impl<T>
     >
 {};
-}}
-
-namespace mitama {
-inline namespace meta {
-
-/// is_optional family
-template < class >
-struct is_std_optional: std::false_type {};
-template < class >
-struct is_boost_optional: std::false_type {};
-
-template < class T >
-struct is_std_optional<std::optional<T>>: std::true_type {};
-template < class T >
-struct is_boost_optional<boost::optional<T>>: std::true_type {};
-
-template < class T >
-struct is_optional
-  : std::disjunction<
-      meta::is_std_optional<meta::remove_cvr_t<T>>,
-      meta::is_boost_optional<meta::remove_cvr_t<T>>
-    >
-{};
 
 /// is_range
 template <class, class = void> struct is_range: std::false_type {};
@@ -125,19 +100,6 @@ template <class Range>
 struct is_range<Range, std::void_t<decltype(*std::begin(std::declval<std::decay_t<Range>>()), std::begin(std::declval<std::decay_t<Range>>()) != std::end(std::declval<std::decay_t<Range>>()))>>
   : std::true_type {};
 
-/// is_dictionary
-template <class, class = void> struct is_dictionary: std::false_type {};
-template <class Dict>
-struct is_dictionary<Dict, std::void_t<typename meta::remove_cvr_t<Dict>::key_type, typename meta::remove_cvr_t<Dict>::mapped_type>>
-  : is_range<Dict> {};
-
-template < class > struct repack;
-
-template < template < class > class Opt, class T >
-struct repack<Opt<T>> {
-  template < class U >
-  using type = Opt<U>;
-};
 }}
 
 #endif
