@@ -6,6 +6,7 @@
 #include <mitama/result/factory/success.hpp>
 #include <mitama/result/factory/failure.hpp>
 #include <mitama/anyhow/error.hpp>
+#include <mitama/result/traits/impl_traits.hpp>
 
 #include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
@@ -66,13 +67,13 @@ namespace mitama {
 /// @param E: Type of unsuccessful value
 template <mutability _mutability, class T, class E>
 class [[nodiscard]] basic_result<_mutability, T, E,
-  trait::where<
+  where<
     std::is_object<meta::remove_cvr_t<T>>,
     std::is_object<meta::remove_cvr_t<E>>,
     std::negation<std::is_array<meta::remove_cvr_t<T>>>,
     std::negation<std::is_array<meta::remove_cvr_t<E>>>
   >>
-  : /* method injection selectors */ 
+  : /* method injection selectors */
   public unwrap_or_default_friend_injector<basic_result<_mutability, T, E>>,
   public transpose_friend_injector<basic_result<_mutability, T, E>>,
   public indirect_friend_injector<basic_result<_mutability, T, E>>,
@@ -87,9 +88,6 @@ class [[nodiscard]] basic_result<_mutability, T, E,
   template <mutability, class, class, class>
   friend class basic_result;
   /// private aliases
-  template <class... Requires>
-  using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
-  static constexpr std::nullptr_t required = nullptr;
   template <mutability _mut, class T_, class E_>
   using not_self = std::negation<std::is_same<basic_result, basic_result<_mut, T_, E_>>>;
 public:
@@ -692,7 +690,7 @@ public:
   /// @note
   ///   This function can be used to unpack a successful result while handling an error.
   template <class Map, class Fallback>
-  constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) && 
+  constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) &&
     noexcept(std::is_nothrow_invocable_v<Fallback, E> && std::is_nothrow_invocable_v<Map, T>)
     -> std::enable_if_t<
           std::conjunction_v<std::is_invocable<Map, T>,

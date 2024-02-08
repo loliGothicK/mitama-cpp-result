@@ -55,11 +55,6 @@ class [[nodiscard]] just_t<T>
 
   T x;
 
-  template <class... Requires>
-  using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
-
-  static constexpr std::nullptr_t required = nullptr;
-
   template <class U>
   using not_self = std::negation<std::is_same<just_t, U>>;
 public:
@@ -238,7 +233,7 @@ public:
   }
 
   template <class U>
-  constexpr 
+  constexpr
   std::enable_if_t<
     std::conjunction_v<
       meta::is_less_comparable_with<T, U>,
@@ -359,11 +354,6 @@ class [[nodiscard]] just_t<T&>
   template <class...> friend class just_t;
 
   std::reference_wrapper<T> x;
-
-  template <class... Requires>
-  using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
-
-  static constexpr std::nullptr_t required = nullptr;
 
   template <class U>
   using not_self = std::negation<std::is_same<just_t, U>>;
@@ -507,7 +497,7 @@ public:
   }
 
   template <class U>
-  constexpr 
+  constexpr
   std::enable_if_t<
     std::conjunction_v<
       meta::is_less_comparable_with<T, U>,
