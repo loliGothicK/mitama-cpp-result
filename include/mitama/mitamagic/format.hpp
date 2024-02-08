@@ -1,10 +1,13 @@
 #ifndef MITAMA_CPP_RESULT_FORMAT_HPP
 #define MITAMA_CPP_RESULT_FORMAT_HPP
-#if __has_include(<format>) && !__has_include(<fmt/format.h>)
+
+#ifdef __cpp_lib_format
 #include <format>
 namespace fmt = std;
-#else
+#elif __has_include(<fmt/format.h>)
 #include <fmt/format.h>
+#else
+#error "mitama-cpp-result requires <fmt/format.h> or C++20 <format> header"
 #endif
 
 #endif //MITAMA_CPP_RESULT_FORMAT_HPP
