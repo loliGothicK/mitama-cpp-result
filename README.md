@@ -25,7 +25,7 @@ mitama-cpp-result/docs> $ poetry run mkdocs serve
 
 ## Dependencies
 
-To use this library, you need at least 1.74.0 or higher version of the boost library.
+To use this library, you need at least 1.80.0 or higher version of the boost library.
 
 ## Supported OS / Compiler / Language Standard
 

@@ -8,7 +8,7 @@ find_package(Threads REQUIRED)
 set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
 
 # Find Boost
-find_package(Boost 1.74.0 REQUIRED
+find_package(Boost 1.80.0 REQUIRED
   COMPONENTS
   stacktrace_addr2line
 )
