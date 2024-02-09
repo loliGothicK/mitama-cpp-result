@@ -13,13 +13,13 @@ class data_store_error {
   using error = mitama::thiserror::error<S, T...>;
 public:
   using disconnect
-      = error<MITAMA_ERROR("data store disconnected")>;
+      = error<"data store disconnected">;
   using redaction
-      = error<MITAMA_ERROR("for key `{0}` isn't available"), std::string>;
+      = error<"for key `{0}` isn't available", std::string>;
   using invalid_header
-      = error<MITAMA_ERROR("(expected {0}, found {1})"), std::string, std::string>;
+      = error<"(expected {0}, found {1})", std::string, std::string>;
   using unknown
-      = error<MITAMA_ERROR("unknown data store error")>;
+      = error<"unknown data store error">;
 };
 ```
 
@@ -52,14 +52,14 @@ class data_store_error {
   using error = mitama::thiserror::error<S, T...>;
 public:
   using disconnect
-        = error<MITAMA_ERROR("data store disconnected")>;
+        = error<"data store disconnected">;
   using redaction
-        = error<MITAMA_ERROR("for key `{0}` isn't available"), std::string>;
+        = error<"for key `{0}` isn't available", std::string>;
   using invalid_header
-        = error<MITAMA_ERROR("(expected {0}, found {1})"), std::string, std::string>;
+        = error<"(expected {0}, found {1})", std::string, std::string>;
   using unknown
-        = error<MITAMA_ERROR("unknown data store error")>;
-};  
+        = error<"unknown data store error">;
+};
 
 int main() {
   anyhow::result<int> data
