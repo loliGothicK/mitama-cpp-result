@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  full_test:
+  ubuntu:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -88,6 +88,30 @@ jobs:
           cmake ..             \
             -DBUILD_TESTING=ON \
             -DBoost_USE_STATIC_LIBS=ON \
+            -DBOOST_ROOT=${{ runner.temp }}/libs/boost
+          make
+          make test
+
+  macos:
+    runs-on: macos-${{ matrix.osver }}
+    strategy:
+      fail-fast: false
+      matrix:
+        osver: [12, 13, 14]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install CMake, Boost, & fmt
+        run: brew install pkg-config cmake boost fmt
+
+      - name: Build and test
+        run: |
+          mkdir build && cd build
+          cmake ..             \
+            -DBUILD_TESTING=ON \
+            -DBoost_USE_STATIC_LIBS=OFF \
             -DBOOST_ROOT=${{ runner.temp }}/libs/boost
           make
           make test
