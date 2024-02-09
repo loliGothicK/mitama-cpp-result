@@ -25,7 +25,9 @@ jobs:
           sudo apt-get install -y clang-format-17
 
       - name: Install Poac
-        run: brew install poac
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          brew install poac
 
       - name: poac fmt
         run: |
