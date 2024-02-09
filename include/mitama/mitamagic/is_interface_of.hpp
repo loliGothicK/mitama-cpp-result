@@ -1,5 +1,5 @@
-#ifndef MITAMA_MITAMAGIC_IS_PUBLIC_DERIVED_HPP
-#define MITAMA_MITAMAGIC_IS_PUBLIC_DERIVED_HPP
+#pragma once
+
 #include <type_traits>
 
 namespace mitama::mitamagic
@@ -24,5 +24,3 @@ inline constexpr bool is_interface_of_v =
     is_interface_of<Interface, Derived>::value;
 
 } // namespace mitama::mitamagic
-
-#endif

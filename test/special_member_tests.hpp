@@ -1,3 +1,5 @@
+#pragma once
+
 #include "TestClass.hpp"
 #include <type_traits>
 

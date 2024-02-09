@@ -1,5 +1,5 @@
-#ifndef MITAMA_BOOLINATORS_HPP
-#define MITAMA_BOOLINATORS_HPP
+#pragma once
+
 #include <mitama/maybe/maybe.hpp>
 #include <mitama/result/result.hpp>
 
@@ -87,5 +87,3 @@ ok_or_else(bool b, G&& err)
            : result_type{ failure(std::invoke(std::forward<G>(err))) };
 }
 } // namespace mitama
-
-#endif

@@ -1,5 +1,5 @@
-#ifndef MITAMA_MAYBE_RANGE_TO_MAYBE_HPP
-#define MITAMA_MAYBE_RANGE_TO_MAYBE_HPP
+#pragma once
+
 #include <mitama/maybe/maybe.hpp>
 
 #include <boost/hana/functional/overload_linearly.hpp>
@@ -53,5 +53,3 @@ range_to_maybe(Range&& range)
   );
 }
 } // namespace mitama
-
-#endif

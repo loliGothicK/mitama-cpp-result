@@ -1,5 +1,4 @@
-#ifndef MITAMA_RESULT_IMPL_HPP
-#define MITAMA_RESULT_IMPL_HPP
+#pragma once
 
 #include <mitama/maybe/maybe.hpp>
 #include <mitama/result/detail/dangling.hpp>
@@ -1028,4 +1027,3 @@ public:
 };
 
 } // namespace mitama
-#endif

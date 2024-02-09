@@ -1,6 +1,7 @@
-#ifndef MITAMA_MAYBE_FWD_HPP
-#define MITAMA_MAYBE_FWD_HPP
+#pragma once
+
 #include <variant>
+
 namespace mitama
 {
 
@@ -20,4 +21,3 @@ template <class T>
 maybe(just_t<T>&&) -> maybe<std::remove_reference_t<T>>;
 
 } // namespace mitama
-#endif

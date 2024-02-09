@@ -1,5 +1,5 @@
-#ifndef MITAMA_RESULT_RESULT_IO_HPP
-#define MITAMA_RESULT_RESULT_IO_HPP
+#pragma once
+
 #include <mitama/result/result.hpp>
 
 #include <boost/hana/functional/fix.hpp>
@@ -11,6 +11,7 @@
 #include <string_view>
 #include <type_traits>
 #include <utility>
+
 namespace mitama
 {
 /// @brief
@@ -107,5 +108,3 @@ operator<<(std::ostream& os, const basic_result<_, T, E>& res)
 }
 
 } // namespace mitama
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef MITAMA_CPP_RESULT_FORMAT_HPP
-#define MITAMA_CPP_RESULT_FORMAT_HPP
+#pragma once
 
 #ifdef __cpp_lib_format
 #  include <format>
@@ -9,5 +8,3 @@ namespace fmt = std;
 #else
 #  error "mitama-cpp-result requires <fmt/format.h> or C++20 <format> header"
 #endif
-
-#endif // MITAMA_CPP_RESULT_FORMAT_HPP

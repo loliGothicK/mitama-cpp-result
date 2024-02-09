@@ -1,5 +1,4 @@
-#ifndef MITAMA_MAYBE_HPP
-#define MITAMA_MAYBE_HPP
+#pragma once
 
 #include <mitama/maybe/factory/just_nothing.hpp>
 #include <mitama/maybe/fwd/maybe_fwd.hpp>
@@ -1342,4 +1341,3 @@ operator<<(std::ostream& os, const maybe<T>& may)
 }
 
 } // namespace mitama
-#endif

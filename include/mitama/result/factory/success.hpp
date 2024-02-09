@@ -1,5 +1,5 @@
-#ifndef MITAMA_RESULT_FACTORY_SUCCESS_HPP
-#define MITAMA_RESULT_FACTORY_SUCCESS_HPP
+#pragma once
+
 #include <mitama/mitamagic/is_interface_of.hpp>
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
@@ -576,5 +576,3 @@ operator<<(std::ostream& os, const success_t<T>& ok)
 }
 
 } // namespace mitama
-
-#endif

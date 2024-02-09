@@ -1,5 +1,5 @@
-#ifndef MITAMA_RESULT_TRAITS_DEREF_HPP
-#define MITAMA_RESULT_TRAITS_DEREF_HPP
+#pragma once
+
 #include <mitama/result/detail/dangling.hpp>
 
 #include <type_traits>
@@ -28,5 +28,3 @@ struct deref<For, std::enable_if_t<is_dereferencable<For>::value>>
 };
 
 } // namespace mitama::traits
-
-#endif

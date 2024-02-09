@@ -1,7 +1,8 @@
-#ifndef MITAMA_RESULT_FWD
-#define MITAMA_RESULT_FWD
+#pragma once
+
 #include <tuple>
 #include <variant>
+
 namespace mitama
 {
 
@@ -72,4 +73,3 @@ class in_place_err_t
 inline constexpr in_place_err_t in_place_err = {};
 
 } // namespace mitama
-#endif
