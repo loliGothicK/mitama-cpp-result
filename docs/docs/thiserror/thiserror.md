@@ -1,7 +1,7 @@
 # thiserror 101
 
 **thiserror** is a library that makes it easy to write domain-specific error types.
-We can embed the reason for the error directly into the type using a macro (we plan to deprecate macros in the future using C++20).
+We can embed the reason for the error directly into the type.
 
 For example, if you want to write `data_store_error`, you can write the following:
 
@@ -9,21 +9,21 @@ For example, if you want to write `data_store_error`, you can write the followin
 #include <mitama/thiserror/thiserror.hpp>
 
 class data_store_error {
-  template <class S, class ...T>
+  template <mitama::thiserror::fixed_string S, class ...T>
   using error = mitama::thiserror::error<S, T...>;
 public:
   using disconnect
-      = error<MITAMA_ERROR("data store disconnected")>;
+      = error<"data store disconnected">;
   using redaction
-      = error<MITAMA_ERROR("for key `{0}` isn't available"), std::string>;
+      = error<"for key `{0}` isn't available", std::string>;
   using invalid_header
-      = error<MITAMA_ERROR("(expected {0}, found {1})"), std::string, std::string>;
+      = error<"(expected {0}, found {1})", std::string, std::string>;
   using unknown
-      = error<MITAMA_ERROR("unknown data store error")>;
+      = error<"unknown data store error">;
 };
 ```
 
-The first template argument of `mitama::thiserror::error` is embedded with a format string using the `MITAMA_ERROR` macro.
+The first template argument of `mitama::thiserror::error` is embedded with a format string.
 The format string should be a string compliant with [**{fmt}**](https://github.com/fmtlib/fmt), check the documentation if you need it.
 The second template argument onwards is a list of formattable arguments.
 
@@ -48,18 +48,18 @@ namespace anyhow = mitama::anyhow;
 using namespace std::literals;
 
 class data_store_error {
-  template <class S, class ...T>
+  template <mitama::thiserror::fixed_string S, class ...T>
   using error = mitama::thiserror::error<S, T...>;
 public:
   using disconnect
-        = error<MITAMA_ERROR("data store disconnected")>;
+        = error<"data store disconnected">;
   using redaction
-        = error<MITAMA_ERROR("for key `{0}` isn't available"), std::string>;
+        = error<"for key `{0}` isn't available", std::string>;
   using invalid_header
-        = error<MITAMA_ERROR("(expected {0}, found {1})"), std::string, std::string>;
+        = error<"(expected {0}, found {1})", std::string, std::string>;
   using unknown
-        = error<MITAMA_ERROR("unknown data store error")>;
-};  
+        = error<"unknown data store error">;
+};
 
 int main() {
   anyhow::result<int> data

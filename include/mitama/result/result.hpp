@@ -44,7 +44,7 @@ struct is_convertible_result_with<basic_result<_mut, T, E>, success_t<U>, failur
 {};
 
 template <class T, class... Requires>
-inline constexpr bool is_convertible_result_with_v = is_convertible_result_with<meta::remove_cvr_t<T>, Requires...>::value;
+inline constexpr bool is_convertible_result_with_v = is_convertible_result_with<std::remove_cvref_t<T>, Requires...>::value;
 
 template <class>
 struct is_err_type : std::false_type {};
@@ -68,10 +68,10 @@ namespace mitama {
 template <mutability _mutability, class T, class E>
 class [[nodiscard]] basic_result<_mutability, T, E,
   where<
-    std::is_object<meta::remove_cvr_t<T>>,
-    std::is_object<meta::remove_cvr_t<E>>,
-    std::negation<std::is_array<meta::remove_cvr_t<T>>>,
-    std::negation<std::is_array<meta::remove_cvr_t<E>>>
+    std::is_object<std::remove_cvref_t<T>>,
+    std::is_object<std::remove_cvref_t<E>>,
+    std::negation<std::is_array<std::remove_cvref_t<T>>>,
+    std::negation<std::is_array<std::remove_cvref_t<E>>>
   >>
   : /* method injection selectors */
   public unwrap_or_default_friend_injector<basic_result<_mutability, T, E>>,
@@ -96,8 +96,8 @@ public:
   using err_type = E;
   using ok_reference_type = std::remove_reference_t<T>&;
   using err_reference_type = std::remove_reference_t<E>&;
-  using ok_const_reference_type = meta::remove_cvr_t<T> const&;
-  using err_const_reference_type = meta::remove_cvr_t<E> const&;
+  using ok_const_reference_type = std::remove_cvref_t<T> const&;
+  using err_const_reference_type = std::remove_cvref_t<E> const&;
   /// mutability
   static constexpr bool is_mut = !static_cast<bool>(_mutability);
 
@@ -474,12 +474,12 @@ public:
   ///   Produces a new basic_result, containing a reference into the original, leaving the original in place.
   constexpr auto as_ref() const&
     noexcept
-    -> basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>
+    -> basic_result<_mutability, std::remove_cvref_t<T> const&, std::remove_cvref_t<E> const&>
   {
     if ( is_ok() )
-      { return basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>{in_place_ok, std::get<success_t<T>>(storage_).get()}; }
+      { return basic_result<_mutability, std::remove_cvref_t<T> const&, std::remove_cvref_t<E> const&>{in_place_ok, std::get<success_t<T>>(storage_).get()}; }
     else
-      { return basic_result<_mutability, meta::remove_cvr_t<T> const&, meta::remove_cvr_t<E> const&>{in_place_err, std::get<failure_t<E>>(storage_).get()}; }
+      { return basic_result<_mutability, std::remove_cvref_t<T> const&, std::remove_cvref_t<E> const&>{in_place_err, std::get<failure_t<E>>(storage_).get()}; }
   }
 
   /// @brief
@@ -1780,17 +1780,17 @@ public:
     ({                                                                                    \
         auto&& result = boost::hana::id(__VA_ARGS__);                                     \
         static_assert(                                                                    \
-            ::mitama::is_result_v<::mitama::meta::remove_cvr_t<decltype(result)>>,        \
+            ::mitama::is_result_v<std::remove_cvref_t<decltype(result)>>,                 \
             "You should pass mitama::result type to this MITAMA_TRY macro."               \
         );                                                                                \
         if (result.is_err()) {                                                            \
             using Err = ::mitama::failure_t<                                              \
-                ::mitama::meta::remove_cvr_t<decltype(result)>::err_type                  \
+                std::remove_cvref_t<decltype(result)>::err_type                           \
             >;                                                                            \
             return ::std::get<Err>(std::forward<decltype(result)>(result).into_storage());\
         }                                                                                 \
         using Ok = ::mitama::success_t<                                                   \
-            ::mitama::meta::remove_cvr_t<decltype(result)>::ok_type                       \
+            std::remove_cvref_t<decltype(result)>::ok_type                                \
         >;                                                                                \
         ::std::get<Ok>(std::forward<decltype(result)>(result).into_storage()).get();      \
     })

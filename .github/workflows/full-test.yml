@@ -5,59 +5,67 @@ on:
     branches: [ master ]
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  full_test:
-    runs-on: ubuntu-20.04
+  ubuntu:
+    runs-on: ubuntu-22.04
     strategy:
-      matrix: # 13 boost version * 7 compiler version = 91 jobs
-        boost_version: [ 1.67.0, 1.68.0, 1.69.0, 1.70.0,
-                         1.71.0, 1.72.0, 1.73.0, 1.74.0, 1.75.0 ]
-        config:
-          - {
-            name: "Latest Version of GCC 8.x",
-            cc: "gcc", cxx: "g++",
-          }
-          - {
-            name: "Latest Version of GCC 9.x",
-            cc: "gcc-9", cxx: "g++-9",
-          }
-          - {
-            name: "Latest Version of GCC 10.x",
-            cc: "gcc-10", cxx: "g++-10",
-          }
-          - {
-            name: "Latest Version of Clang 7.x",
-            cc: "clang-7", cxx: "clang++-7",
-          }
-          - {
-            name: "Latest Version of Clang 8.x",
-            cc: "clang-8", cxx: "clang++-8",
-          }
-          - {
-            name: "Latest Version of Clang 9.x",
-            cc: "clang-9", cxx: "clang++-9",
-          }
-          - {
-            name: "Latest Version of Clang 10.x",
-            cc: "clang-10", cxx: "clang++-10",
-          }
+      fail-fast: false
+      matrix:
+        boost_version:
+          - 1.80.0
+          - 1.81.0
+          - 1.82.0
+          - 1.83.0
+          - 1.84.0
+        compiler:
+          - cc: clang
+            cxx: clang++
+            ver: 15
+          - cc: clang
+            cxx: clang++
+            ver: 16
+          - cc: clang
+            cxx: clang++
+            ver: 17
+          - cc: gcc
+            cxx: g++
+            ver: 11
+          - cc: gcc
+            cxx: g++
+            ver: 12
+          - cc: gcc
+            cxx: g++
+            ver: 13
     env:
-      CC: ${{ matrix.config.cc }}
-      CXX: ${{ matrix.config.cxx }}
+      CC: ${{ matrix.compiler.cc }}-${{ matrix.compiler.ver }}
+      CXX: ${{ matrix.compiler.cxx }}-${{ matrix.compiler.ver }}
     steps:
       - uses: actions/checkout@v4
-      - run: git submodule update --init --recursive
-      - run: sudo apt-get -qq update
+        with:
+          submodules: true
 
-      - name: Install Specific Compiler (${{ matrix.config.cc }})
-        run: sudo apt-get install -y -qq pkg-config cmake libfmt-dev ${{ matrix.config.cc }}
+      - name: Install CMake & fmt
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get install -y -qq pkg-config cmake libfmt-dev
+
+      - name: Install Clang
+        if: startsWith(matrix.compiler.cxx, 'clang')
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x ./llvm.sh
+          sudo ./llvm.sh ${{ matrix.compiler.ver }}
 
       - name: Restore & Cache boost (${{ matrix.boost_version }})
         uses: actions/cache@v4
         id: boost-cache
         with:
           path: ${{ runner.temp }}/libs/boost
-          key: ${{ matrix.config.name }}-boost-${{ matrix.boost_version }}
+          key: ${{ env.CXX }}-boost-${{ matrix.boost_version }}
       - name: Install boost (${{ matrix.boost_version }}) as static
         if: steps.boost-cache.outputs.cache-hit != 'true'
         run: |
@@ -65,7 +73,7 @@ jobs:
           git clone -q -b boost-${{ matrix.boost_version }} --recursive https://github.com/boostorg/boost.git
           cd boost
           ./bootstrap.sh
-          sudo ./b2 link=static install -j2 --prefix=${{ runner.temp }}/libs/boost || exit 0
+          sudo ./b2 link=static install -j4 --prefix=${{ runner.temp }}/libs/boost || exit 0
         working-directory: ${{ runner.temp }}
 
       - name: Build and test
@@ -74,6 +82,30 @@ jobs:
           cmake ..             \
             -DBUILD_TESTING=ON \
             -DBoost_USE_STATIC_LIBS=ON \
+            -DBOOST_ROOT=${{ runner.temp }}/libs/boost
+          make
+          make test
+
+  macos:
+    runs-on: macos-${{ matrix.osver }}
+    strategy:
+      fail-fast: false
+      matrix:
+        osver: [12, 13, 14]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Install CMake, Boost, & fmt
+        run: brew install pkg-config cmake boost fmt
+
+      - name: Build and test
+        run: |
+          mkdir build && cd build
+          cmake ..             \
+            -DBUILD_TESTING=ON \
+            -DBoost_USE_STATIC_LIBS=OFF \
             -DBOOST_ROOT=${{ runner.temp }}/libs/boost
           make
           make test

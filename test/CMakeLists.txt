@@ -8,16 +8,19 @@ find_package(Threads REQUIRED)
 set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
 
 # Find Boost
-find_package(Boost 1.67.0 REQUIRED
+find_package(Boost 1.80.0 REQUIRED
   COMPONENTS
   stacktrace_addr2line
 )
+
+# Find fmt
+find_package(fmt CONFIG REQUIRED)
 
 message($CMAKE)
 
 foreach(TEST_NAME ${TEST_NAMES})
   add_executable(${TEST_NAME} ${TEST_NAME}.cpp)
-  target_compile_features(${TEST_NAME} PRIVATE cxx_std_17)
+  target_compile_features(${TEST_NAME} PRIVATE cxx_std_20)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_compile_options(${TEST_NAME} PRIVATE -Wall -Wextra -ftemplate-backtrace-limit=0)
   else()
@@ -35,7 +38,7 @@ foreach(TEST_NAME ${TEST_NAMES})
     PRIVATE ${CMAKE_SOURCE_DIR}/mitama-utest-utilities/include
   )
 
-  target_link_libraries(${TEST_NAME} ${Boost_LIBRARIES} dl fmt)
+  target_link_libraries(${TEST_NAME} ${Boost_LIBRARIES} dl fmt::fmt-header-only)
   add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME} WORKING_DIRECTORY ${PROJECT_BINARY_DIR})
 endforeach ()
 
