@@ -1,0 +1,8 @@
+[package]
+authors = [
+  "mitama <loligothick@gmail.com>",
+  "Ken Matsui <26405363+ken-matsui@users.noreply.github.com>",
+]
+edition = "20"
+name = "mitama-cpp-result"
+version = "9.2.1"

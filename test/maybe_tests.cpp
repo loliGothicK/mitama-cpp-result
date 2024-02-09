@@ -1,76 +1,84 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include <mitama/result/result.hpp>
-#include <mitama/result/result_io.hpp>
+
 #include <mitama/maybe/maybe.hpp>
 #include <mitama/maybe/range_to_maybe.hpp>
+#include <mitama/result/result.hpp>
+#include <mitama/result/result_io.hpp>
 
 #include <boost/xpressive/xpressive.hpp>
 
+#include <sstream>
 #include <string>
 
 using namespace mitama;
 using namespace std::string_literals;
 
-TEST_CASE("is_just()", "[maybe][is_just]"){
+TEST_CASE("is_just()", "[maybe][is_just]")
+{
   maybe<int> x = just(2);
-  REQUIRE( x.is_just() );
+  REQUIRE(x.is_just());
 
   maybe<int> y = nothing;
-  REQUIRE_FALSE( y.is_just() );
+  REQUIRE_FALSE(y.is_just());
 }
 
-TEST_CASE("is_nothing()", "[maybe][is_nothing]"){
+TEST_CASE("is_nothing()", "[maybe][is_nothing]")
+{
   maybe<int> x = just(2);
-  REQUIRE_FALSE( x.is_nothing() );
+  REQUIRE_FALSE(x.is_nothing());
 
   maybe<int> y = nothing;
-  REQUIRE( y.is_nothing() );
+  REQUIRE(y.is_nothing());
 }
 
-TEST_CASE("unwrap()", "[maybe][unwrap]"){
+TEST_CASE("unwrap()", "[maybe][unwrap]")
+{
   {
     maybe x = just("air"s);
     REQUIRE(x.unwrap() == "air"s);
   }
-  try {
+  try
+  {
     maybe<int> x = nothing;
     x.unwrap(); // panics
   }
-  catch (runtime_panic const &p)
+  catch (const runtime_panic& p)
   {
     using namespace boost::xpressive;
-    sregex re =
-        as_xpr(
-            "runtime panicked at 'called `maybe::unwrap()` on a `nothing` value', ") >>
-        *_ >> as_xpr(":") >> +range('0', '9');
+    sregex re = as_xpr(
+                    "runtime panicked at 'called `maybe::unwrap()` on a "
+                    "`nothing` value', "
+                )
+                >> *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
-    REQUIRE(regex_match(std::string{p.what()}, what, re));
+    REQUIRE(regex_match(std::string{ p.what() }, what, re));
   }
 }
 
-TEST_CASE("expect()", "[maybe][expect]"){
+TEST_CASE("expect()", "[maybe][expect]")
+{
   {
     maybe x = just("air"s);
     REQUIRE(x.expect("the world is ending") == "air"s);
   }
-  try {
+  try
+  {
     maybe<int> x = nothing;
     x.expect("the world is ending"); // panics
   }
-  catch (runtime_panic const &p)
+  catch (const runtime_panic& p)
   {
     using namespace boost::xpressive;
-    sregex re =
-        as_xpr(
-            "runtime panicked at 'the world is ending', ") >>
-        *_ >> as_xpr(":") >> +range('0', '9');
+    sregex re = as_xpr("runtime panicked at 'the world is ending', ") >> *_
+                >> as_xpr(":") >> +range('0', '9');
     smatch what;
-    REQUIRE(regex_match(std::string{p.what()}, what, re));
+    REQUIRE(regex_match(std::string{ p.what() }, what, re));
   }
 }
 
-TEST_CASE("cloned()", "[maybe][cloned]"){
+TEST_CASE("cloned()", "[maybe][cloned]")
+{
   int x = 12;
   maybe<int&> opt_x = just(x);
   REQUIRE(opt_x == just(12));
@@ -84,18 +92,21 @@ TEST_CASE("cloned()", "[maybe][cloned]"){
   REQUIRE(&(cloned.unwrap()) != &x);
 }
 
-TEST_CASE("unwrap_or()", "[maybe][unwrap_or]"){
-  REQUIRE(maybe{just("car"s)}.unwrap_or("bike"s) == "car"s);
-  REQUIRE(maybe<std::string>{nothing}.unwrap_or("bike"s) == "bike"s);
+TEST_CASE("unwrap_or()", "[maybe][unwrap_or]")
+{
+  REQUIRE(maybe{ just("car"s) }.unwrap_or("bike"s) == "car"s);
+  REQUIRE(maybe<std::string>{ nothing }.unwrap_or("bike"s) == "bike"s);
 }
 
-TEST_CASE("unwrap_or_else()", "[maybe][unwrap_or_else]"){
+TEST_CASE("unwrap_or_else()", "[maybe][unwrap_or_else]")
+{
   int k = 10;
-  REQUIRE(maybe{just(4)}.unwrap_or_else([k]{ return 2 * k; }) == 4);
-  REQUIRE(maybe<int>{}.unwrap_or_else([k]{ return 2 * k; }) == 20);
+  REQUIRE(maybe{ just(4) }.unwrap_or_else([k] { return 2 * k; }) == 4);
+  REQUIRE(maybe<int>{}.unwrap_or_else([k] { return 2 * k; }) == 20);
 }
 
-TEST_CASE("map()", "[maybe][map]"){
+TEST_CASE("map()", "[maybe][map]")
+{
 
   maybe maybe_some_string = just("Hello, World!"s);
   // `maybe::map` takes self *by ref*,
@@ -104,14 +115,16 @@ TEST_CASE("map()", "[maybe][map]"){
 
   REQUIRE(maybe_some_len == just(13u));
 
-  maybe some_list = just(std::vector<int>{1,2,3,4,5});
-  auto acc = [](auto&& range, auto init) -> double { return std::accumulate(range.begin(), range.end(), init); };
+  maybe some_list = just(std::vector<int>{ 1, 2, 3, 4, 5 });
+  auto acc = [](auto&& range, auto init) -> double
+  { return std::accumulate(range.begin(), range.end(), init); };
   maybe sum = some_list.map(acc, 0.0);
 
   REQUIRE(sum == just(15));
 }
 
-TEST_CASE("map_or()", "[maybe][map_or]"){
+TEST_CASE("map_or()", "[maybe][map_or]")
+{
 
   maybe x = just("foo"s);
   REQUIRE(x.map_or(42, &std::string::size) == 3);
@@ -126,22 +139,29 @@ TEST_CASE("map_or()", "[maybe][map_or]"){
   REQUIRE(z == just(2));
 }
 
-TEST_CASE("map_or_else()", "[maybe][map_or_else]"){
+TEST_CASE("map_or_else()", "[maybe][map_or_else]")
+{
   int k = 21;
 
   maybe x = just("foo"s);
-  REQUIRE(x.map_or_else([k]{ return 2 * k; }, &std::string::size) == 3);
+  REQUIRE(x.map_or_else([k] { return 2 * k; }, &std::string::size) == 3);
 
   maybe<std::string> y = nothing;
-  REQUIRE(y.map_or_else([k]{ return 2 * k; }, &std::string::size) == 42);
-  REQUIRE(x.map_or_else([]{ return "default"s; }, std::plus{}, "bar"s) == "foobar"s);
-  REQUIRE(y.map_or_else([]{ return "default"s; }, std::plus{}, "bar"s) == "default"s);
+  REQUIRE(y.map_or_else([k] { return 2 * k; }, &std::string::size) == 42);
+  REQUIRE(
+      x.map_or_else([] { return "default"s; }, std::plus{}, "bar"s) == "foobar"s
+  );
+  REQUIRE(
+      y.map_or_else([] { return "default"s; }, std::plus{}, "bar"s)
+      == "default"s
+  );
 
   maybe z = just(1);
-  REQUIRE(z.map_or_else([k]{ return 2 * k; }, std::plus{}, 1) == 2);
+  REQUIRE(z.map_or_else([k] { return 2 * k; }, std::plus{}, 1) == 2);
 }
 
-TEST_CASE("ok_or()", "[maybe][ok_or]"){
+TEST_CASE("ok_or()", "[maybe][ok_or]")
+{
 
   maybe x = just("foo"s);
   REQUIRE(x.ok_or(0) == success("foo"s));
@@ -151,187 +171,204 @@ TEST_CASE("ok_or()", "[maybe][ok_or]"){
 
   REQUIRE(y.ok_or() == failure<>());
   REQUIRE(y.ok_or<int>() == failure(int{}));
-
 }
 
-TEST_CASE("ok_or_else()", "[maybe][ok_or_else]"){
+TEST_CASE("ok_or_else()", "[maybe][ok_or_else]")
+{
 
   maybe x = just("foo"s);
-  REQUIRE(x.ok_or_else([]{ return 0; }) == success("foo"s));
+  REQUIRE(x.ok_or_else([] { return 0; }) == success("foo"s));
 
   maybe<std::string> y = nothing;
-  REQUIRE(y.ok_or_else([]{ return 0; }) == failure(0));
-
+  REQUIRE(y.ok_or_else([] { return 0; }) == failure(0));
 }
 
-TEST_CASE("conj()", "[maybe][conj]"){
+TEST_CASE("conj()", "[maybe][conj]")
 {
-  maybe x = just(2);
-  maybe<std::string> y = nothing;
-  REQUIRE(x.conj(y) == nothing);
-  REQUIRE((x&&y) == nothing);
-}
-{
-  maybe<int> x = nothing;
-  maybe y = just("foo"s);
-  REQUIRE(x.conj(y) == nothing);
-  REQUIRE((x&&y) == nothing);
-}
-{
-  maybe x = just(2);
-  maybe y = just("foo"s);
-  REQUIRE(x.conj(y) == just("foo"s));
-  REQUIRE((x&&y) == just("foo"s));
-}
-{
-  maybe<int> x = nothing;
-  maybe<std::string> y = nothing;
-  REQUIRE(x.conj(y) == nothing);
-  REQUIRE((x&&y) == nothing);
-}
+  {
+    maybe x = just(2);
+    maybe<std::string> y = nothing;
+    REQUIRE(x.conj(y) == nothing);
+    REQUIRE((x && y) == nothing);
+  }
+  {
+    maybe<int> x = nothing;
+    maybe y = just("foo"s);
+    REQUIRE(x.conj(y) == nothing);
+    REQUIRE((x && y) == nothing);
+  }
+  {
+    maybe x = just(2);
+    maybe y = just("foo"s);
+    REQUIRE(x.conj(y) == just("foo"s));
+    REQUIRE((x && y) == just("foo"s));
+  }
+  {
+    maybe<int> x = nothing;
+    maybe<std::string> y = nothing;
+    REQUIRE(x.conj(y) == nothing);
+    REQUIRE((x && y) == nothing);
+  }
 }
 
-TEST_CASE("and_then()", "[maybe][and_then]"){
+TEST_CASE("and_then()", "[maybe][and_then]")
+{
 
   auto sq = [](int x) -> maybe<int> { return just(x * x); };
   auto nope = [](...) -> maybe<int> { return nothing; };
-  auto is_eq = [](int a, int b) { return a == b ? maybe<int>{a} : nothing; };
+  auto is_eq = [](int a, int b) { return a == b ? maybe<int>{ a } : nothing; };
 
-  REQUIRE(maybe{just(2)}.and_then(sq).and_then(sq) == just(16));
-  REQUIRE(maybe{just(2)}.and_then(sq).and_then(nope) == nothing);
-  REQUIRE(maybe{just(2)}.and_then(nope).and_then(sq) == nothing);
-  REQUIRE(maybe{just(2)}.and_then(is_eq, 2) == just(2));
+  REQUIRE(maybe{ just(2) }.and_then(sq).and_then(sq) == just(16));
+  REQUIRE(maybe{ just(2) }.and_then(sq).and_then(nope) == nothing);
+  REQUIRE(maybe{ just(2) }.and_then(nope).and_then(sq) == nothing);
+  REQUIRE(maybe{ just(2) }.and_then(is_eq, 2) == just(2));
   REQUIRE(nope().and_then(sq).and_then(sq) == nothing);
 }
 
+TEST_CASE("filter()", "[maybe][filter]")
+{
 
-TEST_CASE("filter()", "[maybe][filter]"){
-
-  auto is_even = [](int n) -> bool {
-    return n % 2 == 0;
-  };
+  auto is_even = [](int n) -> bool { return n % 2 == 0; };
 
   REQUIRE(maybe<int>{}.filter(is_even) == nothing);
-  REQUIRE(maybe{just(3)}.filter(is_even) == nothing);
-  REQUIRE(maybe{just(4)}.filter(is_even) == just(4));
-
+  REQUIRE(maybe{ just(3) }.filter(is_even) == nothing);
+  REQUIRE(maybe{ just(4) }.filter(is_even) == just(4));
 }
 
-TEST_CASE("disj()", "[maybe][disj]"){
+TEST_CASE("disj()", "[maybe][disj]")
 {
-  maybe x = just(2);
-  maybe<int> y = nothing;
-  assert(x.disj(y) == just(2));
-  assert((x||y) == just(2));
-}
-{
-  maybe<int> x = nothing;
-  maybe y = just(100);
-  assert(x.disj(y) == just(100));
-  assert((x||y) == just(100));
-}
-{
-  maybe x = just(2);
-  maybe y = just(100);
-  assert(x.disj(y) == just(2));
-  assert((x||y) == just(2));
-}
-{
-  maybe<int> x = nothing;
-  maybe<int> y = nothing;
-  assert(x.disj(y) == nothing);
-  assert((x||y) == nothing);
-}
+  {
+    maybe x = just(2);
+    maybe<int> y = nothing;
+    assert(x.disj(y) == just(2));
+    assert((x || y) == just(2));
+  }
+  {
+    maybe<int> x = nothing;
+    maybe y = just(100);
+    assert(x.disj(y) == just(100));
+    assert((x || y) == just(100));
+  }
+  {
+    maybe x = just(2);
+    maybe y = just(100);
+    assert(x.disj(y) == just(2));
+    assert((x || y) == just(2));
+  }
+  {
+    maybe<int> x = nothing;
+    maybe<int> y = nothing;
+    assert(x.disj(y) == nothing);
+    assert((x || y) == nothing);
+  }
 }
 
-TEST_CASE("or_else()", "[maybe][or_else]"){
+TEST_CASE("or_else()", "[maybe][or_else]")
+{
 
   auto nobody = []() -> maybe<std::string> { return nothing; };
   auto vikings = []() -> maybe<std::string> { return just("vikings"s); };
-  auto to_maybe = [](auto&& e) -> maybe<std::decay_t<decltype(e)>> { return just(std::forward<decltype(e)>(e)); };
+  auto to_maybe = [](auto&& e) -> maybe<std::decay_t<decltype(e)>>
+  { return just(std::forward<decltype(e)>(e)); };
 
-  REQUIRE(maybe{just("barbarians"s)}.or_else(vikings) == just("barbarians"s));
+  REQUIRE(maybe{ just("barbarians"s) }.or_else(vikings) == just("barbarians"s));
   REQUIRE(maybe<std::string>{}.or_else(vikings) == just("vikings"s));
-  REQUIRE(maybe<std::string>{}.or_else(to_maybe, "vikings"s) == just("vikings"s));
+  REQUIRE(
+      maybe<std::string>{}.or_else(to_maybe, "vikings"s) == just("vikings"s)
+  );
   REQUIRE(maybe<std::string>{}.or_else(nobody) == nothing);
-
 }
 
-TEST_CASE("xdisj()", "[maybe][xdisj]"){
+TEST_CASE("xdisj()", "[maybe][xdisj]")
 {
-  maybe x = just(2);
-  maybe<int> y = nothing;
-  assert(x.xdisj(y) == just(2));
-  assert((x^y) == just(2));
-}
-{
-  maybe<int> x = nothing;
-  maybe y = just(100);
-  assert(x.xdisj(y) == just(100));
-  assert((x^y) == just(100));
-}
-{
-  maybe x = just(2);
-  maybe y = just(100);
-  assert(x.xdisj(y) == nothing);
-  assert((x^y) == nothing);
-}
-{
-  maybe<int> x = nothing;
-  maybe<int> y = nothing;
-  assert(x.xdisj(y) == nothing);
-  assert((x^y) == nothing);
-}
+  {
+    maybe x = just(2);
+    maybe<int> y = nothing;
+    assert(x.xdisj(y) == just(2));
+    assert((x ^ y) == just(2));
+  }
+  {
+    maybe<int> x = nothing;
+    maybe y = just(100);
+    assert(x.xdisj(y) == just(100));
+    assert((x ^ y) == just(100));
+  }
+  {
+    maybe x = just(2);
+    maybe y = just(100);
+    assert(x.xdisj(y) == nothing);
+    assert((x ^ y) == nothing);
+  }
+  {
+    maybe<int> x = nothing;
+    maybe<int> y = nothing;
+    assert(x.xdisj(y) == nothing);
+    assert((x ^ y) == nothing);
+  }
 }
 
-struct noncopyable {
+struct noncopyable
+{
   noncopyable() = default;
-  noncopyable(noncopyable const&) = delete;
-  noncopyable& operator=(noncopyable const&) = delete;
+  noncopyable(const noncopyable&) = delete;
+  noncopyable& operator=(const noncopyable&) = delete;
   noncopyable(noncopyable&&) = default;
   noncopyable& operator=(noncopyable&&) = default;
 
-  bool operator==(noncopyable&&) & {
+  bool operator==(noncopyable&&) &
+  {
     return true;
   }
-  bool operator==(noncopyable&&) const& {
+  bool operator==(noncopyable&&) const&
+  {
     return true;
   }
-  bool operator==(noncopyable const&) & {
+  bool operator==(const noncopyable&) &
+  {
     return true;
   }
-  bool operator==(noncopyable const&) const& {
+  bool operator==(const noncopyable&) const&
+  {
     return true;
   }
 
-  friend std::ostream& operator<<(std::ostream& os, noncopyable&) {
+  friend std::ostream& operator<<(std::ostream& os, noncopyable&)
+  {
     return os << "noncopyable&";
   }
-  friend std::ostream& operator<<(std::ostream& os, noncopyable const&) {
+  friend std::ostream& operator<<(std::ostream& os, const noncopyable&)
+  {
     return os << "noncopyable const&";
   }
-  friend std::ostream& operator<<(std::ostream& os, noncopyable&&) {
+  friend std::ostream& operator<<(std::ostream& os, noncopyable&&)
+  {
     return os << "noncopyable&&";
   }
 };
 
-TEST_CASE("get_or_emplace()", "[maybe][get_or_emplace]"){
-    maybe<noncopyable> x = nothing;
-    auto& y = x.get_or_emplace(noncopyable{});
-    REQUIRE(y == noncopyable{});
+TEST_CASE("get_or_emplace()", "[maybe][get_or_emplace]")
+{
+  maybe<noncopyable> x = nothing;
+  auto& y = x.get_or_emplace(noncopyable{});
+  REQUIRE(y == noncopyable{});
 }
 
-TEST_CASE("get_or_emplace_with()", "[maybe][get_or_emplace_with]"){
-  GIVEN("a nothing type of maybe<int>.") {
+TEST_CASE("get_or_emplace_with()", "[maybe][get_or_emplace_with]")
+{
+  GIVEN("a nothing type of maybe<int>.")
+  {
     maybe<int> x = nothing;
-    WHEN("call get_or_emplace_with and bind to `y`."){
-      std::ignore = x.get_or_emplace_with([]{ return 5; });
-      std::ignore = x.get_or_emplace_with([](auto x){ return x; }, 5);
-      auto& y = x.get_or_emplace_with(&std::string::size , "12345"s);
+    WHEN("call get_or_emplace_with and bind to `y`.")
+    {
+      std::ignore = x.get_or_emplace_with([] { return 5; });
+      std::ignore = x.get_or_emplace_with([](auto x) { return x; }, 5);
+      auto& y = x.get_or_emplace_with(&std::string::size, "12345"s);
       REQUIRE(y == 5);
-      WHEN("assign 7 to `y`") {
+      WHEN("assign 7 to `y`")
+      {
         y = 7;
-        THEN("changed x to just(7)"){
+        THEN("changed x to just(7)")
+        {
           REQUIRE(x == just(7));
         }
       }
@@ -339,7 +376,8 @@ TEST_CASE("get_or_emplace_with()", "[maybe][get_or_emplace_with]"){
   }
 }
 
-TEST_CASE("as_ref()", "[maybe][as_ref]"){
+TEST_CASE("as_ref()", "[maybe][as_ref]")
+{
   {
     maybe x = just(5);
     auto ref = x.as_ref();
@@ -349,8 +387,8 @@ TEST_CASE("as_ref()", "[maybe][as_ref]"){
   }
 }
 
-
-TEST_CASE("replace()", "[maybe][replace]"){
+TEST_CASE("replace()", "[maybe][replace]")
+{
   {
     maybe x = just(2);
     auto old = x.replace(5);
@@ -365,22 +403,23 @@ TEST_CASE("replace()", "[maybe][replace]"){
   }
 }
 
-TEST_CASE("transpose()", "[maybe][transpose]"){
+TEST_CASE("transpose()", "[maybe][transpose]")
+{
 
   result<maybe<int>, std::string> x = success(just(5));
   maybe<result<int, std::string>> y = just(success(5));
   REQUIRE(x == y.transpose());
-
 }
 
-TEST_CASE("unwrap_or_default()", "[maybe][unwrap_or_default]"){
+TEST_CASE("unwrap_or_default()", "[maybe][unwrap_or_default]")
+{
 
   maybe<std::string> x = nothing;
   REQUIRE(x.unwrap_or_default() == ""s);
-
 }
 
-TEST_CASE("flatten()", "[maybe][flatten]"){
+TEST_CASE("flatten()", "[maybe][flatten]")
+{
 
   maybe<maybe<int>> x = just(just(6));
   REQUIRE(just(6) == x.flatten());
@@ -394,62 +433,68 @@ TEST_CASE("flatten()", "[maybe][flatten]"){
   // Flattening once only removes one level of nesting:
   maybe<maybe<maybe<int>>> nest = just(just(just(6)));
   REQUIRE(just(6) == nest.flatten().flatten());
-
 }
 
-TEST_CASE("and_finally()", "[maybe][and_finally]"){
+TEST_CASE("and_finally()", "[maybe][and_finally]")
+{
 
   std::string hook = "default";
   maybe<std::string> x = nothing;
-  x.and_finally([&hook](std::string v){
-    hook = v;
-  });
+  x.and_finally([&hook](std::string v) { hook = v; });
   REQUIRE(hook == "default"s);
 
   maybe y = just("error"s);
-  y.and_finally([&hook](std::string v){
-    hook = v;
-  });
+  y.and_finally([&hook](std::string v) { hook = v; });
   REQUIRE(hook == "error"s);
-
 }
 
-TEST_CASE("or_finally()", "[maybe][or_finally]"){
+TEST_CASE("or_finally()", "[maybe][or_finally]")
+{
 
   std::string hook = "default";
   maybe<int> x = nothing;
-  x.or_finally([&hook]{
-    hook = "error";
-  });
+  x.or_finally([&hook] { hook = "error"; });
   REQUIRE(hook == "error"s);
-
 }
 
-TEST_CASE("and_peek() test", "[maybe][and_peek]"){
+TEST_CASE("and_peek() test", "[maybe][and_peek]")
+{
   maybe x = just(42);
-  REQUIRE(x.and_peek([](int& v){ v = 57; }) == just(57));
+  REQUIRE(x.and_peek([](int& v) { v = 57; }) == just(57));
   int y = 0;
-  REQUIRE((std::as_const(x).and_peek([&y](auto&& v){ y = v; }), y) == x.unwrap());
+  REQUIRE(
+      (std::as_const(x).and_peek([&y](auto&& v) { y = v; }), y) == x.unwrap()
+  );
 }
 
-TEST_CASE("or_peek() test", "[maybe][and_peek]"){
+TEST_CASE("or_peek() test", "[maybe][and_peek]")
+{
   maybe<int> x = nothing;
   int hook = 0;
-  REQUIRE(x.or_peek([&hook]{ hook = 57; }) == nothing);
+  REQUIRE(x.or_peek([&hook] { hook = 57; }) == nothing);
   REQUIRE(hook == 57);
 }
 
-struct base {
+struct base
+{
   virtual ~base() = default;
-  virtual std::string test() { return "base"; }
+  virtual std::string test()
+  {
+    return "base";
+  }
 };
 
-struct derived final: base {
-  virtual std::string test() override { return "derived"; }
+struct derived final : base
+{
+  virtual std::string test() override
+  {
+    return "derived";
+  }
 };
 
-TEST_CASE("reference of abstract", "[maybe][abstract]"){
-  derived _derived = {}; 
+TEST_CASE("reference of abstract", "[maybe][abstract]")
+{
+  derived _derived = {};
   maybe<base&> x = just(_derived);
   REQUIRE(x->test() == "derived"s);
   base _base = {};
@@ -457,7 +502,8 @@ TEST_CASE("reference of abstract", "[maybe][abstract]"){
   REQUIRE(x->test() == "base"s);
 }
 
-TEST_CASE("equal", "[maybe][equal]"){
+TEST_CASE("equal", "[maybe][equal]")
+{
   maybe<int> just1 = just(1);
   maybe<int> just2 = just(2);
   maybe<int> none = nothing;
@@ -530,7 +576,8 @@ TEST_CASE("equal", "[maybe][equal]"){
   REQUIRE_FALSE(just(2) == nothing);
 }
 
-TEST_CASE("not_equal", "[maybe][not_equal]"){
+TEST_CASE("not_equal", "[maybe][not_equal]")
+{
   maybe<int> just1 = just(1);
   maybe<int> just2 = just(2);
   maybe<int> none = nothing;
@@ -603,7 +650,8 @@ TEST_CASE("not_equal", "[maybe][not_equal]"){
   REQUIRE(just(2) != nothing);
 }
 
-TEST_CASE("less compare", "[maybe][less]"){
+TEST_CASE("less compare", "[maybe][less]")
+{
   maybe<int> just1 = just(1);
   maybe<int> just2 = just(2);
   maybe<int> none = nothing;
@@ -674,10 +722,10 @@ TEST_CASE("less compare", "[maybe][less]"){
 
   REQUIRE_FALSE(just(1) < nothing);
   REQUIRE_FALSE(just(2) < nothing);
-
 }
 
-TEST_CASE("less_or_equal compare", "[maybe][less_or_equal]"){
+TEST_CASE("less_or_equal compare", "[maybe][less_or_equal]")
+{
   maybe<int> just1 = just(1);
   maybe<int> just2 = just(2);
   maybe<int> none = nothing;
@@ -746,10 +794,10 @@ TEST_CASE("less_or_equal compare", "[maybe][less_or_equal]"){
 
   REQUIRE_FALSE(just(1) <= nothing);
   REQUIRE_FALSE(just(2) <= nothing);
-
 }
 
-TEST_CASE("greater compare", "[maybe][greater]"){
+TEST_CASE("greater compare", "[maybe][greater]")
+{
   maybe<int> just1 = just(1);
   maybe<int> just2 = just(2);
   maybe<int> none = nothing;
@@ -818,10 +866,10 @@ TEST_CASE("greater compare", "[maybe][greater]"){
 
   REQUIRE(just(1) > nothing);
   REQUIRE(just(2) > nothing);
-
 }
 
-TEST_CASE("greater_or_equal compare", "[maybe][greater_or_equal]"){
+TEST_CASE("greater_or_equal compare", "[maybe][greater_or_equal]")
+{
   maybe<int> just1 = just(1);
   maybe<int> just2 = just(2);
   maybe<int> none = nothing;
@@ -890,121 +938,137 @@ TEST_CASE("greater_or_equal compare", "[maybe][greater_or_equal]"){
 
   REQUIRE(just(1) >= nothing);
   REQUIRE(just(2) >= nothing);
-
 }
 
-TEST_CASE("format test", "[maybe][format]"){
+TEST_CASE("format test", "[maybe][format]")
+{
   using str = std::string;
-  SECTION("just"){
+  SECTION("just")
+  {
     using namespace std::literals;
     std::stringstream ss;
     ss << just(1);
-    REQUIRE(ss.str() ==  "just(1)"s);
+    REQUIRE(ss.str() == "just(1)"s);
   }
-  SECTION("maybe of just"){
+  SECTION("maybe of just")
+  {
     using namespace std::literals;
     std::stringstream ss;
-    ss << maybe<int>{just(1)};
-    REQUIRE(ss.str() ==  "just(1)"s);
+    ss << maybe<int>{ just(1) };
+    REQUIRE(ss.str() == "just(1)"s);
   }
-  SECTION("just of range"){
+  SECTION("just of range")
+  {
     using namespace std::literals;
     std::stringstream ss;
-    ss << just(std::vector<std::string>{"foo"s, "bar"s});
+    ss << just(std::vector<std::string>{ "foo"s, "bar"s });
     REQUIRE(ss.str() == "just([\"foo\",\"bar\"])"s);
   }
-  SECTION("result of range err"){
+  SECTION("result of range err")
+  {
     using namespace std::literals;
     std::stringstream ss;
-    ss << maybe(just(std::vector<std::string>{"foo"s, "bar"s}));
+    ss << maybe(just(std::vector<std::string>{ "foo"s, "bar"s }));
     REQUIRE(ss.str() == "just([\"foo\",\"bar\"])"s);
   }
-  SECTION("just of tuple"){
+  SECTION("just of tuple")
+  {
     using namespace std::literals;
     std::stringstream ss;
-    ss << just(std::tuple{"foo"s, 1});
+    ss << just(std::tuple{ "foo"s, 1 });
     REQUIRE(ss.str() == "just((\"foo\",1))"s);
   }
-  SECTION("maybe of just tuple"){
+  SECTION("maybe of just tuple")
+  {
     using namespace std::literals;
     std::stringstream ss;
-    ss << maybe(just(std::tuple{"foo"s, 1}));
+    ss << maybe(just(std::tuple{ "foo"s, 1 }));
     REQUIRE(ss.str() == "just((\"foo\",1))"s);
   }
-  SECTION("just of dictionary"){
+  SECTION("just of dictionary")
+  {
     using namespace std::literals;
     {
       std::stringstream ss;
-      ss << just(std::map<str, int>{{"foo"s, 1}});
+      ss << just(std::map<str, int>{ { "foo"s, 1 } });
       REQUIRE(ss.str() == "just({\"foo\": 1})"s);
     }
   }
-  SECTION("maybe of just dictionary"){
+  SECTION("maybe of just dictionary")
+  {
     using namespace std::literals;
     {
       std::stringstream ss;
-      ss << maybe<std::map<str, int>>(just(std::map<str, int>{{"foo"s, 1}}));
+      ss << maybe<std::map<str, int>>(just(std::map<str, int>{ { "foo"s, 1 } })
+      );
       REQUIRE(ss.str() == "just({\"foo\": 1})"s);
     }
   }
-  SECTION("just of tuple of tuple"){
+  SECTION("just of tuple of tuple")
+  {
     using namespace std::literals;
     {
       std::stringstream ss;
-      ss << just(std::tuple{std::tuple{1, 1}, 1});
+      ss << just(std::tuple{ std::tuple{ 1, 1 }, 1 });
       REQUIRE(ss.str() == "just(((1,1),1))"s);
     }
   }
-  SECTION("maybe of just tuple of tuple"){
+  SECTION("maybe of just tuple of tuple")
+  {
     using namespace std::literals;
     {
       std::stringstream ss;
-      ss << maybe(just(std::tuple{std::tuple{1, 1}, 1}));
+      ss << maybe(just(std::tuple{ std::tuple{ 1, 1 }, 1 }));
       REQUIRE(ss.str() == "just(((1,1),1))"s);
     }
   }
 }
 
-TEST_CASE("forward mode test", "[maybe][forward]"){
+TEST_CASE("forward mode test", "[maybe][forward]")
+{
   maybe<std::string> aaaaaaaaaa = just(10, 'a');
   REQUIRE(aaaaaaaaaa == just("aaaaaaaaaa"));
 
-  maybe<std::vector<int>> vec = just({1,2,3});
-  REQUIRE(vec == just(std::vector{1,2,3}));
+  maybe<std::vector<int>> vec = just({ 1, 2, 3 });
+  REQUIRE(vec == just(std::vector{ 1, 2, 3 }));
 }
 
-TEST_CASE("range_to_maybe test", "[maybe][range_to_maybe]"){
-  std::vector v{1,2,3};
+TEST_CASE("range_to_maybe test", "[maybe][range_to_maybe]")
+{
+  std::vector v{ 1, 2, 3 };
   maybe x = range_to_maybe(v);
   REQUIRE(x == just(1));
 
   maybe y = range_to_maybe(std::vector<int>{});
   REQUIRE(y == nothing);
 
-  int a[] = {1};
+  int a[] = { 1 };
   maybe z = range_to_maybe(a);
   REQUIRE(z == 1);
 }
 
 #include <mitama/boolinators.hpp>
 
-TEST_CASE("as_maybe test", "[maybe][as_maybe][boolinators]"){
+TEST_CASE("as_maybe test", "[maybe][as_maybe][boolinators]")
+{
   maybe x = as_maybe(true);
   REQUIRE(x == just(std::monostate{}));
   maybe y = as_maybe(false);
   REQUIRE(y == nothing);
 }
 
-TEST_CASE("as_just test", "[maybe][as_just][boolinators]"){
+TEST_CASE("as_just test", "[maybe][as_just][boolinators]")
+{
   maybe x = as_just(true, 1);
   REQUIRE(x == just(1));
   maybe y = as_just(false, 1);
   REQUIRE(y == nothing);
 }
 
-TEST_CASE("as_just_from test", "[maybe][as_just_from][boolinators]"){
-  maybe x = as_just_from(true, []{ return 1; });
+TEST_CASE("as_just_from test", "[maybe][as_just_from][boolinators]")
+{
+  maybe x = as_just_from(true, [] { return 1; });
   REQUIRE(x == just(1));
-  maybe y = as_just_from(false, []{ return 1; });
+  maybe y = as_just_from(false, [] { return 1; });
   REQUIRE(y == nothing);
 }

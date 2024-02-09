@@ -1,0 +1,36 @@
+---
+BasedOnStyle: LLVM
+AlignAfterOpenBracket: BlockIndent
+AlignEscapedNewlines: Left
+AlignOperands: Align
+AlignTrailingComments: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortBlocksOnASingleLine: Empty
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AlwaysBreakAfterReturnType: TopLevelDefinitions
+AlwaysBreakBeforeMultilineStrings: true
+AlwaysBreakTemplateDeclarations: Yes
+BreakBeforeBraces: Allman
+BreakBeforeBinaryOperators: NonAssignment
+BreakStringLiterals: true
+Cpp11BracedListStyle: false
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: "^<catch2/"
+    Priority: 1
+    CaseSensitive: true
+  - Regex: "^<mitama/"
+    Priority: 2
+    CaseSensitive: true
+  - Regex: "^<boost/"
+    Priority: 3
+    CaseSensitive: true
+  - Regex: ".*"
+    Priority: 4
+    SortPriority: 0
+IndentCaseLabels: true
+IndentPPDirectives: AfterHash
+NamespaceIndentation: Inner
+PointerAlignment: Left
+QualifierAlignment: Left
