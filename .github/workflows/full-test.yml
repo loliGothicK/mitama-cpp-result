@@ -9,6 +9,7 @@ jobs:
   full_test:
     runs-on: ubuntu-20.04
     strategy:
+      fail-fast: false
       matrix: # 13 boost version * 7 compiler version = 91 jobs
         boost_version: [ 1.67.0, 1.68.0, 1.69.0, 1.70.0,
                          1.71.0, 1.72.0, 1.73.0, 1.74.0, 1.75.0 ]
