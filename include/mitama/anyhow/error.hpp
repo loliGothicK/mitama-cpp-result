@@ -10,15 +10,18 @@
 #include <string>
 #include <vector>
 
-namespace mitama::anyhow {
+namespace mitama::anyhow
+{
 
-struct error {
+struct error
+{
   virtual ~error() = default;
   virtual std::string what() const = 0;
   virtual std::shared_ptr<error> context(std::shared_ptr<error>) = 0;
 };
 
-class errors final : public error, public std::enable_shared_from_this<errors> {
+class errors final : public error, public std::enable_shared_from_this<errors>
+{
   std::vector<std::shared_ptr<error>> errs_;
 
 public:
@@ -30,21 +33,29 @@ public:
 
   ~errors() override = default;
   template <class... Errors>
-  errors(Errors&&... errs) : errs_{ std::forward<Errors>(errs)... } {}
+  errors(Errors&&... errs) : errs_{ std::forward<Errors>(errs)... }
+  {
+  }
 
-  std::shared_ptr<error> context(std::shared_ptr<error> ctx) override {
+  std::shared_ptr<error> context(std::shared_ptr<error> ctx) override
+  {
     errs_.emplace_back(std::move(ctx));
     return shared_from_this();
   }
 
-  auto chain() const {
+  auto chain() const
+  {
     return std::vector{ errs_.crbegin(), errs_.crend() };
   }
 
-  auto root_cause() const -> std::shared_ptr<mitama::anyhow::error> {
-    if (errs_.empty()) {
+  auto root_cause() const -> std::shared_ptr<mitama::anyhow::error>
+  {
+    if (errs_.empty())
+    {
       return nullptr;
-    } else {
+    }
+    else
+    {
       return errs_.back();
     }
   }
@@ -70,24 +81,33 @@ public:
   //     0: Failed to write the database.
   //     1: Failed to connect to the database.
   // ```
-  std::string what() const override {
+  std::string what() const override
+  {
     std::stringstream ss;
-    if (errs_.empty()) {
+    if (errs_.empty())
+    {
       return ss.str();
     }
 
-    if (errs_.size() == 1) {
+    if (errs_.size() == 1)
+    {
       ss << (*errs_.crbegin())->what() << "\n";
-    } else {
+    }
+    else
+    {
       auto iter = errs_.crbegin();
       ss << (*iter)->what() << "\n\n"
          << "Caused by:\n";
       ++iter;
 
-      if (errs_.size() == 2) {
+      if (errs_.size() == 2)
+      {
         ss << "    " << (*iter)->what() << "\n";
-      } else {
-        for (int i = 0; iter != errs_.crend(); ++iter, ++i) {
+      }
+      else
+      {
+        for (int i = 0; iter != errs_.crend(); ++iter, ++i)
+        {
           ss << "    " << i << ": " << (*iter)->what() << "\n";
         }
       }
@@ -97,8 +117,8 @@ public:
 };
 
 template <class E>
-class cause final : public error,
-                    public std::enable_shared_from_this<cause<E>> {
+class cause final : public error, public std::enable_shared_from_this<cause<E>>
+{
   E err;
 
 public:
@@ -110,14 +130,16 @@ public:
 
   explicit cause(E err) noexcept : err(err) {}
 
-  std::shared_ptr<error> context(std::shared_ptr<error> ctx) override {
+  std::shared_ptr<error> context(std::shared_ptr<error> ctx) override
+  {
     return std::make_shared<errors>(
         std::enable_shared_from_this<cause<E>>::shared_from_this(),
         std::move(ctx)
     );
   }
 
-  std::string what() const override {
+  std::string what() const override
+  {
     std::stringstream ss;
     ss << err;
     return ss.str();
@@ -129,7 +151,8 @@ cause(E) -> cause<std::decay_t<E>>;
 
 template <class E>
 inline auto
-anyhow(E&& err) -> std::shared_ptr<mitama::anyhow::error> {
+anyhow(E&& err) -> std::shared_ptr<mitama::anyhow::error>
+{
   return std::make_shared<mitama::anyhow::cause<std::decay_t<E>>>(
       std::forward<E>(err)
   );
@@ -138,7 +161,8 @@ anyhow(E&& err) -> std::shared_ptr<mitama::anyhow::error> {
 inline std::ostream&
 operator<<(
     std::ostream& os, const std::shared_ptr<::mitama::anyhow::error>& err
-) {
+)
+{
   return os << err->what();
 }
 
@@ -146,7 +170,8 @@ template <class Err, class... Args>
 inline auto
 failure(Args&&... args) -> std::enable_if_t<
     std::is_base_of_v<mitama::anyhow::error, Err>,
-    mitama::failure_t<std::shared_ptr<Err>>> {
+    mitama::failure_t<std::shared_ptr<Err>>>
+{
   return mitama::failure(std::make_shared<Err>(std::forward<Args>(args)...));
 }
 } // namespace mitama::anyhow

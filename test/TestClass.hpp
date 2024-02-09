@@ -4,14 +4,18 @@
 template <
     bool CopyConstructible, bool CopyAssignable, bool MoveConstructible,
     bool MoveAssignable>
-struct TestClass {
+struct TestClass
+{
   // special member definitions ...
 };
 
-struct Receptor {};
+struct Receptor
+{
+};
 
 template <>
-struct TestClass<true, true, true, true> {
+struct TestClass<true, true, true, true>
+{
   TestClass() = default;
   TestClass(const TestClass&) = default;
   TestClass& operator=(const TestClass&) = default;
@@ -22,7 +26,8 @@ struct TestClass<true, true, true, true> {
 };
 
 template <>
-struct TestClass<true, true, true, false> {
+struct TestClass<true, true, true, false>
+{
   TestClass() = default;
   TestClass(const TestClass&) = default;
   TestClass& operator=(const TestClass&) = default;
@@ -33,7 +38,8 @@ struct TestClass<true, true, true, false> {
 };
 
 template <>
-struct TestClass<true, true, false, true> {
+struct TestClass<true, true, false, true>
+{
   TestClass() = default;
   TestClass(const TestClass&) = default;
   TestClass& operator=(const TestClass&) = default;
@@ -44,7 +50,8 @@ struct TestClass<true, true, false, true> {
 };
 
 template <>
-struct TestClass<true, true, false, false> {
+struct TestClass<true, true, false, false>
+{
   TestClass() = default;
   TestClass(const TestClass&) = default;
   TestClass& operator=(const TestClass&) = default;
@@ -55,7 +62,8 @@ struct TestClass<true, true, false, false> {
 };
 
 template <>
-struct TestClass<true, false, true, true> {
+struct TestClass<true, false, true, true>
+{
   TestClass() = default;
   TestClass(const TestClass&) = default;
   TestClass& operator=(const TestClass&) = delete;
@@ -66,7 +74,8 @@ struct TestClass<true, false, true, true> {
 };
 
 template <>
-struct TestClass<true, false, true, false> {
+struct TestClass<true, false, true, false>
+{
   TestClass() = default;
   TestClass(const TestClass&) = default;
   TestClass& operator=(const TestClass&) = delete;
@@ -77,7 +86,8 @@ struct TestClass<true, false, true, false> {
 };
 
 template <>
-struct TestClass<true, false, false, true> {
+struct TestClass<true, false, false, true>
+{
   TestClass() = default;
   TestClass(const TestClass&) = default;
   TestClass& operator=(const TestClass&) = delete;
@@ -88,7 +98,8 @@ struct TestClass<true, false, false, true> {
 };
 
 template <>
-struct TestClass<true, false, false, false> {
+struct TestClass<true, false, false, false>
+{
   TestClass() = default;
   TestClass(const TestClass&) = default;
   TestClass& operator=(const TestClass&) = delete;
@@ -99,7 +110,8 @@ struct TestClass<true, false, false, false> {
 };
 
 template <>
-struct TestClass<false, true, true, true> {
+struct TestClass<false, true, true, true>
+{
   TestClass() = default;
   TestClass(const TestClass&) = delete;
   TestClass& operator=(const TestClass&) = default;
@@ -110,7 +122,8 @@ struct TestClass<false, true, true, true> {
 };
 
 template <>
-struct TestClass<false, true, true, false> {
+struct TestClass<false, true, true, false>
+{
   TestClass() = default;
   TestClass(const TestClass&) = delete;
   TestClass& operator=(const TestClass&) = default;
@@ -121,7 +134,8 @@ struct TestClass<false, true, true, false> {
 };
 
 template <>
-struct TestClass<false, true, false, true> {
+struct TestClass<false, true, false, true>
+{
   TestClass() = default;
   TestClass(const TestClass&) = delete;
   TestClass& operator=(const TestClass&) = default;
@@ -132,7 +146,8 @@ struct TestClass<false, true, false, true> {
 };
 
 template <>
-struct TestClass<false, true, false, false> {
+struct TestClass<false, true, false, false>
+{
   TestClass() = default;
   TestClass(const TestClass&) = delete;
   TestClass& operator=(const TestClass&) = default;
@@ -143,7 +158,8 @@ struct TestClass<false, true, false, false> {
 };
 
 template <>
-struct TestClass<false, false, true, true> {
+struct TestClass<false, false, true, true>
+{
   TestClass() = default;
   TestClass(const TestClass&) = delete;
   TestClass& operator=(const TestClass&) = delete;
@@ -154,7 +170,8 @@ struct TestClass<false, false, true, true> {
 };
 
 template <>
-struct TestClass<false, false, true, false> {
+struct TestClass<false, false, true, false>
+{
   TestClass() = default;
   TestClass(const TestClass&) = delete;
   TestClass& operator=(const TestClass&) = delete;
@@ -165,7 +182,8 @@ struct TestClass<false, false, true, false> {
 };
 
 template <>
-struct TestClass<false, false, false, true> {
+struct TestClass<false, false, false, true>
+{
   TestClass() = default;
   TestClass(const TestClass&) = delete;
   TestClass& operator=(const TestClass&) = delete;
@@ -176,7 +194,8 @@ struct TestClass<false, false, false, true> {
 };
 
 template <>
-struct TestClass<false, false, false, false> {
+struct TestClass<false, false, false, false>
+{
   TestClass() = default;
   TestClass(const TestClass&) = delete;
   TestClass& operator=(const TestClass&) = delete;

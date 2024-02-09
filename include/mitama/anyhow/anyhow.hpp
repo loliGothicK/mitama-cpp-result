@@ -5,7 +5,8 @@
 
 #include <memory>
 
-namespace mitama::anyhow {
+namespace mitama::anyhow
+{
 template <class T>
 using result =
     result<void_to_monostate_t<T>, std::shared_ptr<::mitama::anyhow::error>>;

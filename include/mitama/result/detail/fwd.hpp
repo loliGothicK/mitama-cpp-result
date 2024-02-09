@@ -2,21 +2,27 @@
 #define MITAMA_RESULT_FWD
 #include <tuple>
 #include <variant>
-namespace mitama {
+namespace mitama
+{
 
-namespace _result_detail {
+namespace _result_detail
+{
   template <class = void, class...>
-  struct forward_mode {};
+  struct forward_mode
+  {
+  };
 } // namespace _result_detail
 
 /// for mutability control
-enum class mutability : bool {
+enum class mutability : bool
+{
   mut = false,
   immut = true,
 };
 
 constexpr mutability
-operator&&(mutability _1, mutability _2) {
+operator&&(mutability _1, mutability _2)
+{
   return mutability{ !(!static_cast<bool>(_1) && !static_cast<bool>(_2)) };
 }
 
@@ -55,10 +61,14 @@ class failure_t;
 template <class E>
 failure_t(E&&) -> failure_t<E>;
 
-class in_place_ok_t {};
+class in_place_ok_t
+{
+};
 inline constexpr in_place_ok_t in_place_ok = {};
 
-class in_place_err_t {};
+class in_place_err_t
+{
+};
 inline constexpr in_place_err_t in_place_err = {};
 
 } // namespace mitama

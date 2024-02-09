@@ -12,10 +12,12 @@
 #include <optional>
 #include <type_traits>
 
-namespace mitama {
+namespace mitama
+{
 
 template <class, class = void>
-class unwrap_or_default_friend_injector {
+class unwrap_or_default_friend_injector
+{
 public:
   void unwrap_or_default() const = delete;
 };
@@ -28,7 +30,8 @@ template <mutability _mu, class T, class E>
 class unwrap_or_default_friend_injector<
     basic_result<_mu, T, E>,
     std::enable_if_t<std::disjunction_v<
-        std::is_default_constructible<T>, std::is_aggregate<T>>>> {
+        std::is_default_constructible<T>, std::is_aggregate<T>>>>
+{
 public:
   /// @brief
   ///   Returns the contained value or a default.
@@ -37,12 +40,16 @@ public:
   ///   Consumes the self argument then,
   ///   if success, returns the contained value,
   ///   otherwise; if Err, returns the default value for that type.
-  T unwrap_or_default() const {
-    if constexpr (std::is_aggregate_v<T>) {
+  T unwrap_or_default() const
+  {
+    if constexpr (std::is_aggregate_v<T>)
+    {
       return static_cast<const basic_result<_mu, T, E>*>(this)->is_ok()
                  ? static_cast<const basic_result<_mu, T, E>*>(this)->unwrap()
                  : T{};
-    } else {
+    }
+    else
+    {
       return static_cast<const basic_result<_mu, T, E>*>(this)->is_ok()
                  ? static_cast<const basic_result<_mu, T, E>*>(this)->unwrap()
                  : T();
@@ -51,7 +58,8 @@ public:
 };
 
 template <class>
-class transpose_friend_injector {
+class transpose_friend_injector
+{
 public:
   void transpose() const = delete;
 };
@@ -59,7 +67,8 @@ public:
 /// @impl
 ///   impl<_mutability, T, E> basic_result<_mutability, Option<T>, E>
 template <mutability _mutability, class T, class E>
-class transpose_friend_injector<basic_result<_mutability, maybe<T>, E>> {
+class transpose_friend_injector<basic_result<_mutability, maybe<T>, E>>
+{
 public:
   /// @brief
   ///   Returns the contained value or a default.
@@ -68,19 +77,26 @@ public:
   ///   Consumes the self argument then,
   ///   if success, returns the contained value,
   ///   otherwise; if failure, returns the default value for that type.
-  maybe<basic_result<_mutability, T, E>> transpose() const& {
+  maybe<basic_result<_mutability, T, E>> transpose() const&
+  {
     if (static_cast<const basic_result<_mutability, maybe<T>, E>*>(this)->is_ok(
-        )) {
+        ))
+    {
       if (const auto& may =
               static_cast<const basic_result<_mutability, maybe<T>, E>*>(this)
-                  ->unwrap()) {
+                  ->unwrap())
+      {
         return maybe<basic_result<_mutability, T, E>>{ std::in_place,
                                                        in_place_ok,
                                                        may.unwrap() };
-      } else {
+      }
+      else
+      {
         return mitama::nothing;
       }
-    } else {
+    }
+    else
+    {
       return maybe<basic_result<_mutability, T, E>>{
         std::in_place, in_place_err,
         static_cast<const basic_result<_mutability, maybe<T>, E>*>(this)
@@ -91,7 +107,8 @@ public:
 };
 
 template <class, class = void>
-class indirect_friend_injector {
+class indirect_friend_injector
+{
 public:
   void indirect() const = delete;
   void indirect_ok() const = delete;
@@ -107,7 +124,8 @@ template <mutability _mutability, class T, class E>
 class indirect_friend_injector<
     basic_result<_mutability, T, E>,
     std::enable_if_t<std::conjunction_v<
-        traits::is_dereferencable<T>, traits::is_dereferencable<E>>>> {
+        traits::is_dereferencable<T>, traits::is_dereferencable<E>>>>
+{
   using indirect_ok_result = basic_result<
       _mutability, std::remove_reference_t<typename traits::deref<T>::Target>&,
       std::remove_reference_t<E>&>;
@@ -156,13 +174,17 @@ public:
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the success arm of the basic_result via
   ///   `operator*`.
-  constexpr auto indirect_ok() & -> indirect_ok_result {
-    if (static_cast<basic_result<_mutability, T, E>*>(this)->is_ok()) {
+  constexpr auto indirect_ok() & -> indirect_ok_result
+  {
+    if (static_cast<basic_result<_mutability, T, E>*>(this)->is_ok())
+    {
       return indirect_ok_result{
         in_place_ok,
         *static_cast<basic_result<_mutability, T, E>*>(this)->unwrap()
       };
-    } else {
+    }
+    else
+    {
       return indirect_ok_result{
         in_place_err,
         static_cast<basic_result<_mutability, T, E>*>(this)->unwrap_err()
@@ -181,13 +203,17 @@ public:
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the failure arm of the basic_result via
   ///   `operator*`.
-  constexpr auto indirect_err() & -> indirect_err_result {
-    if (static_cast<basic_result<_mutability, T, E>*>(this)->is_ok()) {
+  constexpr auto indirect_err() & -> indirect_err_result
+  {
+    if (static_cast<basic_result<_mutability, T, E>*>(this)->is_ok())
+    {
       return indirect_err_result{
         in_place_ok,
         static_cast<basic_result<_mutability, T, E>*>(this)->unwrap()
       };
-    } else {
+    }
+    else
+    {
       return indirect_err_result{
         in_place_err,
         *static_cast<basic_result<_mutability, T, E>*>(this)->unwrap_err()
@@ -208,13 +234,17 @@ public:
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the success and failure arm of the basic_result
   ///   via `operator*`.
-  constexpr auto indirect() & -> indirect_result {
-    if (static_cast<basic_result<_mutability, T, E>*>(this)->is_ok()) {
+  constexpr auto indirect() & -> indirect_result
+  {
+    if (static_cast<basic_result<_mutability, T, E>*>(this)->is_ok())
+    {
       return indirect_result{
         in_place_ok,
         *static_cast<basic_result<_mutability, T, E>*>(this)->unwrap()
       };
-    } else {
+    }
+    else
+    {
       return indirect_result{
         in_place_err,
         *static_cast<basic_result<_mutability, T, E>*>(this)->unwrap_err()
@@ -234,13 +264,17 @@ public:
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the success arm of the basic_result via
   ///   `operator*`.
-  constexpr auto indirect_ok() const& -> const_indirect_ok_result {
-    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok()) {
+  constexpr auto indirect_ok() const& -> const_indirect_ok_result
+  {
+    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok())
+    {
       return const_indirect_ok_result{
         in_place_ok,
         *static_cast<const basic_result<_mutability, T, E>*>(this)->unwrap()
       };
-    } else {
+    }
+    else
+    {
       return const_indirect_ok_result{
         in_place_err,
         static_cast<const basic_result<_mutability, T, E>*>(this)->unwrap_err()
@@ -260,13 +294,17 @@ public:
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the failure arm of the basic_result via
   ///   `operator*`.
-  constexpr auto indirect_err() const& -> const_indirect_err_result {
-    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok()) {
+  constexpr auto indirect_err() const& -> const_indirect_err_result
+  {
+    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok())
+    {
       return const_indirect_err_result{
         in_place_ok,
         static_cast<const basic_result<_mutability, T, E>*>(this)->unwrap()
       };
-    } else {
+    }
+    else
+    {
       return const_indirect_err_result{
         in_place_err,
         *static_cast<const basic_result<_mutability, T, E>*>(this)->unwrap_err()
@@ -287,13 +325,17 @@ public:
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the success and failure arm of the basic_result
   ///   via `operator*`.
-  constexpr auto indirect() const& -> const_indirect_result {
-    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok()) {
+  constexpr auto indirect() const& -> const_indirect_result
+  {
+    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok())
+    {
       return const_indirect_result{
         in_place_ok,
         *static_cast<const basic_result<_mutability, T, E>*>(this)->unwrap()
       };
-    } else {
+    }
+    else
+    {
       return const_indirect_result{
         in_place_err,
         *static_cast<const basic_result<_mutability, T, E>*>(this)->unwrap_err()
@@ -317,13 +359,17 @@ public:
   /// @warning
   ///   Contained reference may be exhausted because of original result is
   ///   rvalue.
-  constexpr auto indirect_ok() && -> dangling_indirect_ok_result {
-    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok()) {
+  constexpr auto indirect_ok() && -> dangling_indirect_ok_result
+  {
+    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok())
+    {
       return dangling_indirect_ok_result{
         in_place_ok,
         std::ref(*static_cast<basic_result<_mutability, T, E>*>(this)->unwrap())
       };
-    } else {
+    }
+    else
+    {
       return dangling_indirect_ok_result{
         in_place_err,
         static_cast<basic_result<_mutability, T, E>*>(this)->unwrap_err()
@@ -347,13 +393,17 @@ public:
   /// @warning
   ///   Contained reference may be exhausted because of original result is
   ///   rvalue.
-  constexpr auto indirect_err() && -> dangling_indirect_err_result {
-    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok()) {
+  constexpr auto indirect_err() && -> dangling_indirect_err_result
+  {
+    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok())
+    {
       return dangling_indirect_err_result{
         in_place_ok,
         static_cast<const basic_result<_mutability, T, E>*>(this)->unwrap()
       };
-    } else {
+    }
+    else
+    {
       return dangling_indirect_err_result{
         in_place_err,
         std::ref(*static_cast<const basic_result<_mutability, T, E>*>(this)
@@ -379,13 +429,17 @@ public:
   /// @warning
   ///   Contained reference may be exhausted because of original result is
   ///   rvalue.
-  constexpr auto indirect() && -> dangling_indirect_result {
-    if (static_cast<basic_result<_mutability, T, E>*>(this)->is_ok()) {
+  constexpr auto indirect() && -> dangling_indirect_result
+  {
+    if (static_cast<basic_result<_mutability, T, E>*>(this)->is_ok())
+    {
       return dangling_indirect_result{
         in_place_ok,
         std::ref(*static_cast<basic_result<_mutability, T, E>*>(this)->unwrap())
       };
-    } else {
+    }
+    else
+    {
       return dangling_indirect_result{
         in_place_err,
         std::ref(
@@ -409,7 +463,8 @@ class indirect_friend_injector<
     basic_result<_mutability, T, E>,
     std::enable_if_t<std::conjunction_v<
         traits::is_dereferencable<T>,
-        std::negation<traits::is_dereferencable<E>>>>> {
+        std::negation<traits::is_dereferencable<E>>>>>
+{
   using indirect_ok_result = basic_result<
       _mutability, std::remove_reference_t<typename traits::deref<T>::Target>&,
       std::remove_reference_t<E>&>;
@@ -435,13 +490,17 @@ public:
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the success arm of the basic_result via
   ///   `operator*`.
-  constexpr auto indirect_ok() & -> indirect_ok_result {
-    if (static_cast<basic_result<_mutability, T, E>*>(this)->is_ok()) {
+  constexpr auto indirect_ok() & -> indirect_ok_result
+  {
+    if (static_cast<basic_result<_mutability, T, E>*>(this)->is_ok())
+    {
       return indirect_ok_result{
         in_place_ok,
         *static_cast<basic_result<_mutability, T, E>*>(this)->unwrap()
       };
-    } else {
+    }
+    else
+    {
       return indirect_ok_result{
         in_place_err,
         static_cast<basic_result<_mutability, T, E>*>(this)->unwrap_err()
@@ -463,13 +522,17 @@ public:
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the success arm of the basic_result via
   ///   `operator*`.
-  constexpr auto indirect_ok() const& -> const_indirect_ok_result {
-    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok()) {
+  constexpr auto indirect_ok() const& -> const_indirect_ok_result
+  {
+    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok())
+    {
       return const_indirect_ok_result{
         in_place_ok,
         *static_cast<const basic_result<_mutability, T, E>*>(this)->unwrap()
       };
-    } else {
+    }
+    else
+    {
       return const_indirect_ok_result{
         in_place_err,
         static_cast<const basic_result<_mutability, T, E>*>(this)->unwrap_err()
@@ -495,13 +558,17 @@ public:
   /// @warning
   ///   Contained reference may be exhausted because of original result is
   ///   rvalue.
-  constexpr auto indirect_ok() && -> dangling_indirect_ok_result {
-    if (static_cast<basic_result<_mutability, T, E>*>(this)->is_ok()) {
+  constexpr auto indirect_ok() && -> dangling_indirect_ok_result
+  {
+    if (static_cast<basic_result<_mutability, T, E>*>(this)->is_ok())
+    {
       return dangling_indirect_ok_result{
         in_place_ok,
         std::ref(*static_cast<basic_result<_mutability, T, E>*>(this)->unwrap())
       };
-    } else {
+    }
+    else
+    {
       return dangling_indirect_ok_result{
         in_place_err,
         static_cast<basic_result<_mutability, T, E>*>(this)->unwrap_err()
@@ -525,7 +592,8 @@ class indirect_friend_injector<
     basic_result<_mutability, T, E>,
     std::enable_if_t<std::conjunction_v<
         std::negation<traits::is_dereferencable<T>>,
-        traits::is_dereferencable<E>>>> {
+        traits::is_dereferencable<E>>>>
+{
   using indirect_err_result = basic_result<
       _mutability, std::remove_reference_t<T>&,
       std::remove_reference_t<typename traits::deref<E>::Target>&>;
@@ -549,13 +617,17 @@ public:
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the failure arm of the basic_result via
   ///   `operator*`.
-  constexpr auto indirect_err() & -> indirect_err_result {
-    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok()) {
+  constexpr auto indirect_err() & -> indirect_err_result
+  {
+    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok())
+    {
       return indirect_err_result{
         in_place_ok,
         static_cast<const basic_result<_mutability, T, E>*>(this)->unwrap()
       };
-    } else {
+    }
+    else
+    {
       return indirect_err_result{
         in_place_err,
         *static_cast<const basic_result<_mutability, T, E>*>(this)->unwrap_err()
@@ -577,13 +649,17 @@ public:
   ///   creating a new one with a reference to the original one,
   ///   additionally coercing the failure arm of the basic_result via
   ///   `operator*`.
-  constexpr auto indirect_err() const& -> const_indirect_err_result {
-    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok()) {
+  constexpr auto indirect_err() const& -> const_indirect_err_result
+  {
+    if (static_cast<const basic_result<_mutability, T, E>*>(this)->is_ok())
+    {
       return const_indirect_err_result{
         in_place_ok,
         static_cast<const basic_result<_mutability, T, E>*>(this)->unwrap()
       };
-    } else {
+    }
+    else
+    {
       return const_indirect_err_result{
         in_place_err,
         *static_cast<const basic_result<_mutability, T, E>*>(this)->unwrap_err()
@@ -609,13 +685,17 @@ public:
   /// @warning
   ///   Contained reference may be exhausted because of original result is
   ///   rvalue.
-  constexpr auto indirect_err() && -> dangling_indirect_err_result {
-    if (static_cast<basic_result<_mutability, T, E>*>(this)->is_ok()) {
+  constexpr auto indirect_err() && -> dangling_indirect_err_result
+  {
+    if (static_cast<basic_result<_mutability, T, E>*>(this)->is_ok())
+    {
       return dangling_indirect_err_result{
         in_place_ok,
         static_cast<basic_result<_mutability, T, E>*>(this)->unwrap()
       };
-    } else {
+    }
+    else
+    {
       return dangling_indirect_err_result{
         in_place_err,
         std::ref(
@@ -632,14 +712,16 @@ public:
 };
 
 template <class, class = void>
-class map_apply_friend_injector {
+class map_apply_friend_injector
+{
 public:
   void map_apply() const = delete;
 };
 
 template <mutability _mu, class T, class E>
 class map_apply_friend_injector<
-    basic_result<_mu, T, E>, std::enable_if_t<is_tuple_like<T>::value>> {
+    basic_result<_mu, T, E>, std::enable_if_t<is_tuple_like<T>::value>>
+{
 public:
   ///   Maps a basic_result<(Ts...), E> to basic_result<U, E> by applying a
   ///   function to a contained tuple elements if holds success values,
@@ -648,7 +730,8 @@ public:
   /// @note
   ///   This function can be used to compose the results of two functions.
   template <class O, class... Args>
-  constexpr auto map_apply(O&& op, Args&&... args) const& {
+  constexpr auto map_apply(O&& op, Args&&... args) const&
+  {
     using result_type = basic_result<
         _mu,
         decltype(std::apply(
@@ -675,14 +758,16 @@ public:
 };
 
 template <class, class = void>
-class map_err_apply_friend_injector {
+class map_err_apply_friend_injector
+{
 public:
   void map_apply_err() const = delete;
 };
 
 template <mutability _mu, class T, class E>
 class map_err_apply_friend_injector<
-    basic_result<_mu, T, E>, std::enable_if_t<is_tuple_like<E>::value>> {
+    basic_result<_mu, T, E>, std::enable_if_t<is_tuple_like<E>::value>>
+{
 public:
   ///   Maps a basic_result<T, (Ts...)> to basic_result<T, F> by applying a
   ///   function to a contained tuple elements if holds failure values,
@@ -691,7 +776,8 @@ public:
   /// @note
   ///   This function can be used to compose the results of two functions.
   template <class O, class... Args>
-  constexpr auto map_apply_err(O&& op, Args&&... args) & {
+  constexpr auto map_apply_err(O&& op, Args&&... args) &
+  {
     using result_type = basic_result<
         _mu, T,
         decltype(std::apply(
@@ -715,7 +801,8 @@ public:
   }
 
   template <class O, class... Args>
-  constexpr auto map_apply_err(O&& op, Args&&... args) const& {
+  constexpr auto map_apply_err(O&& op, Args&&... args) const&
+  {
     using result_type = basic_result<
         _mu, T,
         decltype(std::apply(
@@ -740,7 +827,8 @@ public:
   }
 
   template <class O, class... Args>
-  constexpr auto map_apply_err(O&& op, Args&&... args) && {
+  constexpr auto map_apply_err(O&& op, Args&&... args) &&
+  {
     using result_type = basic_result<
         _mu, T,
         decltype(std::apply(
@@ -765,14 +853,16 @@ public:
 };
 
 template <class, class = void>
-class and_then_apply_friend_injector {
+class and_then_apply_friend_injector
+{
 public:
   void and_then_apply() const = delete;
 };
 
 template <mutability _mu, class T, class E>
 class and_then_apply_friend_injector<
-    basic_result<_mu, T, E>, std::enable_if_t<is_tuple_like<T>::value>> {
+    basic_result<_mu, T, E>, std::enable_if_t<is_tuple_like<T>::value>>
+{
 public:
   template <
       class O, class... Args,
@@ -787,7 +877,8 @@ public:
               )),
               failure_t<E>>,
           bool> = false>
-  constexpr auto and_then_apply(O&& op, Args&&... args) & {
+  constexpr auto and_then_apply(O&& op, Args&&... args) &
+  {
     using result_type = decltype(std::apply(
         std::forward<O>(op),
         std::tuple_cat(
@@ -822,7 +913,8 @@ public:
               )),
               failure_t<E>>,
           bool> = false>
-  constexpr auto and_then_apply(O&& op, Args&&... args) const& {
+  constexpr auto and_then_apply(O&& op, Args&&... args) const&
+  {
     using result_type = decltype(std::apply(
         std::forward<O>(op),
         std::tuple_cat(
@@ -859,7 +951,8 @@ public:
               )),
               failure_t<E>>,
           bool> = false>
-  constexpr auto and_then_apply(O&& op, Args&&... args) && {
+  constexpr auto and_then_apply(O&& op, Args&&... args) &&
+  {
     using result_type = decltype(std::apply(
         std::forward<O>(op),
         std::tuple_cat(
@@ -885,14 +978,16 @@ public:
 };
 
 template <class, class = void>
-class or_else_apply_friend_injector {
+class or_else_apply_friend_injector
+{
 public:
   void or_else_apply() const = delete;
 };
 
 template <mutability _mu, class T, class E>
 class or_else_apply_friend_injector<
-    basic_result<_mu, T, E>, std::enable_if_t<is_tuple_like<E>::value>> {
+    basic_result<_mu, T, E>, std::enable_if_t<is_tuple_like<E>::value>>
+{
 public:
   template <
       class O, class... Args,
@@ -907,7 +1002,8 @@ public:
               )),
               success_t<T>>,
           bool> = false>
-  constexpr auto or_else_apply(O&& op, Args&&... args) const& {
+  constexpr auto or_else_apply(O&& op, Args&&... args) const&
+  {
     using result_type = decltype(std::apply(
         std::forward<O>(op),
         std::tuple_cat(

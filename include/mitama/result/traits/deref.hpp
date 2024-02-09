@@ -4,20 +4,26 @@
 
 #include <type_traits>
 
-namespace mitama::traits {
+namespace mitama::traits
+{
 
 template <class T, class = void>
-struct is_dereferencable : std::false_type {};
+struct is_dereferencable : std::false_type
+{
+};
 
 template <class T>
 struct is_dereferencable<T, std::void_t<decltype(*std::declval<T>())>>
-    : std::true_type {};
+    : std::true_type
+{
+};
 
 template <class For, class = void>
 struct deref;
 
 template <class For>
-struct deref<For, std::enable_if_t<is_dereferencable<For>::value>> {
+struct deref<For, std::enable_if_t<is_dereferencable<For>::value>>
+{
   using Target = decltype(*std::declval<For>());
 };
 

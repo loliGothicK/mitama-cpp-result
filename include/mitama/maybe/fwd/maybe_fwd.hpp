@@ -1,7 +1,8 @@
 #ifndef MITAMA_MAYBE_FWD_HPP
 #define MITAMA_MAYBE_FWD_HPP
 #include <variant>
-namespace mitama {
+namespace mitama
+{
 
 template <class...>
 class just_t;

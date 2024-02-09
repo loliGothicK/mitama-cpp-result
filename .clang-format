@@ -11,6 +11,7 @@ AllowShortFunctionsOnASingleLine: Empty
 AlwaysBreakAfterReturnType: TopLevelDefinitions
 AlwaysBreakBeforeMultilineStrings: true
 AlwaysBreakTemplateDeclarations: Yes
+BreakBeforeBraces: Allman
 BreakBeforeBinaryOperators: NonAssignment
 BreakStringLiterals: true
 Cpp11BracedListStyle: false

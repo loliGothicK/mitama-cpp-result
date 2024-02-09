@@ -3,29 +3,36 @@
 #include <functional>
 #include <utility>
 
-namespace mitama {
+namespace mitama
+{
 
 template <class T>
-class dangling {
+class dangling
+{
   T value_;
 
 public:
   template <class U>
-  constexpr dangling(U&& u) : value_(std::forward<U>(u)) {}
+  constexpr dangling(U&& u) : value_(std::forward<U>(u))
+  {
+  }
 
-  decltype(auto) transmute() const {
+  decltype(auto) transmute() const
+  {
     return value_;
   }
 };
 
 template <class T>
-class dangling<std::reference_wrapper<T>> {
+class dangling<std::reference_wrapper<T>>
+{
   std::reference_wrapper<T> ref_;
 
 public:
   constexpr dangling(std::reference_wrapper<T> ref) : ref_(ref) {}
 
-  T& transmute() const& {
+  T& transmute() const&
+  {
     return ref_.get();
   }
 };

@@ -25,9 +25,12 @@
 #include <utility>
 #include <variant>
 
-namespace mitama::mitamagic {
+namespace mitama::mitamagic
+{
 template <class, class = void>
-struct is_pointer_like : std::false_type {};
+struct is_pointer_like : std::false_type
+{
+};
 
 template <class PointerLike>
 struct is_pointer_like<
@@ -35,7 +38,9 @@ struct is_pointer_like<
                      decltype(std::declval<PointerLike&>().operator->()),
                      decltype(*std::declval<PointerLike&>()),
                      decltype(bool(std::declval<PointerLike&>()))>>
-    : std::true_type {};
+    : std::true_type
+{
+};
 
 template <class, class = void>
 struct element_type;
@@ -43,35 +48,48 @@ struct element_type;
 template <class T>
 struct element_type<
     T, std::enable_if_t<
-           std::disjunction_v<is_pointer_like<T>, std::is_pointer<T>>>> {
+           std::disjunction_v<is_pointer_like<T>, std::is_pointer<T>>>>
+{
   using type = std::remove_reference_t<decltype(*std::declval<T>())>;
 };
 } // namespace mitama::mitamagic
 
-namespace mitama {
+namespace mitama
+{
 
 template <class>
-struct is_maybe : std::false_type {};
+struct is_maybe : std::false_type
+{
+};
 
 template <class T>
-struct is_maybe<maybe<T>> : std::true_type {};
+struct is_maybe<maybe<T>> : std::true_type
+{
+};
 
 template <class, class>
-struct is_maybe_with : std::false_type {};
+struct is_maybe_with : std::false_type
+{
+};
 
 template <class T>
-struct is_maybe_with<maybe<T>, T> : std::true_type {};
+struct is_maybe_with<maybe<T>, T> : std::true_type
+{
+};
 
 template <class>
-class maybe_transpose_injector {
+class maybe_transpose_injector
+{
 public:
   void transpose() = delete;
 };
 
 template <mutability _, class T, class E>
-class maybe_transpose_injector<maybe<basic_result<_, T, E>>> {
+class maybe_transpose_injector<maybe<basic_result<_, T, E>>>
+{
 public:
-  basic_result<_, maybe<T>, E> transpose() const& {
+  basic_result<_, maybe<T>, E> transpose() const&
+  {
     return static_cast<const maybe<basic_result<_, T, E>>*>(this)->is_nothing()
                ? basic_result<_, maybe<T>, E>{ success_t{ nothing } }
            : static_cast<const maybe<basic_result<_, T, E>>*>(this)
@@ -93,7 +111,8 @@ public:
 };
 
 template <class T, class = void>
-class maybe_unwrap_or_default_injector {
+class maybe_unwrap_or_default_injector
+{
 public:
   void unwrap_or_default() = delete;
 };
@@ -101,14 +120,19 @@ public:
 template <class T>
 class maybe_unwrap_or_default_injector<
     maybe<T>, std::enable_if_t<std::disjunction_v<
-                  std::is_default_constructible<T>, std::is_aggregate<T>>>> {
+                  std::is_default_constructible<T>, std::is_aggregate<T>>>>
+{
 public:
-  T unwrap_or_default() const {
-    if constexpr (std::is_aggregate_v<T>) {
+  T unwrap_or_default() const
+  {
+    if constexpr (std::is_aggregate_v<T>)
+    {
       return static_cast<const maybe<T>*>(this)->is_just()
                  ? static_cast<const maybe<T>*>(this)->unwrap()
                  : T{};
-    } else {
+    }
+    else
+    {
       return static_cast<const maybe<T>*>(this)->is_just()
                  ? static_cast<const maybe<T>*>(this)->unwrap()
                  : T();
@@ -117,16 +141,19 @@ public:
 };
 
 template <class, class = void>
-class maybe_flatten_injector {
+class maybe_flatten_injector
+{
 public:
   void flatten() = delete;
 };
 
 template <class T>
 class maybe_flatten_injector<
-    maybe<T>, std::enable_if_t<is_maybe<std::decay_t<T>>::value>> {
+    maybe<T>, std::enable_if_t<is_maybe<std::decay_t<T>>::value>>
+{
 public:
-  auto flatten() const& {
+  auto flatten() const&
+  {
     return static_cast<const maybe<T>*>(this)->is_just()
                ? static_cast<const maybe<T>*>(this)->unwrap().as_ref().cloned()
                : nothing;
@@ -134,7 +161,8 @@ public:
 };
 
 template <class, class = void>
-class maybe_cloned_injector {
+class maybe_cloned_injector
+{
 public:
   void cloned() = delete;
 };
@@ -144,13 +172,14 @@ class maybe_cloned_injector<
     maybe<T>, std::enable_if_t<std::conjunction_v<
                   std::is_lvalue_reference<T>,
                   std::is_copy_constructible<
-                      std::remove_const_t<std::remove_reference_t<T>>>>>> {
+                      std::remove_const_t<std::remove_reference_t<T>>>>>>
+{
 public:
-  maybe<std::remove_reference_t<T>> cloned() const {
+  maybe<std::remove_reference_t<T>> cloned() const
+  {
     auto decay_copy = [](auto&& some
-                      ) -> std::remove_const_t<std::remove_reference_t<T>> {
-      return std::forward<decltype(some)>(some);
-    };
+                      ) -> std::remove_const_t<std::remove_reference_t<T>>
+    { return std::forward<decltype(some)>(some); };
     return static_cast<const maybe<T>*>(this)->is_just()
                ? maybe<std::remove_reference_t<T>>{ just(
                    decay_copy(static_cast<const maybe<T>*>(this)->unwrap())
@@ -160,7 +189,8 @@ public:
 };
 
 template <class, class = void>
-class maybe_replace_injector {
+class maybe_replace_injector
+{
 public:
   void cloned() = delete;
 };
@@ -168,11 +198,13 @@ public:
 template <class T>
 class maybe_replace_injector<
     maybe<T>, std::enable_if_t<std::is_copy_constructible_v<
-                  std::remove_const_t<std::remove_reference_t<T>>>>> {
+                  std::remove_const_t<std::remove_reference_t<T>>>>>
+{
 public:
   template <class... Args>
   std::enable_if_t<std::is_constructible_v<T, Args&&...>, maybe<T>>
-  replace(Args&&... args) & {
+  replace(Args&&... args) &
+  {
     auto old = static_cast<maybe<T>*>(this)->as_ref().cloned();
     static_cast<maybe<T>*>(this)->storage_.template emplace<just_t<T>>(
         std::in_place, std::forward<Args>(args)...
@@ -186,7 +218,8 @@ public:
           std::is_invocable<F, Args&&...>,
           std::is_constructible<T, std::invoke_result_t<F&&, Args&&...>>>,
       maybe<T>>
-  replace_with(F&& f, Args&&... args) & {
+  replace_with(F&& f, Args&&... args) &
+  {
     auto old = static_cast<maybe<T>*>(this)->as_ref().cloned();
     static_cast<maybe<T>*>(this)->storage_.template emplace<just_t<T>>(
         std::invoke(std::forward<F>(f), std::forward<Args>(args)...)
@@ -200,7 +233,8 @@ class maybe : public maybe_transpose_injector<maybe<T>>,
               public maybe_unwrap_or_default_injector<maybe<T>>,
               public maybe_flatten_injector<maybe<T>>,
               public maybe_cloned_injector<maybe<T>>,
-              public maybe_replace_injector<maybe<T>> {
+              public maybe_replace_injector<maybe<T>>
+{
   std::variant<nothing_t, just_t<T>> storage_;
   template <class, class>
   friend class maybe_replace_injector;
@@ -228,7 +262,9 @@ public:
   maybe(U&& u)
       : storage_(
           std::in_place_type<just_t<T>>, std::in_place, std::forward<U>(u)
-      ) {}
+      )
+  {
+  }
 
   template <
       typename U,
@@ -240,7 +276,9 @@ public:
   explicit maybe(U&& u)
       : storage_(
           std::in_place_type<just_t<T>>, std::in_place, std::forward<U>(u)
-      ) {}
+      )
+  {
+  }
 
   template <
       class... Args,
@@ -249,7 +287,9 @@ public:
       : storage_(
           std::in_place_type<just_t<T>>, std::in_place,
           std::forward<Args>(args)...
-      ) {}
+      )
+  {
+  }
 
   template <
       class U, class... Args,
@@ -260,14 +300,18 @@ public:
       : storage_(
           std::in_place_type<just_t<T>>, std::in_place, il,
           std::forward<Args>(args)...
-      ) {}
+      )
+  {
+  }
 
   template <
       class... Args,
       std::enable_if_t<std::is_constructible_v<T, Args...>, bool> = false>
-  maybe(just_t<_just_detail::forward_mode<T>, Args...>&& fwd) : maybe() {
+  maybe(just_t<_just_detail::forward_mode<T>, Args...>&& fwd) : maybe()
+  {
     std::apply(
-        [&](auto&&... args) {
+        [&](auto&&... args)
+        {
           storage_.template emplace<just_t<T>>(
               std::in_place, std::forward<decltype(args)>(args)...
           );
@@ -279,9 +323,11 @@ public:
   template <
       class... Args,
       std::enable_if_t<std::is_constructible_v<T, Args...>, bool> = false>
-  maybe(just_t<_just_detail::forward_mode<>, Args...>&& fwd) : maybe() {
+  maybe(just_t<_just_detail::forward_mode<>, Args...>&& fwd) : maybe()
+  {
     std::apply(
-        [&](auto&&... args) {
+        [&](auto&&... args)
+        {
           storage_.template emplace<just_t<T>>(
               std::in_place, std::forward<decltype(args)>(args)...
           );
@@ -294,7 +340,9 @@ public:
       class U,
       std::enable_if_t<std::is_constructible_v<T, const U&>, bool> = false>
   maybe(const just_t<U>& j)
-      : storage_(std::in_place_type<just_t<T>>, std::in_place, j.get()) {}
+      : storage_(std::in_place_type<just_t<T>>, std::in_place, j.get())
+  {
+  }
 
   template <
       class U, std::enable_if_t<std::is_constructible_v<T, U&&>, bool> = false>
@@ -302,57 +350,70 @@ public:
       : storage_(
           std::in_place_type<just_t<T>>, std::in_place,
           static_cast<U&&>(j.get())
-      ) {}
+      )
+  {
+  }
 
-  explicit operator bool() const {
+  explicit operator bool() const
+  {
     return is_just();
   }
 
-  value_type* operator->() & {
+  value_type* operator->() &
+  {
     return &(std::get<just_t<T>>(storage_).get());
   }
 
-  const value_type* operator->() const& {
+  const value_type* operator->() const&
+  {
     return &(std::get<just_t<T>>(storage_).get());
   }
 
-  bool is_just() const {
+  bool is_just() const
+  {
     return std::holds_alternative<just_t<T>>(storage_);
   }
 
-  bool is_nothing() const {
+  bool is_nothing() const
+  {
     return !is_just();
   }
 
-  value_type& unwrap() & {
+  value_type& unwrap() &
+  {
     if (is_nothing())
       PANIC("called `maybe::unwrap()` on a `nothing` value");
     return std::get<just_t<T>>(storage_).get();
   }
 
-  std::add_const_t<std::remove_reference_t<T>>& unwrap() const& {
+  std::add_const_t<std::remove_reference_t<T>>& unwrap() const&
+  {
     if (is_nothing())
       PANIC("called `maybe::unwrap()` on a `nothing` value");
     return std::get<just_t<T>>(storage_).get();
   }
 
-  value_type unwrap() && {
+  value_type unwrap() &&
+  {
     if (is_nothing())
       PANIC("called `maybe::unwrap()` on a `nothing` value");
     return std::move(std::get<just_t<T>>(storage_).get());
   }
 
-  auto as_ref() & {
+  auto as_ref() &
+  {
     return is_just() ? maybe<T&>(std::in_place, unwrap()) : nothing;
   }
 
-  auto as_ref() const& {
+  auto as_ref() const&
+  {
     return is_just() ? maybe<const T&>(std::in_place, unwrap()) : nothing;
   }
 
   template <class... Args>
   std::enable_if_t<std::is_constructible_v<T, Args&&...>, value_type&>
-  get_or_emplace(Args&&... args) & {
+  get_or_emplace(Args&&... args) &
+  {
     return is_just() ? unwrap()
                      : (storage_.template emplace<just_t<T>>(
                             std::in_place, std::forward<Args>(args)...
@@ -366,7 +427,8 @@ public:
           std::is_invocable<F&&, Args&&...>,
           std::is_constructible<T, std::invoke_result_t<F&&, Args&&...>>>,
       value_type&>
-  get_or_emplace_with(F&& f, Args&&... args) & {
+  get_or_emplace_with(F&& f, Args&&... args) &
+  {
     return is_just() ? unwrap()
                      : (storage_.template emplace<just_t<T>>(
                             std::in_place,
@@ -381,7 +443,8 @@ public:
   std::enable_if_t<
       meta::has_type<std::common_type<T&, U&&>>::value,
       std::common_type_t<value_type&, U&&>>
-  unwrap_or(U&& def) & {
+  unwrap_or(U&& def) &
+  {
     return is_just() ? unwrap() : std::forward<U>(def);
   }
 
@@ -389,7 +452,8 @@ public:
   std::enable_if_t<
       meta::has_type<std::common_type<const T&, U&&>>::value,
       std::common_type_t<const value_type&, U&&>>
-  unwrap_or(U&& def) const& {
+  unwrap_or(U&& def) const&
+  {
     return is_just() ? unwrap() : std::forward<U>(def);
   }
 
@@ -397,7 +461,8 @@ public:
   std::enable_if_t<
       meta::has_type<std::common_type<T&&, U&&>>::value,
       std::common_type_t<value_type&&, U&&>>
-  unwrap_or(U&& def) && {
+  unwrap_or(U&& def) &&
+  {
     return is_just() ? std::move(unwrap()) : std::forward<U>(def);
   }
 
@@ -407,7 +472,8 @@ public:
           std::is_invocable<F&&>,
           meta::has_type<std::common_type<T&, std::invoke_result_t<F&&>>>>,
       std::common_type_t<const value_type&, std::invoke_result_t<F&&>>>
-  unwrap_or_else(F&& f) & {
+  unwrap_or_else(F&& f) &
+  {
     return is_just() ? unwrap() : std::invoke(std::forward<F>(f));
   }
 
@@ -417,7 +483,8 @@ public:
           std::is_invocable<F&&>, meta::has_type<std::common_type<
                                       const T&, std::invoke_result_t<F&&>>>>,
       std::common_type_t<const value_type&, std::invoke_result_t<F&&>>>
-  unwrap_or_else(F&& f) const& {
+  unwrap_or_else(F&& f) const&
+  {
     return is_just() ? unwrap() : std::invoke(std::forward<F>(f));
   }
 
@@ -427,7 +494,8 @@ public:
           std::is_invocable<F&&>,
           meta::has_type<std::common_type<T&&, std::invoke_result_t<F&&>>>>,
       std::common_type_t<const value_type&, std::invoke_result_t<F&&>>>
-  unwrap_or_else(F&& f) && {
+  unwrap_or_else(F&& f) &&
+  {
     return is_just() ? std::move(unwrap()) : std::invoke(std::forward<F>(f));
   }
 
@@ -435,7 +503,8 @@ public:
       class F, class... Args,
       std::enable_if_t<std::is_invocable_v<F&&, value_type&, Args&&...>, bool> =
           false>
-  auto map(F&& f, Args&&... args) & {
+  auto map(F&& f, Args&&... args) &
+  {
     using result_type = std::invoke_result_t<F&&, value_type&, Args&&...>;
     return is_just() ? maybe<result_type>{ just(std::invoke(
                std::forward<F>(f), unwrap(), std::forward<Args>(args)...
@@ -447,7 +516,8 @@ public:
       class F, class... Args,
       std::enable_if_t<
           std::is_invocable_v<F&&, const value_type&, Args&&...>, bool> = false>
-  auto map(F&& f, Args&&... args) const& {
+  auto map(F&& f, Args&&... args) const&
+  {
     using result_type = std::invoke_result_t<F&&, const value_type&, Args&&...>;
     return is_just() ? maybe<result_type>{ just(std::invoke(
                std::forward<F>(f), unwrap(), std::forward<Args>(args)...
@@ -459,7 +529,8 @@ public:
       class F, class... Args,
       std::enable_if_t<
           std::is_invocable_v<F&&, value_type&&, Args&&...>, bool> = false>
-  auto map(F&& f, Args&&... args) && {
+  auto map(F&& f, Args&&... args) &&
+  {
     using result_type = std::invoke_result_t<F&&, value_type&&, Args&&...>;
     return is_just() ? maybe<result_type>{ just(std::invoke(
                std::forward<F>(f), std::move(unwrap()),
@@ -476,7 +547,8 @@ public:
               std::common_type<U&&, std::invoke_result_t<F&&, value_type&>>>>,
       std::common_type_t<
           U&&, std::invoke_result_t<F&&, value_type&, Args&&...>>>
-  map_or(U&& def, F&& f, Args&&... args) & {
+  map_or(U&& def, F&& f, Args&&... args) &
+  {
     return is_just() ? std::invoke(
                std::forward<F>(f), unwrap(), std::forward<Args>(args)...
            )
@@ -490,7 +562,8 @@ public:
           meta::has_type<std::common_type<
               U&&, std::invoke_result_t<F&&, const value_type&, Args&&...>>>>,
       std::common_type_t<U&&, std::invoke_result_t<F&&, const T&, Args&&...>>>
-  map_or(U&& def, F&& f, Args&&... args) const& {
+  map_or(U&& def, F&& f, Args&&... args) const&
+  {
     return is_just() ? std::invoke(
                std::forward<F>(f), unwrap(), std::forward<Args>(args)...
            )
@@ -505,7 +578,8 @@ public:
               U&&, std::invoke_result_t<F&&, value_type&&, Args&&...>>>>,
       std::common_type_t<
           U&&, std::invoke_result_t<F&&, value_type&&, Args&&...>>>
-  map_or(U&& def, F&& f, Args&&... args) && {
+  map_or(U&& def, F&& f, Args&&... args) &&
+  {
     return is_just() ? std::invoke(
                std::forward<F>(f), std::move(unwrap()),
                std::forward<Args>(args)...
@@ -524,7 +598,8 @@ public:
       std::common_type_t<
           std::invoke_result_t<D&&>,
           std::invoke_result_t<F&&, value_type&, Args&&...>>>
-  map_or_else(D&& def, F&& f, Args&&... args) & {
+  map_or_else(D&& def, F&& f, Args&&... args) &
+  {
     return is_just() ? std::invoke(
                std::forward<F>(f), unwrap(), std::forward<Args>(args)...
            )
@@ -542,7 +617,8 @@ public:
       std::common_type_t<
           std::invoke_result_t<D&&>,
           std::invoke_result_t<F&&, const value_type&, Args&&...>>>
-  map_or_else(D&& def, F&& f, Args&&... args) const& {
+  map_or_else(D&& def, F&& f, Args&&... args) const&
+  {
     return is_just() ? std::invoke(
                std::forward<F>(f), unwrap(), std::forward<Args>(args)...
            )
@@ -560,7 +636,8 @@ public:
       std::common_type_t<
           std::invoke_result_t<D&&>,
           std::invoke_result_t<F&&, value_type&&, Args&&...>>>
-  map_or_else(D&& def, F&& f, Args&&... args) && {
+  map_or_else(D&& def, F&& f, Args&&... args) &&
+  {
     return is_just() ? std::invoke(
                std::forward<F>(f), std::move(unwrap()),
                std::forward<Args>(args)...
@@ -568,33 +645,46 @@ public:
                      : std::invoke(std::forward<D>(def));
   }
 
-  value_type& expect(std::string_view msg) & {
-    if (is_just()) {
+  value_type& expect(std::string_view msg) &
+  {
+    if (is_just())
+    {
       return unwrap();
-    } else {
+    }
+    else
+    {
       PANIC("%1%", msg);
     }
   }
 
-  const value_type& expect(std::string_view msg) const& {
-    if (is_just()) {
+  const value_type& expect(std::string_view msg) const&
+  {
+    if (is_just())
+    {
       return unwrap();
-    } else {
+    }
+    else
+    {
       PANIC("%1%", msg);
     }
   }
 
-  value_type&& expect(std::string_view msg) && {
-    if (is_just()) {
+  value_type&& expect(std::string_view msg) &&
+  {
+    if (is_just())
+    {
       return std::move(unwrap());
-    } else {
+    }
+    else
+    {
       PANIC("%1%", msg);
     }
   }
 
   template <class Pred>
   std::enable_if_t<std::is_invocable_r_v<bool, Pred&&, T&>, maybe>
-  filter(Pred&& predicate) & {
+  filter(Pred&& predicate) &
+  {
     return is_just() && std::invoke(std::forward<Pred>(predicate), unwrap())
                ? maybe<T>(unwrap())
                : nothing;
@@ -602,7 +692,8 @@ public:
 
   template <class Pred>
   std::enable_if_t<std::is_invocable_r_v<bool, Pred&&, const T&>, maybe>
-  filter(Pred&& predicate) const& {
+  filter(Pred&& predicate) const&
+  {
     return is_just() && std::invoke(std::forward<Pred>(predicate), unwrap())
                ? maybe<T>(unwrap())
                : nothing;
@@ -610,14 +701,16 @@ public:
 
   template <class Pred>
   std::enable_if_t<std::is_invocable_r_v<bool, Pred&&, T&&>, maybe>
-  filter(Pred&& predicate) && {
+  filter(Pred&& predicate) &&
+  {
     return is_just() && std::invoke(std::forward<Pred>(predicate), unwrap())
                ? maybe<T>(std::move(unwrap()))
                : nothing;
   }
 
   template <class E = std::monostate>
-  auto ok_or(E&& err = {}) & {
+  auto ok_or(E&& err = {}) &
+  {
     using ret_t = result<value_type, std::remove_reference_t<E>>;
     return is_just()
                ? ret_t{ success_t{ unwrap() } }
@@ -625,7 +718,8 @@ public:
   }
 
   template <class E = std::monostate>
-  auto ok_or(E&& err = {}) const& {
+  auto ok_or(E&& err = {}) const&
+  {
     using ret_t = result<value_type, std::remove_reference_t<E>>;
     return is_just()
                ? ret_t{ success_t{ unwrap() } }
@@ -633,7 +727,8 @@ public:
   }
 
   template <class E = std::monostate>
-  auto ok_or(E&& err = {}) && {
+  auto ok_or(E&& err = {}) &&
+  {
     using ret_t = result<value_type, std::remove_reference_t<E>>;
     return is_just()
                ? ret_t{ success_t{ std::move(unwrap()) } }
@@ -643,7 +738,8 @@ public:
   template <class F>
   std::enable_if_t<
       std::is_invocable_v<F&&>, result<T, std::invoke_result_t<F&&>>>
-  ok_or_else(F&& err) const& {
+  ok_or_else(F&& err) const&
+  {
     return is_just()
                ? result<T, std::invoke_result_t<F&&>>{ success_t{ unwrap() } }
                : result<T, std::invoke_result_t<F&&>>{ failure_t{
@@ -653,7 +749,8 @@ public:
   template <class F>
   std::enable_if_t<
       std::is_invocable_v<F&&>, result<T, std::invoke_result_t<F&&>>>
-  ok_or_else(F&& err) && {
+  ok_or_else(F&& err) &&
+  {
     return is_just() ? result<T, std::invoke_result_t<F&&>>{ success_t{
                std::move(unwrap()) } }
                      : result<T, std::invoke_result_t<F&&>>{ failure_t{
@@ -661,28 +758,34 @@ public:
   }
 
   template <class U>
-  maybe<U> conj(const maybe<U>& rhs) const {
+  maybe<U> conj(const maybe<U>& rhs) const
+  {
     return is_just() ? rhs : nothing;
   }
 
   template <class U>
-  maybe<U> operator&&(const maybe<U>& rhs) const {
+  maybe<U> operator&&(const maybe<U>& rhs) const
+  {
     return this->conj(rhs);
   }
 
-  maybe<T> disj(const maybe<T>& rhs) const {
+  maybe<T> disj(const maybe<T>& rhs) const
+  {
     return is_nothing() ? rhs : *this;
   }
 
-  maybe<T> operator||(const maybe<T>& rhs) const {
+  maybe<T> operator||(const maybe<T>& rhs) const
+  {
     return this->disj(rhs);
   }
 
-  maybe<T> xdisj(const maybe<T>& rhs) const {
+  maybe<T> xdisj(const maybe<T>& rhs) const
+  {
     return is_just() ^ rhs.is_just() ? is_just() ? *this : rhs : nothing;
   }
 
-  maybe<T> operator^(const maybe<T>& rhs) const {
+  maybe<T> operator^(const maybe<T>& rhs) const
+  {
     return this->xdisj(rhs);
   }
 
@@ -692,7 +795,8 @@ public:
           std::is_invocable<F&&, T&, Args&&...>,
           is_maybe<std::decay_t<std::invoke_result_t<F&&, T&, Args&&...>>>>,
       std::invoke_result_t<F&&, T&, Args&&...>>
-  and_then(F&& f, Args&&... args) & {
+  and_then(F&& f, Args&&... args) &
+  {
     return is_just() ? std::invoke(
                std::forward<F>(f), unwrap(), std::forward<Args>(args)...
            )
@@ -706,7 +810,8 @@ public:
           is_maybe<
               std::decay_t<std::invoke_result_t<F&&, const T&, Args&&...>>>>,
       std::invoke_result_t<F&&, const T&, Args&&...>>
-  and_then(F&& f, Args&&... args) const& {
+  and_then(F&& f, Args&&... args) const&
+  {
     return is_just() ? std::invoke(
                std::forward<F>(f), unwrap(), std::forward<Args>(args)...
            )
@@ -719,7 +824,8 @@ public:
           std::is_invocable<F&&, T&&, Args&&...>,
           is_maybe<std::decay_t<std::invoke_result_t<F&&, T&&, Args&&...>>>>,
       std::invoke_result_t<F&&, T&, Args&&...>>
-  and_then(F&& f, Args&&... args) && {
+  and_then(F&& f, Args&&... args) &&
+  {
     return is_just() ? std::invoke(
                std::forward<F>(f), std::move(unwrap()),
                std::forward<Args>(args)...
@@ -733,7 +839,8 @@ public:
           std::is_invocable<F&&, Args&&...>,
           is_maybe_with<std::decay_t<std::invoke_result_t<F&&, Args&&...>>, T>>,
       maybe>
-  or_else(F&& f, Args&&... args) & {
+  or_else(F&& f, Args&&... args) &
+  {
     return is_just()
                ? just(unwrap())
                : std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
@@ -745,7 +852,8 @@ public:
           std::is_invocable<F&&, Args&&...>,
           is_maybe_with<std::decay_t<std::invoke_result_t<F&&, Args&&...>>, T>>,
       maybe>
-  or_else(F&& f, Args&&... args) const& {
+  or_else(F&& f, Args&&... args) const&
+  {
     return is_just()
                ? just(unwrap())
                : std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
@@ -757,7 +865,8 @@ public:
           std::is_invocable<F&&, Args&&...>,
           is_maybe_with<std::decay_t<std::invoke_result_t<F&&, Args&&...>>, T>>,
       maybe>
-  or_else(F&& f, Args&&... args) && {
+  or_else(F&& f, Args&&... args) &&
+  {
     return is_just()
                ? just(std::move(unwrap()))
                : std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
@@ -765,25 +874,31 @@ public:
 
   template <class F, class... Args>
   std::enable_if_t<std::is_invocable_v<F&&, value_type&, Args&&...>>
-  and_finally(F&& f, Args&&... args) & {
+  and_finally(F&& f, Args&&... args) &
+  {
     if (is_just())
       std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...);
   }
 
   template <class F, class... Args>
   std::enable_if_t<std::is_invocable_v<F&&, const value_type&>>
-  and_finally(F&& f, Args&&... args) const& {
+  and_finally(F&& f, Args&&... args) const&
+  {
     if (is_just())
       std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...);
   }
 
   template <class F, class... Args>
-  void and_finally(F&& f, Args&&... args) && {
-    if constexpr (std::is_lvalue_reference_v<T>) {
+  void and_finally(F&& f, Args&&... args) &&
+  {
+    if constexpr (std::is_lvalue_reference_v<T>)
+    {
       static_assert(std::is_invocable_v<F&&, value_type&, Args&&...>);
       if (is_just())
         std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...);
-    } else {
+    }
+    else
+    {
       static_assert(std::is_invocable_v<F&&, value_type&&>);
       if (is_just())
         std::invoke(std::forward<F>(f), std::move(unwrap()));
@@ -792,21 +907,24 @@ public:
 
   template <class F, class... Args>
   std::enable_if_t<std::is_invocable_v<F&&, Args&&...>>
-  or_finally(F&& f, Args&&... args) & {
+  or_finally(F&& f, Args&&... args) &
+  {
     if (is_nothing())
       std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
   }
 
   template <class F, class... Args>
   std::enable_if_t<std::is_invocable_v<F&&, Args&&...>>
-  or_finally(F&& f, Args&&... args) const& {
+  or_finally(F&& f, Args&&... args) const&
+  {
     if (is_nothing())
       std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
   }
 
   template <class F, class... Args>
   std::enable_if_t<std::is_invocable_v<F&&, Args&&...>>
-  or_finally(F&& f, Args&&... args) && {
+  or_finally(F&& f, Args&&... args) &&
+  {
     if (is_nothing())
       std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
   }
@@ -816,11 +934,16 @@ public:
       std::disjunction_v<
           std::is_invocable<F, value_type&>, std::is_invocable<F>>,
       maybe&>
-  and_peek(F&& f) & {
-    if (is_just()) {
-      if constexpr (std::is_invocable_v<F, value_type&>) {
+  and_peek(F&& f) &
+  {
+    if (is_just())
+    {
+      if constexpr (std::is_invocable_v<F, value_type&>)
+      {
         std::invoke(std::forward<F>(f), unwrap());
-      } else {
+      }
+      else
+      {
         std::invoke(std::forward<F>(f));
       }
     }
@@ -832,11 +955,16 @@ public:
       std::disjunction_v<
           std::is_invocable<F&&, const value_type&>, std::is_invocable<F&&>>,
       const maybe&>
-  and_peek(F&& f) const& {
-    if (is_just()) {
-      if constexpr (std::is_invocable_v<F, value_type&>) {
+  and_peek(F&& f) const&
+  {
+    if (is_just())
+    {
+      if constexpr (std::is_invocable_v<F, value_type&>)
+      {
         std::invoke(std::forward<F>(f), unwrap());
-      } else {
+      }
+      else
+      {
         std::invoke(std::forward<F>(f));
       }
     }
@@ -844,8 +972,8 @@ public:
   }
 
   template <class F>
-  constexpr std::enable_if_t<std::is_invocable_v<F&&>, maybe&> or_peek(F&& f
-  ) & {
+  constexpr std::enable_if_t<std::is_invocable_v<F&&>, maybe&> or_peek(F&& f) &
+  {
     if (is_nothing())
       std::invoke(std::forward<F>(f));
     return *this;
@@ -853,7 +981,8 @@ public:
 
   template <class F>
   constexpr std::enable_if_t<std::is_invocable_v<F&&>, const maybe&>
-  or_peek(F&& f) const& {
+  or_peek(F&& f) const&
+  {
     if (is_nothing())
       std::invoke(std::forward<F>(f));
     return *this;
@@ -865,20 +994,23 @@ maybe(T&&) -> maybe<T>;
 
 template <class T, class U>
 std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-operator==(const maybe<T>& lhs, const maybe<U>& rhs) {
+operator==(const maybe<T>& lhs, const maybe<U>& rhs)
+{
   return lhs.is_just() && rhs.is_just() ? (lhs.unwrap() == rhs.unwrap())
                                         : lhs.is_nothing() && rhs.is_nothing();
 }
 
 template <class T>
 bool
-operator==(const maybe<T>& lhs, const nothing_t) {
+operator==(const maybe<T>& lhs, const nothing_t)
+{
   return lhs.is_nothing();
 }
 
 template <class T>
 bool
-operator==(const nothing_t, const maybe<T>& rhs) {
+operator==(const nothing_t, const maybe<T>& rhs)
+{
   return rhs.is_nothing();
 }
 
@@ -888,7 +1020,8 @@ std::enable_if_t<
         std::negation<is_maybe<std::decay_t<U>>>,
         meta::is_comparable_with<T, U>>,
     bool>
-operator==(const maybe<T>& lhs, U&& rhs) {
+operator==(const maybe<T>& lhs, U&& rhs)
+{
   return lhs == just(std::forward<U>(rhs));
 }
 
@@ -898,25 +1031,29 @@ std::enable_if_t<
         std::negation<is_maybe<std::decay_t<T>>>,
         meta::is_comparable_with<T, U>>,
     bool>
-operator==(T&& lhs, const maybe<U>& rhs) {
+operator==(T&& lhs, const maybe<U>& rhs)
+{
   return just(std::forward<T>(lhs)) == rhs;
 }
 
 template <class T, class U>
 std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-operator!=(const maybe<T>& lhs, const maybe<U>& rhs) {
+operator!=(const maybe<T>& lhs, const maybe<U>& rhs)
+{
   return !(lhs == rhs);
 }
 
 template <class T>
 bool
-operator!=(const maybe<T>& lhs, const nothing_t) {
+operator!=(const maybe<T>& lhs, const nothing_t)
+{
   return lhs.is_just();
 }
 
 template <class T>
 bool
-operator!=(const nothing_t, const maybe<T>& rhs) {
+operator!=(const nothing_t, const maybe<T>& rhs)
+{
   return rhs.is_just();
 }
 
@@ -926,7 +1063,8 @@ std::enable_if_t<
         std::negation<is_maybe<std::decay_t<U>>>,
         meta::is_comparable_with<T, U>>,
     bool>
-operator!=(const maybe<T>& lhs, U&& rhs) {
+operator!=(const maybe<T>& lhs, U&& rhs)
+{
   return lhs != just(std::forward<U>(rhs));
 }
 
@@ -936,25 +1074,29 @@ std::enable_if_t<
         std::negation<is_maybe<std::decay_t<T>>>,
         meta::is_comparable_with<T, U>>,
     bool>
-operator!=(T&& lhs, const maybe<U>& rhs) {
+operator!=(T&& lhs, const maybe<U>& rhs)
+{
   return just(std::forward<T>(lhs)) != rhs;
 }
 
 template <class T, class U>
 bool
-operator<(const maybe<T>& lhs, const maybe<U>& rhs) {
+operator<(const maybe<T>& lhs, const maybe<U>& rhs)
+{
   return lhs.ok_or() < rhs.ok_or();
 }
 
 template <class T>
 bool
-operator<(nothing_t, const maybe<T>& rhs) {
+operator<(nothing_t, const maybe<T>& rhs)
+{
   return rhs.is_just();
 }
 
 template <class T>
 bool
-operator<(const maybe<T>&, nothing_t) {
+operator<(const maybe<T>&, nothing_t)
+{
   return false;
 }
 
@@ -964,7 +1106,8 @@ std::enable_if_t<
         std::negation<is_maybe<std::decay_t<U>>>,
         meta::is_less_comparable_with<T, U>>,
     bool>
-operator<(const maybe<T>& lhs, U&& rhs) {
+operator<(const maybe<T>& lhs, U&& rhs)
+{
   return lhs < just(std::forward<U>(rhs));
 }
 
@@ -974,25 +1117,29 @@ std::enable_if_t<
         std::negation<is_maybe<std::decay_t<T>>>,
         meta::is_less_comparable_with<T, U>>,
     bool>
-operator<(T&& lhs, const maybe<U>& rhs) {
+operator<(T&& lhs, const maybe<U>& rhs)
+{
   return just(std::forward<T>(lhs)) < rhs;
 }
 
 template <class T, class U>
 bool
-operator<=(const maybe<T>& lhs, const maybe<U>& rhs) {
+operator<=(const maybe<T>& lhs, const maybe<U>& rhs)
+{
   return lhs.ok_or() <= rhs.ok_or();
 }
 
 template <class T>
 bool
-operator<=(nothing_t, const maybe<T>&) {
+operator<=(nothing_t, const maybe<T>&)
+{
   return true;
 }
 
 template <class T>
 bool
-operator<=(const maybe<T>& lhs, nothing_t) {
+operator<=(const maybe<T>& lhs, nothing_t)
+{
   return lhs.is_nothing();
 }
 
@@ -1002,7 +1149,8 @@ std::enable_if_t<
         std::negation<is_maybe<std::decay_t<U>>>,
         meta::is_less_comparable_with<T, U>, meta::is_comparable_with<T, U>>,
     bool>
-operator<=(const maybe<T>& lhs, U&& rhs) {
+operator<=(const maybe<T>& lhs, U&& rhs)
+{
   return lhs <= just(std::forward<U>(rhs));
 }
 
@@ -1012,25 +1160,29 @@ std::enable_if_t<
         std::negation<is_maybe<std::decay_t<T>>>,
         meta::is_less_comparable_with<T, U>, meta::is_comparable_with<T, U>>,
     bool>
-operator<=(T&& lhs, const maybe<U>& rhs) {
+operator<=(T&& lhs, const maybe<U>& rhs)
+{
   return just(std::forward<T>(lhs)) <= rhs;
 }
 
 template <class T, class U>
 bool
-operator>(const maybe<T>& lhs, const maybe<U>& rhs) {
+operator>(const maybe<T>& lhs, const maybe<U>& rhs)
+{
   return lhs.ok_or() > rhs.ok_or();
 }
 
 template <class T>
 bool
-operator>(nothing_t, const maybe<T>&) {
+operator>(nothing_t, const maybe<T>&)
+{
   return false;
 }
 
 template <class T>
 bool
-operator>(const maybe<T>& lhs, nothing_t) {
+operator>(const maybe<T>& lhs, nothing_t)
+{
   return lhs.is_just();
 }
 
@@ -1040,7 +1192,8 @@ std::enable_if_t<
         std::negation<is_maybe<std::decay_t<U>>>,
         meta::is_less_comparable_with<U, T>>,
     bool>
-operator>(const maybe<T>& lhs, U&& rhs) {
+operator>(const maybe<T>& lhs, U&& rhs)
+{
   return lhs > just(std::forward<U>(rhs));
 }
 
@@ -1050,25 +1203,29 @@ std::enable_if_t<
         std::negation<is_maybe<std::decay_t<T>>>,
         meta::is_less_comparable_with<U, T>>,
     bool>
-operator>(T&& lhs, const maybe<U>& rhs) {
+operator>(T&& lhs, const maybe<U>& rhs)
+{
   return just(std::forward<T>(lhs)) > rhs;
 }
 
 template <class T, class U>
 bool
-operator>=(const maybe<T>& lhs, const maybe<U>& rhs) {
+operator>=(const maybe<T>& lhs, const maybe<U>& rhs)
+{
   return lhs.ok_or() >= rhs.ok_or();
 }
 
 template <class T>
 bool
-operator>=(nothing_t, const maybe<T>& rhs) {
+operator>=(nothing_t, const maybe<T>& rhs)
+{
   return rhs.is_nothing();
 }
 
 template <class T>
 bool
-operator>=(const maybe<T>&, nothing_t) {
+operator>=(const maybe<T>&, nothing_t)
+{
   return true;
 }
 
@@ -1078,7 +1235,8 @@ std::enable_if_t<
         std::negation<is_maybe<std::decay_t<U>>>,
         meta::is_less_comparable_with<U, T>, meta::is_comparable_with<U, T>>,
     bool>
-operator>=(const maybe<T>& lhs, U&& rhs) {
+operator>=(const maybe<T>& lhs, U&& rhs)
+{
   return lhs >= just(std::forward<U>(rhs));
 }
 
@@ -1088,7 +1246,8 @@ std::enable_if_t<
         std::negation<is_maybe<std::decay_t<T>>>,
         meta::is_less_comparable_with<U, T>, meta::is_comparable_with<U, T>>,
     bool>
-operator>=(T&& lhs, const maybe<U>& rhs) {
+operator>=(T&& lhs, const maybe<U>& rhs)
+{
   return just(std::forward<T>(lhs)) >= rhs;
 }
 
@@ -1103,14 +1262,16 @@ operator>=(T&& lhs, const maybe<U>& rhs) {
 ///   found by ADL.
 template <class T>
 std::enable_if_t<trait::formattable<T>::value, std::ostream&>
-operator<<(std::ostream& os, const maybe<T>& may) {
+operator<<(std::ostream& os, const maybe<T>& may)
+{
   using namespace std::string_literals;
   using namespace std::string_view_literals;
   auto inner_format = boost::hana::fix(boost::hana::overload_linearly(
       [](auto, const auto& x)
           -> std::enable_if_t<
               trait::formattable_element<std::decay_t<decltype(x)>>::value,
-              std::string> {
+              std::string>
+      {
         return boost::hana::overload_linearly(
 		  [](std::monostate) { return "()"s; },
 		  [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
@@ -1120,7 +1281,8 @@ operator<<(std::ostream& os, const maybe<T>& may) {
       [](auto _fmt, const auto& x)
           -> std::enable_if_t<
               trait::formattable_dictionary<std::decay_t<decltype(x)>>::value,
-              std::string> {
+              std::string>
+      {
         if (x.empty())
           return "{}"s;
         using std::begin, std::end;
@@ -1130,7 +1292,8 @@ operator<<(std::ostream& os, const maybe<T>& may) {
             + (boost::format("%1%: %2%") % _fmt(std::get<0>(*iter))
                % _fmt(std::get<1>(*iter)))
                   .str();
-        while (++iter != end(x)) {
+        while (++iter != end(x))
+        {
           str += (boost::format(",%1%: %2%") % _fmt(std::get<0>(*iter))
                   % _fmt(std::get<1>(*iter)))
                      .str();
@@ -1140,13 +1303,15 @@ operator<<(std::ostream& os, const maybe<T>& may) {
       [](auto _fmt, const auto& x)
           -> std::enable_if_t<
               trait::formattable_range<std::decay_t<decltype(x)>>::value,
-              std::string> {
+              std::string>
+      {
         if (x.empty())
           return "[]"s;
         using std::begin, std::end;
         auto iter = begin(x);
         std::string str = "["s + _fmt(*iter);
-        while (++iter != end(x)) {
+        while (++iter != end(x))
+        {
           str += (boost::format(",%1%") % _fmt(*iter)).str();
         }
         return str += "]";
@@ -1154,10 +1319,14 @@ operator<<(std::ostream& os, const maybe<T>& may) {
       [](auto _fmt, const auto& x)
           -> std::enable_if_t<
               trait::formattable_tuple<std::decay_t<decltype(x)>>::value,
-              std::string> {
-        if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0) {
+              std::string>
+      {
+        if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0)
+        {
           return "()"s;
-        } else {
+        }
+        else
+        {
           return std::apply(
               [_fmt](auto const& head, auto const&... tail) {
                 return "("s + _fmt(head) + ((("," + _fmt(tail))) + ...) + ")"s;

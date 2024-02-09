@@ -546,13 +546,15 @@ static_assert(
 );
 
 template <class A, class B>
-struct cc_expected {
+struct cc_expected
+{
   static constexpr bool value = std::conjunction_v<
       std::is_copy_constructible<A>, std::is_copy_constructible<B>>;
 };
 
 template <class A, class B>
-struct mc_expected {
+struct mc_expected
+{
   static constexpr bool value = std::disjunction_v<
       std::conjunction<
           std::is_move_constructible<A>, std::is_move_constructible<B>>,
@@ -561,14 +563,16 @@ struct mc_expected {
 };
 
 template <class A, class B>
-struct ca_expected {
+struct ca_expected
+{
   static constexpr bool value = std::conjunction_v<
       std::is_copy_constructible<A>, std::is_copy_constructible<B>,
       std::is_copy_assignable<A>, std::is_copy_assignable<B>>;
 };
 
 template <class A, class B>
-struct ma_expected {
+struct ma_expected
+{
   static constexpr bool value = std::disjunction_v<
       std::conjunction<
           std::is_move_constructible<A>, std::is_move_constructible<B>,

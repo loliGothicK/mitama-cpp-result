@@ -11,7 +11,8 @@
 #include <string_view>
 #include <type_traits>
 #include <utility>
-namespace mitama {
+namespace mitama
+{
 /// @brief
 ///   ostream output operator
 ///
@@ -26,13 +27,15 @@ template <mutability _, class T, class E>
 std::enable_if_t<
     std::conjunction_v<trait::formattable<T>, trait::formattable<E>>,
     std::ostream&>
-operator<<(std::ostream& os, const basic_result<_, T, E>& res) {
+operator<<(std::ostream& os, const basic_result<_, T, E>& res)
+{
   using namespace std::literals::string_literals;
   auto inner_format = boost::hana::fix(boost::hana::overload_linearly(
       [](auto, const auto& x)
           -> std::enable_if_t<
               trait::formattable_element<std::decay_t<decltype(x)>>::value,
-              std::string> {
+              std::string>
+      {
         return boost::hana::overload_linearly(
           [](std::monostate) { return "()"s; },
           [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
@@ -42,7 +45,8 @@ operator<<(std::ostream& os, const basic_result<_, T, E>& res) {
       [](auto _fmt, const auto& x)
           -> std::enable_if_t<
               trait::formattable_dictionary<std::decay_t<decltype(x)>>::value,
-              std::string> {
+              std::string>
+      {
         if (x.empty())
           return "{}"s;
         using std::begin, std::end;
@@ -52,7 +56,8 @@ operator<<(std::ostream& os, const basic_result<_, T, E>& res) {
             + (boost::format("%1%: %2%") % _fmt(std::get<0>(*iter))
                % _fmt(std::get<1>(*iter)))
                   .str();
-        while (++iter != end(x)) {
+        while (++iter != end(x))
+        {
           str += (boost::format(",%1%: %2%") % _fmt(std::get<0>(*iter))
                   % _fmt(std::get<1>(*iter)))
                      .str();
@@ -62,13 +67,15 @@ operator<<(std::ostream& os, const basic_result<_, T, E>& res) {
       [](auto _fmt, const auto& x)
           -> std::enable_if_t<
               trait::formattable_range<std::decay_t<decltype(x)>>::value,
-              std::string> {
+              std::string>
+      {
         if (x.empty())
           return "[]"s;
         using std::begin, std::end;
         auto iter = begin(x);
         std::string str = "["s + _fmt(*iter);
-        while (++iter != end(x)) {
+        while (++iter != end(x))
+        {
           str += (boost::format(",%1%") % _fmt(*iter)).str();
         }
         return str += "]";
@@ -76,10 +83,14 @@ operator<<(std::ostream& os, const basic_result<_, T, E>& res) {
       [](auto _fmt, const auto& x)
           -> std::enable_if_t<
               trait::formattable_tuple<std::decay_t<decltype(x)>>::value,
-              std::string> {
-        if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0) {
+              std::string>
+      {
+        if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0)
+        {
           return "()"s;
-        } else {
+        }
+        else
+        {
           return std::apply(
               [_fmt](auto const& head, auto const&... tail) {
                 return "("s + _fmt(head) + ((("," + _fmt(tail))) + ...) + ")"s;
