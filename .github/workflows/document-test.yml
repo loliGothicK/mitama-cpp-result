@@ -15,38 +15,47 @@ env:
 
 jobs:
   doc_test:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        config:
-          - {
-            name: "Latest Version of GCC 10.x",
-            cc: "gcc-10", cxx: "g++-10",
-          }
-          - {
-            name: "Latest Version of Clang 10.x",
-            cc: "clang-10", cxx: "clang++-10",
-          }
+        compiler:
+          - cc: clang
+            cxx: clang++
+            ver: 17
+          - cc: gcc
+            cxx: g++
+            ver: 13
     env:
-      CC: ${{ matrix.config.cc }}
-      CXX: ${{ matrix.config.cxx }}
+      CC: ${{ matrix.compiler.cc }}-${{ matrix.compiler.ver }}
+      CXX: ${{ matrix.compiler.cxx }}-${{ matrix.compiler.ver }}
     steps:
       - uses: actions/checkout@v4
-      - run: git submodule update --init --recursive
-      - run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
-      - run: sudo apt-get -qq update
-      - name: Install ${{ matrix.config.cc }}
-        run: sudo apt-get install -y -qq pkg-config cmake ${{ matrix.config.cc }}
+        with:
+          submodules: true
 
-      - name: Clang Version
-        run: ${{ matrix.config.cxx }} --version
+      - run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+
+      - name: Install CMake
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get install -y -qq pkg-config cmake
+
+      - name: Install Clang
+        if: startsWith(matrix.compiler.cxx, 'clang')
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x ./llvm.sh
+          sudo ./llvm.sh ${{ matrix.compiler.ver }}
+
+      - name: Print Compiler Version
+        run: ${{ env.CXX }} --version
 
       - name: Restore & Cache {fmt}
         uses: actions/cache@v4
         id: fmt-cache
         with:
           path: ${{ runner.temp }}/libs/fmt
-          key: ${{ matrix.config.name }}-fmt-${{ env.FMT_VERSION }}
+          key: ${{ env.CXX }}-fmt-${{ env.FMT_VERSION }}
       - name: Install fmt
         if: steps.fmt-cache.outputs.cache-hit != 'true'
         run: |
@@ -63,7 +72,7 @@ jobs:
         id: boost-cache
         with:
           path: ${{ runner.temp }}/libs/boost
-          key: ${{ matrix.config.name }}-boost-${{ env.BOOST_VERSION }}
+          key: ${{ env.CXX }}-boost-${{ env.BOOST_VERSION }}
       - name: Install boost (${{ env.BOOST_VERSION }}) as static
         if: steps.boost-cache.outputs.cache-hit != 'true'
         run: |
@@ -81,7 +90,7 @@ jobs:
             | jq -r '.[0].assets[] | select(.name | test("x86_64-unknown-linux-musl.zip")) | .browser_download_url' \
             | xargs -n1 curl -LOk
           unzip x86_64-unknown-linux-musl.zip
-          sed -i 's#__COMPILER__#${{ matrix.config.cxx }}#g' config.toml
+          sed -i 's#__COMPILER__#${{ env.CXX }}#g' config.toml
           sed -i 's#__BOOST_ROOT__#${{ runner.temp }}/libs/boost#g' config.toml
           sed -i 's#__LIBFMT_SO__#${{ runner.temp }}/libs/fmt/lib/libfmt.so#g' config.toml
           sed -i 's#__FMT_INCLUDE_DIR__#${{ runner.temp }}/libs/fmt/include#g' config.toml
