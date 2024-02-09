@@ -72,18 +72,22 @@ auto parse = [](str s) -> result<T, str>
       {
         return success(std::stoi(s));
       }
+      // NOLINTNEXTLINE(runtime/int)
       else if constexpr (std::is_same_v<T, long>)
       {
         return success(std::stol(s));
       }
+      // NOLINTNEXTLINE(runtime/int)
       else if constexpr (std::is_same_v<T, unsigned long>)
       {
         return success(std::stoul(s));
       }
+      // NOLINTNEXTLINE(runtime/int)
       else if constexpr (std::is_same_v<T, long long>)
       {
         return success(std::stoll(s));
       }
+      // NOLINTNEXTLINE(runtime/int)
       else if constexpr (std::is_same_v<T, unsigned long long>)
       {
         return success(std::stoull(s));

@@ -6,3 +6,19 @@ authors = [
 edition = "20"
 name = "mitama-cpp-result"
 version = "9.2.1"
+
+[lint.cpplint]
+filters = [
+  "-build/c++11",
+  "-build/include_order", # prioritize clang-format
+  "-build/include_subdir",
+  "-legal/copyright",
+  "-readability/braces", # prioritize clang-format
+  "-readability/nolint", # ignore NOLINT comments for clang-tidy
+  "-readability/todo", # todo comments don't need a username
+  "-runtime/explicit",
+  "-runtime/indentation_namespace", # inner namespace should be indented
+  "-runtime/references", # non-const reference rather than a pointer
+  "-whitespace",
+  "+whitespace/ending_newline",
+]

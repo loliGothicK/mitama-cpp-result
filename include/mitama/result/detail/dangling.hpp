@@ -13,7 +13,7 @@ class dangling
 
 public:
   template <class U>
-  constexpr dangling(U&& u) : value_(std::forward<U>(u))
+  constexpr explicit dangling(U&& u) : value_(std::forward<U>(u))
   {
   }
 
@@ -29,7 +29,7 @@ class dangling<std::reference_wrapper<T>>
   std::reference_wrapper<T> ref_;
 
 public:
-  constexpr dangling(std::reference_wrapper<T> ref) : ref_(ref) {}
+  constexpr explicit dangling(std::reference_wrapper<T> ref) : ref_(ref) {}
 
   T& transmute() const&
   {

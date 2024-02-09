@@ -18,6 +18,7 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <string>
 #include <string_view>
 #include <tuple>
 #include <type_traits>
@@ -36,7 +37,7 @@ struct is_pointer_like<
     PointerLike, std::void_t<
                      decltype(std::declval<PointerLike&>().operator->()),
                      decltype(*std::declval<PointerLike&>()),
-                     decltype(bool(std::declval<PointerLike&>()))>>
+                     decltype(static_cast<bool>(std::declval<PointerLike&>()))>>
     : std::true_type
 {
 };
@@ -1263,8 +1264,8 @@ template <class T>
 std::enable_if_t<trait::formattable<T>::value, std::ostream&>
 operator<<(std::ostream& os, const maybe<T>& may)
 {
-  using namespace std::string_literals;
-  using namespace std::string_view_literals;
+  using std::string_literals::operator""s;
+  using std::string_view_literals::operator""sv;
   auto inner_format = boost::hana::fix(boost::hana::overload_linearly(
       [](auto, const auto& x)
           -> std::enable_if_t<

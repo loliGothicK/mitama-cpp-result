@@ -23,7 +23,7 @@ struct TestClass<true, true, true, true>
   TestClass(TestClass&&) = default;
   TestClass& operator=(TestClass&&) = default;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 
 template <>
@@ -35,7 +35,7 @@ struct TestClass<true, true, true, false>
   TestClass(TestClass&&) = default;
   TestClass& operator=(TestClass&&) = delete;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 
 template <>
@@ -47,7 +47,7 @@ struct TestClass<true, true, false, true>
   TestClass(TestClass&&) = delete;
   TestClass& operator=(TestClass&&) = default;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 
 template <>
@@ -59,7 +59,7 @@ struct TestClass<true, true, false, false>
   TestClass(TestClass&&) = delete;
   TestClass& operator=(TestClass&&) = delete;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 
 template <>
@@ -71,7 +71,7 @@ struct TestClass<true, false, true, true>
   TestClass(TestClass&&) = default;
   TestClass& operator=(TestClass&&) = default;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 
 template <>
@@ -83,7 +83,7 @@ struct TestClass<true, false, true, false>
   TestClass(TestClass&&) = default;
   TestClass& operator=(TestClass&&) = delete;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 
 template <>
@@ -95,7 +95,7 @@ struct TestClass<true, false, false, true>
   TestClass(TestClass&&) = delete;
   TestClass& operator=(TestClass&&) = default;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 
 template <>
@@ -107,7 +107,7 @@ struct TestClass<true, false, false, false>
   TestClass(TestClass&&) = delete;
   TestClass& operator=(TestClass&&) = delete;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 
 template <>
@@ -119,7 +119,7 @@ struct TestClass<false, true, true, true>
   TestClass(TestClass&&) = default;
   TestClass& operator=(TestClass&&) = default;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 
 template <>
@@ -131,7 +131,7 @@ struct TestClass<false, true, true, false>
   TestClass(TestClass&&) = default;
   TestClass& operator=(TestClass&&) = delete;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 
 template <>
@@ -143,7 +143,7 @@ struct TestClass<false, true, false, true>
   TestClass(TestClass&&) = delete;
   TestClass& operator=(TestClass&&) = default;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 
 template <>
@@ -155,7 +155,7 @@ struct TestClass<false, true, false, false>
   TestClass(TestClass&&) = delete;
   TestClass& operator=(TestClass&&) = delete;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 
 template <>
@@ -167,7 +167,7 @@ struct TestClass<false, false, true, true>
   TestClass(TestClass&&) = default;
   TestClass& operator=(TestClass&&) = default;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 
 template <>
@@ -179,7 +179,7 @@ struct TestClass<false, false, true, false>
   TestClass(TestClass&&) = default;
   TestClass& operator=(TestClass&&) = delete;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 
 template <>
@@ -191,7 +191,7 @@ struct TestClass<false, false, false, true>
   TestClass(TestClass&&) = delete;
   TestClass& operator=(TestClass&&) = default;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 
 template <>
@@ -203,7 +203,7 @@ struct TestClass<false, false, false, false>
   TestClass(TestClass&&) = delete;
   TestClass& operator=(TestClass&&) = delete;
   ~TestClass() = default;
-  TestClass(const Receptor&) {}
+  explicit TestClass(const Receptor&) {}
 };
 static_assert(
     std::is_copy_constructible_v<TestClass<true, true, true, true>> == true

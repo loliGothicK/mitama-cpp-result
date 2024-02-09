@@ -486,7 +486,7 @@ struct base
 
 struct derived final : base
 {
-  virtual std::string test() override
+  std::string test() override
   {
     return "derived";
   }

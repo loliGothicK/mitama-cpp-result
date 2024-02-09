@@ -162,4 +162,5 @@ struct is_range<
 {
 };
 
+// NOLINTNEXTLINE(readability/namespace)
 } // namespace mitama::inline meta

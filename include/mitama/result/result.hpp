@@ -15,6 +15,7 @@
 #include <boost/hana/functional/overload_linearly.hpp>
 
 #include <functional>
+#include <memory>
 #include <optional>
 #include <string_view>
 #include <type_traits>
