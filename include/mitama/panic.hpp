@@ -32,7 +32,7 @@ class runtime_panic : public std::runtime_error
 {
 public:
   template <class... Args>
-  runtime_panic(boost::format fmt, Args&&... args) noexcept
+  explicit runtime_panic(boost::format fmt, Args&&... args) noexcept
       : std::runtime_error((fmt % ... % std::forward<Args>(args)).str())
   {
   }
@@ -46,7 +46,7 @@ public:
           std::string{ "runtime panicked at '" }
           + (boost::format(fmt) % ... % [](auto&& arg) -> decltype(auto)
              {
-               using namespace std::string_view_literals;
+               using std::string_view_literals::operator""sv;
                if constexpr (std::is_same_v<
                                  std::decay_t<decltype(arg)>, std::monostate>)
                {
@@ -74,7 +74,7 @@ public:
           + (boost::format(fmt) % ... %
                  [](auto&& arg [[maybe_unused]]) -> decltype(auto)
              {
-               using namespace std::string_view_literals;
+               using std::string_view_literals::operator""sv;
                if constexpr (std::is_same_v<
                                  std::decay_t<decltype(arg)>, std::monostate>)
                {

@@ -35,3 +35,21 @@ jobs:
           poac fmt --check --verbose
         env:
           POAC_FMT: clang-format-17
+
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cpplint
+        run: pip install cpplint
+
+      - name: Install Poac
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          brew install poac
+
+      - name: poac lint
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          poac lint --verbose

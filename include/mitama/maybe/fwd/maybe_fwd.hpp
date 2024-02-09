@@ -1,6 +1,6 @@
 #pragma once
 
-#include <variant>
+#include <type_traits>
 
 namespace mitama
 {

@@ -30,7 +30,7 @@ std::enable_if_t<
     std::ostream&>
 operator<<(std::ostream& os, const basic_result<_, T, E>& res)
 {
-  using namespace std::literals::string_literals;
+  using std::string_literals::operator""s;
   auto inner_format = boost::hana::fix(boost::hana::overload_linearly(
       [](auto, const auto& x)
           -> std::enable_if_t<

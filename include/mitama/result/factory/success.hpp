@@ -12,6 +12,7 @@
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 
@@ -501,7 +502,7 @@ template <class T>
 inline std::enable_if_t<trait::formattable<T>::value, std::ostream&>
 operator<<(std::ostream& os, const success_t<T>& ok)
 {
-  using namespace std::literals::string_literals;
+  using std::string_literals::operator""s;
   auto inner_format = boost::hana::fix(boost::hana::overload_linearly(
       [](auto, const auto& x)
           -> std::enable_if_t<
