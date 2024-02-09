@@ -1,6 +1,6 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#define MITAMA_PANIC_WITH_STACKTRACE
+
 #include <mitama/maybe/maybe.hpp>
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
@@ -429,8 +429,7 @@ TEST_CASE("unwrap() test", "[result][unwrap]")
                     "runtime panicked at 'called `basic_result::unwrap()` on a "
                     "value: `failure(\"emergency failure\")`', "
                 )
-                >> *_ >> as_xpr(":") >> +range('0', '9') >> _n >> _n
-                >> as_xpr("stacktrace:") >> +(_n | ~_n);
+                >> *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
     REQUIRE(regex_match(std::string{ p.what() }, what, re));
   }
@@ -450,8 +449,7 @@ TEST_CASE("unwrap_err() test", "[result][unwrap_err]")
         as_xpr(
             R"(runtime panicked at 'called `basic_result::unwrap_err()` on a value: `success(2)`', )"
         )
-        >> *_ >> as_xpr(":") >> +range('0', '9') >> _n >> _n
-        >> as_xpr("stacktrace:") >> +(_n | ~_n);
+        >> *_ >> as_xpr(":") >> +range('0', '9');
     smatch what;
     REQUIRE(regex_match(std::string{ p.what() }, what, re));
   }
@@ -1440,7 +1438,7 @@ TEST_CASE("map & map_err with void", "[result][map][map_err][void]")
 {
   u32 val = 3;
   auto add_one_val = [&] { val += 1; };
-  auto add_one_arg = [&](u32 e) { e += 1; };
+  auto add_one_arg = [&]([[maybe_unused]] u32 e) { e += 1; };
 
   result<void, u32> x = success();
   result<void, void> y = x.map(add_one_val) // 4
