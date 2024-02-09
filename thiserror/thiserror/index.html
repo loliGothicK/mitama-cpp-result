@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Mitama.Result C++17 Library">
+        <meta name="description" content="Mitama.Result C++20 Library">
       
       
         <meta name="author" content="mitama">
@@ -1458,25 +1458,25 @@
 
 <h1 id="thiserror_101">thiserror 101<a class="headerlink" href="#thiserror_101" title="Permanent link">&para;</a></h1>
 <p><strong>thiserror</strong> is a library that makes it easy to write domain-specific error types.
-We can embed the reason for the error directly into the type using a macro (we plan to deprecate macros in the future using C++20).</p>
+We can embed the reason for the error directly into the type.</p>
 <p>For example, if you want to write <code>data_store_error</code>, you can write the following:</p>
 <div class="highlight"><pre><span></span><code><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;mitama/thiserror/thiserror.hpp&gt;</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">data_store_error</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">S</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="p">...</span><span class="n">T</span><span class="o">&gt;</span>
+<span class="w">  </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="n">mitama</span><span class="o">::</span><span class="n">thiserror</span><span class="o">::</span><span class="n">fixed_string</span><span class="w"> </span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="p">...</span><span class="n">T</span><span class="o">&gt;</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mitama</span><span class="o">::</span><span class="n">thiserror</span><span class="o">::</span><span class="n">error</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">...</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="k">public</span><span class="o">:</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">disconnect</span>
-<span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="n">MITAMA_ERROR</span><span class="p">(</span><span class="s">&quot;data store disconnected&quot;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="s">&quot;data store disconnected&quot;</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">redaction</span>
-<span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="n">MITAMA_ERROR</span><span class="p">(</span><span class="s">&quot;for key `{0}` isn&#39;t available&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="s">&quot;for key `{0}` isn&#39;t available&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">invalid_header</span>
-<span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="n">MITAMA_ERROR</span><span class="p">(</span><span class="s">&quot;(expected {0}, found {1})&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="s">&quot;(expected {0}, found {1})&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">unknown</span>
-<span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="n">MITAMA_ERROR</span><span class="p">(</span><span class="s">&quot;unknown data store error&quot;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="s">&quot;unknown data store error&quot;</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="p">};</span>
 </code></pre></div>
-<p>The first template argument of <code>mitama::thiserror::error</code> is embedded with a format string using the <code>MITAMA_ERROR</code> macro.
+<p>The first template argument of <code>mitama::thiserror::error</code> is embedded with a format string.
 The format string should be a string compliant with <a href="https://github.com/fmtlib/fmt"><strong>{fmt}</strong></a>, check the documentation if you need it.
 The second template argument onwards is a list of formattable arguments.</p>
 <p><code>mitama::thiserror::error</code> inherits from <code>anyhow::error</code>, so it can be used together with anyhow.
@@ -1495,18 +1495,18 @@ The factory function <code>anyhow::failure</code> is used to create a <code>shar
 <span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="o">::</span><span class="nn">literals</span><span class="p">;</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">data_store_error</span><span class="w"> </span><span class="p">{</span>
-<span class="w">  </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">S</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="p">...</span><span class="n">T</span><span class="o">&gt;</span>
+<span class="w">  </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="n">mitama</span><span class="o">::</span><span class="n">thiserror</span><span class="o">::</span><span class="n">fixed_string</span><span class="w"> </span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="p">...</span><span class="n">T</span><span class="o">&gt;</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mitama</span><span class="o">::</span><span class="n">thiserror</span><span class="o">::</span><span class="n">error</span><span class="o">&lt;</span><span class="n">S</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">...</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="k">public</span><span class="o">:</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">disconnect</span>
-<span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="n">MITAMA_ERROR</span><span class="p">(</span><span class="s">&quot;data store disconnected&quot;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="s">&quot;data store disconnected&quot;</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">redaction</span>
-<span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="n">MITAMA_ERROR</span><span class="p">(</span><span class="s">&quot;for key `{0}` isn&#39;t available&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="s">&quot;for key `{0}` isn&#39;t available&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">invalid_header</span>
-<span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="n">MITAMA_ERROR</span><span class="p">(</span><span class="s">&quot;(expected {0}, found {1})&quot;</span><span class="p">),</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="s">&quot;(expected {0}, found {1})&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">unknown</span>
-<span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="n">MITAMA_ERROR</span><span class="p">(</span><span class="s">&quot;unknown data store error&quot;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="p">};</span><span class="w">  </span>
+<span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="n">error</span><span class="o">&lt;</span><span class="s">&quot;unknown data store error&quot;</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="p">};</span>
 
 <span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="n">anyhow</span><span class="o">::</span><span class="n">result</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span>
