@@ -1,0 +1,35 @@
+name: C++
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+env:
+  POAC_TERM_COLOR: always
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: |
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x ./llvm.sh
+          sudo ./llvm.sh 17
+          sudo apt-get install -y clang-format-17
+
+      - name: Install Poac
+        run: brew install poac
+
+      - name: poac fmt
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          poac fmt --check --verbose
+        env:
+          POAC_FMT: clang-format-17
