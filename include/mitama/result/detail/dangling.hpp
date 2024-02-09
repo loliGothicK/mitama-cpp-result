@@ -1,5 +1,5 @@
-#ifndef MITAMA_RESULT_DETAIL_DANGLING_HPP
-#define MITAMA_RESULT_DETAIL_DANGLING_HPP
+#pragma once
+
 #include <functional>
 #include <utility>
 
@@ -40,5 +40,3 @@ public:
 template <class T>
 using dangle_ref = dangling<std::reference_wrapper<std::remove_reference_t<T>>>;
 } // namespace mitama
-
-#endif

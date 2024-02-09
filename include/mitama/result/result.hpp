@@ -1,5 +1,5 @@
-#ifndef MITAMA_RESULT_HPP
-#define MITAMA_RESULT_HPP
+#pragma once
+
 #include <mitama/anyhow/error.hpp>
 #include <mitama/panic.hpp>
 #include <mitama/result/detail/fwd.hpp>
@@ -2235,6 +2235,4 @@ operator>=(T&& lhs, const basic_result<_, U, E>& rhs)
 #else
 #  define MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC false
 #  define MITAMA_TRY(...) boost::hana::id(__VA_ARGS__).unwrap()
-#endif
-
 #endif

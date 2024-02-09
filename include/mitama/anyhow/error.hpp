@@ -1,5 +1,4 @@
-#ifndef MITAMA_ANYHOW_ERROR_HPP
-#define MITAMA_ANYHOW_ERROR_HPP
+#pragma once
 
 #include <mitama/result/factory/failure.hpp>
 
@@ -175,5 +174,3 @@ failure(Args&&... args) -> std::enable_if_t<
   return mitama::failure(std::make_shared<Err>(std::forward<Args>(args)...));
 }
 } // namespace mitama::anyhow
-
-#endif

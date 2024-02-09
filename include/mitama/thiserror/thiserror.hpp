@@ -1,5 +1,5 @@
-#ifndef MITAMA_THISERROR_THISERROR_HPP
-#define MITAMA_THISERROR_THISERROR_HPP
+#pragma once
+
 #include <mitama/anyhow/error.hpp>
 #include <mitama/mitamagic/format.hpp>
 
@@ -128,4 +128,3 @@ struct fmt::formatter<mitama::thiserror::error<Fmt, Sources...>>
 };
 
 #undef MITAMA_CONSTEVAL_FALLBACK
-#endif

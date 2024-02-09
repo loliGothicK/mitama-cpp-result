@@ -1,5 +1,4 @@
-#ifndef MITAMA_PANIC_HPP
-#define MITAMA_PANIC_HPP
+#pragma once
 
 #include <boost/format.hpp>
 
@@ -110,6 +109,4 @@ public:
       ::mitama::stacktarce_use, __FILE__, __LINE__,    \
           boost::stacktrace::stacktrace(), __VA_ARGS__ \
     }
-#endif
-
 #endif

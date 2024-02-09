@@ -1,5 +1,4 @@
-#ifndef MITAMA_RESULT_TRAIT_HPP
-#define MITAMA_RESULT_TRAIT_HPP
+#pragma once
 
 #include <mitama/result/detail/meta.hpp>
 
@@ -128,5 +127,3 @@ struct formattable_dictionary<
 };
 
 } // namespace mitama::trait
-
-#endif

@@ -1,5 +1,5 @@
-#ifndef MITAMA_MAYBE_FACTORY_JUST_HPP
-#define MITAMA_MAYBE_FACTORY_JUST_HPP
+#pragma once
+
 #include <mitama/maybe/fwd/maybe_fwd.hpp>
 #include <mitama/mitamagic/is_interface_of.hpp>
 #include <mitama/result/detail/meta.hpp>
@@ -793,5 +793,3 @@ public:
   }
 };
 } // namespace mitama
-
-#endif

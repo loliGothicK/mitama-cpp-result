@@ -1,5 +1,5 @@
-#ifndef MITAMA_RESULT_DETAIL_META_HPP
-#define MITAMA_RESULT_DETAIL_META_HPP
+#pragma once
+
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -163,5 +163,3 @@ struct is_range<
 };
 
 } // namespace mitama::inline meta
-
-#endif
