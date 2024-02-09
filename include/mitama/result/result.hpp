@@ -1780,17 +1780,17 @@ public:
     ({                                                                                    \
         auto&& result = boost::hana::id(__VA_ARGS__);                                     \
         static_assert(                                                                    \
-            ::mitama::is_result_v<::mitama::std::remove_cvref_t<decltype(result)>>,        \
+            ::mitama::is_result_v<std::remove_cvref_t<decltype(result)>>,                 \
             "You should pass mitama::result type to this MITAMA_TRY macro."               \
         );                                                                                \
         if (result.is_err()) {                                                            \
             using Err = ::mitama::failure_t<                                              \
-                ::mitama::std::remove_cvref_t<decltype(result)>::err_type                  \
+                std::remove_cvref_t<decltype(result)>::err_type                           \
             >;                                                                            \
             return ::std::get<Err>(std::forward<decltype(result)>(result).into_storage());\
         }                                                                                 \
         using Ok = ::mitama::success_t<                                                   \
-            ::mitama::std::remove_cvref_t<decltype(result)>::ok_type                       \
+            std::remove_cvref_t<decltype(result)>::ok_type                                \
         >;                                                                                \
         ::std::get<Ok>(std::forward<decltype(result)>(result).into_storage()).get();      \
     })
