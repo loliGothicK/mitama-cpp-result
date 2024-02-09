@@ -8,7 +8,7 @@
 #include <string>
 #include <string_view>
 
-namespace mitama::trait {
+namespace mitama {
 
 // Trait Helpers
 
@@ -17,6 +17,9 @@ using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
 
 inline constexpr std::nullptr_t required = nullptr;
 
+}
+
+namespace mitama::trait {
 
 /// Atomic Constraint
 template <class T, class = void>
@@ -41,7 +44,7 @@ struct formattable<T, std::enable_if_t<
     formattable_range<T>,
     formattable_dictionary<T>,
     formattable_tuple<T>
->>>: std::true_type {}; 
+>>>: std::true_type {};
 
 
 template < >

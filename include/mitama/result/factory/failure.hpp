@@ -24,11 +24,6 @@ class [[nodiscard]] failure_t<E>
   friend class failure_t;
   E x;
 
-  template <class... Requires>
-  using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
-
-  static constexpr std::nullptr_t required = nullptr;
-
   template <class U>
   using not_self = std::negation<std::is_same<failure_t, U>>;
 public:
@@ -252,11 +247,6 @@ class [[nodiscard]] failure_t<E&>
   template <class, class...>
   friend class failure_t;
   std::reference_wrapper<E> x;
-
-  template <class... Requires>
-  using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
-
-  static constexpr std::nullptr_t required = nullptr;
 
   template <class U>
   using not_self = std::negation<std::is_same<failure_t, U>>;
@@ -488,7 +478,7 @@ public:
             [](std::monostate) { return "()"s; },
             [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
             [](auto const& x) { return (boost::format("%1%") % x).str(); })
-          (x);        
+          (x);
         },
         [](auto _fmt, auto const& x) -> std::enable_if_t<trait::formattable_dictionary<std::decay_t<decltype(x)>>::value, std::string> {
           if (x.empty()) return "{}"s;
