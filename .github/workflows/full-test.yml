@@ -83,7 +83,7 @@ jobs:
           git clone -q -b boost-${{ matrix.boost_version }} --recursive https://github.com/boostorg/boost.git
           cd boost
           ./bootstrap.sh
-          sudo ./b2 link=static install -j2 --prefix=${{ runner.temp }}/libs/boost || exit 0
+          sudo ./b2 link=static install -j4 --prefix=${{ runner.temp }}/libs/boost || exit 0
         working-directory: ${{ runner.temp }}
 
       - name: Build and test
