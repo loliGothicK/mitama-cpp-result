@@ -7,26 +7,9 @@
 #include <string_view>
 #include <utility>
 #include <variant>
-#if defined(MITAMA_PANIC_WITH_STACKTRACE)
-#  ifdef _WIN32
-#  else
-#    define BOOST_STACKTRACE_USE_ADDR2LINE
-#  endif
-#  include <boost/stacktrace.hpp>
-#endif
 
 namespace mitama
 {
-
-class macro_use_tag_t
-{
-};
-inline static constexpr macro_use_tag_t macro_use{};
-
-class stacktarce_use_tag_t
-{
-};
-inline static constexpr stacktarce_use_tag_t stacktarce_use{};
 
 class runtime_panic : public std::runtime_error
 {
@@ -39,8 +22,7 @@ public:
 
   template <class... Args>
   explicit runtime_panic(
-      macro_use_tag_t, const char* func, int line, std::string fmt,
-      Args&&... args
+      const char* func, int line, std::string fmt, Args&&... args
   ) noexcept
       : std::runtime_error(
           std::string{ "runtime panicked at '" }
@@ -62,51 +44,11 @@ public:
       )
   {
   }
-
-#if defined(MITAMA_PANIC_WITH_STACKTRACE)
-  template <class StackTrace, class... Args>
-  explicit runtime_panic(
-      stacktarce_use_tag_t, const char* func, int line, StackTrace&& st,
-      std::string fmt, Args&&... args
-  ) noexcept
-      : std::runtime_error(
-          std::string{ "runtime panicked at '" }
-          + (boost::format(fmt) % ... %
-                 [](auto&& arg [[maybe_unused]]) -> decltype(auto)
-             {
-               using std::string_view_literals::operator""sv;
-               if constexpr (std::is_same_v<
-                                 std::decay_t<decltype(arg)>, std::monostate>)
-               {
-                 return "()"sv;
-               }
-               else
-               {
-                 return std::forward<decltype(arg)>(arg);
-               }
-             }(std::forward<Args>(args)))
-                .str()
-          + (boost::format("', %1%:%2%\n\nstacktrace:\n%3%")
-             % std::string{ func } % line % std::forward<StackTrace>(st))
-                .str()
-      )
-  {
-  }
-#endif
 };
 } // namespace mitama
 
-#if !defined(MITAMA_PANIC_WITH_STACKTRACE)
-#  define PANIC(...)                                       \
-    throw ::mitama::runtime_panic                          \
-    {                                                      \
-      ::mitama::macro_use, __FILE__, __LINE__, __VA_ARGS__ \
-    }
-#else
-#  define PANIC(...)                                   \
-    throw ::mitama::runtime_panic                      \
-    {                                                  \
-      ::mitama::stacktarce_use, __FILE__, __LINE__,    \
-          boost::stacktrace::stacktrace(), __VA_ARGS__ \
-    }
-#endif
+#define PANIC(...)                  \
+  throw ::mitama::runtime_panic     \
+  {                                 \
+    __FILE__, __LINE__, __VA_ARGS__ \
+  }
