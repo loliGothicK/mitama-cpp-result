@@ -2,7 +2,7 @@
 language = "cpp" # Follow github flavered markdown
 compilers = ["__COMPILER__"] # Compilers for doc test
 compiler_options = [
-    "-std=c++17",
+    "-std=c++20",
     "-Wall",
     "-Wextra",
     "-pedantic-errors",
