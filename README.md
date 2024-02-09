@@ -7,7 +7,7 @@
 and [Option](https://doc.rust-lang.org/std/option/enum.Option.html) in Programming Language Rust).
 
 ## Test Status
-![Full Test](https://github.com/LoliGothick/mitama-cpp-result/workflows/Full%20Test/badge.svg)
+[![Full Test](https://github.com/LoliGothick/mitama-cpp-result/actions/workflows/full-test.yml/badge.svg)](https://github.com/LoliGothick/mitama-cpp-result/actions/workflows/full-test.yml)
 
 ## References
 
