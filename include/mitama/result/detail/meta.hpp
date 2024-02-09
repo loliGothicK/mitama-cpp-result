@@ -4,11 +4,7 @@
 #include <utility>
 #include <tuple>
 
-namespace mitama {
-inline namespace meta {
-
-template < class T > struct remove_cvr: std::remove_cv<std::remove_reference_t<T>> {};
-template < class T > using remove_cvr_t = typename remove_cvr<T>::type;
+namespace mitama::inline meta {
 
 template < class T, class = void >
 struct has_type: std::false_type {};
@@ -48,25 +44,16 @@ struct is_less_comparable_with : std::false_type {};
 template <class T, class U>
 struct is_less_comparable_with<T, U, std::void_t<decltype(std::declval<T const& >() < std::declval<U const &>())>> : std::true_type {};
 
-}}
 
-namespace mitama {
-inline namespace meta {
 namespace detail {
   template <class AlwaysVoid, class... Types> struct has_common_type: std::false_type {};
   template <class... Types>
   struct has_common_type<std::enable_if_t<::mitama::meta::has_type<std::common_type<Types...>>::value>, Types...>: std::true_type {};
-}}}
-
-namespace mitama {
-inline namespace meta {
-  template <class... Types>
-  struct has_common_type: detail::has_common_type<void, Types...> {};
-}
 }
 
-namespace mitama {
-inline namespace meta {
+template <class... Types>
+struct has_common_type: detail::has_common_type<void, Types...> {};
+
 namespace detail {
 template < class, class, class = void > struct is_tuple_like_detail: std::false_type {};
 
@@ -77,10 +64,8 @@ struct is_tuple_like_detail<T, std::index_sequence<I...>, std::void_t<decltype(s
 
 template < class TupleLike >
 struct is_tuple_like_impl: is_tuple_like_detail<TupleLike, std::make_index_sequence<std::tuple_size_v<TupleLike>>> {};
-}}}
+}
 
-namespace mitama {
-inline namespace meta {
 /// is_tuple_like
 /// requires
 ///   std::tuple_element<0, T>
@@ -100,6 +85,6 @@ template <class Range>
 struct is_range<Range, std::void_t<decltype(*std::begin(std::declval<std::decay_t<Range>>()), std::begin(std::declval<std::decay_t<Range>>()) != std::end(std::declval<std::decay_t<Range>>()))>>
   : std::true_type {};
 
-}}
+}
 
 #endif

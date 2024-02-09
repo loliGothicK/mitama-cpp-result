@@ -1,12 +1,12 @@
 # mitama-cpp-result
 
-**mitama-cpp-result** is the C++17 libraries for error handling without exceptions.
+**mitama-cpp-result** is the C++20 libraries for error handling without exceptions.
 
 **mitama-cpp-result** provides `result<T, E>`, `maybe<T>`, and associated monadic functions
 (like [Result](https://doc.rust-lang.org/std/result/enum.Result.html)
 and [Option](https://doc.rust-lang.org/std/option/enum.Option.html) in Programming Language Rust).
 
-## Test Status 
+## Test Status
 ![Full Test](https://github.com/LoliGothick/mitama-cpp-result/workflows/Full%20Test/badge.svg)
 
 ## References
@@ -27,19 +27,18 @@ mitama-cpp-result/docs> $ poetry run mkdocs serve
 
 To use this library, you need at least 1.67.0 or higher version of the boost library.
 
-## OS / Compiler / Language Standard
+## Supported OS / Compiler / Language Standard
 
-- support architectures
+- OS
     - Linux
     - Apple Darwin
     - (Windows)
 
-- support compilers
+- Compilers
     - gcc >= 8.3
     - clang >= 7.0.1
-    - Latest preview version of MSVC only 
+    - Latest preview version of MSVC only
 
-- support language standards
-    - C++17
+- Language Standards
     - C++20
     - (MSVC: only support `/std:c++latest`)
