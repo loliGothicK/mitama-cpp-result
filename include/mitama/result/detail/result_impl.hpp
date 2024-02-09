@@ -9,6 +9,7 @@
 #include <mitama/maybe/maybe.hpp>
 #include <optional>
 #include <functional>
+#include <type_traits>
 
 namespace mitama {
 
