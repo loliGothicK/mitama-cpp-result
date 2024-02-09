@@ -1,11 +1,11 @@
 #define CATCH_CONFIG_MAIN
 
+#include <catch2/catch.hpp>
+
 #include <mitama/anyhow/anyhow.hpp>
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
 #include <mitama/thiserror/thiserror.hpp>
-
-#include <catch2/catch.hpp>
 
 namespace anyhow = mitama::anyhow;
 using namespace std::literals;

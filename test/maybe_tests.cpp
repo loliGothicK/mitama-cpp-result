@@ -1,4 +1,6 @@
 #define CATCH_CONFIG_MAIN
+#include <catch2/catch.hpp>
+
 #include <mitama/maybe/maybe.hpp>
 #include <mitama/maybe/range_to_maybe.hpp>
 #include <mitama/result/result.hpp>
@@ -6,7 +8,7 @@
 
 #include <boost/xpressive/xpressive.hpp>
 
-#include <catch2/catch.hpp>
+#include <sstream>
 #include <string>
 
 using namespace mitama;

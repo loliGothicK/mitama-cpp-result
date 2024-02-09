@@ -16,14 +16,18 @@ BreakStringLiterals: true
 Cpp11BracedListStyle: false
 IncludeBlocks: Regroup
 IncludeCategories:
-  - Regex:           '^<mitama/'
-    Priority:        1
-    CaseSensitive:   true
-  - Regex:           '^<boost/'
-    Priority:        2
-  - Regex:           '.*'
-    Priority:        3
-    SortPriority:    0
+  - Regex: "^<catch2/"
+    Priority: 1
+    CaseSensitive: true
+  - Regex: "^<mitama/"
+    Priority: 2
+    CaseSensitive: true
+  - Regex: "^<boost/"
+    Priority: 3
+    CaseSensitive: true
+  - Regex: ".*"
+    Priority: 4
+    SortPriority: 0
 IndentCaseLabels: true
 IndentPPDirectives: AfterHash
 NamespaceIndentation: Inner
