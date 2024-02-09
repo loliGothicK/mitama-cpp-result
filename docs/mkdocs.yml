@@ -1,6 +1,6 @@
 site_name: Mitama.Result User Manual
 site_url: https://loligothick.github.io/mitama-cpp-result/
-site_description: Mitama.Result C++17 Library
+site_description: Mitama.Result C++20 Library
 site_author: mitama
 
 # Repository
@@ -42,7 +42,7 @@ markdown_extensions:
       separator: "_"
       baselevel: 1
 
-extra_javascript: 
+extra_javascript:
   - https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML
   - mathjaxhelper.js
 extra_css:
