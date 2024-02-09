@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mitama/mitamagic/format.hpp>
 #include <mitama/result/factory/failure.hpp>
 
 #include <exception>
@@ -175,3 +176,9 @@ failure(Args&&... args) -> std::enable_if_t<
   return mitama::failure(std::make_shared<Err>(std::forward<Args>(args)...));
 }
 } // namespace mitama::anyhow
+
+template <>
+struct fmt::formatter<std::shared_ptr<mitama::anyhow::error>>
+    : ostream_formatter
+{
+};

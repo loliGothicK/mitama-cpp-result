@@ -7,7 +7,7 @@ set(TEST_NAMES
 set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
 
 find_package(Boost 1.80.0 REQUIRED)
-find_package(fmt CONFIG REQUIRED)
+find_package(fmt 9.0.0 CONFIG REQUIRED)
 
 message($CMAKE)
 

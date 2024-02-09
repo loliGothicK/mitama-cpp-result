@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mitama/maybe/maybe.hpp>
+#include <mitama/mitamagic/format.hpp>
 #include <mitama/result/detail/dangling.hpp>
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>

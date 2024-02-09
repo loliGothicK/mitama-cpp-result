@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mitama/mitamagic/format.hpp>
 #include <mitama/mitamagic/is_interface_of.hpp>
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
@@ -511,8 +512,8 @@ operator<<(std::ostream& os, const success_t<T>& ok)
       {
         return boost::hana::overload_linearly(
             [](std::monostate) { return "()"s; },
-            [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
-            [](auto const& x) { return (boost::format("%1%") % x).str(); })
+            [](std::string_view x) { return fmt::format(fmt::runtime("\"{}\""), x); },
+            [](auto const& x) { return fmt::format(fmt::runtime("{}"), x); })
           (x);
       },
       [](auto _fmt, const auto& x)
@@ -526,14 +527,14 @@ operator<<(std::ostream& os, const success_t<T>& ok)
         auto iter = begin(x);
         std::string str =
             "{"s
-            + (boost::format("%1%: %2%") % _fmt(std::get<0>(*iter))
-               % _fmt(std::get<1>(*iter)))
-                  .str();
+            + fmt::format(
+                "{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter))
+            );
         while (++iter != end(x))
         {
-          str += (boost::format(",%1%: %2%") % _fmt(std::get<0>(*iter))
-                  % _fmt(std::get<1>(*iter)))
-                     .str();
+          str += fmt::format(
+              ",{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter))
+          );
         }
         return str += "}";
       },
@@ -549,7 +550,7 @@ operator<<(std::ostream& os, const success_t<T>& ok)
         std::string str = "["s + _fmt(*iter);
         while (++iter != end(x))
         {
-          str += (boost::format(",%1%") % _fmt(*iter)).str();
+          str += fmt::format(",{}", _fmt(*iter));
         }
         return str += "]";
       },
@@ -573,7 +574,12 @@ operator<<(std::ostream& os, const success_t<T>& ok)
         }
       }
   ));
-  return os << boost::format("success(%1%)") % inner_format(ok.get());
+  return os << fmt::format("success({})", inner_format(ok.get()));
 }
 
 } // namespace mitama
+
+template <class T>
+struct fmt::formatter<mitama::success_t<T>> : ostream_formatter
+{
+};

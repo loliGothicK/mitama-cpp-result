@@ -1,10 +1,55 @@
 #pragma once
 
-#ifdef __cpp_lib_format
-#  include <format>
-namespace fmt = std;
-#elif __has_include(<fmt/format.h>)
-#  include <fmt/format.h>
-#else
-#  error "mitama-cpp-result requires <fmt/format.h> or C++20 <format> header"
-#endif
+#include <memory>
+#include <string>
+#include <string_view>
+#include <variant>
+
+std::ostream&
+operator<<(std::ostream& os, const std::monostate&)
+{
+  return os << "()";
+}
+template <class T>
+std::ostream&
+operator<<(std::ostream& os, const std::unique_ptr<T>& ptr)
+{
+  if (ptr)
+  {
+    return os << *ptr;
+  }
+  else
+  {
+    return os << "null";
+  }
+}
+template <class T>
+std::ostream&
+operator<<(std::ostream& os, const std::shared_ptr<T>& ptr)
+{
+  if (ptr)
+  {
+    return os << *ptr;
+  }
+  else
+  {
+    return os << "null";
+  }
+}
+
+#include <fmt/core.h>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
+
+template <>
+struct fmt::formatter<std::monostate> : ostream_formatter
+{
+};
+template <class T>
+struct fmt::formatter<std::unique_ptr<T>> : ostream_formatter
+{
+};
+template <class T>
+struct fmt::formatter<std::shared_ptr<T>> : ostream_formatter
+{
+};

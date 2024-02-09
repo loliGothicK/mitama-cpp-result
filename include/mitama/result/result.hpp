@@ -1,6 +1,7 @@
 #pragma once
 
 #include <mitama/anyhow/error.hpp>
+#include <mitama/mitamagic/format.hpp>
 #include <mitama/panic.hpp>
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
@@ -8,7 +9,6 @@
 #include <mitama/result/factory/success.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
 
-#include <boost/format.hpp>
 #include <boost/hana/functional/fix.hpp>
 #include <boost/hana/functional/id.hpp>
 #include <boost/hana/functional/overload.hpp>
@@ -1365,7 +1365,7 @@ public:
       else
       {
         PANIC(
-            "called `basic_result::unwrap()` on a value: `%1%`",
+            "called `basic_result::unwrap()` on a value: `{}`",
             std::get<failure_t<E>>(storage_)
         );
       }
@@ -1401,7 +1401,7 @@ public:
       else
       {
         PANIC(
-            "called `basic_result::unwrap()` on a value: `%1%`",
+            "called `basic_result::unwrap()` on a value: `{}`",
             std::get<failure_t<E>>(storage_)
         );
       }
@@ -1436,7 +1436,7 @@ public:
       else
       {
         PANIC(
-            "called `basic_result::unwrap_err()` on a value: `%1%`",
+            "called `basic_result::unwrap_err()` on a value: `{}`",
             std::get<success_t<T>>(storage_)
         );
       }
@@ -1472,7 +1472,7 @@ public:
       else
       {
         PANIC(
-            "called `basic_result::unwrap_err()` on a value: `%1%`",
+            "called `basic_result::unwrap_err()` on a value: `{}`",
             std::get<success_t<T>>(storage_)
         );
       }
@@ -1500,7 +1500,7 @@ public:
   {
     if (is_err())
     {
-      PANIC("%1%: %2%", msg, unwrap_err());
+      PANIC("{}: {}", msg, unwrap_err());
     }
     else
     {
@@ -1518,7 +1518,7 @@ public:
   {
     if (is_err())
     {
-      PANIC("%1%: %2%", msg, unwrap_err());
+      PANIC("{}: {}", msg, unwrap_err());
     }
     else
     {
@@ -1536,7 +1536,7 @@ public:
   {
     if (is_ok())
     {
-      PANIC("%1%: %2%", msg, unwrap());
+      PANIC("{}: {}", msg, unwrap_err());
     }
     else
     {
@@ -1554,7 +1554,7 @@ public:
   {
     if (is_ok())
     {
-      PANIC("%1%: %2%", msg, unwrap());
+      PANIC("{}: {}", msg, unwrap_err());
     }
     else
     {

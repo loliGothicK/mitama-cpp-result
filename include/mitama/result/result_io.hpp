@@ -1,5 +1,6 @@
 #pragma once
 
+#include <mitama/mitamagic/format.hpp>
 #include <mitama/result/result.hpp>
 
 #include <boost/hana/functional/fix.hpp>
@@ -38,9 +39,9 @@ operator<<(std::ostream& os, const basic_result<_, T, E>& res)
               std::string>
       {
         return boost::hana::overload_linearly(
-          [](std::monostate) { return "()"s; },
-          [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
-          [](auto const& x) { return (boost::format("%1%") % x).str(); })
+            [](std::monostate) { return "()"s; },
+          [](std::string_view x) { return fmt::format(fmt::runtime("\"{}\""), x); },
+          [](auto const& x) { return fmt::format(fmt::runtime("{}"), x); })
         (x);
       },
       [](auto _fmt, const auto& x)
@@ -54,14 +55,14 @@ operator<<(std::ostream& os, const basic_result<_, T, E>& res)
         auto iter = begin(x);
         std::string str =
             "{"s
-            + (boost::format("%1%: %2%") % _fmt(std::get<0>(*iter))
-               % _fmt(std::get<1>(*iter)))
-                  .str();
+            + fmt::format(
+                "{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter))
+            );
         while (++iter != end(x))
         {
-          str += (boost::format(",%1%: %2%") % _fmt(std::get<0>(*iter))
-                  % _fmt(std::get<1>(*iter)))
-                     .str();
+          str += fmt::format(
+              ",{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter))
+          );
         }
         return str += "}";
       },
@@ -77,7 +78,7 @@ operator<<(std::ostream& os, const basic_result<_, T, E>& res)
         std::string str = "["s + _fmt(*iter);
         while (++iter != end(x))
         {
-          str += (boost::format(",%1%") % _fmt(*iter)).str();
+          str += fmt::format(",{}", _fmt(*iter));
         }
         return str += "]";
       },
@@ -102,9 +103,13 @@ operator<<(std::ostream& os, const basic_result<_, T, E>& res)
       }
   ));
   return res.is_ok()
-             ? os << boost::format("success(%1%)") % inner_format(res.unwrap())
-             : os << boost::format("failure(%1%)")
-                         % inner_format(res.unwrap_err());
+             ? os << fmt::format("success({})", inner_format(res.unwrap()))
+             : os << fmt::format("failure({})", inner_format(res.unwrap_err()));
 }
 
 } // namespace mitama
+
+template <mitama::mutability _, class T, class E>
+struct fmt::formatter<mitama::basic_result<_, T, E>> : ostream_formatter
+{
+};
