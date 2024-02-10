@@ -2,6 +2,7 @@
 
 #include <mitama/maybe/factory/just_nothing.hpp>
 #include <mitama/maybe/fwd/maybe_fwd.hpp>
+#include <mitama/mitamagic/format.hpp>
 #include <mitama/panic.hpp>
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
@@ -9,7 +10,6 @@
 #include <mitama/result/factory/success.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
 
-#include <boost/format.hpp>
 #include <boost/hana/functional/fix.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
@@ -653,7 +653,7 @@ public:
     }
     else
     {
-      PANIC("%1%", msg);
+      PANIC("{}", msg);
     }
   }
 
@@ -665,7 +665,7 @@ public:
     }
     else
     {
-      PANIC("%1%", msg);
+      PANIC("{}", msg);
     }
   }
 
@@ -677,7 +677,7 @@ public:
     }
     else
     {
-      PANIC("%1%", msg);
+      PANIC("{}", msg);
     }
   }
 
@@ -1273,10 +1273,10 @@ operator<<(std::ostream& os, const maybe<T>& may)
               std::string>
       {
         return boost::hana::overload_linearly(
-		  [](std::monostate) { return "()"s; },
-		  [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
-		  [](auto const& x) { return (boost::format("%1%") % x).str(); })
-		(x);
+            [](std::monostate) { return "()"s; },
+            [](std::string_view x) { return fmt::format(fmt::runtime("\"{}\""), x); },
+            [](auto const& x) { return fmt::format(fmt::runtime("{}"), x); }
+        )(x);
       },
       [](auto _fmt, const auto& x)
           -> std::enable_if_t<
@@ -1287,16 +1287,16 @@ operator<<(std::ostream& os, const maybe<T>& may)
           return "{}"s;
         using std::begin, std::end;
         auto iter = begin(x);
-        std::string str =
-            "{"s
-            + (boost::format("%1%: %2%") % _fmt(std::get<0>(*iter))
-               % _fmt(std::get<1>(*iter)))
-                  .str();
+        std::string str = "{"s
+                          + fmt::format(
+                              fmt::runtime("{}: {}"), _fmt(std::get<0>(*iter)),
+                              _fmt(std::get<1>(*iter))
+                          );
         while (++iter != end(x))
         {
-          str += (boost::format(",%1%: %2%") % _fmt(std::get<0>(*iter))
-                  % _fmt(std::get<1>(*iter)))
-                     .str();
+          str += fmt::format(
+              ",{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter))
+          );
         }
         return str += "}";
       },
@@ -1312,7 +1312,7 @@ operator<<(std::ostream& os, const maybe<T>& may)
         std::string str = "["s + _fmt(*iter);
         while (++iter != end(x))
         {
-          str += (boost::format(",%1%") % _fmt(*iter)).str();
+          str += fmt::format(",{}", _fmt(*iter));
         }
         return str += "]";
       },
@@ -1337,8 +1337,13 @@ operator<<(std::ostream& os, const maybe<T>& may)
       }
   ));
   return may.is_just()
-             ? os << boost::format("just(%1%)") % inner_format(may.unwrap())
+             ? os << fmt::format("just({})", inner_format(may.unwrap()))
              : os << "nothing"sv;
 }
 
 } // namespace mitama
+
+template <class T>
+struct fmt::formatter<mitama::maybe<T>> : ostream_formatter
+{
+};

@@ -2,7 +2,7 @@ name: Full Test
 
 on:
   push:
-    branches: [ master ]
+    branches: [main]
   pull_request:
 
 concurrency:
@@ -51,7 +51,7 @@ jobs:
       - name: Install CMake & fmt
         run: |
           sudo apt-get -qq update
-          sudo apt-get install -y -qq pkg-config cmake libfmt-dev
+          sudo apt-get install -y -qq pkg-config cmake
 
       - name: Install Clang
         if: startsWith(matrix.compiler.cxx, 'clang')
@@ -59,6 +59,11 @@ jobs:
           wget https://apt.llvm.org/llvm.sh
           chmod +x ./llvm.sh
           sudo ./llvm.sh ${{ matrix.compiler.ver }}
+
+      - name: Install fmt
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          brew install fmt
 
       - name: Restore & Cache boost (${{ matrix.boost_version }})
         uses: actions/cache@v4
@@ -78,6 +83,7 @@ jobs:
 
       - name: Build and test
         run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           mkdir build && cd build
           cmake ..             \
             -DBUILD_TESTING=ON \

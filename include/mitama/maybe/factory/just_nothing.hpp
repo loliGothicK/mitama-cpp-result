@@ -1,11 +1,11 @@
 #pragma once
 
 #include <mitama/maybe/fwd/maybe_fwd.hpp>
+#include <mitama/mitamagic/format.hpp>
 #include <mitama/mitamagic/is_interface_of.hpp>
 #include <mitama/result/detail/meta.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
 
-#include <boost/format.hpp>
 #include <boost/hana/functional/fix.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
@@ -679,10 +679,10 @@ operator<<(std::ostream& os, const just_t<T>& j)
               std::string>
       {
         return boost::hana::overload_linearly(
-      [](std::monostate) { return "()"s; },
-      [](std::string_view x) { return (boost::format("\"%1%\"") % x).str(); },
-      [](auto const& x) { return (boost::format("%1%") % x).str(); })
-      (x);
+            [](std::monostate) { return "()"s; },
+            [](std::string_view x) { return fmt::format(fmt::runtime("\"{}\""), x); },
+            [](auto const& x) { return fmt::format(fmt::runtime("{}"), x); }
+        )(x);
       },
       [](auto _fmt, const auto& x)
           -> std::enable_if_t<
@@ -695,14 +695,14 @@ operator<<(std::ostream& os, const just_t<T>& j)
         auto iter = begin(x);
         std::string str =
             "{"s
-            + (boost::format("%1%: %2%") % _fmt(std::get<0>(*iter))
-               % _fmt(std::get<1>(*iter)))
-                  .str();
+            + fmt::format(
+                "{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter))
+            );
         while (++iter != end(x))
         {
-          str += (boost::format(",%1%: %2%") % _fmt(std::get<0>(*iter))
-                  % _fmt(std::get<1>(*iter)))
-                     .str();
+          str += fmt::format(
+              ",{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter))
+          );
         }
         return str += "}";
       },
@@ -718,7 +718,7 @@ operator<<(std::ostream& os, const just_t<T>& j)
         std::string str = "["s + _fmt(*iter);
         while (++iter != end(x))
         {
-          str += (boost::format(",%1%") % _fmt(*iter)).str();
+          str += fmt::format(",{}", _fmt(*iter));
         }
         return str += "]";
       },
@@ -742,7 +742,7 @@ operator<<(std::ostream& os, const just_t<T>& j)
         }
       }
   ));
-  return os << boost::format("just(%1%)") % inner_format(j.get());
+  return os << fmt::format("just({})", inner_format(j.get()));
 }
 
 template <class Target = void, class... Types>
@@ -793,4 +793,10 @@ public:
     );
   }
 };
+
 } // namespace mitama
+
+template <class T>
+struct fmt::formatter<mitama::just_t<T>> : ostream_formatter
+{
+};

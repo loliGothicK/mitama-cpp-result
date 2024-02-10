@@ -2,46 +2,46 @@ name: Documents
 
 on:
   push:
-    branches: [ master ]
+    branches: [main]
   pull_request:
 
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.8'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
 
-    - name: Set up Poetry 1.6.1
-      uses: abatilo/actions-poetry@v3.0.0
-      with:
-        poetry-version: 1.6.1
+      - name: Set up Poetry 1.6.1
+        uses: abatilo/actions-poetry@v3.0.0
+        with:
+          poetry-version: 1.6.1
 
-    - name: Restore & Cache Poetry and Dependences
-      uses: actions/cache@v4
-      id: poetry-cache
-      with:
-        path: |
-          ~/.poetry
-          ~/.cache/pypoetry
-        key: ${{ hashFiles('docs/poetry.lock') }}
-    - name: poetry install
-      if: steps.poetry-cache.outputs.cache-hit != 'true'
-      run: poetry install --no-root
-      working-directory: docs
+      - name: Restore & Cache Poetry and Dependences
+        uses: actions/cache@v4
+        id: poetry-cache
+        with:
+          path: |
+            ~/.poetry
+            ~/.cache/pypoetry
+          key: ${{ hashFiles('docs/poetry.lock') }}
+      - name: poetry install
+        if: steps.poetry-cache.outputs.cache-hit != 'true'
+        run: poetry install --no-root
+        working-directory: docs
 
-    - name: Build Document
-      run: |
-        poetry run mkdocs build
-      working-directory: docs
+      - name: Build Document
+        run: |
+          poetry run mkdocs build
+        working-directory: docs
 
-    - name: Deploy to GitHub Pages
-      if: github.event_name == 'push'
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs/site
+      - name: Deploy to GitHub Pages
+        if: github.event_name == 'push'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/site
