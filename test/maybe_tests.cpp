@@ -964,7 +964,7 @@ TEST_CASE("format test", "[maybe][format]")
     ss << just(std::vector<std::string>{ "foo"s, "bar"s });
     REQUIRE(ss.str() == "just([\"foo\", \"bar\"])"s);
   }
-  SECTION("result of range err")
+  SECTION("maybe of range err")
   {
     using namespace std::literals;
     std::stringstream ss;

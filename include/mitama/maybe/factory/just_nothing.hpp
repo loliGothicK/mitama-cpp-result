@@ -671,7 +671,6 @@ operator<<(std::ostream& os, const just_t<T>& j)
   auto inner_format = [](const auto& x) -> std::string
   {
     return boost::hana::overload_linearly(
-            [](std::monostate) { return "()"; },
             [](std::string_view x) { return fmt::format(fmt::runtime("\"{}\""), x); },
             [](auto const& x) { return fmt::format(fmt::runtime("{}"), x); }
         )(x);
