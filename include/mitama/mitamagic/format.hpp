@@ -40,6 +40,7 @@ operator<<(std::ostream& os, const std::shared_ptr<T>& ptr)
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
+#include <fmt/ranges.h>
 
 template <>
 struct fmt::formatter<std::monostate> : ostream_formatter

@@ -9,7 +9,6 @@
 #include <mitama/result/factory/success.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
 
-#include <boost/hana/functional/fix.hpp>
 #include <boost/hana/functional/id.hpp>
 #include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>

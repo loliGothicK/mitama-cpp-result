@@ -10,8 +10,6 @@
 #include <mitama/result/factory/success.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
 
-#include <boost/hana/functional/fix.hpp>
-#include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
 
 #include <cassert>
@@ -1264,81 +1262,17 @@ template <class T>
 std::enable_if_t<trait::formattable<T>::value, std::ostream&>
 operator<<(std::ostream& os, const maybe<T>& may)
 {
-  using std::string_literals::operator""s;
-  using std::string_view_literals::operator""sv;
-  auto inner_format = boost::hana::fix(boost::hana::overload_linearly(
-      [](auto, const auto& x)
-          -> std::enable_if_t<
-              trait::formattable_element<std::decay_t<decltype(x)>>::value,
-              std::string>
-      {
-        return boost::hana::overload_linearly(
-            [](std::monostate) { return "()"s; },
+  auto inner_format = [](const auto& x) -> std::string
+  {
+    return boost::hana::overload_linearly(
+            [](std::monostate) { return "()"; },
             [](std::string_view x) { return fmt::format(fmt::runtime("\"{}\""), x); },
             [](auto const& x) { return fmt::format(fmt::runtime("{}"), x); }
         )(x);
-      },
-      [](auto _fmt, const auto& x)
-          -> std::enable_if_t<
-              trait::formattable_dictionary<std::decay_t<decltype(x)>>::value,
-              std::string>
-      {
-        if (x.empty())
-          return "{}"s;
-        using std::begin, std::end;
-        auto iter = begin(x);
-        std::string str = "{"s
-                          + fmt::format(
-                              fmt::runtime("{}: {}"), _fmt(std::get<0>(*iter)),
-                              _fmt(std::get<1>(*iter))
-                          );
-        while (++iter != end(x))
-        {
-          str += fmt::format(
-              ",{}: {}", _fmt(std::get<0>(*iter)), _fmt(std::get<1>(*iter))
-          );
-        }
-        return str += "}";
-      },
-      [](auto _fmt, const auto& x)
-          -> std::enable_if_t<
-              trait::formattable_range<std::decay_t<decltype(x)>>::value,
-              std::string>
-      {
-        if (x.empty())
-          return "[]"s;
-        using std::begin, std::end;
-        auto iter = begin(x);
-        std::string str = "["s + _fmt(*iter);
-        while (++iter != end(x))
-        {
-          str += fmt::format(",{}", _fmt(*iter));
-        }
-        return str += "]";
-      },
-      [](auto _fmt, const auto& x)
-          -> std::enable_if_t<
-              trait::formattable_tuple<std::decay_t<decltype(x)>>::value,
-              std::string>
-      {
-        if constexpr (std::tuple_size_v<std::decay_t<decltype(x)>> == 0)
-        {
-          return "()"s;
-        }
-        else
-        {
-          return std::apply(
-              [_fmt](auto const& head, auto const&... tail) {
-                return "("s + _fmt(head) + ((("," + _fmt(tail))) + ...) + ")"s;
-              },
-              x
-          );
-        }
-      }
-  ));
+  };
   return may.is_just()
              ? os << fmt::format("just({})", inner_format(may.unwrap()))
-             : os << "nothing"sv;
+             : os << "nothing";
 }
 
 } // namespace mitama
