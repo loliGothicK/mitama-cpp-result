@@ -590,28 +590,28 @@ TEST_CASE("format test", "[result][format]")
     using namespace std::literals;
     std::stringstream ss;
     ss << success(std::vector<std::string>{ "foo"s, "bar"s });
-    REQUIRE(ss.str() == "success([\"foo\",\"bar\"])"s);
+    REQUIRE(ss.str() == "success([\"foo\", \"bar\"])"s);
   }
   SECTION("result of range err")
   {
     using namespace std::literals;
     std::stringstream ss;
     ss << failure(std::vector<std::string>{ "foo"s, "bar"s });
-    REQUIRE(ss.str() == "failure([\"foo\",\"bar\"])"s);
+    REQUIRE(ss.str() == "failure([\"foo\", \"bar\"])"s);
   }
   SECTION("success of tuple")
   {
     using namespace std::literals;
     std::stringstream ss;
     ss << success(std::tuple{ "foo"s, 1 });
-    REQUIRE(ss.str() == "success((\"foo\",1))"s);
+    REQUIRE(ss.str() == "success((\"foo\", 1))"s);
   }
   SECTION("failure of tuple")
   {
     using namespace std::literals;
     std::stringstream ss;
     ss << failure(std::tuple{ "foo"s, 1 });
-    REQUIRE(ss.str() == "failure((\"foo\",1))"s);
+    REQUIRE(ss.str() == "failure((\"foo\", 1))"s);
   }
   SECTION("result of tuple")
   {
@@ -619,12 +619,12 @@ TEST_CASE("format test", "[result][format]")
     {
       std::stringstream ss;
       ss << result<std::tuple<str, int>, int>(success(std::tuple{ "foo"s, 1 }));
-      REQUIRE(ss.str() == "success((\"foo\",1))"s);
+      REQUIRE(ss.str() == "success((\"foo\", 1))"s);
     }
     {
       std::stringstream ss;
       ss << result<int, std::tuple<str, int>>(failure(std::tuple{ "foo"s, 1 }));
-      REQUIRE(ss.str() == "failure((\"foo\",1))"s);
+      REQUIRE(ss.str() == "failure((\"foo\", 1))"s);
     }
   }
   SECTION("result of dictionary")
@@ -645,7 +645,7 @@ TEST_CASE("format test", "[result][format]")
       ss << result<std::tuple<std::tuple<int, int>, int>, int>(
           success(std::tuple{ std::tuple{ 1, 1 }, 1 })
       );
-      REQUIRE(ss.str() == "success(((1,1),1))"s);
+      REQUIRE(ss.str() == "success(((1, 1), 1))"s);
     }
   }
   SECTION("result of range of tuple")
@@ -655,7 +655,7 @@ TEST_CASE("format test", "[result][format]")
       std::stringstream ss;
       ss << result<std::vector<std::tuple<int, int>>, int>(success(std::vector{
           std::tuple{ 1, 1 }, std::tuple{ 1, 1 } }));
-      REQUIRE(ss.str() == "success([(1,1),(1,1)])"s);
+      REQUIRE(ss.str() == "success([(1, 1), (1, 1)])"s);
     }
   }
   SECTION("failure")
@@ -669,7 +669,7 @@ TEST_CASE("format test", "[result][format]")
   {
     using namespace std::literals;
     auto res = mut_result<int, std::vector<int>>{ in_place_err, { 1, 2, 3 } };
-    REQUIRE(fmt::format("{}", res) == "failure([1,2,3])"s);
+    REQUIRE(fmt::format("{}", res) == "failure([1, 2, 3])"s);
     res = success(1);
     REQUIRE(fmt::format("{}", res) == "success(1)"s);
   }

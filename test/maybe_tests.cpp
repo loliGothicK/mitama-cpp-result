@@ -962,28 +962,28 @@ TEST_CASE("format test", "[maybe][format]")
     using namespace std::literals;
     std::stringstream ss;
     ss << just(std::vector<std::string>{ "foo"s, "bar"s });
-    REQUIRE(ss.str() == "just([\"foo\",\"bar\"])"s);
+    REQUIRE(ss.str() == "just([\"foo\", \"bar\"])"s);
   }
   SECTION("result of range err")
   {
     using namespace std::literals;
     std::stringstream ss;
     ss << maybe(just(std::vector<std::string>{ "foo"s, "bar"s }));
-    REQUIRE(ss.str() == "just([\"foo\",\"bar\"])"s);
+    REQUIRE(ss.str() == "just([\"foo\", \"bar\"])"s);
   }
   SECTION("just of tuple")
   {
     using namespace std::literals;
     std::stringstream ss;
     ss << just(std::tuple{ "foo"s, 1 });
-    REQUIRE(ss.str() == "just((\"foo\",1))"s);
+    REQUIRE(ss.str() == "just((\"foo\", 1))"s);
   }
   SECTION("maybe of just tuple")
   {
     using namespace std::literals;
     std::stringstream ss;
     ss << maybe(just(std::tuple{ "foo"s, 1 }));
-    REQUIRE(ss.str() == "just((\"foo\",1))"s);
+    REQUIRE(ss.str() == "just((\"foo\", 1))"s);
   }
   SECTION("just of dictionary")
   {
@@ -1010,7 +1010,7 @@ TEST_CASE("format test", "[maybe][format]")
     {
       std::stringstream ss;
       ss << just(std::tuple{ std::tuple{ 1, 1 }, 1 });
-      REQUIRE(ss.str() == "just(((1,1),1))"s);
+      REQUIRE(ss.str() == "just(((1, 1), 1))"s);
     }
   }
   SECTION("maybe of just tuple of tuple")
@@ -1019,7 +1019,7 @@ TEST_CASE("format test", "[maybe][format]")
     {
       std::stringstream ss;
       ss << maybe(just(std::tuple{ std::tuple{ 1, 1 }, 1 }));
-      REQUIRE(ss.str() == "just(((1,1),1))"s);
+      REQUIRE(ss.str() == "just(((1, 1), 1))"s);
     }
   }
 }
