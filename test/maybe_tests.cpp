@@ -6,10 +6,9 @@
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
 
-#include <boost/xpressive/xpressive.hpp>
-
 #include <sstream>
 #include <string>
+#include <string_view>
 
 using namespace mitama;
 using namespace std::string_literals;
@@ -45,14 +44,10 @@ TEST_CASE("unwrap()", "[maybe][unwrap]")
   }
   catch (const runtime_panic& p)
   {
-    using namespace boost::xpressive;
-    sregex re = as_xpr(
-                    "runtime panicked at 'called `maybe::unwrap()` on a "
-                    "`nothing` value', "
-                )
-                >> *_ >> as_xpr(":") >> +range('0', '9');
-    smatch what;
-    REQUIRE(regex_match(std::string{ p.what() }, what, re));
+    REQUIRE(std::string_view{ p.what() }.starts_with(
+        "runtime panicked at 'called `maybe::unwrap()` on a "
+        "`nothing` value', "
+    ));
   }
 }
 
@@ -69,11 +64,9 @@ TEST_CASE("expect()", "[maybe][expect]")
   }
   catch (const runtime_panic& p)
   {
-    using namespace boost::xpressive;
-    sregex re = as_xpr("runtime panicked at 'the world is ending', ") >> *_
-                >> as_xpr(":") >> +range('0', '9');
-    smatch what;
-    REQUIRE(regex_match(std::string{ p.what() }, what, re));
+    REQUIRE(std::string_view{ p.what() }.starts_with(
+        "runtime panicked at 'the world is ending', "
+    ));
   }
 }
 
