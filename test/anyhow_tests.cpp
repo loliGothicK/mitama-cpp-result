@@ -47,19 +47,14 @@ TEST_CASE("try with context", "[anyhow][context]")
   std::cout << res << std::endl;
 }
 
-#if not MITAMA_THISERROR_ENABLE_V1
-#  define MITAMA_ERROR(x) x
-#endif
-
 class data_store_error : mitama::thiserror::derive_error
 {
 public:
-  using disconnect = error<MITAMA_ERROR("data store disconnected")>;
-  using redaction =
-      error<MITAMA_ERROR("for key `{0}` isn't available"), std::string>;
-  using invalid_header = error<
-      MITAMA_ERROR("(expected {0}, found {1})"), std::string, std::string>;
-  using unknown = error<MITAMA_ERROR("unknown data store error")>;
+  using disconnect = error<"data store disconnected">;
+  using redaction = error<"for key `{0}` isn't available", std::string>;
+  using invalid_header =
+      error<"(expected {0}, found {1})", std::string, std::string>;
+  using unknown = error<"unknown data store error">;
 };
 
 TEST_CASE("data_store_error::disconnect", "[anyhow][thiserror]")
