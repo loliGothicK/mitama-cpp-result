@@ -3,8 +3,6 @@
 #include <mitama/mitamagic/format.hpp>
 #include <mitama/result/result.hpp>
 
-#include <boost/hana/functional/overload_linearly.hpp>
-
 #include <iostream>
 #include <string>
 #include <string_view>
@@ -29,16 +27,9 @@ std::enable_if_t<
     std::ostream&>
 operator<<(std::ostream& os, const basic_result<_, T, E>& res)
 {
-  auto inner_format = [](const auto& x) -> std::string
-  {
-    return boost::hana::overload_linearly(
-          [](std::string_view x) { return fmt::format(fmt::runtime("\"{}\""), x); },
-          [](auto const& x) { return fmt::format(fmt::runtime("{}"), x); }
-        )(x);
-  };
   return res.is_ok()
-             ? os << fmt::format("success({})", inner_format(res.unwrap()))
-             : os << fmt::format("failure({})", inner_format(res.unwrap_err()));
+             ? os << fmt::format("success({})", quote_str(res.unwrap()))
+             : os << fmt::format("failure({})", quote_str(res.unwrap_err()));
 }
 
 } // namespace mitama

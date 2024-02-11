@@ -679,6 +679,21 @@ TEST_CASE("format test", "[result][format]")
     ss << failure("foo"s);
     REQUIRE(ss.str() == "failure(\"foo\")"s);
   }
+  SECTION("failure of string_view")
+  {
+    using namespace std::literals;
+    std::stringstream ss;
+    constexpr std::string_view foo = "foo";
+    ss << failure(foo);
+    REQUIRE(ss.str() == "failure(\"foo\")"s);
+  }
+  SECTION("failure of char*")
+  {
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << failure("foo");
+    REQUIRE(ss.str() == "failure(\"foo\")"s);
+  }
   SECTION("replace")
   {
     using namespace std::literals;
