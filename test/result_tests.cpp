@@ -677,7 +677,7 @@ TEST_CASE("format test", "[result][format]")
 
 TEST_CASE("monostate success test", "[result][monostate]")
 {
-  auto func = []() -> result<std::monostate, std::string>
+  auto func = []() -> result<void, std::string>
   {
     if (false)
       return failure<std::string>("hoge"s);
@@ -706,7 +706,7 @@ TEST_CASE("contextually convertible to bool", "[result]")
       return failure<>();
     return failure<>();
   };
-  auto ok_func = []() -> result<std::monostate, std::string>
+  auto ok_func = []() -> result<void, std::string>
   {
     if (false)
       return failure<std::string>("hoge"s);
