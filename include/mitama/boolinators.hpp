@@ -71,18 +71,18 @@ as_result_from(bool b, F&& ok, G&& err)
 }
 
 template <class E>
-inline result<std::monostate, E>
+inline result<void, E>
 ok_or(bool b, E&& err)
 {
-  return b ? result<std::monostate, E>{ success() }
-           : result<std::monostate, E>{ failure(std::forward<E>(err)) };
+  return b ? result<void, E>{ success() }
+           : result<void, E>{ failure(std::forward<E>(err)) };
 }
 
 template <class G>
-inline result<std::monostate, std::invoke_result_t<G&&>>
+inline result<void, std::invoke_result_t<G&&>>
 ok_or_else(bool b, G&& err)
 {
-  using result_type = result<std::monostate, std::invoke_result_t<G>>;
+  using result_type = result<void, std::invoke_result_t<G>>;
   return b ? result_type{ success() }
            : result_type{ failure(std::invoke(std::forward<G>(err))) };
 }
