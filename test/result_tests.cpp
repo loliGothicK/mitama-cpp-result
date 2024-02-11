@@ -585,6 +585,20 @@ TEST_CASE("format test", "[result][format]")
     ss << result<int, std::string>{ failure("hoge"s) };
     REQUIRE(ss.str() == "failure(\"hoge\")"s);
   }
+  SECTION("result of void ok")
+  {
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << result<>{ success() };
+    REQUIRE(ss.str() == "success(())"s);
+  }
+  SECTION("result of void err")
+  {
+    using namespace std::literals;
+    std::stringstream ss;
+    ss << result<>{ failure() };
+    REQUIRE(ss.str() == "failure(())"s);
+  }
   SECTION("result of range ok")
   {
     using namespace std::literals;
