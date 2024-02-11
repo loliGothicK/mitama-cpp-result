@@ -3,6 +3,8 @@
 #include <memory>
 #include <string>
 #include <string_view>
+#include <type_traits>
+#include <utility>
 #include <variant>
 
 std::ostream&
@@ -54,3 +56,17 @@ template <class T>
 struct fmt::formatter<std::shared_ptr<T>> : ostream_formatter
 {
 };
+
+template <class T>
+  requires std::is_convertible_v<std::remove_cvref_t<T>, std::string_view>
+std::string
+quote_str(T&& val)
+{
+  return fmt::format("\"{}\"", std::forward<T>(val));
+}
+template <class T>
+constexpr T&&
+quote_str(T&& val) noexcept
+{
+  return std::forward<T>(val);
+}

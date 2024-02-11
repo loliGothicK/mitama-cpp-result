@@ -6,8 +6,6 @@
 #include <mitama/result/detail/meta.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
 
-#include <boost/hana/functional/overload_linearly.hpp>
-
 #include <iostream>
 #include <string>
 #include <string_view>
@@ -511,14 +509,7 @@ template <class E>
 inline std::enable_if_t<trait::formattable<E>::value, std::ostream&>
 operator<<(std::ostream& os, const failure_t<E>& err)
 {
-  auto inner_format = [](const auto& x) -> std::string
-  {
-    return boost::hana::overload_linearly(
-            [](std::string_view x) { return fmt::format(fmt::runtime("\"{}\""), x); },
-            [](auto const& x) { return fmt::format(fmt::runtime("{}"), x); })
-          (x);
-  };
-  return os << fmt::format("failure({})", inner_format(err.get()));
+  return os << fmt::format("failure({})", quote_str(err.get()));
 }
 
 } // namespace mitama

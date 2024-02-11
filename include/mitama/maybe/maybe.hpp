@@ -10,8 +10,6 @@
 #include <mitama/result/factory/success.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
 
-#include <boost/hana/functional/overload_linearly.hpp>
-
 #include <cassert>
 #include <functional>
 #include <memory>
@@ -1262,16 +1260,8 @@ template <class T>
 std::enable_if_t<trait::formattable<T>::value, std::ostream&>
 operator<<(std::ostream& os, const maybe<T>& may)
 {
-  auto inner_format = [](const auto& x) -> std::string
-  {
-    return boost::hana::overload_linearly(
-            [](std::string_view x) { return fmt::format(fmt::runtime("\"{}\""), x); },
-            [](auto const& x) { return fmt::format(fmt::runtime("{}"), x); }
-        )(x);
-  };
-  return may.is_just()
-             ? os << fmt::format("just({})", inner_format(may.unwrap()))
-             : os << "nothing";
+  return may.is_just() ? os << fmt::format("just({})", quote_str(may.unwrap()))
+                       : os << "nothing";
 }
 
 } // namespace mitama

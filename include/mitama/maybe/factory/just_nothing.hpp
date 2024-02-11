@@ -6,8 +6,6 @@
 #include <mitama/result/detail/meta.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
 
-#include <boost/hana/functional/overload_linearly.hpp>
-
 #include <iostream>
 #include <string>
 #include <string_view>
@@ -668,14 +666,7 @@ template <class T>
 inline std::enable_if_t<trait::formattable<T>::value, std::ostream&>
 operator<<(std::ostream& os, const just_t<T>& j)
 {
-  auto inner_format = [](const auto& x) -> std::string
-  {
-    return boost::hana::overload_linearly(
-            [](std::string_view x) { return fmt::format(fmt::runtime("\"{}\""), x); },
-            [](auto const& x) { return fmt::format(fmt::runtime("{}"), x); }
-        )(x);
-  };
-  return os << fmt::format("just({})", inner_format(j.get()));
+  return os << fmt::format("just({})", quote_str(j.get()));
 }
 
 template <class Target = void, class... Types>
