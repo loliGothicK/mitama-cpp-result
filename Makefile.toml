@@ -22,18 +22,13 @@ args = [
     "-DBUILD_TESTING=ON",
 ]
 
-[tasks.lint-lib]
-cwd = "./include/"
-command = "poac"
-args = [ "lint" ]
-
-[tasks.lint-test]
-cwd = "./test/"
-command = "poac"
-args = [ "lint" ]
-
 [tasks.lint]
-dependencies = [ "lint-lib", "lint-test" ]
+command = "poac"
+args = [
+    "lint",
+    "--exclude", "Catch2",
+    "--exclude", "mitama-utest-utilities",
+]
 
 [tasks.fmt-lib]
 install_crate = "fd-find"
@@ -61,7 +56,7 @@ dependencies = [ "fmt-lib", "fmt-test" ]
 [tasks.pretty]
 dependencies = [
     "fmt",
-    "lint-lib",
+    "lint",
     "build",
     "test"
 ]
