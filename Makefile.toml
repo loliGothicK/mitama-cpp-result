@@ -32,20 +32,35 @@ cwd = "./test/"
 command = "poac"
 args = [ "lint" ]
 
+[tasks.lint]
+dependencies = [ "lint-lib", "lint-test" ]
+
 [tasks.fmt-lib]
+install_crate = "fd-find"
 cwd = "./include/"
-command = "poac"
-args = [ "fmt" ]
+command = "fd"
+args = [
+    "-e", "hpp",
+    "-e", "cpp",
+    "-x", "clang-format", "-i"
+]
 
 [tasks.fmt-test]
+install_crate = "fd-find"
 cwd = "./test/"
-command = "poac"
-args = [ "fmt" ]
+command = "fd"
+args = [
+    "-e", "hpp",
+    "-e", "cpp",
+    "-x", "clang-format", "-i"
+]
 
+[tasks.fmt]
+dependencies = [ "fmt-lib", "fmt-test" ]
+ 
 [tasks.pretty]
 dependencies = [
-    "fmt-lib",
-    "fmt-test",
+    "fmt",
     "lint-lib",
     "build",
     "test"
