@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   ubuntu:
-    runs-on: ubuntu-22.04
+    runs-on: ${{ matrix.compiler.os }}
     strategy:
       fail-fast: false
       matrix:
@@ -25,21 +25,27 @@ jobs:
           - cc: clang
             cxx: clang++
             ver: 15
+            os: ubuntu-22.04
           - cc: clang
             cxx: clang++
             ver: 16
+            os: ubuntu-22.04
           - cc: clang
             cxx: clang++
             ver: 17
+            os: ubuntu-24.04
           - cc: gcc
             cxx: g++
             ver: 11
+            os: ubuntu-22.04
           - cc: gcc
             cxx: g++
             ver: 12
+            os: ubuntu-24.04
           - cc: gcc
             cxx: g++
             ver: 13
+            os: ubuntu-24.04
     env:
       CC: ${{ matrix.compiler.cc }}-${{ matrix.compiler.ver }}
       CXX: ${{ matrix.compiler.cxx }}-${{ matrix.compiler.ver }}
