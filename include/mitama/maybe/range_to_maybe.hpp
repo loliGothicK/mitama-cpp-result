@@ -3,26 +3,10 @@
 #include <mitama/maybe/maybe.hpp>
 
 #include <iterator>
-#include <type_traits>
 #include <utility>
 
 namespace mitama::_range_to_maybe_detail
 {
-using std::begin, std::end;
-template <class T, class = std::void_t<>, class = std::void_t<>>
-struct is_range : std::false_type
-{
-};
-
-template <class T>
-struct is_range<
-    T, std::enable_if_t<std::is_constructible_v<
-           bool, decltype(begin(std::declval<T>()) != end(std::declval<T>()))>>>
-    : std::true_type
-{
-  using type = decltype(*begin(std::declval<T>()));
-};
-
 template <class Range>
 concept is_std_range = requires(Range range) {
   std::begin(range);
