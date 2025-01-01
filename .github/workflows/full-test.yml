@@ -46,6 +46,10 @@ jobs:
             cxx: g++
             ver: 13
             os: ubuntu-24.04
+          - cc: gcc
+            cxx: g++
+            ver: 14
+            os: ubuntu-24.04
     env:
       CC: ${{ matrix.compiler.cc }}-${{ matrix.compiler.ver }}
       CXX: ${{ matrix.compiler.cxx }}-${{ matrix.compiler.ver }}
@@ -65,6 +69,10 @@ jobs:
           wget https://apt.llvm.org/llvm.sh
           chmod +x ./llvm.sh
           sudo ./llvm.sh ${{ matrix.compiler.ver }}
+
+      - name: Install GCC
+        if: matrix.compiler.cxx == 'g++' && matrix.compiler.ver == 14
+        run: sudo apt update && sudo apt install -y gcc-14
 
       - name: Install fmt
         run: |
