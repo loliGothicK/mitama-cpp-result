@@ -19,10 +19,10 @@ public:
       const char* file, const int line, std::string_view fmt, Args&&... args
   ) noexcept
       : std::runtime_error(
-          std::string{ "runtime panicked at '" }
-          + fmt::format(fmt::runtime(fmt), std::forward<Args>(args)...)
-          + fmt::format("', {}:{}", file, line)
-      )
+            std::string{ "runtime panicked at '" }
+            + fmt::format(fmt::runtime(fmt), std::forward<Args>(args)...)
+            + fmt::format("', {}:{}", file, line)
+        )
   {
   }
 };

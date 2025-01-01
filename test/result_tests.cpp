@@ -116,7 +116,7 @@ auto parse = [](str s) -> result<T, str>
       static_assert(mitama::always_true_v<T>);
     }
   }
-  catch (std::invalid_argument const& e)
+  catch (const std::invalid_argument& e)
   {
     return failure(e.what());
   }
@@ -1347,13 +1347,11 @@ TEST_CASE("as_result test", "[result][as_result][boolinators]")
 
 TEST_CASE("as_result_from test", "[result][as_result_from][boolinators]")
 {
-  basic_result x = as_result_from(
-      true, [] { return 1; }, [] { return "err"s; }
-  );
+  basic_result x =
+      as_result_from(true, [] { return 1; }, [] { return "err"s; });
   REQUIRE(x == success(1));
-  basic_result y = as_result_from(
-      false, [] { return 1; }, [] { return "err"s; }
-  );
+  basic_result y =
+      as_result_from(false, [] { return 1; }, [] { return "err"s; });
   REQUIRE(y == failure("err"));
 }
 

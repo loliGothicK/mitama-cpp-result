@@ -668,20 +668,22 @@ public:
         _mutability, void_to_monostate_t<std::invoke_result_t<O, T, Args&&...>>,
         E>;
     if constexpr (std::is_void_v<std::invoke_result_t<O, T, Args&&...>>)
-      return is_ok() ? std::invoke(
-                 std::forward<O>(op), std::get<success_t<T>>(storage_).get(),
-                 std::forward<Args>(args)...
-             ),
+      return is_ok()
+             ? std::invoke(
+                   std::forward<O>(op), std::get<success_t<T>>(storage_).get(),
+                   std::forward<Args>(args)...
+               ),
              static_cast<result_type>(success_t{})
-                     : static_cast<result_type>(failure_t{
-                         std::get<failure_t<E>>(storage_).get() });
+             : static_cast<result_type>(failure_t{
+                   std::get<failure_t<E>>(storage_).get() });
     else
       return is_ok() ? static_cast<result_type>(success_t{ std::invoke(
-                 std::forward<O>(op), std::get<success_t<T>>(storage_).get(),
-                 std::forward<Args>(args)...
-             ) })
+                           std::forward<O>(op),
+                           std::get<success_t<T>>(storage_).get(),
+                           std::forward<Args>(args)...
+                       ) })
                      : static_cast<result_type>(failure_t{
-                         std::get<failure_t<E>>(storage_).get() });
+                           std::get<failure_t<E>>(storage_).get() });
   }
 
   /// @brief
@@ -713,13 +715,13 @@ public:
              ? std::invoke(std::forward<O>(op), std::forward<Args>(args)...),
              static_cast<result_type>(success_t{})
              : static_cast<result_type>(failure_t{
-                 std::get<failure_t<E>>(storage_).get() });
+                   std::get<failure_t<E>>(storage_).get() });
     else
-      return is_ok() ? static_cast<result_type>(success_t{
-                 std::invoke(std::forward<O>(op), std::forward<Args>(args)...) }
-             )
+      return is_ok() ? static_cast<result_type>(success_t{ std::invoke(
+                           std::forward<O>(op), std::forward<Args>(args)...
+                       ) })
                      : static_cast<result_type>(failure_t{
-                         std::get<failure_t<E>>(storage_).get() });
+                           std::get<failure_t<E>>(storage_).get() });
   }
 
   /// @brief
@@ -747,25 +749,25 @@ public:
         E>;
     if constexpr (std::is_void_v<std::invoke_result_t<O, T, Args&&...>>)
       return is_ok() ? std::invoke(
-                 std::forward<O>(op),
-                 std::move(
-                     std::get<success_t<T>>(storage_).get(),
-                     std::forward<Args>(args)...
-                 )
-             ),
+                           std::forward<O>(op),
+                           std::move(
+                               std::get<success_t<T>>(storage_).get(),
+                               std::forward<Args>(args)...
+                           )
+                       ),
              static_cast<result_type>(success_t{})
                      : static_cast<result_type>(failure_t{
-                         std::move(std::get<failure_t<E>>(storage_).get()) });
+                           std::move(std::get<failure_t<E>>(storage_).get()) });
     else
       return is_ok() ? static_cast<result_type>(success_t{ std::invoke(
-                 std::forward<O>(op),
-                 std::move(
-                     std::get<success_t<T>>(storage_).get(),
-                     std::forward<Args>(args)...
-                 )
-             ) })
+                           std::forward<O>(op),
+                           std::move(
+                               std::get<success_t<T>>(storage_).get(),
+                               std::forward<Args>(args)...
+                           )
+                       ) })
                      : static_cast<result_type>(failure_t{
-                         std::move(std::get<failure_t<E>>(storage_).get()) });
+                           std::move(std::get<failure_t<E>>(storage_).get()) });
   }
 
   /// @brief
@@ -797,13 +799,13 @@ public:
              ? std::invoke(std::forward<O>(op), std::forward<Args>(args)...),
              static_cast<result_type>(success_t{})
              : static_cast<result_type>(failure_t{
-                 std::move(std::get<failure_t<E>>(storage_).get()) });
+                   std::move(std::get<failure_t<E>>(storage_).get()) });
     else
-      return is_ok() ? static_cast<result_type>(success_t{
-                 std::invoke(std::forward<O>(op), std::forward<Args>(args)...) }
-             )
+      return is_ok() ? static_cast<result_type>(success_t{ std::invoke(
+                           std::forward<O>(op), std::forward<Args>(args)...
+                       ) })
                      : static_cast<result_type>(failure_t{
-                         std::move(std::get<failure_t<E>>(storage_).get()) });
+                           std::move(std::get<failure_t<E>>(storage_).get()) });
   }
 
   /// @brief
@@ -838,12 +840,13 @@ public:
     using result_type = std::common_type_t<
         std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
     return is_ok() ? static_cast<result_type>(std::invoke(
-               std::forward<Map>(_map), std::get<success_t<T>>(storage_).get()
-           ))
+                         std::forward<Map>(_map),
+                         std::get<success_t<T>>(storage_).get()
+                     ))
                    : static_cast<result_type>(std::invoke(
-                       std::forward<Fallback>(_fallback),
-                       std::get<failure_t<E>>(storage_).get()
-                   ));
+                         std::forward<Fallback>(_fallback),
+                         std::get<failure_t<E>>(storage_).get()
+                     ));
   }
 
   /// @brief
@@ -878,12 +881,13 @@ public:
     using result_type = std::common_type_t<
         std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
     return is_ok() ? static_cast<result_type>(std::invoke(
-               std::forward<Map>(_map), std::get<success_t<T>>(storage_).get()
-           ))
+                         std::forward<Map>(_map),
+                         std::get<success_t<T>>(storage_).get()
+                     ))
                    : static_cast<result_type>(std::invoke(
-                       std::forward<Fallback>(_fallback),
-                       std::get<failure_t<E>>(storage_).get()
-                   ));
+                         std::forward<Fallback>(_fallback),
+                         std::get<failure_t<E>>(storage_).get()
+                     ));
   }
 
   /// @brief
@@ -918,13 +922,13 @@ public:
     using result_type = std::common_type_t<
         std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
     return is_ok() ? static_cast<result_type>(std::invoke(
-               std::forward<Map>(_map),
-               std::move(std::get<success_t<T>>(storage_).get())
-           ))
+                         std::forward<Map>(_map),
+                         std::move(std::get<success_t<T>>(storage_).get())
+                     ))
                    : static_cast<result_type>(std::invoke(
-                       std::forward<Fallback>(_fallback),
-                       std::move(std::get<failure_t<E>>(storage_).get())
-                   ));
+                         std::forward<Fallback>(_fallback),
+                         std::move(std::get<failure_t<E>>(storage_).get())
+                     ));
   }
 
   /// @brief
@@ -950,20 +954,22 @@ public:
         _mutability, T,
         void_to_monostate_t<std::invoke_result_t<O, E, Args&&...>>>;
     if constexpr (std::is_void_v<std::invoke_result_t<O, E, Args&&...>>)
-      return is_err() ? std::invoke(
-                 std::forward<O>(op), std::get<failure_t<E>>(storage_).get(),
-                 std::forward<Args>(args)...
-             ),
+      return is_err()
+             ? std::invoke(
+                   std::forward<O>(op), std::get<failure_t<E>>(storage_).get(),
+                   std::forward<Args>(args)...
+               ),
              static_cast<result_type>(failure_t{})
-                      : static_cast<result_type>(success_t{
-                          std::get<success_t<T>>(storage_).get() });
+             : static_cast<result_type>(success_t{
+                   std::get<success_t<T>>(storage_).get() });
     else
       return is_err() ? static_cast<result_type>(failure_t{ std::invoke(
-                 std::forward<O>(op), std::get<failure_t<E>>(storage_).get(),
-                 std::forward<Args>(args)...
-             ) })
+                            std::forward<O>(op),
+                            std::get<failure_t<E>>(storage_).get(),
+                            std::forward<Args>(args)...
+                        ) })
                       : static_cast<result_type>(success_t{
-                          std::get<success_t<T>>(storage_).get() });
+                            std::get<success_t<T>>(storage_).get() });
   }
 
   /// @brief
@@ -995,13 +1001,13 @@ public:
              ? std::invoke(std::forward<O>(op), std::forward<Args>(args)...),
              static_cast<result_type>(failure_t{})
              : static_cast<result_type>(success_t{
-                 std::get<success_t<T>>(storage_).get() });
+                   std::get<success_t<T>>(storage_).get() });
     else
-      return is_err() ? static_cast<result_type>(failure_t{
-                 std::invoke(std::forward<O>(op), std::forward<Args>(args)...) }
-             )
+      return is_err() ? static_cast<result_type>(failure_t{ std::invoke(
+                            std::forward<O>(op), std::forward<Args>(args)...
+                        ) })
                       : static_cast<result_type>(success_t{
-                          std::get<success_t<T>>(storage_).get() });
+                            std::get<success_t<T>>(storage_).get() });
   }
 
   /// @brief
@@ -1028,22 +1034,24 @@ public:
         _mutability, T,
         void_to_monostate_t<std::invoke_result_t<O, E, Args&&...>>>;
     if constexpr (std::is_void_v<std::invoke_result_t<O, E, Args&&...>>)
-      return is_err() ? std::invoke(
-                 std::forward<O>(op),
-                 std::move(std::get<failure_t<E>>(storage_).get()),
-                 std::forward<Args>(args)...
-             ),
+      return is_err()
+             ? std::invoke(
+                   std::forward<O>(op),
+                   std::move(std::get<failure_t<E>>(storage_).get()),
+                   std::forward<Args>(args)...
+               ),
              static_cast<result_type>(failure_t{})
-                      : static_cast<result_type>(success_t{
-                          std::move(std::get<success_t<T>>(storage_).get()) });
+             : static_cast<result_type>(success_t{
+                   std::move(std::get<success_t<T>>(storage_).get()) });
     else
-      return is_err() ? static_cast<result_type>(failure_t{ std::invoke(
-                 std::forward<O>(op),
-                 std::move(std::get<failure_t<E>>(storage_).get()),
-                 std::forward<Args>(args)...
-             ) })
-                      : static_cast<result_type>(success_t{
-                          std::move(std::get<success_t<T>>(storage_).get()) });
+      return is_err()
+                 ? static_cast<result_type>(failure_t{ std::invoke(
+                       std::forward<O>(op),
+                       std::move(std::get<failure_t<E>>(storage_).get()),
+                       std::forward<Args>(args)...
+                   ) })
+                 : static_cast<result_type>(success_t{
+                       std::move(std::get<success_t<T>>(storage_).get()) });
   }
 
   /// @brief
@@ -1075,13 +1083,14 @@ public:
              ? std::invoke(std::forward<O>(op), std::forward<Args>(args)...),
              static_cast<result_type>(failure_t{})
              : static_cast<result_type>(success_t{
-                 std::move(std::get<success_t<T>>(storage_).get()) });
+                   std::move(std::get<success_t<T>>(storage_).get()) });
     else
-      return is_err() ? static_cast<result_type>(failure_t{
-                 std::invoke(std::forward<O>(op), std::forward<Args>(args)...) }
-             )
-                      : static_cast<result_type>(success_t{
-                          std::move(std::get<success_t<T>>(storage_).get()) });
+      return is_err()
+                 ? static_cast<result_type>(failure_t{ std::invoke(
+                       std::forward<O>(op), std::forward<Args>(args)...
+                   ) })
+                 : static_cast<result_type>(success_t{
+                       std::move(std::get<success_t<T>>(storage_).get()) });
   }
 
   /// @brief
@@ -1104,11 +1113,12 @@ public:
   {
     using result_type = std::invoke_result_t<O, T, Args&&...>;
     return is_ok() ? std::invoke(
-               std::forward<O>(op), std::get<success_t<T>>(storage_).get(),
-               std::forward<Args>(args)...
-           )
+                         std::forward<O>(op),
+                         std::get<success_t<T>>(storage_).get(),
+                         std::forward<Args>(args)...
+                     )
                    : static_cast<result_type>(failure_t{
-                       std::get<failure_t<E>>(storage_).get() });
+                         std::get<failure_t<E>>(storage_).get() });
   }
 
   /// @brief
@@ -1132,12 +1142,12 @@ public:
   {
     using result_type = std::invoke_result_t<O, T, Args&&...>;
     return is_ok() ? std::invoke(
-               std::forward<O>(op),
-               std::move(std::get<success_t<T>>(storage_).get()),
-               std::forward<Args>(args)...
-           )
+                         std::forward<O>(op),
+                         std::move(std::get<success_t<T>>(storage_).get()),
+                         std::forward<Args>(args)...
+                     )
                    : static_cast<result_type>(failure_t{
-                       std::move(std::get<failure_t<E>>(storage_).get()) });
+                         std::move(std::get<failure_t<E>>(storage_).get()) });
   }
 
   /// @brief
@@ -1160,11 +1170,12 @@ public:
   {
     using result_type = std::invoke_result_t<O, E, Args&&...>;
     return is_err() ? std::invoke(
-               std::forward<O>(op), std::get<failure_t<E>>(storage_).get(),
-               std::forward<Args>(args)...
-           )
+                          std::forward<O>(op),
+                          std::get<failure_t<E>>(storage_).get(),
+                          std::forward<Args>(args)...
+                      )
                     : static_cast<result_type>(success_t{
-                        std::get<success_t<T>>(storage_).get() });
+                          std::get<success_t<T>>(storage_).get() });
   }
 
   /// @brief
@@ -1187,12 +1198,12 @@ public:
   {
     using result_type = std::invoke_result_t<O, E, Args&&...>;
     return is_err() ? std::invoke(
-               std::forward<O>(op),
-               std::get<failure_t<E>>(std::move(storage_)).get(),
-               std::forward<Args>(args)...
-           )
+                          std::forward<O>(op),
+                          std::get<failure_t<E>>(std::move(storage_)).get(),
+                          std::forward<Args>(args)...
+                      )
                     : static_cast<result_type>(success_t{
-                        std::get<success_t<T>>(std::move(storage_)).get() });
+                          std::get<success_t<T>>(std::move(storage_)).get() });
   }
 
   /// @brief
@@ -1204,7 +1215,7 @@ public:
   {
     using result_type = basic_result<_mutability && _mu, U, E>;
     return this->is_err() ? static_cast<result_type>(failure_t{
-               std::get<failure_t<E>>(storage_).get() })
+                                std::get<failure_t<E>>(storage_).get() })
            : res.is_err()
                ? static_cast<result_type>(failure_t{ res.unwrap_err() })
                : static_cast<result_type>(success_t{ res.unwrap() });
@@ -1235,7 +1246,7 @@ public:
   {
     using result_type = basic_result<_mutability, T, F>;
     return this->is_ok() ? static_cast<result_type>(success_t{
-               std::get<success_t<T>>(storage_).get() })
+                               std::get<success_t<T>>(storage_).get() })
            : res.is_ok()
                ? static_cast<result_type>(success_t{ res.unwrap() })
                : static_cast<result_type>(failure_t{ res.unwrap_err() });
@@ -1327,11 +1338,11 @@ public:
   {
     if constexpr (std::is_invocable_r_v<T, O, E>)
     {
-      return is_ok()
-                 ? std::get<success_t<T>>(storage_).get()
-                 : std::invoke(
-                     std::forward<O>(op), std::get<failure_t<E>>(storage_).get()
-                 );
+      return is_ok() ? std::get<success_t<T>>(storage_).get()
+                     : std::invoke(
+                           std::forward<O>(op),
+                           std::get<failure_t<E>>(storage_).get()
+                       );
     }
     else if constexpr (std::is_invocable_r_v<T, O>)
     {
@@ -1781,8 +1792,7 @@ public:
             [](const success_t<T>& l, const success_t<U>& r)
             { return l.get() == r.get(); },
             [](const failure_t<E>& l, const failure_t<F>& r)
-            { return l.get() == r.get(); },
-            [](auto&&...) { return false; }
+            { return l.get() == r.get(); }, [](auto&&...) { return false; }
         ),
         this->storage_, rhs.storage_
     );
@@ -1809,8 +1819,7 @@ public:
             [](const success_t<T>& l, const success_t<U>& r)
             { return !(l.get() == r.get()); },
             [](const failure_t<E>& l, const failure_t<F>& r)
-            { return !(l.get() == r.get()); },
-            [](auto&&...) { return true; }
+            { return !(l.get() == r.get()); }, [](auto&&...) { return true; }
         ),
         this->storage_, rhs.storage_
     );
