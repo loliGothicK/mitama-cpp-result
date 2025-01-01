@@ -92,11 +92,11 @@ public:
                    ->unwrap()
                    .is_ok()
                ? basic_result<
-                   _, maybe<T>,
-                   E>{ in_place_ok, std::in_place,
-                       static_cast<const maybe<basic_result<_, T, E>>*>(this)
-                           ->unwrap()
-                           .unwrap() }
+                     _, maybe<T>,
+                     E>{ in_place_ok, std::in_place,
+                         static_cast<const maybe<basic_result<_, T, E>>*>(this)
+                             ->unwrap()
+                             .unwrap() }
                : basic_result<_, maybe<T>, E>{
                    in_place_err,
                    static_cast<const maybe<basic_result<_, T, E>>*>(this)
@@ -178,8 +178,8 @@ public:
     { return std::forward<decltype(some)>(some); };
     return static_cast<const maybe<T>*>(this)->is_just()
                ? maybe<std::remove_reference_t<T>>{ just(
-                   decay_copy(static_cast<const maybe<T>*>(this)->unwrap())
-               ) }
+                     decay_copy(static_cast<const maybe<T>*>(this)->unwrap())
+                 ) }
                : nothing;
   }
 };
@@ -257,8 +257,8 @@ public:
                       bool> = false>
   maybe(U&& u)
       : storage_(
-          std::in_place_type<just_t<T>>, std::in_place, std::forward<U>(u)
-      )
+            std::in_place_type<just_t<T>>, std::in_place, std::forward<U>(u)
+        )
   {
   }
 
@@ -271,8 +271,8 @@ public:
           bool> = false>
   explicit maybe(U&& u)
       : storage_(
-          std::in_place_type<just_t<T>>, std::in_place, std::forward<U>(u)
-      )
+            std::in_place_type<just_t<T>>, std::in_place, std::forward<U>(u)
+        )
   {
   }
 
@@ -281,9 +281,9 @@ public:
       std::enable_if_t<std::is_constructible_v<T, Args&&...>, bool> = false>
   explicit maybe(std::in_place_t, Args&&... args)
       : storage_(
-          std::in_place_type<just_t<T>>, std::in_place,
-          std::forward<Args>(args)...
-      )
+            std::in_place_type<just_t<T>>, std::in_place,
+            std::forward<Args>(args)...
+        )
   {
   }
 
@@ -294,9 +294,9 @@ public:
           bool> = false>
   explicit maybe(std::in_place_t, std::initializer_list<U> il, Args&&... args)
       : storage_(
-          std::in_place_type<just_t<T>>, std::in_place, il,
-          std::forward<Args>(args)...
-      )
+            std::in_place_type<just_t<T>>, std::in_place, il,
+            std::forward<Args>(args)...
+        )
   {
   }
 
@@ -344,9 +344,9 @@ public:
       class U, std::enable_if_t<std::is_constructible_v<T, U&&>, bool> = false>
   maybe(just_t<U>&& j)
       : storage_(
-          std::in_place_type<just_t<T>>, std::in_place,
-          static_cast<U&&>(j.get())
-      )
+            std::in_place_type<just_t<T>>, std::in_place,
+            static_cast<U&&>(j.get())
+        )
   {
   }
 
@@ -502,10 +502,11 @@ public:
   auto map(F&& f, Args&&... args) &
   {
     using result_type = std::invoke_result_t<F&&, value_type&, Args&&...>;
-    return is_just() ? maybe<result_type>{ just(std::invoke(
-               std::forward<F>(f), unwrap(), std::forward<Args>(args)...
-           )) }
-                     : nothing;
+    return is_just()
+               ? maybe<result_type>{ just(std::invoke(
+                     std::forward<F>(f), unwrap(), std::forward<Args>(args)...
+                 )) }
+               : nothing;
   }
 
   template <
@@ -515,10 +516,11 @@ public:
   auto map(F&& f, Args&&... args) const&
   {
     using result_type = std::invoke_result_t<F&&, const value_type&, Args&&...>;
-    return is_just() ? maybe<result_type>{ just(std::invoke(
-               std::forward<F>(f), unwrap(), std::forward<Args>(args)...
-           )) }
-                     : nothing;
+    return is_just()
+               ? maybe<result_type>{ just(std::invoke(
+                     std::forward<F>(f), unwrap(), std::forward<Args>(args)...
+                 )) }
+               : nothing;
   }
 
   template <
@@ -529,9 +531,9 @@ public:
   {
     using result_type = std::invoke_result_t<F&&, value_type&&, Args&&...>;
     return is_just() ? maybe<result_type>{ just(std::invoke(
-               std::forward<F>(f), std::move(unwrap()),
-               std::forward<Args>(args)...
-           )) }
+                           std::forward<F>(f), std::move(unwrap()),
+                           std::forward<Args>(args)...
+                       )) }
                      : nothing;
   }
 
@@ -545,10 +547,11 @@ public:
           U&&, std::invoke_result_t<F&&, value_type&, Args&&...>>>
   map_or(U&& def, F&& f, Args&&... args) &
   {
-    return is_just() ? std::invoke(
-               std::forward<F>(f), unwrap(), std::forward<Args>(args)...
-           )
-                     : std::forward<U>(def);
+    return is_just()
+               ? std::invoke(
+                     std::forward<F>(f), unwrap(), std::forward<Args>(args)...
+                 )
+               : std::forward<U>(def);
   }
 
   template <class U, class F, class... Args>
@@ -560,10 +563,11 @@ public:
       std::common_type_t<U&&, std::invoke_result_t<F&&, const T&, Args&&...>>>
   map_or(U&& def, F&& f, Args&&... args) const&
   {
-    return is_just() ? std::invoke(
-               std::forward<F>(f), unwrap(), std::forward<Args>(args)...
-           )
-                     : std::forward<U>(def);
+    return is_just()
+               ? std::invoke(
+                     std::forward<F>(f), unwrap(), std::forward<Args>(args)...
+                 )
+               : std::forward<U>(def);
   }
 
   template <class U, class F, class... Args>
@@ -577,9 +581,9 @@ public:
   map_or(U&& def, F&& f, Args&&... args) &&
   {
     return is_just() ? std::invoke(
-               std::forward<F>(f), std::move(unwrap()),
-               std::forward<Args>(args)...
-           )
+                           std::forward<F>(f), std::move(unwrap()),
+                           std::forward<Args>(args)...
+                       )
                      : std::forward<U>(def);
   }
 
@@ -596,10 +600,11 @@ public:
           std::invoke_result_t<F&&, value_type&, Args&&...>>>
   map_or_else(D&& def, F&& f, Args&&... args) &
   {
-    return is_just() ? std::invoke(
-               std::forward<F>(f), unwrap(), std::forward<Args>(args)...
-           )
-                     : std::invoke(std::forward<D>(def));
+    return is_just()
+               ? std::invoke(
+                     std::forward<F>(f), unwrap(), std::forward<Args>(args)...
+                 )
+               : std::invoke(std::forward<D>(def));
   }
 
   template <class D, class F, class... Args>
@@ -615,10 +620,11 @@ public:
           std::invoke_result_t<F&&, const value_type&, Args&&...>>>
   map_or_else(D&& def, F&& f, Args&&... args) const&
   {
-    return is_just() ? std::invoke(
-               std::forward<F>(f), unwrap(), std::forward<Args>(args)...
-           )
-                     : std::invoke(std::forward<D>(def));
+    return is_just()
+               ? std::invoke(
+                     std::forward<F>(f), unwrap(), std::forward<Args>(args)...
+                 )
+               : std::invoke(std::forward<D>(def));
   }
 
   template <class D, class F, class... Args>
@@ -635,9 +641,9 @@ public:
   map_or_else(D&& def, F&& f, Args&&... args) &&
   {
     return is_just() ? std::invoke(
-               std::forward<F>(f), std::move(unwrap()),
-               std::forward<Args>(args)...
-           )
+                           std::forward<F>(f), std::move(unwrap()),
+                           std::forward<Args>(args)...
+                       )
                      : std::invoke(std::forward<D>(def));
   }
 
@@ -739,7 +745,7 @@ public:
     return is_just()
                ? result<T, std::invoke_result_t<F&&>>{ success_t{ unwrap() } }
                : result<T, std::invoke_result_t<F&&>>{ failure_t{
-                   std::invoke(std::forward<F>(err)) } };
+                     std::invoke(std::forward<F>(err)) } };
   }
 
   template <class F>
@@ -748,9 +754,9 @@ public:
   ok_or_else(F&& err) &&
   {
     return is_just() ? result<T, std::invoke_result_t<F&&>>{ success_t{
-               std::move(unwrap()) } }
+                           std::move(unwrap()) } }
                      : result<T, std::invoke_result_t<F&&>>{ failure_t{
-                         std::invoke(std::forward<F>(err)) } };
+                           std::invoke(std::forward<F>(err)) } };
   }
 
   template <class U>
@@ -793,10 +799,11 @@ public:
       std::invoke_result_t<F&&, T&, Args&&...>>
   and_then(F&& f, Args&&... args) &
   {
-    return is_just() ? std::invoke(
-               std::forward<F>(f), unwrap(), std::forward<Args>(args)...
-           )
-                     : nothing;
+    return is_just()
+               ? std::invoke(
+                     std::forward<F>(f), unwrap(), std::forward<Args>(args)...
+                 )
+               : nothing;
   }
 
   template <class F, class... Args>
@@ -808,10 +815,11 @@ public:
       std::invoke_result_t<F&&, const T&, Args&&...>>
   and_then(F&& f, Args&&... args) const&
   {
-    return is_just() ? std::invoke(
-               std::forward<F>(f), unwrap(), std::forward<Args>(args)...
-           )
-                     : nothing;
+    return is_just()
+               ? std::invoke(
+                     std::forward<F>(f), unwrap(), std::forward<Args>(args)...
+                 )
+               : nothing;
   }
 
   template <class F, class... Args>
@@ -823,9 +831,9 @@ public:
   and_then(F&& f, Args&&... args) &&
   {
     return is_just() ? std::invoke(
-               std::forward<F>(f), std::move(unwrap()),
-               std::forward<Args>(args)...
-           )
+                           std::forward<F>(f), std::move(unwrap()),
+                           std::forward<Args>(args)...
+                       )
                      : nothing;
   }
 

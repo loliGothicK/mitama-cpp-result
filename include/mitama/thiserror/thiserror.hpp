@@ -79,7 +79,8 @@ public:
   friend std::ostream& operator<<(std::ostream& os, const error& err)
   {
     return os << std::apply(
-               [&](auto&&... src) {
+               [&](auto&&... src)
+               {
                  return fmt::format(fmt, std::forward<decltype(src)>(src)...);
                },
                err.sources
@@ -123,8 +124,7 @@ struct fmt::formatter<mitama::thiserror::error<Fmt, Sources...>>
   {
     return std::apply(
         [&ctx](const auto&... sources)
-        { return format_to(ctx.out(), type::fmt, sources...); },
-        err.sources
+        { return format_to(ctx.out(), type::fmt, sources...); }, err.sources
     );
   }
 };
