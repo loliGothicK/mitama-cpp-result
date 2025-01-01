@@ -23,7 +23,7 @@ args = [
 ]
 
 [tasks.lint]
-command = "poac"
+command = "cabin"
 args = [
     "lint",
     "--exclude", "Catch2",

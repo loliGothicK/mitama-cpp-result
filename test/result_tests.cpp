@@ -21,7 +21,10 @@
 #include <regex>
 #include <stdexcept>
 #include <string>
+#include <tuple>
 #include <utest_utility/is_invalid_expr.hpp>
+#include <utility>
+#include <vector>
 
 using namespace boost::xpressive;
 using namespace mitama;
