@@ -34,6 +34,14 @@ jobs:
             cxx: clang++
             ver: 17
             os: ubuntu-24.04
+          - cc: clang
+            cxx: clang++
+            ver: 18
+            os: ubuntu-24.04
+          - cc: clang
+            cxx: clang++
+            ver: 19
+            os: ubuntu-24.04
           - cc: gcc
             cxx: g++
             ver: 11
