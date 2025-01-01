@@ -6,7 +6,7 @@ on:
   pull_request:
 
 env:
-  POAC_TERM_COLOR: always
+  CABIN_TERM_COLOR: always
 
 permissions:
   contents: read
@@ -24,17 +24,17 @@ jobs:
           sudo ./llvm.sh 17
           sudo apt-get install -y clang-format-17
 
-      - name: Install Poac
+      - name: Install Cabin
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          brew install poac
+          brew install cabin
 
-      - name: poac fmt
+      - name: cabin fmt
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          poac fmt --check --verbose
+          cabin fmt --check --verbose
         env:
-          POAC_FMT: clang-format-17
+          CABIN_FMT: clang-format-17
 
   lint:
     runs-on: ubuntu-22.04
@@ -44,12 +44,12 @@ jobs:
       - name: Install cpplint
         run: pip install cpplint
 
-      - name: Install Poac
+      - name: Install Cabin
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          brew install poac
+          brew install cabin
 
-      - name: poac lint
+      - name: cabin lint
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          poac lint --verbose
+          cabin lint --verbose
