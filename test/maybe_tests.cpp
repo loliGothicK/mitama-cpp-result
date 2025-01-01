@@ -6,9 +6,11 @@
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
 
+#include <map>
 #include <sstream>
 #include <string>
 #include <string_view>
+#include <utility>
 
 using namespace mitama;
 using namespace std::string_literals;
