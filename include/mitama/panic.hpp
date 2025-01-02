@@ -16,13 +16,13 @@ class runtime_panic : public std::runtime_error
 public:
   template <class... Args>
   explicit runtime_panic(
-      const char* file, const int line, std::string_view fmt, Args&&... args
+      const char* file, const int line, std::string_view f, Args&&... args
   ) noexcept
-      : std::runtime_error(
-            std::string{ "runtime panicked at '" }
-            + fmt::format(fmt::runtime(fmt), std::forward<Args>(args)...)
-            + fmt::format("', {}:{}", file, line)
-        )
+      : std::runtime_error(fmt::format(
+            "runtime panicked at '{}', {}:{}",
+            fmt::format(fmt::runtime(f), std::forward<Args>(args)...), file,
+            line
+        ))
   {
   }
 };
