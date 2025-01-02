@@ -10,7 +10,6 @@
 #include <mitama/result/traits/impl_traits.hpp>
 
 #include <boost/hana/functional/id.hpp>
-#include <boost/hana/functional/overload.hpp>
 #include <boost/hana/functional/overload_linearly.hpp>
 
 #include <functional>
@@ -20,6 +19,17 @@
 #include <type_traits>
 #include <utility>
 #include <variant>
+
+namespace mitama::_result_detail
+{
+
+template <class... Ts>
+struct overload : Ts...
+{
+  using Ts::operator()...;
+};
+
+} // namespace mitama::_result_detail
 
 namespace mitama
 {
@@ -1788,12 +1798,13 @@ public:
   operator==(const basic_result<_mut, U, F>& rhs) const&
   {
     return std::visit(
-        boost::hana::overload(
+        _result_detail::overload{
             [](const success_t<T>& l, const success_t<U>& r)
             { return l.get() == r.get(); },
             [](const failure_t<E>& l, const failure_t<F>& r)
-            { return l.get() == r.get(); }, [](auto&&...) { return false; }
-        ),
+            { return l.get() == r.get(); }, //
+            [](auto&&...) { return false; } //
+        },
         this->storage_, rhs.storage_
     );
   }
@@ -1814,15 +1825,7 @@ public:
       bool>
   operator!=(const basic_result<_mut, U, F>& rhs) const&
   {
-    return std::visit(
-        boost::hana::overload(
-            [](const success_t<T>& l, const success_t<U>& r)
-            { return !(l.get() == r.get()); },
-            [](const failure_t<E>& l, const failure_t<F>& r)
-            { return !(l.get() == r.get()); }, [](auto&&...) { return true; }
-        ),
-        this->storage_, rhs.storage_
-    );
+    return !(*this == rhs);
   }
 
   /// @brief
