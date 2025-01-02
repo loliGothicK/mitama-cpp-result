@@ -29,6 +29,9 @@ struct overload : Ts...
   using Ts::operator()...;
 };
 
+template <class... Ts>
+overload(Ts...) -> overload<Ts...>;
+
 } // namespace mitama::_result_detail
 
 namespace mitama
