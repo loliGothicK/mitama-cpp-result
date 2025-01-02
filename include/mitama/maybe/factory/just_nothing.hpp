@@ -2,7 +2,6 @@
 
 #include <mitama/maybe/fwd/maybe_fwd.hpp>
 #include <mitama/mitamagic/format.hpp>
-#include <mitama/mitamagic/is_interface_of.hpp>
 #include <mitama/result/detail/meta.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
 
@@ -421,20 +420,12 @@ public:
   explicit constexpr just_t(T& ref) : x(ref) {}
   explicit constexpr just_t(std::in_place_t, T& ref) : x(ref) {}
 
-  template <
-      class Derived,
-      std::enable_if_t<
-          mitamagic::is_interface_of_v<std::decay_t<T>, std::decay_t<Derived>>,
-          bool> = false>
-  explicit constexpr just_t(Derived& derived) : x(derived)
+  template <class U>
+  explicit constexpr just_t(U& value) : x(value)
   {
   }
-  template <
-      class Derived,
-      std::enable_if_t<
-          mitamagic::is_interface_of_v<std::decay_t<T>, std::decay_t<Derived>>,
-          bool> = false>
-  explicit constexpr just_t(std::in_place_t, Derived& derived) : x(derived)
+  template <class U>
+  explicit constexpr just_t(std::in_place_t, U& value) : x(value)
   {
   }
 

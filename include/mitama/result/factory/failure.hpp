@@ -1,7 +1,6 @@
 #pragma once
 
 #include <mitama/mitamagic/format.hpp>
-#include <mitama/mitamagic/is_interface_of.hpp>
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
@@ -277,20 +276,12 @@ public:
   explicit constexpr failure_t(E& err) : x(err) {}
   explicit constexpr failure_t(std::in_place_t, E& err) : x(err) {}
 
-  template <
-      class Derived,
-      std::enable_if_t<
-          mitamagic::is_interface_of_v<std::decay_t<E>, std::decay_t<Derived>>,
-          bool> = false>
-  explicit constexpr failure_t(Derived& derived) : x(derived)
+  template <class U>
+  explicit constexpr failure_t(U& value) : x(value)
   {
   }
-  template <
-      class Derived,
-      std::enable_if_t<
-          mitamagic::is_interface_of_v<std::decay_t<E>, std::decay_t<Derived>>,
-          bool> = false>
-  explicit constexpr failure_t(std::in_place_t, Derived& derived) : x(derived)
+  template <class U>
+  explicit constexpr failure_t(std::in_place_t, U& value) : x(value)
   {
   }
 
