@@ -169,9 +169,8 @@ operator<<(
 
 template <class Err, class... Args>
 inline auto
-failure(Args&&... args) -> std::enable_if_t<
-    std::is_base_of_v<mitama::anyhow::error, Err>,
-    mitama::failure_t<std::shared_ptr<Err>>>
+failure(Args&&... args) -> mitama::failure_t<std::shared_ptr<Err>>
+  requires std::is_base_of_v<mitama::anyhow::error, Err>
 {
   return mitama::failure(std::make_shared<Err>(std::forward<Args>(args)...));
 }
