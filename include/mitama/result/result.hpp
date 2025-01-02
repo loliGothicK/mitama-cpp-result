@@ -89,13 +89,11 @@ namespace mitama
 /// @param T: Type of successful value
 /// @param E: Type of unsuccessful value
 template <mutability _mutability, class T, class E>
-class [[nodiscard]] basic_result<
-    _mutability, T, E,
-    where<
-        std::is_object<std::remove_cvref_t<T>>,
-        std::is_object<std::remove_cvref_t<E>>,
-        std::negation<std::is_array<std::remove_cvref_t<T>>>,
-        std::negation<std::is_array<std::remove_cvref_t<E>>>>>
+  requires std::is_object_v<std::remove_cvref_t<T>>
+               && std::is_object_v<std::remove_cvref_t<E>>
+               && (!std::is_array_v<std::remove_cvref_t<T>>)
+               && (!std::is_array_v<std::remove_cvref_t<E>>)
+class [[nodiscard]] basic_result<_mutability, T, E>
     : /* method injection selectors */
       public unwrap_or_default_friend_injector<basic_result<_mutability, T, E>>,
       public transpose_friend_injector<basic_result<_mutability, T, E>>,
@@ -133,13 +131,9 @@ public:
 
   /// @brief
   ///   explicit copy construcor for convertible basic_result
-  template <
-      mutability _mu, class U, class F,
-      where<
-          std::is_constructible<T, U>, std::is_constructible<E, F>,
-          std::disjunction<
-              std::negation<std::is_convertible<F, E>>,
-              std::negation<std::is_convertible<U, T>>>> = required>
+  template <mutability _mu, class U, class F>
+    requires std::is_constructible_v<T, U> && std::is_constructible_v<E, F>
+             && (!std::is_convertible_v<F, E> || !std::is_convertible_v<U, T>)
   explicit constexpr basic_result(const basic_result<_mu, U, F>& res)
       : storage_(res.storage_)
   {
@@ -147,11 +141,9 @@ public:
 
   /// @brief
   ///   non-explicit copy construcor for convertible basic_result
-  template <
-      mutability _mu, class U, class F,
-      where<
-          std::is_constructible<T, U>, std::is_constructible<E, F>,
-          std::is_convertible<U, T>, std::is_convertible<F, E>> = required>
+  template <mutability _mu, class U, class F>
+    requires std::is_constructible_v<T, U> && std::is_constructible_v<E, F>
+             && std::is_convertible_v<U, T> && std::is_convertible_v<F, E>
   constexpr basic_result(const basic_result<_mu, U, F>& res)
       : storage_(res.storage_)
   {
@@ -159,13 +151,9 @@ public:
 
   /// @brief
   ///   explicit move construcor for convertible basic_result
-  template <
-      mutability _mu, class U, class F,
-      where<
-          std::is_constructible<T, U>, std::is_constructible<E, F>,
-          std::disjunction<
-              std::negation<std::is_convertible<F, E>>,
-              std::negation<std::is_convertible<U, T>>>> = required>
+  template <mutability _mu, class U, class F>
+    requires std::is_constructible_v<T, U> && std::is_constructible_v<E, F>
+             && (!std::is_convertible_v<F, E> || !std::is_convertible_v<U, T>)
   explicit constexpr basic_result(basic_result<_mu, U, F>&& res)
       : storage_(std::move(res.storage_))
   {
@@ -173,11 +161,9 @@ public:
 
   /// @brief
   ///   non-explicit copy construcor for convertible basic_result
-  template <
-      mutability _mu, class U, class F,
-      where<
-          std::is_constructible<T, U>, std::is_constructible<E, F>,
-          std::is_convertible<U, T>, std::is_convertible<F, E>> = required>
+  template <mutability _mu, class U, class F>
+    requires std::is_constructible_v<T, U> && std::is_constructible_v<E, F>
+             && std::is_convertible_v<U, T> && std::is_convertible_v<F, E>
   constexpr basic_result(basic_result<_mu, U, F>&& res)
       : storage_(std::move(res.storage_))
   {
@@ -185,10 +171,8 @@ public:
 
   /// @brief
   ///   copy assignment operator for convertible basic_result
-  template <
-      mutability _mu, class U, class F,
-      where<std::is_constructible<T, U>, std::is_constructible<E, F>> =
-          required>
+  template <mutability _mu, class U, class F>
+    requires std::is_constructible_v<T, U> && std::is_constructible_v<E, F>
   constexpr basic_result& operator=(const basic_result<_mu, U, F>& res)
   {
     static_assert(
@@ -207,10 +191,8 @@ public:
 
   /// @brief
   ///   move assignment operator for convertible basic_result
-  template <
-      mutability _mu, class U, class F,
-      where<std::is_constructible<T, U>, std::is_constructible<E, F>> =
-          required>
+  template <mutability _mu, class U, class F>
+    requires std::is_constructible_v<T, U> && std::is_constructible_v<E, F>
   constexpr basic_result& operator=(basic_result<_mu, U, F>&& res)
   {
     static_assert(
@@ -229,7 +211,8 @@ public:
 
   /// @brief
   ///   copy assignment operator for convertible success_t
-  template <class U, where<std::is_constructible<T, U>> = required>
+  template <class U>
+    requires std::is_constructible_v<T, U>
   constexpr basic_result& operator=(const success_t<U>& _ok)
   {
     static_assert(
@@ -241,7 +224,8 @@ public:
 
   /// @brief
   ///   copy assignment operator for convertible failure_t
-  template <class F, where<std::is_constructible<E, F>> = required>
+  template <class F>
+    requires std::is_constructible_v<E, F>
   constexpr basic_result& operator=(const failure_t<F>& _err)
   {
     static_assert(
@@ -253,7 +237,8 @@ public:
 
   /// @brief
   ///   move assignment operator for convertible success_t
-  template <class U, where<std::is_constructible<T, U>> = required>
+  template <class U>
+    requires std::is_constructible_v<T, U>
   constexpr basic_result& operator=(success_t<U>&& _ok)
   {
     static_assert(
@@ -265,7 +250,8 @@ public:
 
   /// @brief
   ///   move assignment operator for convertible failure_t
-  template <class F, where<std::is_constructible<E, F>> = required>
+  template <class F>
+    requires std::is_constructible_v<E, F>
   constexpr basic_result& operator=(failure_t<F>&& _err)
   {
     static_assert(
@@ -277,9 +263,8 @@ public:
 
   /// @brief
   ///   non-explicit constructor for successful lvalue
-  template <
-      class U,
-      where<std::is_constructible<T, U>, std::is_convertible<U, T>> = required>
+  template <class U>
+    requires std::is_constructible_v<T, U> && std::is_convertible_v<U, T>
   constexpr basic_result(const success_t<U>& ok)
       : storage_{ std::in_place_type<success_t<T>>, std::in_place, ok.get() }
   {
@@ -287,10 +272,8 @@ public:
 
   /// @brief
   ///   explicit constructor for successful lvalue
-  template <
-      class U, where<
-                   std::is_constructible<T, U>,
-                   std::negation<std::is_convertible<U, T>>> = required>
+  template <class U>
+    requires std::is_constructible_v<T, U> && (!std::is_convertible_v<U, T>)
   constexpr explicit basic_result(const success_t<U>& ok)
       : storage_{ std::in_place_type<success_t<T>>, std::in_place, ok.get() }
   {
@@ -298,9 +281,8 @@ public:
 
   /// @brief
   ///   non-explicit constructor for successful rvalue
-  template <
-      class U,
-      where<std::is_constructible<T, U>, std::is_convertible<U, T>> = required>
+  template <class U>
+    requires std::is_constructible_v<T, U> && std::is_convertible_v<U, T>
   constexpr basic_result(success_t<U>&& ok)
       : storage_{ std::in_place_type<success_t<T>>, std::move(ok) }
   {
@@ -308,10 +290,8 @@ public:
 
   /// @brief
   ///   explicit constructor for successful rvalue
-  template <
-      class U, where<
-                   std::is_constructible<T, U>,
-                   std::negation<std::is_convertible<U, T>>> = required>
+  template <class U>
+    requires std::is_constructible_v<T, U> && (!std::is_convertible_v<U, T>)
   constexpr explicit basic_result(success_t<U>&& ok)
       : storage_{ std::in_place_type<success_t<T>>, std::move(ok) }
   {
@@ -319,9 +299,8 @@ public:
 
   /// @brief
   ///   non-explicit constructor for unsuccessful lvalue
-  template <
-      class U,
-      where<std::is_constructible<E, U>, std::is_convertible<U, E>> = required>
+  template <class U>
+    requires std::is_constructible_v<E, U> && std::is_convertible_v<U, E>
   constexpr basic_result(const failure_t<U>& err)
       : storage_{ std::in_place_type<failure_t<E>>, std::in_place, err.get() }
   {
@@ -329,10 +308,8 @@ public:
 
   /// @brief
   ///   explicit constructor for unsuccessful lvalue
-  template <
-      class U, where<
-                   std::is_constructible<T, U>,
-                   std::negation<std::is_convertible<U, T>>> = required>
+  template <class U>
+    requires std::is_constructible_v<T, U> && (!std::is_convertible_v<U, T>)
   constexpr explicit basic_result(const failure_t<U>& err)
       : storage_{ std::in_place_type<failure_t<E>>, std::in_place, err.get() }
   {
@@ -340,9 +317,8 @@ public:
 
   /// @brief
   ///   non-explicit constructor for unsuccessful rvalue
-  template <
-      class U,
-      where<std::is_constructible<E, U>, std::is_convertible<U, E>> = required>
+  template <class U>
+    requires std::is_constructible_v<E, U> && std::is_convertible_v<U, E>
   constexpr basic_result(failure_t<U>&& err)
       : storage_{ std::in_place_type<failure_t<E>>, std::move(err) }
   {
@@ -350,10 +326,8 @@ public:
 
   /// @brief
   ///   explicit constructor for unsuccessful lvalue
-  template <
-      class U, where<
-                   std::is_constructible<T, U>,
-                   std::negation<std::is_convertible<U, T>>> = required>
+  template <class U>
+    requires std::is_constructible_v<T, U> && (!std::is_convertible_v<U, T>)
   constexpr explicit basic_result(failure_t<U>&& err)
       : storage_{ std::in_place_type<failure_t<E>>, std::move(err) }
   {
@@ -371,8 +345,8 @@ public:
 
   /// @brief
   ///   in-place constructor for successful result
-  template <
-      class... Args, where<std::is_constructible<T, Args&&...>> = required>
+  template <class... Args>
+    requires std::is_constructible_v<T, Args...>
   constexpr explicit basic_result(in_place_ok_t, Args&&... args)
       : storage_{ std::in_place_type<success_t<T>>, std::in_place,
                   std::forward<Args>(args)... }
@@ -381,8 +355,8 @@ public:
 
   /// @brief
   ///   in-place constructor for unsuccessful result
-  template <
-      class... Args, where<std::is_constructible<E, Args&&...>> = required>
+  template <class... Args>
+    requires std::is_constructible_v<E, Args&&...>
   constexpr explicit basic_result(in_place_err_t, Args&&... args)
       : storage_{ std::in_place_type<failure_t<E>>, std::in_place,
                   std::forward<Args>(args)... }
@@ -391,10 +365,8 @@ public:
 
   /// @brief
   ///   in-place constructor with initializer_list for successful result
-  template <
-      class U, class... Args,
-      where<std::is_constructible<T, std::initializer_list<U>, Args&&...>> =
-          required>
+  template <class U, class... Args>
+    requires std::is_constructible_v<T, std::initializer_list<U>, Args&&...>
   constexpr explicit basic_result(
       in_place_ok_t, std::initializer_list<U> il, Args&&... args
   )
@@ -405,9 +377,8 @@ public:
 
   /// @brief
   ///   in-place constructor with initializer_list for unsuccessful result
-  template <
-      class U, class... Args,
-      where<std::is_constructible<E, Args&&...>> = required>
+  template <class U, class... Args>
+    requires std::is_constructible_v<E, Args&&...>
   constexpr explicit basic_result(
       in_place_err_t, std::initializer_list<U> il, Args&&... args
   )
@@ -416,9 +387,8 @@ public:
   {
   }
 
-  template <
-      class... Args,
-      std::enable_if_t<std::is_constructible_v<T, Args...>, bool> = false>
+  template <class... Args>
+    requires std::is_constructible_v<T, Args...>
   basic_result(success_t<_result_detail::forward_mode<T>, Args...> fwd)
       : storage_()
   {
@@ -433,9 +403,8 @@ public:
     );
   }
 
-  template <
-      class... Args,
-      std::enable_if_t<std::is_constructible_v<T, Args...>, bool> = false>
+  template <class... Args>
+    requires std::is_constructible_v<T, Args...>
   basic_result(success_t<_result_detail::forward_mode<void>, Args...> fwd)
       : storage_()
   {
@@ -450,9 +419,8 @@ public:
     );
   }
 
-  template <
-      class... Args,
-      std::enable_if_t<std::is_constructible_v<E, Args...>, bool> = false>
+  template <class... Args>
+    requires std::is_constructible_v<E, Args...>
   basic_result(failure_t<_result_detail::forward_mode<E>, Args...> fwd)
       : storage_()
   {
@@ -467,9 +435,8 @@ public:
     );
   }
 
-  template <
-      class... Args,
-      std::enable_if_t<std::is_constructible_v<E, Args...>, bool> = false>
+  template <class... Args>
+    requires std::is_constructible_v<E, Args...>
   basic_result(failure_t<_result_detail::forward_mode<void>, Args...> fwd)
       : storage_()
   {
@@ -658,11 +625,10 @@ public:
   constexpr auto
   map(O&& op, Args&&... args
   ) const& noexcept(std::is_nothrow_invocable_v<O, T, Args&&...>)
-      -> std::enable_if_t<
-          std::is_invocable_v<O, T, Args&&...>,
-          basic_result<
-              _mutability,
-              void_to_monostate_t<std::invoke_result_t<O, T, Args&&...>>, E>>
+      -> basic_result<
+          _mutability,
+          void_to_monostate_t<std::invoke_result_t<O, T, Args&&...>>, E>
+    requires std::is_invocable_v<O, T, Args&&...>
   {
     using result_type = basic_result<
         _mutability, void_to_monostate_t<std::invoke_result_t<O, T, Args&&...>>,
@@ -700,12 +666,11 @@ public:
   constexpr auto
   map(O&& op,
       Args&&... args) const& noexcept(std::is_nothrow_invocable_v<O, Args&&...>)
-      -> std::enable_if_t<
-          std::conjunction_v<
-              std::is_same<T, std::monostate>, std::is_invocable<O, Args&&...>>,
-          basic_result<
-              _mutability,
-              void_to_monostate_t<std::invoke_result_t<O, Args&&...>>, E>>
+      -> basic_result<
+          _mutability, void_to_monostate_t<std::invoke_result_t<O, Args&&...>>,
+          E>
+    requires std::is_same_v<T, std::monostate>
+             && std::is_invocable_v<O, Args&&...>
   {
     using result_type = basic_result<
         _mutability, void_to_monostate_t<std::invoke_result_t<O, Args&&...>>,
@@ -738,11 +703,10 @@ public:
   constexpr auto
   map(O&& op,
       Args&&... args) && noexcept(std::is_nothrow_invocable_v<O, T, Args&&...>)
-      -> std::enable_if_t<
-          std::is_invocable_v<O, T, Args&&...>,
-          basic_result<
-              _mutability,
-              void_to_monostate_t<std::invoke_result_t<O, T, Args&&...>>, E>>
+      -> basic_result<
+          _mutability,
+          void_to_monostate_t<std::invoke_result_t<O, T, Args&&...>>, E>
+    requires std::is_invocable_v<O, T, Args&&...>
   {
     using result_type = basic_result<
         _mutability, void_to_monostate_t<std::invoke_result_t<O, T, Args&&...>>,
@@ -784,12 +748,11 @@ public:
   constexpr auto
   map(O&& op,
       Args&&... args) && noexcept(std::is_nothrow_invocable_v<O, Args&&...>)
-      -> std::enable_if_t<
-          std::conjunction_v<
-              std::is_same<T, std::monostate>, std::is_invocable<O, Args&&...>>,
-          basic_result<
-              _mutability,
-              void_to_monostate_t<std::invoke_result_t<O, Args&&...>>, E>>
+      -> basic_result<
+          _mutability, void_to_monostate_t<std::invoke_result_t<O, Args&&...>>,
+          E>
+    requires std::is_same_v<T, std::monostate>
+             && std::is_invocable_v<O, Args&&...>
   {
     using result_type = basic_result<
         _mutability, void_to_monostate_t<std::invoke_result_t<O, Args&&...>>,
@@ -825,17 +788,15 @@ public:
   constexpr auto map_or_else(
       Fallback&& _fallback, Map&& _map
   ) & noexcept(std::is_nothrow_invocable_v<Fallback, E> && std::is_nothrow_invocable_v<Map, T>)
-      -> std::enable_if_t<
-          std::conjunction_v<
-              std::is_invocable<Map, T&>, std::is_invocable<Fallback, E&>,
-              std::is_convertible<
-                  std::invoke_result_t<Map, T&>,
-                  std::invoke_result_t<Fallback, E&>>,
-              std::is_convertible<
-                  std::invoke_result_t<Fallback, E&>,
-                  std::invoke_result_t<Map, T&>>>,
-          std::common_type_t<
-              std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>>
+      -> std::common_type_t<
+          std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>
+    requires std::is_invocable_v<Map, T&> && std::is_invocable_v<Fallback, E&>
+             && std::is_convertible_v<
+                 std::invoke_result_t<Map, T&>,
+                 std::invoke_result_t<Fallback, E&>>
+             && std::is_convertible_v<
+                 std::invoke_result_t<Fallback, E&>,
+                 std::invoke_result_t<Map, T&>>
   {
     using result_type = std::common_type_t<
         std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
@@ -866,17 +827,15 @@ public:
   constexpr auto map_or_else(
       Fallback&& _fallback, Map&& _map
   ) const& noexcept(std::is_nothrow_invocable_v<Fallback, E> && std::is_nothrow_invocable_v<Map, T>)
-      -> std::enable_if_t<
-          std::conjunction_v<
-              std::is_invocable<Map, T>, std::is_invocable<Fallback, E>,
-              std::is_convertible<
-                  std::invoke_result_t<Map, T>,
-                  std::invoke_result_t<Fallback, E>>,
-              std::is_convertible<
-                  std::invoke_result_t<Fallback, E>,
-                  std::invoke_result_t<Map, T>>>,
-          std::common_type_t<
-              std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>>
+      -> std::common_type_t<
+          std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>
+    requires std::is_invocable_v<Map, T> && std::is_invocable_v<Fallback, E>
+             && std::is_convertible_v<
+                 std::invoke_result_t<Map, T>,
+                 std::invoke_result_t<Fallback, E>>
+             && std::is_convertible_v<
+                 std::invoke_result_t<Fallback, E>,
+                 std::invoke_result_t<Map, T>>
   {
     using result_type = std::common_type_t<
         std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
@@ -907,17 +866,15 @@ public:
   constexpr auto map_or_else(
       Fallback&& _fallback, Map&& _map
   ) && noexcept(std::is_nothrow_invocable_v<Fallback, E> && std::is_nothrow_invocable_v<Map, T>)
-      -> std::enable_if_t<
-          std::conjunction_v<
-              std::is_invocable<Map, T>, std::is_invocable<Fallback, E>,
-              std::is_convertible<
-                  std::invoke_result_t<Map, T>,
-                  std::invoke_result_t<Fallback, E>>,
-              std::is_convertible<
-                  std::invoke_result_t<Fallback, E>,
-                  std::invoke_result_t<Map, T>>>,
-          std::common_type_t<
-              std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>>
+      -> std::common_type_t<
+          std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>
+    requires std::is_invocable_v<Map, T> && std::is_invocable_v<Fallback, E>
+             && std::is_convertible_v<
+                 std::invoke_result_t<Map, T>,
+                 std::invoke_result_t<Fallback, E>>
+             && std::is_convertible_v<
+                 std::invoke_result_t<Fallback, E>,
+                 std::invoke_result_t<Map, T>>
   {
     using result_type = std::common_type_t<
         std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>;
@@ -944,11 +901,10 @@ public:
   template <class O, class... Args>
   constexpr auto map_err(O&& op, Args&&... args)
       const& noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
-          -> std::enable_if_t<
-              std::is_invocable_v<O, E, Args&&...>,
-              basic_result<
-                  _mutability, T,
-                  void_to_monostate_t<std::invoke_result_t<O, E, Args&&...>>>>
+          -> basic_result<
+              _mutability, T,
+              void_to_monostate_t<std::invoke_result_t<O, E, Args&&...>>>
+    requires std::is_invocable_v<O, E, Args&&...>
   {
     using result_type = basic_result<
         _mutability, T,
@@ -983,15 +939,13 @@ public:
   ///   This function can be used to pass through a successful result while
   ///   handling an error. result<T, void> -> result<T, F>
   template <class O, class... Args>
-  constexpr auto map_err(
-      O&& op, Args&&... args
-  ) const& noexcept(std::is_nothrow_invocable_v<O, Args&&...>)
-      -> std::enable_if_t<
-          std::conjunction_v<
-              std::is_same<E, std::monostate>, std::is_invocable<O, Args&&...>>,
-          basic_result<
+  constexpr auto map_err(O&& op, Args&&... args)
+      const& noexcept(std::is_nothrow_invocable_v<O, Args&&...>)
+          -> basic_result<
               _mutability, T,
-              void_to_monostate_t<std::invoke_result_t<O, Args&&...>>>>
+              void_to_monostate_t<std::invoke_result_t<O, Args&&...>>>
+    requires std::is_same_v<E, std::monostate>
+             && std::is_invocable_v<O, Args&&...>
   {
     using result_type = basic_result<
         _mutability, T,
@@ -1024,11 +978,10 @@ public:
   constexpr auto map_err(
       O&& op, Args&&... args
   ) && noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
-      -> std::enable_if_t<
-          std::is_invocable_v<O, E, Args&&...>,
-          basic_result<
-              _mutability, T,
-              void_to_monostate_t<std::invoke_result_t<O, E, Args&&...>>>>
+      -> basic_result<
+          _mutability, T,
+          void_to_monostate_t<std::invoke_result_t<O, E, Args&&...>>>
+    requires std::is_invocable_v<O, E, Args&&...>
   {
     using result_type = basic_result<
         _mutability, T,
@@ -1068,12 +1021,11 @@ public:
   constexpr auto map_err(
       O&& op, Args&&... args
   ) && noexcept(std::is_nothrow_invocable_v<O, Args&&...>)
-      -> std::enable_if_t<
-          std::conjunction_v<
-              std::is_same<E, std::monostate>, std::is_invocable<O, Args&&...>>,
-          basic_result<
-              _mutability, T,
-              void_to_monostate_t<std::invoke_result_t<O, Args&&...>>>>
+      -> basic_result<
+          _mutability, T,
+          void_to_monostate_t<std::invoke_result_t<O, Args&&...>>>
+    requires std::is_same_v<E, std::monostate>
+             && std::is_invocable_v<O, Args&&...>
   {
     using result_type = basic_result<
         _mutability, T,
@@ -1106,10 +1058,9 @@ public:
   template <class O, class... Args>
   constexpr auto and_then(O&& op, Args&&... args)
       const& noexcept(std::is_nothrow_invocable_v<O, T, Args&&...>)
-          -> std::enable_if_t<
-              is_convertible_result_with_v<
-                  std::invoke_result_t<O, T, Args&&...>, failure_t<E>>,
-              std::invoke_result_t<O, T, Args&&...>>
+          -> std::invoke_result_t<O, T, Args&&...>
+    requires is_convertible_result_with_v<
+        std::invoke_result_t<O, T, Args&&...>, failure_t<E>>
   {
     using result_type = std::invoke_result_t<O, T, Args&&...>;
     return is_ok() ? std::invoke(
@@ -1135,10 +1086,9 @@ public:
   constexpr auto and_then(
       O&& op, Args&&... args
   ) && noexcept(std::is_nothrow_invocable_v<O, T, Args&&...>)
-      -> std::enable_if_t<
-          is_convertible_result_with_v<
-              std::invoke_result_t<O, T, Args&&...>, failure_t<E>>,
-          std::invoke_result_t<O, T, Args&&...>>
+      -> std::invoke_result_t<O, T, Args&&...>
+    requires is_convertible_result_with_v<
+        std::invoke_result_t<O, T, Args&&...>, failure_t<E>>
   {
     using result_type = std::invoke_result_t<O, T, Args&&...>;
     return is_ok() ? std::invoke(
@@ -1163,10 +1113,9 @@ public:
   template <class O, class... Args>
   constexpr auto or_else(O&& op, Args&&... args)
       const& noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
-          -> std::enable_if_t<
-              is_convertible_result_with_v<
-                  std::invoke_result_t<O, T, Args&&...>, success_t<T>>,
-              std::invoke_result_t<O, E, Args&&...>>
+          -> std::invoke_result_t<O, E, Args&&...>
+    requires is_convertible_result_with_v<
+        std::invoke_result_t<O, T, Args&&...>, success_t<T>>
   {
     using result_type = std::invoke_result_t<O, E, Args&&...>;
     return is_err() ? std::invoke(
@@ -1191,10 +1140,9 @@ public:
   constexpr auto or_else(
       O&& op, Args&&... args
   ) && noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
-      -> std::enable_if_t<
-          is_convertible_result_with_v<
-              std::invoke_result_t<O, T, Args&&...>, success_t<T>>,
-          std::invoke_result_t<O, E, Args&&...>>
+      -> std::invoke_result_t<O, E, Args&&...>
+    requires is_convertible_result_with_v<
+        std::invoke_result_t<O, T, Args&&...>, success_t<T>>
   {
     using result_type = std::invoke_result_t<O, E, Args&&...>;
     return is_err() ? std::invoke(
@@ -1280,7 +1228,8 @@ public:
   ///   if you are passing the result of a function call,
   ///   it is recommended to use `unwrap_or_else`,
   ///   which is lazily evaluated.
-  template <class U, where<meta::has_common_type<T, U&&>> = required>
+  template <class U>
+    requires meta::has_common_type<T, U&&>::value
   decltype(auto) unwrap_or(U&& optb) const& noexcept
   {
     return is_ok() ? std::get<success_t<T>>(storage_).get()
@@ -1299,9 +1248,8 @@ public:
   ///   if you are passing the result of a function call,
   ///   it is recommended to use `unwrap_or_else`,
   ///   which is lazily evaluated.
-  template <
-      class U, where<meta::has_common_type<std::remove_reference_t<T>&&, U&&>> =
-                   required>
+  template <class U>
+    requires meta::has_common_type<std::remove_reference_t<T>&&, U&&>::value
   decltype(auto) unwrap_or(U&& optb) && noexcept
   {
     return is_ok() ? std::move(std::get<success_t<T>>(storage_).get())
@@ -1323,11 +1271,8 @@ public:
   ///     value,
   ///     - otherwise; static_assert.
   template <class O>
-  std::enable_if_t<
-      std::disjunction_v<
-          std::is_invocable_r<T, O, E>, std::is_invocable_r<T, O>>,
-      T>
-  unwrap_or_else(O&& op) const
+    requires std::is_invocable_r_v<T, O, E> || std::is_invocable_r_v<T, O>
+  T unwrap_or_else(O&& op) const
       noexcept(std::disjunction_v<
                std::conjunction<
                    std::is_invocable_r<T, O, E>,
@@ -1573,26 +1518,24 @@ public:
   }
 
   template <class F>
-  constexpr std::enable_if_t<std::is_invocable_v<F&&, T>> and_finally(F&& f
-  ) const&
+    requires std::is_invocable_v<F&&, T>
+  constexpr void and_finally(F&& f) const&
   {
     if (this->is_ok())
       std::invoke(std::forward<F>(f), unwrap());
   }
 
   template <class F>
-  constexpr std::enable_if_t<std::is_invocable_v<F&&, E>> or_finally(F&& f
-  ) const&
+    requires std::is_invocable_v<F&&, E>
+  constexpr void or_finally(F&& f) const&
   {
     if (this->is_err())
       std::invoke(std::forward<F>(f), unwrap_err());
   }
 
   template <class F>
-  constexpr std::enable_if_t<
-      std::disjunction_v<std::is_invocable<F, T&>, std::is_invocable<F>>,
-      basic_result&>
-  and_peek(F&& f) &
+    requires std::is_invocable_v<F, T&> || std::is_invocable_v<F>
+  constexpr basic_result& and_peek(F&& f) &
   {
     if constexpr (std::is_invocable_v<F, T&>)
     {
@@ -1608,10 +1551,8 @@ public:
   }
 
   template <class F>
-  std::enable_if_t<
-      std::disjunction_v<std::is_invocable<F, const T&>, std::is_invocable<F>>,
-      const basic_result&>
-  and_peek(F&& f) const&
+    requires std::is_invocable_v<F, const T&> || std::is_invocable_v<F>
+  const basic_result& and_peek(F&& f) const&
   {
     if constexpr (std::is_invocable_v<F, const T&>)
     {
@@ -1627,10 +1568,8 @@ public:
   }
 
   template <class F>
-  std::enable_if_t<
-      std::disjunction_v<std::is_invocable<F, T&&>, std::is_invocable<F>>,
-      basic_result&&>
-  and_peek(F&& f) &&
+    requires std::is_invocable_v<F, T&&> || std::is_invocable_v<F>
+  basic_result&& and_peek(F&& f) &&
   {
     if constexpr (std::is_invocable_v<F, T&&>)
     {
@@ -1646,10 +1585,8 @@ public:
   }
 
   template <class F>
-  std::enable_if_t<
-      std::disjunction_v<std::is_invocable<F, E&>, std::is_invocable<F>>,
-      basic_result&>
-  or_peek(F&& f) &
+    requires std::is_invocable_v<F, E&> || std::is_invocable_v<F>
+  basic_result& or_peek(F&& f) &
   {
     if constexpr (std::is_invocable_v<F, E&>)
     {
@@ -1665,10 +1602,8 @@ public:
   }
 
   template <class F>
-  std::enable_if_t<
-      std::disjunction_v<std::is_invocable<F, const E&>, std::is_invocable<F>>,
-      const basic_result&>
-  or_peek(F&& f) const&
+    requires std::is_invocable_v<F, const E&> || std::is_invocable_v<F>
+  const basic_result& or_peek(F&& f) const&
   {
     if constexpr (std::is_invocable_v<F, const E&>)
     {
@@ -1684,10 +1619,8 @@ public:
   }
 
   template <class F>
-  std::enable_if_t<
-      std::disjunction_v<std::is_invocable<F, E&&>, std::is_invocable<F>>,
-      basic_result&&>
-  or_peek(F&& f) &&
+    requires std::is_invocable_v<F, E&&> || std::is_invocable_v<F>
+  basic_result&& or_peek(F&& f) &&
   {
     if constexpr (std::is_invocable_v<F, E&&>)
     {
@@ -1705,15 +1638,13 @@ public:
   template <class F>
   auto map_anything_else(F&& f
   ) & noexcept(std::is_nothrow_invocable_v<F, E&> && std::is_nothrow_invocable_v<F, T&>)
-      -> std::enable_if_t<
-          std::conjunction_v<
-              std::is_invocable<F, T&>, std::is_invocable<F, E&>,
-              std::is_convertible<
-                  std::invoke_result_t<F, T&>, std::invoke_result_t<F, E&>>,
-              std::is_convertible<
-                  std::invoke_result_t<F, E&>, std::invoke_result_t<F, T&>>>,
-          std::common_type_t<
-              std::invoke_result_t<F, T&>, std::invoke_result_t<F, E&>>>
+      -> std::common_type_t<
+          std::invoke_result_t<F, T&>, std::invoke_result_t<F, E&>>
+    requires std::is_invocable_v<F, T&> && std::is_invocable_v<F, E&>
+             && std::is_convertible_v<
+                 std::invoke_result_t<F, T&>, std::invoke_result_t<F, E&>>
+             && std::is_convertible_v<
+                 std::invoke_result_t<F, E&>, std::invoke_result_t<F, T&>>
   {
     auto decay_copy =
         [](auto&& some
@@ -1727,18 +1658,16 @@ public:
   template <class F>
   auto map_anything_else(F&& f
   ) const& noexcept(std::is_nothrow_invocable_v<F, const E&> && std::is_nothrow_invocable_v<F, const T&>)
-      -> std::enable_if_t<
-          std::conjunction_v<
-              std::is_invocable<F, const T&>, std::is_invocable<F, const E&>,
-              std::is_convertible<
-                  std::invoke_result_t<F, const T&>,
-                  std::invoke_result_t<F, const E&>>,
-              std::is_convertible<
-                  std::invoke_result_t<F, const E&>,
-                  std::invoke_result_t<F, const T&>>>,
-          std::common_type_t<
-              std::invoke_result_t<F, const T&>,
-              std::invoke_result_t<F, const E&>>>
+      -> std::common_type_t<
+          std::invoke_result_t<F, const T&>, std::invoke_result_t<F, const E&>>
+    requires std::is_invocable_v<F, const T&>
+             && std::is_invocable_v<F, const E&>
+             && std::is_convertible_v<
+                 std::invoke_result_t<F, const T&>,
+                 std::invoke_result_t<F, const E&>>
+             && std::is_convertible_v<
+                 std::invoke_result_t<F, const E&>,
+                 std::invoke_result_t<F, const T&>>
   {
     auto decay_copy =
         [](auto&& some
@@ -1752,15 +1681,13 @@ public:
   template <class F>
   auto map_anything_else(F&& f
   ) && noexcept(std::is_nothrow_invocable_v<F, E&&> && std::is_nothrow_invocable_v<F, T&&>)
-      -> std::enable_if_t<
-          std::conjunction_v<
-              std::is_invocable<F, T&&>, std::is_invocable<F, E&&>,
-              std::is_convertible<
-                  std::invoke_result_t<F, T&&>, std::invoke_result_t<F, E&&>>,
-              std::is_convertible<
-                  std::invoke_result_t<F, E&&>, std::invoke_result_t<F, T&&>>>,
-          std::common_type_t<
-              std::invoke_result_t<F, T&&>, std::invoke_result_t<F, E&&>>>
+      -> std::common_type_t<
+          std::invoke_result_t<F, T&&>, std::invoke_result_t<F, E&&>>
+    requires std::is_invocable_v<F, T&&> && std::is_invocable_v<F, E&&>
+             && std::is_convertible_v<
+                 std::invoke_result_t<F, T&&>, std::invoke_result_t<F, E&&>>
+             && std::is_convertible_v<
+                 std::invoke_result_t<F, E&&>, std::invoke_result_t<F, T&&>>
   {
     auto decay_copy =
         [](auto&& some
@@ -1782,10 +1709,8 @@ public:
   ///   This method tests for self and other values to be equal, and is used by
   ///   `==` found by ADL.
   template <mutability _mut, class U, class F>
-  std::enable_if_t<
-      std::conjunction_v<is_comparable_with<T, U>, is_comparable_with<E, F>>,
-      bool>
-  operator==(const basic_result<_mut, U, F>& rhs) const&
+    requires is_comparable_with<T, U>::value && is_comparable_with<E, F>::value
+  bool operator==(const basic_result<_mut, U, F>& rhs) const&
   {
     return std::visit(
         boost::hana::overload(
@@ -1809,10 +1734,8 @@ public:
   ///   This method tests for self and other values to be not equal, and is used
   ///   by `==` found by ADL.
   template <mutability _mut, class U, class F>
-  std::enable_if_t<
-      std::conjunction_v<is_comparable_with<T, U>, is_comparable_with<E, F>>,
-      bool>
-  operator!=(const basic_result<_mut, U, F>& rhs) const&
+    requires is_comparable_with<T, U>::value && is_comparable_with<E, F>::value
+  bool operator!=(const basic_result<_mut, U, F>& rhs) const&
   {
     return std::visit(
         boost::hana::overload(
@@ -1835,8 +1758,8 @@ public:
   ///   This method tests for self and other values to be equal, and is used by
   ///   `==` found by ADL.
   template <class U>
-  std::enable_if_t<is_comparable_with<T, U>::value, bool>
-  operator==(const success_t<U>& rhs) const
+    requires is_comparable_with<T, U>::value
+  bool operator==(const success_t<U>& rhs) const
   {
     return this->is_ok() ? this->unwrap() == rhs.get() : false;
   }
@@ -1851,8 +1774,8 @@ public:
   ///   This method tests for self and other values to be not equal, and is used
   ///   by `==` found by ADL.
   template <class U>
-  std::enable_if_t<is_comparable_with<T, U>::value, bool>
-  operator!=(const success_t<U>& rhs) const
+    requires is_comparable_with<T, U>::value
+  bool operator!=(const success_t<U>& rhs) const
   {
     return this->is_ok() ? !(this->unwrap() == rhs.get()) : true;
   }
@@ -1867,8 +1790,8 @@ public:
   ///   This method tests for self and other values to be equal, and is used by
   ///   `==` found by ADL.
   template <class F>
-  std::enable_if_t<is_comparable_with<E, F>::value, bool>
-  operator==(const failure_t<F>& rhs) const
+    requires is_comparable_with<E, F>::value
+  bool operator==(const failure_t<F>& rhs) const
   {
     return this->is_err() ? this->unwrap_err() == rhs.get() : false;
   }
@@ -1883,19 +1806,16 @@ public:
   ///   This method tests for self and other values to be equal, and is used by
   ///   `==` found by ADL.
   template <class F>
-  std::enable_if_t<is_comparable_with<E, F>::value, bool>
-  operator!=(const failure_t<F>& rhs) const
+    requires is_comparable_with<E, F>::value
+  bool operator!=(const failure_t<F>& rhs) const
   {
     return this->is_err() ? !(this->unwrap_err() == rhs.get()) : true;
   }
 
   template <mutability _, class U, class F>
-  std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<T, U>,
-          meta::is_less_comparable_with<E, F>>,
-      bool>
-  operator<(const basic_result<_, U, F>& rhs) const
+    requires meta::is_less_comparable_with<T, U>::value
+             && meta::is_less_comparable_with<E, F>::value
+  bool operator<(const basic_result<_, U, F>& rhs) const
   {
     return std::visit(
         boost::hana::overload_linearly(
@@ -1912,26 +1832,23 @@ public:
   }
 
   template <class U>
-  std::enable_if_t<meta::is_less_comparable_with<U, T>::value, bool>
-  operator<(const success_t<U>& rhs) const
+    requires meta::is_less_comparable_with<U, T>::value
+  bool operator<(const success_t<U>& rhs) const
   {
     return rhs > *this;
   }
 
   template <class F>
-  std::enable_if_t<meta::is_less_comparable_with<F, E>::value, bool>
-  operator<(const failure_t<F>& rhs) const
+    requires meta::is_less_comparable_with<F, E>::value
+  bool operator<(const failure_t<F>& rhs) const
   {
     return rhs > *this;
   }
 
   template <mutability _, class U, class F>
-  std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<U, T>,
-          meta::is_less_comparable_with<F, E>>,
-      bool>
-  operator>(const basic_result<_, U, F>& rhs) const
+    requires meta::is_less_comparable_with<U, T>::value
+             && meta::is_less_comparable_with<F, E>::value
+  bool operator>(const basic_result<_, U, F>& rhs) const
   {
     return std::visit(
         boost::hana::overload_linearly(
@@ -1948,27 +1865,25 @@ public:
   }
 
   template <class U>
-  std::enable_if_t<meta::is_less_comparable_with<U, T>::value, bool>
-  operator>(const success_t<U>& rhs) const
+    requires meta::is_less_comparable_with<U, T>::value
+  bool operator>(const success_t<U>& rhs) const
   {
     return rhs < *this;
   }
 
   template <class F>
-  std::enable_if_t<meta::is_less_comparable_with<F, E>::value, bool>
-  operator>(const failure_t<F>& rhs) const
+    requires meta::is_less_comparable_with<F, E>::value
+  bool operator>(const failure_t<F>& rhs) const
   {
     return rhs < *this;
   }
 
   template <mutability _, class U, class F>
-  std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<T, U>,
-          meta::is_less_comparable_with<E, F>, is_comparable_with<T, U>,
-          is_comparable_with<E, F>>,
-      bool>
-  operator<=(const basic_result<_, U, F>& rhs) const
+    requires meta::is_less_comparable_with<T, U>::value
+             && meta::is_less_comparable_with<E, F>::value
+             && is_comparable_with<T, U>::value
+             && is_comparable_with<E, F>::value
+  bool operator<=(const basic_result<_, U, F>& rhs) const
   {
     return std::visit(
         boost::hana::overload_linearly(
@@ -1985,33 +1900,27 @@ public:
   }
 
   template <class U>
-  std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<U, T>, is_comparable_with<U, T>>,
-      bool>
-  operator<=(const success_t<U>& rhs) const
+    requires meta::is_less_comparable_with<U, T>::value
+             && is_comparable_with<U, T>::value
+  bool operator<=(const success_t<U>& rhs) const
   {
     return rhs >= *this;
   }
 
   template <class F>
-  std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<F, E>, is_comparable_with<F, E>>,
-      bool>
-  operator<=(const failure_t<F>& rhs) const
+    requires meta::is_less_comparable_with<F, E>::value
+             && is_comparable_with<F, E>::value
+  bool operator<=(const failure_t<F>& rhs) const
   {
     return rhs >= *this;
   }
 
   template <mutability _, class U, class F>
-  std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<T, U>,
-          meta::is_less_comparable_with<E, F>, is_comparable_with<T, U>,
-          is_comparable_with<E, F>>,
-      bool>
-  operator>=(const basic_result<_, U, F>& rhs) const
+    requires meta::is_less_comparable_with<T, U>::value
+             && meta::is_less_comparable_with<E, F>::value
+             && is_comparable_with<T, U>::value
+             && is_comparable_with<E, F>::value
+  bool operator>=(const basic_result<_, U, F>& rhs) const
   {
     return std::visit(
         boost::hana::overload_linearly(
@@ -2028,29 +1937,25 @@ public:
   }
 
   template <class U>
-  std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<U, T>, is_comparable_with<U, T>>,
-      bool>
-  operator>=(const success_t<U>& rhs) const
+    requires meta::is_less_comparable_with<U, T>::value
+             && is_comparable_with<U, T>::value
+  bool operator>=(const success_t<U>& rhs) const
   {
     return rhs <= *this;
   }
 
   template <class F>
-  std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<F, E>, is_comparable_with<F, E>>,
-      bool>
-  operator>=(const failure_t<F>& rhs) const
+    requires meta::is_less_comparable_with<F, E>::value
+             && is_comparable_with<F, E>::value
+  bool operator>=(const failure_t<F>& rhs) const
   {
     return rhs <= *this;
   }
 
   template <class Ctx>
-  auto with_context(Ctx ctx) -> std::enable_if_t<
-      std::is_invocable_r_v<std::shared_ptr<anyhow::error>, Ctx>,
-      basic_result<_mutability, T, std::shared_ptr<anyhow::error>>>
+  auto with_context(Ctx ctx)
+      -> basic_result<_mutability, T, std::shared_ptr<anyhow::error>>
+    requires std::is_invocable_r_v<std::shared_ptr<anyhow::error>, Ctx>
   {
     return this->map_err(
         [&](auto err) -> std::shared_ptr<anyhow::error>
@@ -2060,148 +1965,136 @@ public:
 };
 
 template <mutability _, class T, class E, class U>
-std::enable_if_t<
-    std::negation_v<std::disjunction<
-        is_result<std::decay_t<U>>, is_ok_type<std::decay_t<U>>,
-        is_err_type<std::decay_t<U>>>>
-        && is_comparable_with<T, U>::value,
-    bool>
+  requires(!(is_result<std::decay_t<U>>::value
+             || is_ok_type<std::decay_t<U>>::value
+             || is_err_type<std::decay_t<U>>::value))
+          && is_comparable_with<T, U>::value
+bool
 operator==(const basic_result<_, T, E>& lhs, U&& rhs)
 {
   return lhs == success_t(std::forward<U>(rhs));
 }
 
 template <mutability _, class T, class E, class U>
-std::enable_if_t<
-    std::negation_v<std::disjunction<
-        is_result<std::decay_t<T>>, is_ok_type<std::decay_t<T>>,
-        is_err_type<std::decay_t<T>>>>
-        && is_comparable_with<T, U>::value,
-    bool>
+  requires(!(is_result<std::decay_t<T>>::value
+             || is_ok_type<std::decay_t<T>>::value
+             || is_err_type<std::decay_t<T>>::value))
+          && is_comparable_with<T, U>::value
+bool
 operator==(T&& lhs, const basic_result<_, U, E>& rhs)
 {
   return success_t(std::forward<T>(lhs)) == rhs;
 }
 
 template <mutability _, class T, class E, class U>
-std::enable_if_t<
-    std::negation_v<std::disjunction<
-        is_result<std::decay_t<U>>, is_ok_type<std::decay_t<U>>,
-        is_err_type<std::decay_t<U>>>>
-        && is_comparable_with<T, U>::value,
-    bool>
+  requires(!(is_result<std::decay_t<U>>::value
+             || is_ok_type<std::decay_t<U>>::value
+             || is_err_type<std::decay_t<U>>::value))
+          && is_comparable_with<T, U>::value
+bool
 operator!=(const basic_result<_, T, E>& lhs, U&& rhs)
 {
   return lhs != success_t(std::forward<U>(rhs));
 }
 
 template <mutability _, class T, class E, class U>
-std::enable_if_t<
-    std::negation_v<std::disjunction<
-        is_result<std::decay_t<T>>, is_ok_type<std::decay_t<T>>,
-        is_err_type<std::decay_t<T>>>>
-        && is_comparable_with<T, U>::value,
-    bool>
+  requires(!(is_result<std::decay_t<T>>::value
+             || is_ok_type<std::decay_t<T>>::value
+             || is_err_type<std::decay_t<T>>::value))
+          && is_comparable_with<T, U>::value
+bool
 operator!=(T&& lhs, const basic_result<_, U, E>& rhs)
 {
   return success_t(std::forward<T>(lhs)) != rhs;
 }
 
 template <mutability _, class T, class E, class U>
-std::enable_if_t<
-    std::negation_v<std::disjunction<
-        is_result<std::decay_t<U>>, is_ok_type<std::decay_t<U>>,
-        is_err_type<std::decay_t<U>>>>
-        && meta::is_less_comparable_with<T, U>::value,
-    bool>
+  requires(!(is_result<std::decay_t<U>>::value
+             || is_ok_type<std::decay_t<U>>::value
+             || is_err_type<std::decay_t<U>>::value))
+          && meta::is_less_comparable_with<T, U>::value
+bool
 operator<(const basic_result<_, T, E>& lhs, U&& rhs)
 {
   return lhs < success_t(std::forward<U>(rhs));
 }
 
 template <mutability _, class T, class E, class U>
-std::enable_if_t<
-    std::negation_v<std::disjunction<
-        is_result<std::decay_t<T>>, is_ok_type<std::decay_t<T>>,
-        is_err_type<std::decay_t<T>>>>
-        && meta::is_less_comparable_with<T, U>::value,
-    bool>
+  requires(!(is_result<std::decay_t<T>>::value
+             || is_ok_type<std::decay_t<T>>::value
+             || is_err_type<std::decay_t<T>>::value))
+          && meta::is_less_comparable_with<T, U>::value
+bool
 operator<(T&& lhs, const basic_result<_, U, E>& rhs)
 {
   return success_t(std::forward<T>(lhs)) < rhs;
 }
 
 template <mutability _, class T, class E, class U>
-std::enable_if_t<
-    std::negation_v<std::disjunction<
-        is_result<std::decay_t<U>>, is_ok_type<std::decay_t<U>>,
-        is_err_type<std::decay_t<U>>>>
-        && meta::is_less_comparable_with<T, U>::value
-        && is_comparable_with<T, U>::value,
-    bool>
+  requires(!(is_result<std::decay_t<U>>::value
+             || is_ok_type<std::decay_t<U>>::value
+             || is_err_type<std::decay_t<U>>::value))
+          && meta::is_less_comparable_with<T, U>::value
+          && is_comparable_with<T, U>::value
+bool
 operator<=(const basic_result<_, T, E>& lhs, U&& rhs)
 {
   return lhs <= success_t(std::forward<U>(rhs));
 }
 
 template <mutability _, class T, class E, class U>
-std::enable_if_t<
-    std::negation_v<std::disjunction<
-        is_result<std::decay_t<T>>, is_ok_type<std::decay_t<T>>,
-        is_err_type<std::decay_t<T>>>>
-        && meta::is_less_comparable_with<T, U>::value
-        && is_comparable_with<T, U>::value,
-    bool>
+  requires(!(is_result<std::decay_t<T>>::value
+             || is_ok_type<std::decay_t<T>>::value
+             || is_err_type<std::decay_t<T>>::value))
+          && meta::is_less_comparable_with<T, U>::value
+          && is_comparable_with<T, U>::value
+bool
 operator<=(T&& lhs, const basic_result<_, U, E>& rhs)
 {
   return success_t(std::forward<T>(lhs)) <= rhs;
 }
 
 template <mutability _, class T, class E, class U>
-std::enable_if_t<
-    std::negation_v<std::disjunction<
-        is_result<std::decay_t<U>>, is_ok_type<std::decay_t<U>>,
-        is_err_type<std::decay_t<U>>>>
-        && meta::is_less_comparable_with<U, T>::value,
-    bool>
+  requires(!(is_result<std::decay_t<U>>::value
+             || is_ok_type<std::decay_t<U>>::value
+             || is_err_type<std::decay_t<U>>::value))
+          && meta::is_less_comparable_with<U, T>::value
+bool
 operator>(const basic_result<_, T, E>& lhs, U&& rhs)
 {
   return lhs > success_t(std::forward<U>(rhs));
 }
 
 template <mutability _, class T, class E, class U>
-std::enable_if_t<
-    std::negation_v<std::disjunction<
-        is_result<std::decay_t<T>>, is_ok_type<std::decay_t<T>>,
-        is_err_type<std::decay_t<T>>>>
-        && meta::is_less_comparable_with<U, T>::value,
-    bool>
+  requires(!(is_result<std::decay_t<T>>::value
+             || is_ok_type<std::decay_t<T>>::value
+             || is_err_type<std::decay_t<T>>::value))
+          && meta::is_less_comparable_with<U, T>::value
+bool
 operator>(T&& lhs, const basic_result<_, U, E>& rhs)
 {
   return success_t(std::forward<T>(lhs)) > rhs;
 }
 
 template <mutability _, class T, class E, class U>
-std::enable_if_t<
-    std::negation_v<std::disjunction<
-        is_result<std::decay_t<U>>, is_ok_type<std::decay_t<U>>,
-        is_err_type<std::decay_t<U>>>>
-        && meta::is_less_comparable_with<U, T>::value
-        && is_comparable_with<U, T>::value,
-    bool>
+  requires(!(is_result<std::decay_t<U>>::value
+             || is_ok_type<std::decay_t<U>>::value
+             || is_err_type<std::decay_t<U>>::value))
+          && meta::is_less_comparable_with<U, T>::value
+          && is_comparable_with<U, T>::value
+bool
 operator>=(const basic_result<_, T, E>& lhs, U&& rhs)
 {
   return lhs >= success_t(std::forward<U>(rhs));
 }
 
 template <mutability _, class T, class E, class U>
-std::enable_if_t<
-    std::negation_v<std::disjunction<
-        is_result<std::decay_t<T>>, is_ok_type<std::decay_t<T>>,
-        is_err_type<std::decay_t<T>>>>
-        && meta::is_less_comparable_with<U, T>::value
-        && is_comparable_with<U, T>::value,
-    bool>
+  requires(!(is_result<std::decay_t<T>>::value
+             || is_ok_type<std::decay_t<T>>::value
+             || is_err_type<std::decay_t<T>>::value))
+          && meta::is_less_comparable_with<U, T>::value
+          && is_comparable_with<U, T>::value
+bool
 operator>=(T&& lhs, const basic_result<_, U, E>& rhs)
 {
   return success_t(std::forward<T>(lhs)) >= rhs;
