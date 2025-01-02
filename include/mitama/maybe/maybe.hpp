@@ -86,23 +86,14 @@ class maybe_transpose_injector<maybe<basic_result<_, T, E>>>
 public:
   basic_result<_, maybe<T>, E> transpose() const&
   {
-    return static_cast<const maybe<basic_result<_, T, E>>*>(this)->is_nothing()
+    const auto* self = static_cast<const maybe<basic_result<_, T, E>>*>(this);
+    return self->is_nothing()
                ? basic_result<_, maybe<T>, E>{ success_t{ nothing } }
-           : static_cast<const maybe<basic_result<_, T, E>>*>(this)
-                   ->unwrap()
-                   .is_ok()
-               ? basic_result<
-                     _, maybe<T>,
-                     E>{ in_place_ok, std::in_place,
-                         static_cast<const maybe<basic_result<_, T, E>>*>(this)
-                             ->unwrap()
-                             .unwrap() }
-               : basic_result<_, maybe<T>, E>{
-                   in_place_err,
-                   static_cast<const maybe<basic_result<_, T, E>>*>(this)
-                       ->unwrap()
-                       .unwrap_err()
-                 };
+           : self->unwrap().is_ok()
+               ? basic_result<_, maybe<T>, E>{ in_place_ok, std::in_place,
+                                               self->unwrap().unwrap() }
+               : basic_result<_, maybe<T>, E>{ in_place_err,
+                                               self->unwrap().unwrap_err() };
   }
 };
 
@@ -121,17 +112,14 @@ class maybe_unwrap_or_default_injector<
 public:
   T unwrap_or_default() const
   {
+    const auto* self = static_cast<const maybe<T>*>(this);
     if constexpr (std::is_aggregate_v<T>)
     {
-      return static_cast<const maybe<T>*>(this)->is_just()
-                 ? static_cast<const maybe<T>*>(this)->unwrap()
-                 : T{};
+      return self->is_just() ? self->unwrap() : T{};
     }
     else
     {
-      return static_cast<const maybe<T>*>(this)->is_just()
-                 ? static_cast<const maybe<T>*>(this)->unwrap()
-                 : T();
+      return self->is_just() ? self->unwrap() : T();
     }
   }
 };
@@ -150,9 +138,8 @@ class maybe_flatten_injector<
 public:
   auto flatten() const&
   {
-    return static_cast<const maybe<T>*>(this)->is_just()
-               ? static_cast<const maybe<T>*>(this)->unwrap().as_ref().cloned()
-               : nothing;
+    const auto* self = static_cast<const maybe<T>*>(this);
+    return self->is_just() ? self->unwrap().as_ref().cloned() : nothing;
   }
 };
 
@@ -176,11 +163,11 @@ public:
     auto decay_copy = [](auto&& some
                       ) -> std::remove_const_t<std::remove_reference_t<T>>
     { return std::forward<decltype(some)>(some); };
-    return static_cast<const maybe<T>*>(this)->is_just()
-               ? maybe<std::remove_reference_t<T>>{ just(
-                     decay_copy(static_cast<const maybe<T>*>(this)->unwrap())
-                 ) }
-               : nothing;
+    const auto* self = static_cast<const maybe<T>*>(this);
+    return self->is_just() ? maybe<std::remove_reference_t<T>>{ just(
+                                 decay_copy(self->unwrap())
+                             ) }
+                           : nothing;
   }
 };
 
@@ -201,8 +188,9 @@ public:
   std::enable_if_t<std::is_constructible_v<T, Args&&...>, maybe<T>>
   replace(Args&&... args) &
   {
-    auto old = static_cast<maybe<T>*>(this)->as_ref().cloned();
-    static_cast<maybe<T>*>(this)->storage_.template emplace<just_t<T>>(
+    auto* self_mut = static_cast<maybe<T>*>(this);
+    auto old = self_mut->as_ref().cloned();
+    self_mut->storage_.template emplace<just_t<T>>(
         std::in_place, std::forward<Args>(args)...
     );
     return old;
@@ -216,8 +204,9 @@ public:
       maybe<T>>
   replace_with(F&& f, Args&&... args) &
   {
-    auto old = static_cast<maybe<T>*>(this)->as_ref().cloned();
-    static_cast<maybe<T>*>(this)->storage_.template emplace<just_t<T>>(
+    auto* self_mut = static_cast<maybe<T>*>(this);
+    auto old = self_mut->as_ref().cloned();
+    self_mut->storage_.template emplace<just_t<T>>(
         std::invoke(std::forward<F>(f), std::forward<Args>(args)...)
     );
     return old;
