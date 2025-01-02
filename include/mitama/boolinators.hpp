@@ -36,11 +36,10 @@ and_maybe(bool b, const maybe<T>& may)
 }
 
 template <class F>
+  requires std::is_invocable_v<F&&>
+           && is_maybe<std::invoke_result_t<F&&>>::value
 inline auto
-and_maybe_from(bool b, F&& may) -> std::enable_if_t<
-    std::conjunction_v<
-        std::is_invocable<F&&>, is_maybe<std::invoke_result_t<F&&>>>,
-    std::invoke_result_t<F&&>>
+and_maybe_from(bool b, F&& may) -> std::invoke_result_t<F&&>
 {
   return b ? std::invoke(std::forward<F>(may)) : nothing;
 }
