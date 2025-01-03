@@ -10,12 +10,13 @@
 #include <mitama/result/traits/impl_traits.hpp>
 
 #include <boost/hana/functional/id.hpp>
-#include <boost/hana/functional/overload_linearly.hpp>
 
+#include <cstddef>
 #include <functional>
 #include <memory>
 #include <optional>
 #include <string_view>
+#include <tuple>
 #include <type_traits>
 #include <utility>
 #include <variant>
@@ -31,6 +32,42 @@ struct overload : Fs...
 
 template <class... Fs>
 overload(Fs...) -> overload<Fs...>;
+
+template <class... Fs>
+struct overload_linearly
+{
+  std::tuple<Fs...> funcs;
+
+  explicit overload_linearly(Fs... fs) : funcs(std::move(fs)...) {}
+
+  template <class... Args>
+  decltype(auto) operator()(Args&&... args) const
+  {
+    return invoke_impl<0>(std::forward<Args>(args)...);
+  }
+
+private:
+  template <std::size_t Index, class... Args>
+  decltype(auto) invoke_impl(Args&&... args) const
+  {
+    if constexpr (Index < sizeof...(Fs))
+    {
+      using Func = std::tuple_element_t<Index, std::tuple<Fs...>>;
+      if constexpr (std::is_invocable_v<Func, Args...>)
+      {
+        return std::get<Index>(funcs)(std::forward<Args>(args)...);
+      }
+      else
+      {
+        return invoke_impl<Index + 1>(std::forward<Args>(args)...);
+      }
+    }
+    else
+    {
+      static_assert(Index < sizeof...(Fs), "No matching callable found.");
+    }
+  }
+};
 
 } // namespace mitama::_result_detail
 
@@ -1904,7 +1941,7 @@ public:
   operator<(const basic_result<_, U, F>& rhs) const
   {
     return std::visit(
-        boost::hana::overload_linearly(
+        _result_detail::overload_linearly(
             [](const success_t<T>& l, const success_t<U>& r)
             { return l.get() < r.get(); },
             [](const failure_t<E>& l, const failure_t<F>& r)
@@ -1940,7 +1977,7 @@ public:
   operator>(const basic_result<_, U, F>& rhs) const
   {
     return std::visit(
-        boost::hana::overload_linearly(
+        _result_detail::overload_linearly(
             [](const success_t<T>& l, const success_t<U>& r)
             { return r.get() < l.get(); },
             [](const failure_t<E>& l, const failure_t<F>& r)
@@ -1977,7 +2014,7 @@ public:
   operator<=(const basic_result<_, U, F>& rhs) const
   {
     return std::visit(
-        boost::hana::overload_linearly(
+        _result_detail::overload_linearly(
             [](const success_t<T>& l, const success_t<U>& r)
             { return (l.get() == r.get()) || (l.get() < r.get()); },
             [](const failure_t<E>& l, const failure_t<F>& r)
@@ -2020,7 +2057,7 @@ public:
   operator>=(const basic_result<_, U, F>& rhs) const
   {
     return std::visit(
-        boost::hana::overload_linearly(
+        _result_detail::overload_linearly(
             [](const success_t<T>& l, const success_t<U>& r)
             { return (l.get() == r.get()) || (r.get() < l.get()); },
             [](const failure_t<E>& l, const failure_t<F>& r)
