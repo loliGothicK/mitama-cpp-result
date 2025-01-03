@@ -5,15 +5,11 @@
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
 
-#include <boost/lambda/lambda.hpp>
-#include <boost/type_index.hpp>
 #include <boost/xpressive/xpressive.hpp>
 
-#include <array>
 #include <cassert>
 #include <cstdint>
 #include <functional>
-#include <iostream>
 #include <map>
 #include <memory>
 #include <regex>
@@ -28,8 +24,6 @@ using namespace boost::xpressive;
 using namespace mitama;
 using namespace std::string_literals;
 using namespace std::string_view_literals;
-using boost::lambda::_1;
-using boost::lambda::_2;
 
 using str = std::string;
 using u32 = std::uint32_t;
@@ -161,10 +155,9 @@ TEST_CASE("map() test", "[result][map]")
 
   for (auto num : split(line, ","))
   {
-    if (auto res = parse<i32>(num).map(_1 * 2); res.is_ok())
-    {
-      REQUIRE(res.ok().unwrap() % 2 == 0);
-    }
+    auto res = parse<i32>(num).map([](i32 x) { return x * 2; });
+    REQUIRE(res.is_ok() == true);
+    REQUIRE(res.ok().unwrap() % 2 == 0);
   }
 
   result<int, int> some_num = success(1);
