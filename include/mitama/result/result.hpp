@@ -33,21 +33,21 @@ struct overload : Fs...
 template <class... Fs>
 overload(Fs...) -> overload<Fs...>;
 
-template <typename... Fs>
+template <class... Fs>
 struct overload_linearly
 {
   std::tuple<Fs...> funcs;
 
   explicit overload_linearly(Fs... fs) : funcs(std::move(fs)...) {}
 
-  template <typename... Args>
+  template <class... Args>
   decltype(auto) operator()(Args&&... args) const
   {
     return invoke_impl<0>(std::forward<Args>(args)...);
   }
 
 private:
-  template <std::size_t Index, typename... Args>
+  template <std::size_t Index, class... Args>
   decltype(auto) invoke_impl(Args&&... args) const
   {
     if constexpr (Index < sizeof...(Fs))
