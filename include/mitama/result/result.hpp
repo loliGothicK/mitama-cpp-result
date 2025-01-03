@@ -9,12 +9,9 @@
 #include <mitama/result/factory/success.hpp>
 #include <mitama/result/traits/impl_traits.hpp>
 
-#include <boost/hana/functional/id.hpp>
-
 #include <cstddef>
 #include <functional>
 #include <memory>
-#include <optional>
 #include <string_view>
 #include <tuple>
 #include <type_traits>
@@ -68,6 +65,13 @@ private:
     }
   }
 };
+
+template <typename T>
+constexpr T
+id(T&& t)
+{
+  return static_cast<T&&>(t);
+}
 
 } // namespace mitama::_result_detail
 
@@ -2151,7 +2155,7 @@ operator>=(T&& lhs, const basic_result<_, U, E>& rhs)
 #  define MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC true
 #  define MITAMA_TRY_IMPL(...)                                                 \
     ({                                                                         \
-      auto&& result = boost::hana::id(__VA_ARGS__);                            \
+      auto&& result = ::mitama::_result_detail::id(__VA_ARGS__);               \
       static_assert(                                                           \
           ::mitama::is_result_v<std::remove_cvref_t<decltype(result)>>,        \
           "You should pass mitama::result type to this MITAMA_TRY macro."      \
@@ -2179,5 +2183,5 @@ operator>=(T&& lhs, const basic_result<_, U, E>& rhs)
 #  endif
 #else
 #  define MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC false
-#  define MITAMA_TRY(...) boost::hana::id(__VA_ARGS__).unwrap()
+#  define MITAMA_TRY(...) ::mitama::_result_detail::id(__VA_ARGS__).unwrap()
 #endif
