@@ -23,14 +23,14 @@
 namespace mitama::_result_detail
 {
 
-template <class... Ts>
-struct overload : Ts...
+template <class... Fs>
+struct overload : Fs...
 {
-  using Ts::operator()...;
+  using Fs::operator()...;
 };
 
-template <class... Ts>
-overload(Ts...) -> overload<Ts...>;
+template <class... Fs>
+overload(Fs...) -> overload<Fs...>;
 
 } // namespace mitama::_result_detail
 
