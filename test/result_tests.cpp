@@ -5,8 +5,6 @@
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
 
-#include <boost/hana/assert.hpp>
-#include <boost/hana/functional/overload.hpp>
 #include <boost/lambda/lambda.hpp>
 #include <boost/type_index.hpp>
 #include <boost/xpressive/xpressive.hpp>
@@ -30,7 +28,6 @@ using namespace boost::xpressive;
 using namespace mitama;
 using namespace std::string_literals;
 using namespace std::string_view_literals;
-namespace hana = boost::hana;
 using boost::lambda::_1;
 using boost::lambda::_2;
 
