@@ -7,24 +7,10 @@
 namespace mitama::traits
 {
 
-template <class T, class = void>
-struct is_dereferencable : std::false_type
-{
-};
-
 template <class T>
-struct is_dereferencable<T, std::void_t<decltype(*std::declval<T>())>>
-    : std::true_type
-{
-};
+concept dereferenceable = requires { *std::declval<T>(); };
 
-template <class For, class = void>
-struct deref;
-
-template <class For>
-struct deref<For, std::enable_if_t<is_dereferencable<For>::value>>
-{
-  using Target = decltype(*std::declval<For>());
-};
+template <dereferenceable For>
+using deref = decltype(*std::declval<For>());
 
 } // namespace mitama::traits
