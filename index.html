@@ -1614,10 +1614,6 @@
 <td style="text-align: center;">gcc &gt;= 8.3.0</td>
 <td style="text-align: center;">Testing on CircleCI; tested on each push to GitHub</td>
 </tr>
-<tr>
-<td style="text-align: center;">boost &gt;= 1.67.0</td>
-<td style="text-align: center;">Testing on CircleCI; tested on each push to GitHub</td>
-</tr>
 </tbody>
 </table>
 <p>More specifically, <code>Mitama.Result</code> requires a compiler/standard library supporting the following C++17 features:</p>
@@ -1631,11 +1627,6 @@
 <li><code>std::{invoke, apply}</code> from the <code>&lt;functional&gt;</code> header</li>
 <li><code>std::string_view</code> from the <code>&lt;string_view&gt;</code> header</li>
 <li><code>std::monostate</code> from the <code>&lt;variant&gt;</code> header</li>
-</ul>
-<p>And requires a Boost supporting the following libraries:</p>
-<ul>
-<li><code>boost::format</code> from the <code>&lt;boost/format.hpp&gt;</code> header</li>
-<li><code>boost::hana::{fix, overload, overload_linearly}</code> from the <code>&lt;boost/hana/functional/{fix, overload, overload_linearly}.hpp&gt;</code> header</li>
 </ul>
 <h3 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h3>
 <h4 id="cmake">CMake<a class="headerlink" href="#cmake" title="Permanent link">&para;</a></h4>
