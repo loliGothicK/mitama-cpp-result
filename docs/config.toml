@@ -6,7 +6,6 @@ compiler_options = [
     "-Wall",
     "-Wextra",
     "-pedantic-errors",
-    "-I__BOOST_ROOT__/include",
     "-I__FMT_INCLUDE_DIR__",
     "-I../include",
 ]

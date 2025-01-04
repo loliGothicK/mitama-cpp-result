@@ -239,17 +239,15 @@ int main() {
 #include <mitama/result/result.hpp>
 #include <cassert>
 #include <string>
-#include <boost/lambda/lambda.hpp>
 using namespace mitama;
 using namespace std::string_literals;
-using boost::lambda::_1;
 
 int main() {
     result<int, int> ok = success(2);
-    assert(ok.map(_1 * 2) == success(4));
+    assert(ok.map([](int x) { return x * 2; }) == success(4));
 
     result<int, int> err = failure(2);
-    assert(err.map(_1 * 2) == failure(2));
+    assert(err.map([](int x) { return x * 2; }) == failure(2));
 }
 // end example
 ```

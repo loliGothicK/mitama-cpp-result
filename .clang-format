@@ -23,11 +23,8 @@ IncludeCategories:
   - Regex: "^<mitama/"
     Priority: 2
     CaseSensitive: true
-  - Regex: "^<boost/"
-    Priority: 3
-    CaseSensitive: true
   - Regex: ".*"
-    Priority: 4
+    Priority: 3
     SortPriority: 0
 IndentCaseLabels: true
 IndentPPDirectives: AfterHash

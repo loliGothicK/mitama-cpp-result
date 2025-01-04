@@ -9,7 +9,6 @@ on:
   pull_request:
 
 env:
-  BOOST_VERSION: 1.84.0
   FMT_VERSION: 10.2.1
 
 jobs:
@@ -66,22 +65,6 @@ jobs:
           make -j4 && sudo make install || exit 0
         working-directory: ${{ runner.temp }}
 
-      - name: Restore & Cache boost (${{ env.BOOST_VERSION }})
-        uses: actions/cache@v4
-        id: boost-cache
-        with:
-          path: ${{ runner.temp }}/libs/boost
-          key: ${{ env.CXX }}-boost-${{ env.BOOST_VERSION }}
-      - name: Install boost (${{ env.BOOST_VERSION }}) as static
-        if: steps.boost-cache.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p ${{ runner.temp }}/libs/boost
-          git clone -q -b boost-${{ env.BOOST_VERSION }} --recursive https://github.com/boostorg/boost.git
-          cd boost
-          ./bootstrap.sh
-          sudo ./b2 link=static install -j4 --prefix=${{ runner.temp }}/libs/boost || exit 0
-        working-directory: ${{ runner.temp }}
-
       - name: Document test
         run: |
           cd docs
@@ -90,7 +73,6 @@ jobs:
             | xargs -n1 curl -LOk
           unzip x86_64-unknown-linux-musl.zip
           sed -i 's#__COMPILER__#${{ env.CXX }}#g' config.toml
-          sed -i 's#__BOOST_ROOT__#${{ runner.temp }}/libs/boost#g' config.toml
           sed -i 's#__LIBFMT_SO__#${{ runner.temp }}/libs/fmt/lib/libfmt.so#g' config.toml
           sed -i 's#__FMT_INCLUDE_DIR__#${{ runner.temp }}/libs/fmt/include#g' config.toml
           export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${{ runner.temp }}/libs/fmt/lib/

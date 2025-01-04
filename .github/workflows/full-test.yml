@@ -5,25 +5,12 @@ on:
     branches: [main]
   pull_request:
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-
 jobs:
   ubuntu:
     runs-on: ${{ matrix.compiler.os }}
     strategy:
       fail-fast: false
       matrix:
-        boost_version:
-          - 1.80.0
-          - 1.81.0
-          - 1.82.0
-          - 1.83.0
-          - 1.84.0
-          - 1.85.0
-          - 1.86.0
-          - 1.87.0
         compiler:
           - cc: clang
             cxx: clang++
@@ -90,30 +77,11 @@ jobs:
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           brew install fmt
 
-      - name: Restore & Cache boost (${{ matrix.boost_version }})
-        uses: actions/cache@v4
-        id: boost-cache
-        with:
-          path: ${{ runner.temp }}/libs/boost
-          key: ${{ env.CXX }}-boost-${{ matrix.boost_version }}
-      - name: Install boost (${{ matrix.boost_version }}) as static
-        if: steps.boost-cache.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p ${{ runner.temp }}/libs/boost
-          git clone -q -b boost-${{ matrix.boost_version }} --recursive https://github.com/boostorg/boost.git
-          cd boost
-          ./bootstrap.sh
-          sudo ./b2 link=static install -j4 --prefix=${{ runner.temp }}/libs/boost || exit 0
-        working-directory: ${{ runner.temp }}
-
       - name: Build and test
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           mkdir build && cd build
-          cmake ..             \
-            -DBUILD_TESTING=ON \
-            -DBoost_USE_STATIC_LIBS=ON \
-            -DBOOST_ROOT=${{ runner.temp }}/libs/boost
+          cmake .. -DBUILD_TESTING=ON
           make
           make test
 
@@ -128,15 +96,12 @@ jobs:
         with:
           submodules: true
 
-      - name: Install CMake, Boost, & fmt
-        run: brew install pkg-config cmake boost fmt
+      - name: Install CMake & fmt
+        run: brew install pkg-config cmake fmt
 
       - name: Build and test
         run: |
           mkdir build && cd build
-          cmake ..             \
-            -DBUILD_TESTING=ON \
-            -DBoost_USE_STATIC_LIBS=OFF \
-            -DBOOST_ROOT=${{ runner.temp }}/libs/boost
+          cmake .. -DBUILD_TESTING=ON
           make
           make test
