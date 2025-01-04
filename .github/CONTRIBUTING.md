@@ -26,9 +26,6 @@ Initialize submodules with command as follows:
 $ git sbumodule update --init --recursive
 ```
 
-The library does not depend on Boost, but the tests use Boost.
-Although we do not use the Boost library that needs to be built, we recommend that you install it so that CMake will automatically find it (Please refer to [Boost Wiki](https://github.com/boostorg/boost/wiki/Getting-Started)).
-
 The other tool you need besides the C ++ compiler to test is CMake.
 Please install CMake-3.1 or later which can specify C++17.
 

@@ -25,7 +25,6 @@ mitama-cpp-result/docs> $ poetry run mkdocs serve
 
 ## Dependencies
 
-* Boost: 1.80.0 or higher
 * fmt: 9.0.0 or higher
 
 ## Supported OS / Compiler / Language Standard

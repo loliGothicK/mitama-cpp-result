@@ -5,8 +5,6 @@
 #include <mitama/result/result.hpp>
 #include <mitama/result/result_io.hpp>
 
-#include <boost/xpressive/xpressive.hpp>
-
 #include <cassert>
 #include <cstdint>
 #include <functional>
@@ -20,7 +18,6 @@
 #include <utility>
 #include <vector>
 
-using namespace boost::xpressive;
 using namespace mitama;
 using namespace std::string_literals;
 using namespace std::string_view_literals;
@@ -51,17 +48,13 @@ auto parse = [](str s) -> result<T, str>
   {
     if (std::is_integral_v<T>)
     {
-      using namespace boost::xpressive;
-      sregex re1 = +range('0', '9');
-      smatch what;
-      if (!regex_match(s, what, re1))
-        return failure("parse error at string: "s + s);
-      if constexpr (std::is_unsigned_v<T>)
-      {
-        sregex re2 = as_xpr("-") >> +range('0', '9');
-        if (regex_match(s, what, re1))
-          return failure("negative value: "s + s);
-      };
+      if (s.empty())
+        return failure("parse error at empty string"s);
+
+      for (const char c : s)
+        if (c < '0' || '9' < c)
+          return failure("parse error at string: "s + s);
+
       if constexpr (std::is_same_v<T, int>)
       {
         return success(std::stoi(s));
@@ -417,14 +410,18 @@ TEST_CASE("unwrap() test", "[result][unwrap]")
   }
   catch (const runtime_panic& p)
   {
-    using namespace boost::xpressive;
-    sregex re = as_xpr(
-                    "runtime panicked at 'called `basic_result::unwrap()` on a "
-                    "value: `failure(\"emergency failure\")`', "
-                )
-                >> *_ >> as_xpr(":") >> +range('0', '9');
-    smatch what;
-    REQUIRE(regex_match(std::string{ p.what() }, what, re));
+    const std::string_view expected =
+        "runtime panicked at 'called `basic_result::unwrap()` on a "
+        "value: `failure(\"emergency failure\")`', ";
+
+    const std::string_view what = p.what();
+    REQUIRE(what.starts_with(expected));
+
+    std::size_t i = expected.size();
+    for (; i < what.size() && what[i] != ':'; ++i)
+      ;
+    REQUIRE(i++ != what.size());
+    REQUIRE((what[i] >= '0' && what[i] <= '9'));
   }
 }
 
@@ -437,14 +434,17 @@ TEST_CASE("unwrap_err() test", "[result][unwrap_err]")
   }
   catch (const runtime_panic& p)
   {
-    using namespace boost::xpressive;
-    sregex re =
-        as_xpr(
-            R"(runtime panicked at 'called `basic_result::unwrap_err()` on a value: `success(2)`', )"
-        )
-        >> *_ >> as_xpr(":") >> +range('0', '9');
-    smatch what;
-    REQUIRE(regex_match(std::string{ p.what() }, what, re));
+    const std::string_view expected =
+        R"(runtime panicked at 'called `basic_result::unwrap_err()` on a value: `success(2)`', )";
+
+    const std::string_view what = p.what();
+    REQUIRE(what.starts_with(expected));
+
+    std::size_t i = expected.size();
+    for (; i < what.size() && what[i] != ':'; ++i)
+      ;
+    REQUIRE(i++ != what.size());
+    REQUIRE((what[i] >= '0' && what[i] <= '9'));
   }
 
   {

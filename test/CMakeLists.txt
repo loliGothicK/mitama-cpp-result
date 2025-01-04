@@ -6,7 +6,6 @@ set(TEST_NAMES
 
 set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
 
-find_package(Boost 1.80.0 REQUIRED)
 find_package(fmt 9.0.0 CONFIG REQUIRED)
 
 message($CMAKE)
@@ -25,7 +24,6 @@ foreach(TEST_NAME ${TEST_NAMES})
   endif()
 
   target_include_directories(${TEST_NAME}
-    PRIVATE ${Boost_INCLUDE_DIRS}
     PRIVATE ${CMAKE_SOURCE_DIR}/include
     PRIVATE ${CMAKE_SOURCE_DIR}/Catch2/single_include
     PRIVATE ${CMAKE_SOURCE_DIR}/mitama-utest-utilities/include
