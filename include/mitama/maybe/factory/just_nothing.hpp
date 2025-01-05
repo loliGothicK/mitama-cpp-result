@@ -6,8 +6,6 @@
 #include <mitama/result/traits/impl_traits.hpp>
 
 #include <iostream>
-#include <string>
-#include <string_view>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -104,77 +102,66 @@ public:
   using type = T;
 
   template <class U = T>
-  constexpr just_t(
-      std::enable_if_t<std::is_same_v<std::monostate, U>, std::nullptr_t> =
-          nullptr
-  )
+    requires std::is_same_v<std::monostate, U>
+  constexpr just_t(std::nullptr_t = nullptr)
   { /* whatever */
   }
 
-  template <
-      class U, where<
-                   not_self<std::decay_t<U>>, std::is_constructible<T, U>,
-                   std::is_convertible<U, T>> = required>
+  template <class U>
+    requires not_self<std::decay_t<U>>::value
+             && std::is_constructible_v<T, U> && std::is_convertible_v<U, T>
   constexpr just_t(U&& u) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::forward<U>(u))
   {
   }
 
-  template <
-      class U, where<
-                   not_self<std::decay_t<U>>, std::is_constructible<T, U>,
-                   std::negation<std::is_convertible<U, T>>> = required>
+  template <class U>
+    requires not_self<std::decay_t<U>>::value
+             && std::is_constructible_v<T, U> && (!std::is_convertible_v<U, T>)
   explicit constexpr just_t(U&& u
   ) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::forward<U>(u))
   {
   }
 
-  template <
-      typename U,
-      where<
-          std::negation<std::is_same<T, U>>, std::is_constructible<T, const U&>,
-          std::is_convertible<const U&, T>> = required>
+  template <typename U>
+    requires(!std::is_same_v<T, U>) && std::is_constructible_v<T, const U&>
+            && std::is_convertible_v<const U&, T>
   constexpr just_t(const just_t<U>& t
   ) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(t.get())
   {
   }
 
-  template <
-      typename U,
-      where<
-          std::negation<std::is_same<T, U>>, std::is_constructible<T, const U&>,
-          std::negation<std::is_convertible<const U&, T>>> = required>
+  template <typename U>
+    requires(!std::is_same_v<T, U>) && std::is_constructible_v<T, const U&>
+            && (!std::is_convertible_v<const U&, T>)
   explicit constexpr just_t(const just_t<U>& t
   ) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(t.get())
   {
   }
 
-  template <
-      typename U,
-      where<
-          std::negation<std::is_same<T, U>>, std::is_constructible<T, U&&>,
-          std::is_convertible<U&&, T>> = required>
+  template <typename U>
+    requires(!std::is_same_v<T, U>)
+            && std::is_constructible_v<T, U&&> && std::is_convertible_v<U&&, T>
   constexpr just_t(just_t<U>&& t
   ) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::move(t.get()))
   {
   }
 
-  template <
-      typename U,
-      where<
-          std::negation<std::is_same<T, U>>, std::is_constructible<T, U&&>,
-          std::negation<std::is_convertible<U&&, T>>> = required>
+  template <typename U>
+    requires(!std::is_same_v<T, U>) && std::is_constructible_v<T, U&&>
+            && (!std::is_convertible_v<U &&, T>)
   explicit constexpr just_t(just_t<U>&& t
   ) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::move(t.get()))
   {
   }
 
-  template <class... Args, where<std::is_constructible<T, Args...>> = required>
+  template <class... Args>
+    requires std::is_constructible_v<T, Args...>
   explicit constexpr just_t(
       std::in_place_t, Args&&... args
   ) noexcept(std::is_nothrow_constructible_v<T, Args...>)
@@ -193,22 +180,22 @@ public:
   }
 
   template <class U>
-  constexpr std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-  operator==(const just_t<U>& rhs) const
+    requires meta::is_comparable_with<T, U>::value
+  constexpr bool operator==(const just_t<U>& rhs) const
   {
     return this->x == rhs.get();
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-  operator==(const maybe<U>& lhs, const just_t& rhs)
+    requires meta::is_comparable_with<T, U>::value
+  friend bool operator==(const maybe<U>& lhs, const just_t& rhs)
   {
     return lhs && (lhs.unwrap() == rhs.get());
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-  operator==(const just_t& lhs, const maybe<U>& rhs)
+    requires meta::is_comparable_with<T, U>::value
+  friend bool operator==(const just_t& lhs, const maybe<U>& rhs)
   {
     return rhs && (lhs.get() == rhs.unwrap());
   }
@@ -224,22 +211,22 @@ public:
   }
 
   template <class U>
-  constexpr std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-  operator!=(const just_t<U>& rhs) const
+    requires meta::is_comparable_with<T, U>::value
+  constexpr bool operator!=(const just_t<U>& rhs) const
   {
     return !(this->x == rhs.get());
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-  operator!=(const maybe<U>& lhs, const just_t& rhs)
+    requires meta::is_comparable_with<T, U>::value
+  friend bool operator!=(const maybe<U>& lhs, const just_t& rhs)
   {
     return lhs.is_nothing() || !(lhs.unwrap() == rhs.get());
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-  operator!=(const just_t& lhs, const maybe<U>& rhs)
+    requires meta::is_comparable_with<T, U>::value
+  friend bool operator!=(const just_t& lhs, const maybe<U>& rhs)
   {
     return rhs.is_nothing() || !(lhs.get() == rhs.unwrap());
   }
@@ -255,22 +242,22 @@ public:
   }
 
   template <class U>
-  constexpr std::enable_if_t<meta::is_less_comparable_with<T, U>::value, bool>
-  operator<(const just_t<U>& rhs) const
+    requires meta::is_less_comparable_with<T, U>::value
+  constexpr bool operator<(const just_t<U>& rhs) const
   {
     return this->x < rhs.get();
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_less_comparable_with<T, U>::value, bool>
-  operator<(const just_t& lhs, const maybe<U>& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+  friend bool operator<(const just_t& lhs, const maybe<U>& rhs)
   {
     return rhs ? lhs.get() < rhs.unwrap() : false;
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_less_comparable_with<T, U>::value, bool>
-  operator<(const maybe<U>& lhs, const just_t& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+  friend bool operator<(const maybe<U>& lhs, const just_t& rhs)
   {
     return lhs ? lhs.unwrap() < rhs.get() : true;
   }
@@ -286,32 +273,26 @@ public:
   }
 
   template <class U>
-  constexpr std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<T, U>, meta::is_comparable_with<T, U>>,
-      bool>
-  operator<=(const just_t<U>& rhs) const
+    requires meta::is_less_comparable_with<T, U>::value
+             && meta::is_comparable_with<T, U>::value
+  constexpr bool operator<=(const just_t<U>& rhs) const
   {
     return this->x < rhs.get() || this->x == rhs.get();
   }
 
   template <class U>
-  friend std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<T, U>, meta::is_comparable_with<T, U>>,
-      bool>
-  operator<=(const just_t& lhs, const maybe<U>& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+             && meta::is_comparable_with<T, U>::value
+  friend bool operator<=(const just_t& lhs, const maybe<U>& rhs)
   {
     return rhs ? (lhs.get() < rhs.unwrap() || lhs.get() == rhs.unwrap())
                : false;
   }
 
   template <class U>
-  friend std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<T, U>, meta::is_comparable_with<T, U>>,
-      bool>
-  operator<=(const maybe<U>& lhs, const just_t& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+             && meta::is_comparable_with<T, U>::value
+  friend bool operator<=(const maybe<U>& lhs, const just_t& rhs)
   {
     return lhs ? (lhs.unwrap() < rhs.get() || lhs.unwrap() == rhs.get()) : true;
   }
@@ -327,22 +308,22 @@ public:
   }
 
   template <class U>
-  std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-  operator>(const just_t<U>& rhs) const
+    requires meta::is_comparable_with<T, U>::value
+  bool operator>(const just_t<U>& rhs) const
   {
     return rhs < *this;
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_less_comparable_with<T, U>::value, bool>
-  operator>(const just_t& lhs, const maybe<U>& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+  friend bool operator>(const just_t& lhs, const maybe<U>& rhs)
   {
     return rhs < lhs;
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_less_comparable_with<T, U>::value, bool>
-  operator>(const maybe<U>& lhs, const just_t& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+  friend bool operator>(const maybe<U>& lhs, const just_t& rhs)
   {
     return rhs < lhs;
   }
@@ -358,31 +339,25 @@ public:
   }
 
   template <class U>
-  std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<T, U>, meta::is_comparable_with<T, U>>,
-      bool>
-  operator>=(const just_t<U>& rhs) const
+    requires meta::is_less_comparable_with<T, U>::value
+             && meta::is_comparable_with<T, U>::value
+  bool operator>=(const just_t<U>& rhs) const
   {
     return rhs <= *this;
   }
 
   template <class U>
-  friend std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<T, U>, meta::is_comparable_with<T, U>>,
-      bool>
-  operator>=(const just_t& lhs, const maybe<U>& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+             && meta::is_comparable_with<T, U>::value
+  friend bool operator>=(const just_t& lhs, const maybe<U>& rhs)
   {
     return rhs <= lhs;
   }
 
   template <class U>
-  friend std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<T, U>, meta::is_comparable_with<T, U>>,
-      bool>
-  operator>=(const maybe<U>& lhs, const just_t& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+             && meta::is_comparable_with<T, U>::value
+  friend bool operator>=(const maybe<U>& lhs, const just_t& rhs)
   {
     return rhs <= lhs;
   }
@@ -445,22 +420,22 @@ public:
   }
 
   template <class U>
-  constexpr std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-  operator==(const just_t<U>& rhs) const
+    requires meta::is_comparable_with<T, U>::value
+  constexpr bool operator==(const just_t<U>& rhs) const
   {
     return this->x == rhs.get();
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-  operator==(const maybe<U>& lhs, const just_t& rhs)
+    requires meta::is_comparable_with<T, U>::value
+  friend bool operator==(const maybe<U>& lhs, const just_t& rhs)
   {
     return lhs && (lhs.unwrap() == rhs.get());
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-  operator==(const just_t& lhs, const maybe<U>& rhs)
+    requires meta::is_comparable_with<T, U>::value
+  friend bool operator==(const just_t& lhs, const maybe<U>& rhs)
   {
     return rhs && (lhs.get() == rhs.unwrap());
   }
@@ -476,22 +451,22 @@ public:
   }
 
   template <class U>
-  constexpr std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-  operator!=(const just_t<U>& rhs) const
+    requires meta::is_comparable_with<T, U>::value
+  constexpr bool operator!=(const just_t<U>& rhs) const
   {
     return !(this->x == rhs.get());
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-  operator!=(const maybe<U>& lhs, const just_t& rhs)
+    requires meta::is_comparable_with<T, U>::value
+  friend bool operator!=(const maybe<U>& lhs, const just_t& rhs)
   {
     return lhs.is_nothing() || !(lhs.unwrap() == rhs.get());
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-  operator!=(const just_t& lhs, const maybe<U>& rhs)
+    requires meta::is_comparable_with<T, U>::value
+  friend bool operator!=(const just_t& lhs, const maybe<U>& rhs)
   {
     return rhs.is_nothing() || !(lhs.get() == rhs.unwrap());
   }
@@ -507,22 +482,22 @@ public:
   }
 
   template <class U>
-  constexpr std::enable_if_t<meta::is_less_comparable_with<T, U>::value, bool>
-  operator<(const just_t<U>& rhs) const
+    requires meta::is_less_comparable_with<T, U>::value
+  constexpr bool operator<(const just_t<U>& rhs) const
   {
     return this->x < rhs.get();
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_less_comparable_with<T, U>::value, bool>
-  operator<(const just_t& lhs, const maybe<U>& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+  friend bool operator<(const just_t& lhs, const maybe<U>& rhs)
   {
     return rhs ? lhs.get() < rhs.unwrap() : false;
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_less_comparable_with<T, U>::value, bool>
-  operator<(const maybe<U>& lhs, const just_t& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+  friend bool operator<(const maybe<U>& lhs, const just_t& rhs)
   {
     return lhs ? lhs.unwrap() < rhs.get() : true;
   }
@@ -538,32 +513,26 @@ public:
   }
 
   template <class U>
-  constexpr std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<T, U>, meta::is_comparable_with<T, U>>,
-      bool>
-  operator<=(const just_t<U>& rhs) const
+    requires meta::is_less_comparable_with<T, U>::value
+             && meta::is_comparable_with<T, U>::value
+  constexpr bool operator<=(const just_t<U>& rhs) const
   {
     return this->x < rhs.get() || this->x == rhs.get();
   }
 
   template <class U>
-  friend std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<T, U>, meta::is_comparable_with<T, U>>,
-      bool>
-  operator<=(const just_t& lhs, const maybe<U>& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+             && meta::is_comparable_with<T, U>::value
+  friend bool operator<=(const just_t& lhs, const maybe<U>& rhs)
   {
     return rhs ? (lhs.get() < rhs.unwrap() || lhs.get() == rhs.unwrap())
                : false;
   }
 
   template <class U>
-  friend std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<T, U>, meta::is_comparable_with<T, U>>,
-      bool>
-  operator<=(const maybe<U>& lhs, const just_t& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+             && meta::is_comparable_with<T, U>::value
+  friend bool operator<=(const maybe<U>& lhs, const just_t& rhs)
   {
     return lhs ? (lhs.unwrap() < rhs.get() || lhs.unwrap() == rhs.get()) : true;
   }
@@ -579,22 +548,22 @@ public:
   }
 
   template <class U>
-  std::enable_if_t<meta::is_comparable_with<T, U>::value, bool>
-  operator>(const just_t<U>& rhs) const
+    requires meta::is_comparable_with<T, U>::value
+  bool operator>(const just_t<U>& rhs) const
   {
     return rhs < *this;
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_less_comparable_with<T, U>::value, bool>
-  operator>(const just_t& lhs, const maybe<U>& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+  friend bool operator>(const just_t& lhs, const maybe<U>& rhs)
   {
     return rhs < lhs;
   }
 
   template <class U>
-  friend std::enable_if_t<meta::is_less_comparable_with<T, U>::value, bool>
-  operator>(const maybe<U>& lhs, const just_t& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+  friend bool operator>(const maybe<U>& lhs, const just_t& rhs)
   {
     return rhs < lhs;
   }
@@ -610,31 +579,25 @@ public:
   }
 
   template <class U>
-  std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<T, U>, meta::is_comparable_with<T, U>>,
-      bool>
-  operator>=(const just_t<U>& rhs) const
+    requires meta::is_less_comparable_with<T, U>::value
+             && meta::is_comparable_with<T, U>::value
+  bool operator>=(const just_t<U>& rhs) const
   {
     return rhs <= *this;
   }
 
   template <class U>
-  friend std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<T, U>, meta::is_comparable_with<T, U>>,
-      bool>
-  operator>=(const just_t& lhs, const maybe<U>& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+             && meta::is_comparable_with<T, U>::value
+  friend bool operator>=(const just_t& lhs, const maybe<U>& rhs)
   {
     return rhs <= lhs;
   }
 
   template <class U>
-  friend std::enable_if_t<
-      std::conjunction_v<
-          meta::is_less_comparable_with<T, U>, meta::is_comparable_with<T, U>>,
-      bool>
-  operator>=(const maybe<U>& lhs, const just_t& rhs)
+    requires meta::is_less_comparable_with<T, U>::value
+             && meta::is_comparable_with<T, U>::value
+  friend bool operator>=(const maybe<U>& lhs, const just_t& rhs)
   {
     return rhs <= lhs;
   }
@@ -654,7 +617,8 @@ public:
 };
 
 template <class T>
-inline std::enable_if_t<trait::formattable<T>::value, std::ostream&>
+  requires trait::formattable<T>::value
+inline std::ostream&
 operator<<(std::ostream& os, const just_t<T>& j)
 {
   return os << fmt::format("just({})", quote_str(j.get()));

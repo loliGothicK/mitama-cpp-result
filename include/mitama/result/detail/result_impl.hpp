@@ -9,7 +9,6 @@
 #include <mitama/result/traits/impl_traits.hpp>
 
 #include <functional>
-#include <optional>
 #include <type_traits>
 #include <utility>
 
