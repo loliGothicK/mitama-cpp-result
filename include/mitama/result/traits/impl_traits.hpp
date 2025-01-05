@@ -3,23 +3,9 @@
 #include <mitama/result/detail/meta.hpp>
 
 #include <iostream>
-#include <string>
-#include <string_view>
 #include <type_traits>
 #include <utility>
 #include <variant>
-
-namespace mitama
-{
-
-// Trait Helpers
-
-template <class... Requires>
-using where = std::enable_if_t<std::conjunction_v<Requires...>, std::nullptr_t>;
-
-inline constexpr std::nullptr_t required = nullptr;
-
-} // namespace mitama
 
 namespace mitama::trait
 {
@@ -51,10 +37,9 @@ struct formattable : std::false_type
 };
 
 template <class T>
-struct formattable<
-    T, std::enable_if_t<std::disjunction_v<
-           formattable_element<T>, formattable_range<T>,
-           formattable_dictionary<T>, formattable_tuple<T>>>> : std::true_type
+  requires formattable_element<T>::value || formattable_range<T>::value
+           || formattable_dictionary<T>::value || formattable_tuple<T>::value
+struct formattable<T> : std::true_type
 {
 };
 
@@ -78,7 +63,8 @@ struct formattable_element<
 };
 
 template <class Range>
-struct formattable_range<Range, std::enable_if_t<meta::is_range<Range>::value>>
+  requires meta::is_range<Range>::value
+struct formattable_range<Range>
     : formattable<typename std::remove_cvref_t<Range>::value_type>
 {
 };
@@ -109,8 +95,8 @@ namespace mitama::trait
 {
 
 template <class Tuple>
-struct formattable_tuple<
-    Tuple, std::enable_if_t<meta::is_tuple_like<Tuple>::value>>
+  requires meta::is_tuple_like<Tuple>::value
+struct formattable_tuple<Tuple>
     : meta::detail::is_formattable_tuple_detail<
           Tuple, std::make_index_sequence<std::tuple_size_v<Tuple>>>
 {

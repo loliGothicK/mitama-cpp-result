@@ -93,23 +93,13 @@ struct is_less_comparable_with<
 {
 };
 
-namespace detail
-{
-  template <class AlwaysVoid, class... Types>
-  struct has_common_type : std::false_type
-  {
-  };
-  template <class... Types>
-  struct has_common_type<
-      std::enable_if_t<
-          ::mitama::meta::has_type<std::common_type<Types...>>::value>,
-      Types...> : std::true_type
-  {
-  };
-} // namespace detail
-
 template <class... Types>
-struct has_common_type : detail::has_common_type<void, Types...>
+struct has_common_type : std::false_type
+{
+};
+template <class... Types>
+  requires ::mitama::meta::has_type<std::common_type<Types...>>::value
+struct has_common_type<Types...> : std::true_type
 {
 };
 
