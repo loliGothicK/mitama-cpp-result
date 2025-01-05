@@ -28,10 +28,8 @@ public:
 ///   where
 ///     T: Default
 template <mutability _mu, class T, class E>
-class unwrap_or_default_friend_injector<
-    basic_result<_mu, T, E>,
-    std::enable_if_t<std::disjunction_v<
-        std::is_default_constructible<T>, std::is_aggregate<T>>>>
+  requires std::is_default_constructible_v<T> || std::is_aggregate_v<T>
+class unwrap_or_default_friend_injector<basic_result<_mu, T, E>>
 {
 public:
   /// @brief
@@ -709,8 +707,8 @@ public:
 };
 
 template <mutability _mu, class T, class E>
-class map_apply_friend_injector<
-    basic_result<_mu, T, E>, std::enable_if_t<is_tuple_like<T>::value>>
+  requires is_tuple_like<T>::value
+class map_apply_friend_injector<basic_result<_mu, T, E>>
 {
 public:
   ///   Maps a basic_result<(Ts...), E> to basic_result<U, E> by applying a
@@ -755,8 +753,8 @@ public:
 };
 
 template <mutability _mu, class T, class E>
-class map_err_apply_friend_injector<
-    basic_result<_mu, T, E>, std::enable_if_t<is_tuple_like<E>::value>>
+  requires is_tuple_like<E>::value
+class map_err_apply_friend_injector<basic_result<_mu, T, E>>
 {
 public:
   ///   Maps a basic_result<T, (Ts...)> to basic_result<T, F> by applying a
@@ -850,23 +848,20 @@ public:
 };
 
 template <mutability _mu, class T, class E>
-class and_then_apply_friend_injector<
-    basic_result<_mu, T, E>, std::enable_if_t<is_tuple_like<T>::value>>
+  requires is_tuple_like<T>::value
+class and_then_apply_friend_injector<basic_result<_mu, T, E>>
 {
 public:
-  template <
-      class O, class... Args,
-      std::enable_if_t<
-          is_convertible_result_with_v<
-              decltype(std::apply(
-                  std::declval<O>(),
-                  std::tuple_cat(
-                      std::declval<const T&>(),
-                      std::forward_as_tuple(std::declval<Args&&>()...)
-                  )
-              )),
-              failure_t<E>>,
-          bool> = false>
+  template <class O, class... Args>
+    requires is_convertible_result_with_v<
+        decltype(std::apply(
+            std::declval<O>(),
+            std::tuple_cat(
+                std::declval<const T&>(),
+                std::forward_as_tuple(std::declval<Args&&>()...)
+            )
+        )),
+        failure_t<E>>
   constexpr auto and_then_apply(O&& op, Args&&... args) &
   {
     using result_type = decltype(std::apply(
@@ -890,19 +885,16 @@ public:
                  ));
   }
 
-  template <
-      class O, class... Args,
-      std::enable_if_t<
-          is_convertible_result_with_v<
-              decltype(std::apply(
-                  std::declval<O>(),
-                  std::tuple_cat(
-                      std::declval<const T&>(),
-                      std::forward_as_tuple(std::declval<Args&&>()...)
-                  )
-              )),
-              failure_t<E>>,
-          bool> = false>
+  template <class O, class... Args>
+    requires is_convertible_result_with_v<
+        decltype(std::apply(
+            std::declval<O>(),
+            std::tuple_cat(
+                std::declval<const T&>(),
+                std::forward_as_tuple(std::declval<Args&&>()...)
+            )
+        )),
+        failure_t<E>>
   constexpr auto and_then_apply(O&& op, Args&&... args) const&
   {
     using result_type = decltype(std::apply(
@@ -928,19 +920,16 @@ public:
                  );
   }
 
-  template <
-      class O, class... Args,
-      std::enable_if_t<
-          is_convertible_result_with_v<
-              decltype(std::apply(
-                  std::declval<O>(),
-                  std::tuple_cat(
-                      std::declval<T>(),
-                      std::forward_as_tuple(std::declval<Args&&>()...)
-                  )
-              )),
-              failure_t<E>>,
-          bool> = false>
+  template <class O, class... Args>
+    requires is_convertible_result_with_v<
+        decltype(std::apply(
+            std::declval<O>(),
+            std::tuple_cat(
+                std::declval<T>(),
+                std::forward_as_tuple(std::declval<Args&&>()...)
+            )
+        )),
+        failure_t<E>>
   constexpr auto and_then_apply(O&& op, Args&&... args) &&
   {
     using result_type = decltype(std::apply(
@@ -974,23 +963,20 @@ public:
 };
 
 template <mutability _mu, class T, class E>
-class or_else_apply_friend_injector<
-    basic_result<_mu, T, E>, std::enable_if_t<is_tuple_like<E>::value>>
+  requires is_tuple_like<E>::value
+class or_else_apply_friend_injector<basic_result<_mu, T, E>>
 {
 public:
-  template <
-      class O, class... Args,
-      std::enable_if_t<
-          is_convertible_result_with_v<
-              decltype(std::apply(
-                  std::declval<O>(),
-                  std::tuple_cat(
-                      std::declval<const E&>(),
-                      std::forward_as_tuple(std::declval<Args&&>()...)
-                  )
-              )),
-              success_t<T>>,
-          bool> = false>
+  template <class O, class... Args>
+    requires is_convertible_result_with_v<
+        decltype(std::apply(
+            std::declval<O>(),
+            std::tuple_cat(
+                std::declval<const E&>(),
+                std::forward_as_tuple(std::declval<Args&&>()...)
+            )
+        )),
+        success_t<T>>
   constexpr auto or_else_apply(O&& op, Args&&... args) const&
   {
     using result_type = decltype(std::apply(
