@@ -7,7 +7,7 @@
 #include <utility>
 #include <variant>
 
-std::ostream&
+inline std::ostream&
 operator<<(std::ostream& os, const std::monostate&)
 {
   return os << "()";
