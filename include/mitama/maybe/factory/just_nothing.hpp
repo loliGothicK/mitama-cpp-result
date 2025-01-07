@@ -3,7 +3,6 @@
 #include <mitama/maybe/fwd/maybe_fwd.hpp>
 #include <mitama/mitamagic/format.hpp>
 #include <mitama/result/detail/meta.hpp>
-#include <mitama/result/traits/impl_traits.hpp>
 
 #include <iostream>
 #include <tuple>
@@ -617,7 +616,6 @@ public:
 };
 
 template <class T>
-  requires trait::formattable<T>::value
 inline std::ostream&
 operator<<(std::ostream& os, const just_t<T>& j)
 {

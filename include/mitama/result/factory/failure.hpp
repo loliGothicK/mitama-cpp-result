@@ -3,7 +3,6 @@
 #include <mitama/mitamagic/format.hpp>
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
-#include <mitama/result/traits/impl_traits.hpp>
 
 #include <iostream>
 #include <tuple>
@@ -468,7 +467,6 @@ failure(Types&&... v)
 ///   Output its contained value with pretty format, and is used by `operator<<`
 ///   found by ADL.
 template <class E>
-  requires trait::formattable<E>::value
 inline std::ostream&
 operator<<(std::ostream& os, const failure_t<E>& err)
 {

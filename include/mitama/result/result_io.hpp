@@ -18,7 +18,6 @@ namespace mitama
 ///   Output its contained value with pretty format, and is used by `operator<<`
 ///   found by ADL.
 template <mutability _, class T, class E>
-  requires trait::formattable<T>::value && trait::formattable<E>::value
 std::ostream&
 operator<<(std::ostream& os, const basic_result<_, T, E>& res)
 {
