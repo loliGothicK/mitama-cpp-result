@@ -6,7 +6,6 @@
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
 #include <mitama/result/traits/deref.hpp>
-#include <mitama/result/traits/impl_traits.hpp>
 
 #include <functional>
 #include <type_traits>

@@ -8,7 +8,6 @@
 #include <mitama/result/detail/meta.hpp>
 #include <mitama/result/factory/failure.hpp>
 #include <mitama/result/factory/success.hpp>
-#include <mitama/result/traits/impl_traits.hpp>
 
 #include <cassert>
 #include <functional>
@@ -1166,7 +1165,6 @@ operator>=(T&& lhs, const maybe<U>& rhs)
 ///   Output its contained value with pretty format, and is used by `operator<<`
 ///   found by ADL.
 template <class T>
-  requires trait::formattable<T>::value
 std::ostream&
 operator<<(std::ostream& os, const maybe<T>& may)
 {

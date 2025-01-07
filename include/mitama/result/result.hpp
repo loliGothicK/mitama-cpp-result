@@ -7,9 +7,10 @@
 #include <mitama/result/detail/meta.hpp>
 #include <mitama/result/factory/failure.hpp>
 #include <mitama/result/factory/success.hpp>
-#include <mitama/result/traits/impl_traits.hpp>
 
 #include <cstddef>
+#include <fmt/core.h>
+#include <fmt/std.h>
 #include <functional>
 #include <memory>
 #include <string_view>
@@ -1365,7 +1366,7 @@ public:
   ///   failure's value.
   force_add_const_t<T>& unwrap() const&
   {
-    if constexpr (trait::formattable_element<E>::value)
+    if constexpr (fmt::is_formattable<E>::value)
     {
       if (is_ok())
       {
@@ -1401,7 +1402,7 @@ public:
   std::conditional_t<is_mut_v<_mutability>, T&, force_add_const_t<T>&>
   unwrap() &
   {
-    if constexpr (trait::formattable_element<E>::value)
+    if constexpr (fmt::is_formattable<E>::value)
     {
       if (is_ok())
       {
@@ -1436,7 +1437,7 @@ public:
   ///   success's value.
   force_add_const_t<E>& unwrap_err() const&
   {
-    if constexpr (trait::formattable_element<T>::value)
+    if constexpr (fmt::is_formattable<T>::value)
     {
       if (is_err())
       {
@@ -1472,7 +1473,7 @@ public:
   std::conditional_t<is_mut_v<_mutability>, E&, force_add_const_t<E>&>
   unwrap_err() &
   {
-    if constexpr (trait::formattable_element<T>::value)
+    if constexpr (fmt::is_formattable<T>::value)
     {
       if (is_err())
       {
