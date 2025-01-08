@@ -18,6 +18,7 @@
 #include <type_traits>
 #include <utility>
 #include <variant>
+#include <version>
 
 #if __cpp_lib_variant >= 202106L
 #  define MITAMA_VARIANT_CONSTEXPR constexpr
