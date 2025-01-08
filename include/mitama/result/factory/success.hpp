@@ -44,7 +44,8 @@ public:
   template <class U>
     requires not_self<std::decay_t<U>>::value
              && std::is_constructible_v<T, U> && (!std::is_convertible_v<U, T>)
-  explicit constexpr success_t(U&& u
+  explicit constexpr success_t(
+      U&& u
   ) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::forward<U>(u))
   {
@@ -53,7 +54,8 @@ public:
   template <typename U>
     requires(!std::is_same_v<T, U>) && std::is_constructible_v<T, const U&>
             && std::is_convertible_v<const U&, T>
-  constexpr success_t(const success_t<U>& t
+  constexpr success_t(
+      const success_t<U>& t
   ) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(t.get())
   {
@@ -62,7 +64,8 @@ public:
   template <typename U>
     requires(!std::is_same_v<T, U>) && std::is_constructible_v<T, const U&>
             && (!std::is_convertible_v<const U&, T>)
-  explicit constexpr success_t(const success_t<U>& t
+  explicit constexpr success_t(
+      const success_t<U>& t
   ) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(t.get())
   {
@@ -71,7 +74,8 @@ public:
   template <typename U>
     requires(!std::is_same_v<T, U>)
             && std::is_constructible_v<T, U&&> && std::is_convertible_v<U&&, T>
-  constexpr success_t(success_t<U>&& t
+  constexpr success_t(
+      success_t<U>&& t
   ) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::move(t.get()))
   {
@@ -80,7 +84,8 @@ public:
   template <typename U>
     requires(!std::is_same_v<T, U>) && std::is_constructible_v<T, U&&>
             && (!std::is_convertible_v<U &&, T>)
-  explicit constexpr success_t(success_t<U>&& t
+  explicit constexpr success_t(
+      success_t<U>&& t
   ) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::move(t.get()))
   {
@@ -220,15 +225,15 @@ public:
     return true;
   }
 
-  T& get() &
+  constexpr T& get() &
   {
     return x;
   }
-  const T& get() const&
+  constexpr const T& get() const&
   {
     return x;
   }
-  T&& get() &&
+  constexpr T&& get() &&
   {
     return std::move(x);
   }
@@ -390,15 +395,15 @@ public:
     return true;
   }
 
-  T& get() &
+  constexpr T& get() &
   {
     return x.get();
   }
-  const T& get() const&
+  constexpr const T& get() const&
   {
     return x.get();
   }
-  T& get() &&
+  constexpr T& get() &&
   {
     return x.get();
   }
@@ -414,7 +419,7 @@ public:
   {
   }
 
-  auto operator()() &&
+  constexpr auto operator()() &&
   {
     return std::apply(
         [](auto&&... fwd)
@@ -425,7 +430,7 @@ public:
 };
 
 template <class Target = void, class... Types>
-inline auto
+inline constexpr auto
 success(Types&&... v)
 {
   if constexpr (!std::is_void_v<Target>)
