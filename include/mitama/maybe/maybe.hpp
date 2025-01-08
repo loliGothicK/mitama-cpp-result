@@ -471,13 +471,11 @@ public:
   constexpr auto map(F&& f, Args&&... args) &
   {
     using result_type = std::invoke_result_t<F&&, value_type&, Args&&...>;
-    return is_just() ? maybe<result_type>{ just(
-                           std::invoke(
-                               std::forward<F>(f), unwrap(),
-                               std::forward<Args>(args)...
-                           )
-                       ) }
-                     : nothing;
+    return is_just()
+               ? maybe<result_type>{ just(std::invoke(
+                     std::forward<F>(f), unwrap(), std::forward<Args>(args)...
+                 )) }
+               : nothing;
   }
 
   template <class F, class... Args>
@@ -485,13 +483,11 @@ public:
   constexpr auto map(F&& f, Args&&... args) const&
   {
     using result_type = std::invoke_result_t<F&&, const value_type&, Args&&...>;
-    return is_just() ? maybe<result_type>{ just(
-                           std::invoke(
-                               std::forward<F>(f), unwrap(),
-                               std::forward<Args>(args)...
-                           )
-                       ) }
-                     : nothing;
+    return is_just()
+               ? maybe<result_type>{ just(std::invoke(
+                     std::forward<F>(f), unwrap(), std::forward<Args>(args)...
+                 )) }
+               : nothing;
   }
 
   template <class F, class... Args>
@@ -499,12 +495,10 @@ public:
   constexpr auto map(F&& f, Args&&... args) &&
   {
     using result_type = std::invoke_result_t<F&&, value_type&&, Args&&...>;
-    return is_just() ? maybe<result_type>{ just(
-                           std::invoke(
-                               std::forward<F>(f), std::move(unwrap()),
-                               std::forward<Args>(args)...
-                           )
-                       ) }
+    return is_just() ? maybe<result_type>{ just(std::invoke(
+                           std::forward<F>(f), std::move(unwrap()),
+                           std::forward<Args>(args)...
+                       )) }
                      : nothing;
   }
 

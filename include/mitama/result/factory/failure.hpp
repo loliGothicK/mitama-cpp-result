@@ -44,8 +44,7 @@ public:
   template <class U>
     requires not_self<std::decay_t<U>>::value
              && std::is_constructible_v<E, U> && (!std::is_convertible_v<U, E>)
-  explicit constexpr failure_t(
-      U&& u
+  explicit constexpr failure_t(U&& u
   ) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(std::forward<U>(u))
   {
@@ -54,8 +53,7 @@ public:
   template <typename U>
     requires(!std::is_same_v<E, U>) && std::is_constructible_v<E, const U&>
             && std::is_convertible_v<const U&, E>
-  constexpr failure_t(
-      const failure_t<U>& t
+  constexpr failure_t(const failure_t<U>& t
   ) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(t.get())
   {
@@ -64,8 +62,7 @@ public:
   template <typename U>
     requires(!std::is_same_v<E, U>) && std::is_constructible_v<E, const U&>
             && (!std::is_convertible_v<const U&, E>)
-  explicit constexpr failure_t(
-      const failure_t<U>& t
+  explicit constexpr failure_t(const failure_t<U>& t
   ) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(t.get())
   {
@@ -74,8 +71,7 @@ public:
   template <typename U>
     requires(!std::is_same_v<E, U>)
             && std::is_constructible_v<E, U&&> && std::is_convertible_v<U&&, E>
-  constexpr failure_t(
-      failure_t<U>&& t
+  constexpr failure_t(failure_t<U>&& t
   ) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(std::move(t.get()))
   {
@@ -84,8 +80,7 @@ public:
   template <typename U>
     requires(!std::is_same_v<E, U>) && std::is_constructible_v<E, U&&>
             && (!std::is_convertible_v<U &&, E>)
-  explicit constexpr failure_t(
-      failure_t<U>&& t
+  explicit constexpr failure_t(failure_t<U>&& t
   ) noexcept(std::is_nothrow_constructible_v<E, U>)
       : x(std::move(t.get()))
   {

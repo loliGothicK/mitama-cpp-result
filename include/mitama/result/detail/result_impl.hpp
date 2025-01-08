@@ -830,10 +830,8 @@ public:
                : static_cast<result_type>(failure_t{ std::apply(
                      std::forward<O>(op),
                      std::tuple_cat(
-                         std::move(
-                             static_cast<basic_result<_mu, T, E>*>(this)
-                                 ->unwrap_err()
-                         ),
+                         std::move(static_cast<basic_result<_mu, T, E>*>(this)
+                                       ->unwrap_err()),
                          std::forward_as_tuple(std::forward<Args>(args))...
                      )
                  ) });
@@ -914,10 +912,10 @@ public:
                          std::forward_as_tuple(std::forward<Args>(args))...
                      )
                  ))
-               : static_cast<result_type>(failure(
-                     static_cast<const basic_result<_mu, T, E>*>(this)
-                         ->unwrap_err()
-                 ));
+               : static_cast<result_type>(
+                     failure(static_cast<const basic_result<_mu, T, E>*>(this)
+                                 ->unwrap_err())
+                 );
   }
 
   template <class O, class... Args>
@@ -944,19 +942,14 @@ public:
                ? static_cast<result_type>(std::apply(
                      std::forward<O>(op),
                      std::tuple_cat(
-                         std::move(
-                             static_cast<basic_result<_mu, T, E>*>(this)
-                                 ->unwrap()
-                         ),
+                         std::move(static_cast<basic_result<_mu, T, E>*>(this)
+                                       ->unwrap()),
                          std::forward_as_tuple(std::forward<Args>(args)...)
                      )
                  ))
-               : static_cast<result_type>(failure(
-                     std::move(
-                         static_cast<basic_result<_mu, T, E>*>(this)
-                             ->unwrap_err()
-                     )
-                 ));
+               : static_cast<result_type>(failure(std::move(
+                     static_cast<basic_result<_mu, T, E>*>(this)->unwrap_err()
+                 )));
   }
 };
 

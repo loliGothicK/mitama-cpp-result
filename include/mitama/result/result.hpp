@@ -625,8 +625,10 @@ public:
   /// @brief
   ///   Produces a new basic_result, containing a reference into the original,
   ///   leaving the original in place.
-  constexpr auto as_ref() const& noexcept -> basic_result<
-      _mutability, const std::remove_cvref_t<T>&, const std::remove_cvref_t<E>&>
+  constexpr auto
+  as_ref() const& noexcept -> basic_result<
+                               _mutability, const std::remove_cvref_t<T>&,
+                               const std::remove_cvref_t<E>&>
   {
     if (is_ok())
     {
@@ -649,9 +651,10 @@ public:
   /// @brief
   ///   Converts from `basic_result<mutability::mut, T, E>&` to
   ///   `basic_result<mutability::immut, T&, E&>`.
-  constexpr auto as_mut() & noexcept -> basic_result<
-      mutability::immut, std::remove_reference_t<T>&,
-      std::remove_reference_t<E>&>
+  constexpr auto
+  as_mut() & noexcept -> basic_result<
+                          mutability::immut, std::remove_reference_t<T>&,
+                          std::remove_reference_t<E>&>
   {
     static_assert(
         !std::is_const_v<std::remove_reference_t<T>>,
@@ -855,10 +858,9 @@ public:
   ///   This function can be used to unpack a successful result while handling
   ///   an error.
   template <class Map, class Fallback>
-  constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) & noexcept(
-      std::is_nothrow_invocable_v<Fallback, E>
-      && std::is_nothrow_invocable_v<Map, T>
-  )
+  constexpr auto map_or_else(
+      Fallback&& _fallback, Map&& _map
+  ) & noexcept(std::is_nothrow_invocable_v<Fallback, E> && std::is_nothrow_invocable_v<Map, T>)
       -> std::common_type_t<
           std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>
     requires std::is_invocable_v<Map, T&> && std::is_invocable_v<Fallback, E&>
@@ -895,10 +897,9 @@ public:
   ///   This function can be used to unpack a successful result while handling
   ///   an error.
   template <class Map, class Fallback>
-  constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) const& noexcept(
-      std::is_nothrow_invocable_v<Fallback, E>
-      && std::is_nothrow_invocable_v<Map, T>
-  )
+  constexpr auto map_or_else(
+      Fallback&& _fallback, Map&& _map
+  ) const& noexcept(std::is_nothrow_invocable_v<Fallback, E> && std::is_nothrow_invocable_v<Map, T>)
       -> std::common_type_t<
           std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>
     requires std::is_invocable_v<Map, T> && std::is_invocable_v<Fallback, E>
@@ -935,10 +936,9 @@ public:
   ///   This function can be used to unpack a successful result while handling
   ///   an error.
   template <class Map, class Fallback>
-  constexpr auto map_or_else(Fallback&& _fallback, Map&& _map) && noexcept(
-      std::is_nothrow_invocable_v<Fallback, E>
-      && std::is_nothrow_invocable_v<Map, T>
-  )
+  constexpr auto map_or_else(
+      Fallback&& _fallback, Map&& _map
+  ) && noexcept(std::is_nothrow_invocable_v<Fallback, E> && std::is_nothrow_invocable_v<Map, T>)
       -> std::common_type_t<
           std::invoke_result_t<Map, T>, std::invoke_result_t<Fallback, E>>
     requires std::is_invocable_v<Map, T> && std::is_invocable_v<Fallback, E>
@@ -972,12 +972,11 @@ public:
   ///   This function can be used to pass through a successful result while
   ///   handling an error. result<T, E> -> result<T, F>
   template <class O, class... Args>
-  constexpr auto map_err(
-      O&& op, Args&&... args
-  ) const& noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
-      -> basic_result<
-          _mutability, T,
-          void_to_monostate_t<std::invoke_result_t<O, E, Args&&...>>>
+  constexpr auto map_err(O&& op, Args&&... args)
+      const& noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
+          -> basic_result<
+              _mutability, T,
+              void_to_monostate_t<std::invoke_result_t<O, E, Args&&...>>>
     requires std::is_invocable_v<O, E, Args&&...>
   {
     using result_type = basic_result<
@@ -1013,12 +1012,11 @@ public:
   ///   This function can be used to pass through a successful result while
   ///   handling an error. result<T, void> -> result<T, F>
   template <class O, class... Args>
-  constexpr auto map_err(
-      O&& op, Args&&... args
-  ) const& noexcept(std::is_nothrow_invocable_v<O, Args&&...>)
-      -> basic_result<
-          _mutability, T,
-          void_to_monostate_t<std::invoke_result_t<O, Args&&...>>>
+  constexpr auto map_err(O&& op, Args&&... args)
+      const& noexcept(std::is_nothrow_invocable_v<O, Args&&...>)
+          -> basic_result<
+              _mutability, T,
+              void_to_monostate_t<std::invoke_result_t<O, Args&&...>>>
     requires std::is_same_v<E, std::monostate>
              && std::is_invocable_v<O, Args&&...>
   {
@@ -1131,9 +1129,9 @@ public:
   /// @note
   ///   This function can be used for control flow based on result values.
   template <class O, class... Args>
-  constexpr auto and_then(O&& op, Args&&... args) const& noexcept(
-      std::is_nothrow_invocable_v<O, T, Args&&...>
-  ) -> std::invoke_result_t<O, T, Args&&...>
+  constexpr auto and_then(O&& op, Args&&... args)
+      const& noexcept(std::is_nothrow_invocable_v<O, T, Args&&...>)
+          -> std::invoke_result_t<O, T, Args&&...>
     requires is_convertible_result_with_v<
         std::invoke_result_t<O, T, Args&&...>, failure_t<E>>
   {
@@ -1158,9 +1156,10 @@ public:
   /// @note
   ///   This function can be used for control flow based on result values.
   template <class O, class... Args>
-  constexpr auto and_then(O&& op, Args&&... args) && noexcept(
-      std::is_nothrow_invocable_v<O, T, Args&&...>
-  ) -> std::invoke_result_t<O, T, Args&&...>
+  constexpr auto and_then(
+      O&& op, Args&&... args
+  ) && noexcept(std::is_nothrow_invocable_v<O, T, Args&&...>)
+      -> std::invoke_result_t<O, T, Args&&...>
     requires is_convertible_result_with_v<
         std::invoke_result_t<O, T, Args&&...>, failure_t<E>>
   {
@@ -1185,9 +1184,9 @@ public:
   /// @note
   ///   This function can be used for control flow based on result values.
   template <class O, class... Args>
-  constexpr auto or_else(O&& op, Args&&... args) const& noexcept(
-      std::is_nothrow_invocable_v<O, E, Args&&...>
-  ) -> std::invoke_result_t<O, E, Args&&...>
+  constexpr auto or_else(O&& op, Args&&... args)
+      const& noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
+          -> std::invoke_result_t<O, E, Args&&...>
     requires is_convertible_result_with_v<
         std::invoke_result_t<O, T, Args&&...>, success_t<T>>
   {
@@ -1211,9 +1210,10 @@ public:
   /// @note
   ///   This function can be used for control flow based on result values.
   template <class O, class... Args>
-  constexpr auto or_else(O&& op, Args&&... args) && noexcept(
-      std::is_nothrow_invocable_v<O, E, Args&&...>
-  ) -> std::invoke_result_t<O, E, Args&&...>
+  constexpr auto or_else(
+      O&& op, Args&&... args
+  ) && noexcept(std::is_nothrow_invocable_v<O, E, Args&&...>)
+      -> std::invoke_result_t<O, E, Args&&...>
     requires is_convertible_result_with_v<
         std::invoke_result_t<O, T, Args&&...>, success_t<T>>
   {
@@ -1231,8 +1231,8 @@ public:
   ///   Returns `res` if the result is success_t, otherwise; returns the failure
   ///   value of self.
   template <mutability _mu, class U>
-  constexpr decltype(auto)
-  conj(const basic_result<_mu, U, E>& res) const& noexcept
+  constexpr decltype(auto) conj(const basic_result<_mu, U, E>& res
+  ) const& noexcept
   {
     using result_type = basic_result<_mutability && _mu, U, E>;
     return this->is_err() ? static_cast<result_type>(failure_t{
@@ -1262,8 +1262,8 @@ public:
   ///   it is recommended to use `or_else`,
   ///   which is lazily evaluated.
   template <mutability _mut, class F>
-  constexpr decltype(auto)
-  disj(const basic_result<_mut, T, F>& res) const& noexcept
+  constexpr decltype(auto) disj(const basic_result<_mut, T, F>& res
+  ) const& noexcept
   {
     using result_type = basic_result<_mutability, T, F>;
     return this->is_ok() ? static_cast<result_type>(success_t{
@@ -1345,14 +1345,14 @@ public:
   ///     - otherwise; static_assert.
   template <class O>
     requires std::is_invocable_r_v<T, O, E> || std::is_invocable_r_v<T, O>
-  constexpr T unwrap_or_else(O&& op) const noexcept(
-      std::disjunction_v<
-          std::conjunction<
-              std::is_invocable_r<T, O, E>,
-              std::is_nothrow_invocable_r<T, O, E>>,
-          std::conjunction<
-              std::is_invocable_r<T, O>, std::is_nothrow_invocable_r<T, O>>>
-  )
+  constexpr T unwrap_or_else(O&& op) const
+      noexcept(std::disjunction_v<
+               std::conjunction<
+                   std::is_invocable_r<T, O, E>,
+                   std::is_nothrow_invocable_r<T, O, E>>,
+               std::conjunction<
+                   std::is_invocable_r<T, O>,
+                   std::is_nothrow_invocable_r<T, O>>>)
   {
     if constexpr (std::is_invocable_r_v<T, O, E>)
     {
@@ -1709,9 +1709,8 @@ public:
   }
 
   template <class F>
-  constexpr auto map_anything_else(F&& f) & noexcept(
-      std::is_nothrow_invocable_v<F, E&> && std::is_nothrow_invocable_v<F, T&>
-  )
+  constexpr auto map_anything_else(F&& f
+  ) & noexcept(std::is_nothrow_invocable_v<F, E&> && std::is_nothrow_invocable_v<F, T&>)
       -> std::common_type_t<
           std::invoke_result_t<F, T&>, std::invoke_result_t<F, E&>>
     requires std::is_invocable_v<F, T&> && std::is_invocable_v<F, E&>
@@ -1730,10 +1729,8 @@ public:
   }
 
   template <class F>
-  constexpr auto map_anything_else(F&& f) const& noexcept(
-      std::is_nothrow_invocable_v<F, const E&>
-      && std::is_nothrow_invocable_v<F, const T&>
-  )
+  constexpr auto map_anything_else(F&& f
+  ) const& noexcept(std::is_nothrow_invocable_v<F, const E&> && std::is_nothrow_invocable_v<F, const T&>)
       -> std::common_type_t<
           std::invoke_result_t<F, const T&>, std::invoke_result_t<F, const E&>>
     requires std::is_invocable_v<F, const T&>
@@ -1755,9 +1752,8 @@ public:
   }
 
   template <class F>
-  constexpr auto map_anything_else(F&& f) && noexcept(
-      std::is_nothrow_invocable_v<F, E&&> && std::is_nothrow_invocable_v<F, T&&>
-  )
+  constexpr auto map_anything_else(F&& f
+  ) && noexcept(std::is_nothrow_invocable_v<F, E&&> && std::is_nothrow_invocable_v<F, T&&>)
       -> std::common_type_t<
           std::invoke_result_t<F, T&&>, std::invoke_result_t<F, E&&>>
     requires std::is_invocable_v<F, T&&> && std::is_invocable_v<F, E&&>
@@ -2023,8 +2019,8 @@ public:
   }
 
   template <class Ctx>
-  auto with_context(Ctx ctx)
-      -> basic_result<_mutability, T, std::shared_ptr<anyhow::error>>
+  auto with_context(Ctx ctx
+  ) -> basic_result<_mutability, T, std::shared_ptr<anyhow::error>>
     requires std::is_invocable_r_v<std::shared_ptr<anyhow::error>, Ctx>
   {
     return this->map_err(

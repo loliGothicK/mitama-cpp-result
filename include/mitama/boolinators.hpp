@@ -37,7 +37,7 @@ and_maybe(bool b, const maybe<T>& may)
 
 template <class F>
   requires std::is_invocable_v<F&&>
-           && is_maybe<std::invoke_result_t<F&&>>::value
+               && is_maybe<std::invoke_result_t<F&&>>::value
 inline constexpr auto
 and_maybe_from(bool b, F&& may) -> std::invoke_result_t<F&&>
 {
