@@ -883,7 +883,7 @@ public:
 
   template <class F>
     requires std::is_invocable_v<F, value_type&> || std::is_invocable_v<F>
-  constexpr constexpr maybe& and_peek(F&& f) &
+  constexpr maybe& and_peek(F&& f) &
   {
     if (is_just())
     {
