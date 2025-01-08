@@ -2204,5 +2204,3 @@ operator>=(T&& lhs, const basic_result<_, U, E>& rhs)
 #  define MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC false
 #  define MITAMA_TRY(...) ::mitama::_result_detail::id(__VA_ARGS__).unwrap()
 #endif
-
-#undef MITAMA_VARIANT_CONSTEXPR

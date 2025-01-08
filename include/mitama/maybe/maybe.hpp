@@ -1204,5 +1204,3 @@ template <class T>
 struct fmt::formatter<mitama::maybe<T>> : ostream_formatter
 {
 };
-
-#undef MITAMA_VARIANT_CONSTEXPR
