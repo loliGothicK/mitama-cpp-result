@@ -16,6 +16,13 @@
 #include <type_traits>
 #include <utility>
 #include <variant>
+#include <version>
+
+#if __cpp_lib_variant >= 202106L
+#  define MITAMA_VARIANT_CONSTEXPR constexpr
+#else
+#  define MITAMA_VARIANT_CONSTEXPR
+#endif
 
 namespace mitama::mitamagic
 {
@@ -79,7 +86,7 @@ template <mutability _, class T, class E>
 class maybe_transpose_injector<maybe<basic_result<_, T, E>>>
 {
 public:
-  basic_result<_, maybe<T>, E> transpose() const&
+  constexpr basic_result<_, maybe<T>, E> transpose() const&
   {
     const auto* self = static_cast<const maybe<basic_result<_, T, E>>*>(this);
     return self->is_nothing()
@@ -104,7 +111,7 @@ template <class T>
 class maybe_unwrap_or_default_injector<maybe<T>>
 {
 public:
-  T unwrap_or_default() const
+  constexpr T unwrap_or_default() const
   {
     const auto* self = static_cast<const maybe<T>*>(this);
     if constexpr (std::is_aggregate_v<T>)
@@ -130,7 +137,7 @@ template <class T>
 class maybe_flatten_injector<maybe<T>>
 {
 public:
-  auto flatten() const&
+  constexpr auto flatten() const&
   {
     const auto* self = static_cast<const maybe<T>*>(this);
     return self->is_just() ? self->unwrap().as_ref().cloned() : nothing;
@@ -151,7 +158,7 @@ template <class T>
 class maybe_cloned_injector<maybe<T>>
 {
 public:
-  maybe<std::remove_reference_t<T>> cloned() const
+  constexpr maybe<std::remove_reference_t<T>> cloned() const
   {
     auto decay_copy = [](auto&& some
                       ) -> std::remove_const_t<std::remove_reference_t<T>>
@@ -179,7 +186,7 @@ class maybe_replace_injector<maybe<T>>
 public:
   template <class... Args>
     requires std::is_constructible_v<T, Args&&...>
-  maybe<T> replace(Args&&... args) &
+  MITAMA_VARIANT_CONSTEXPR maybe<T> replace(Args&&... args) &
   {
     auto* self_mut = static_cast<maybe<T>*>(this);
     auto old = self_mut->as_ref().cloned();
@@ -192,7 +199,7 @@ public:
   template <class F, class... Args>
     requires std::is_invocable_v<F, Args&&...>
              && std::is_constructible_v<T, std::invoke_result_t<F&&, Args&&...>>
-  maybe<T> replace_with(F&& f, Args&&... args) &
+  MITAMA_VARIANT_CONSTEXPR maybe<T> replace_with(F&& f, Args&&... args) &
   {
     auto* self_mut = static_cast<maybe<T>*>(this);
     auto old = self_mut->as_ref().cloned();
@@ -231,7 +238,7 @@ public:
   template <typename U>
     requires std::is_constructible_v<T, U&&>
              && std::is_convertible_v<std::decay_t<U>, T>
-  maybe(U&& u)
+  constexpr maybe(U&& u)
       : storage_(
             std::in_place_type<just_t<T>>, std::in_place, std::forward<U>(u)
         )
@@ -241,7 +248,7 @@ public:
   template <typename U>
     requires std::is_constructible_v<T, U&&>
              && (!std::is_convertible_v<std::decay_t<U>, T>)
-  explicit maybe(U&& u)
+  explicit constexpr maybe(U&& u)
       : storage_(
             std::in_place_type<just_t<T>>, std::in_place, std::forward<U>(u)
         )
@@ -250,7 +257,7 @@ public:
 
   template <class... Args>
     requires std::is_constructible_v<T, Args&&...>
-  explicit maybe(std::in_place_t, Args&&... args)
+  explicit constexpr maybe(std::in_place_t, Args&&... args)
       : storage_(
             std::in_place_type<just_t<T>>, std::in_place,
             std::forward<Args>(args)...
@@ -260,7 +267,9 @@ public:
 
   template <class U, class... Args>
     requires std::is_constructible_v<T, std::initializer_list<U>, Args&&...>
-  explicit maybe(std::in_place_t, std::initializer_list<U> il, Args&&... args)
+  explicit constexpr maybe(
+      std::in_place_t, std::initializer_list<U> il, Args&&... args
+  )
       : storage_(
             std::in_place_type<just_t<T>>, std::in_place, il,
             std::forward<Args>(args)...
@@ -270,7 +279,9 @@ public:
 
   template <class... Args>
     requires std::is_constructible_v<T, Args...>
-  maybe(just_t<_just_detail::forward_mode<T>, Args...>&& fwd) : maybe()
+  MITAMA_VARIANT_CONSTEXPR
+  maybe(just_t<_just_detail::forward_mode<T>, Args...>&& fwd)
+      : maybe()
   {
     std::apply(
         [&](auto&&... args)
@@ -285,7 +296,9 @@ public:
 
   template <class... Args>
     requires std::is_constructible_v<T, Args...>
-  maybe(just_t<_just_detail::forward_mode<>, Args...>&& fwd) : maybe()
+  MITAMA_VARIANT_CONSTEXPR
+  maybe(just_t<_just_detail::forward_mode<>, Args...>&& fwd)
+      : maybe()
   {
     std::apply(
         [&](auto&&... args)
@@ -300,14 +313,14 @@ public:
 
   template <class U>
     requires std::is_constructible_v<T, const U&>
-  maybe(const just_t<U>& j)
+  constexpr maybe(const just_t<U>& j)
       : storage_(std::in_place_type<just_t<T>>, std::in_place, j.get())
   {
   }
 
   template <class U>
     requires std::is_constructible_v<T, U&&>
-  maybe(just_t<U>&& j)
+  constexpr maybe(just_t<U>&& j)
       : storage_(
             std::in_place_type<just_t<T>>, std::in_place,
             static_cast<U&&>(j.get())
@@ -315,65 +328,65 @@ public:
   {
   }
 
-  explicit operator bool() const
+  explicit constexpr operator bool() const
   {
     return is_just();
   }
 
-  value_type* operator->() &
+  constexpr value_type* operator->() &
   {
     return &(std::get<just_t<T>>(storage_).get());
   }
 
-  const value_type* operator->() const&
+  constexpr const value_type* operator->() const&
   {
     return &(std::get<just_t<T>>(storage_).get());
   }
 
-  bool is_just() const
+  constexpr bool is_just() const
   {
     return std::holds_alternative<just_t<T>>(storage_);
   }
 
-  bool is_nothing() const
+  constexpr bool is_nothing() const
   {
     return !is_just();
   }
 
-  value_type& unwrap() &
+  constexpr value_type& unwrap() &
   {
     if (is_nothing())
       PANIC("called `maybe::unwrap()` on a `nothing` value");
     return std::get<just_t<T>>(storage_).get();
   }
 
-  std::add_const_t<std::remove_reference_t<T>>& unwrap() const&
+  constexpr std::add_const_t<std::remove_reference_t<T>>& unwrap() const&
   {
     if (is_nothing())
       PANIC("called `maybe::unwrap()` on a `nothing` value");
     return std::get<just_t<T>>(storage_).get();
   }
 
-  value_type unwrap() &&
+  constexpr value_type unwrap() &&
   {
     if (is_nothing())
       PANIC("called `maybe::unwrap()` on a `nothing` value");
     return std::move(std::get<just_t<T>>(storage_).get());
   }
 
-  auto as_ref() &
+  constexpr auto as_ref() &
   {
     return is_just() ? maybe<T&>(std::in_place, unwrap()) : nothing;
   }
 
-  auto as_ref() const&
+  constexpr auto as_ref() const&
   {
     return is_just() ? maybe<const T&>(std::in_place, unwrap()) : nothing;
   }
 
   template <class... Args>
     requires std::is_constructible_v<T, Args&&...>
-  value_type& get_or_emplace(Args&&... args) &
+  MITAMA_VARIANT_CONSTEXPR value_type& get_or_emplace(Args&&... args) &
   {
     return is_just() ? unwrap()
                      : (storage_.template emplace<just_t<T>>(
@@ -385,7 +398,8 @@ public:
   template <class F, class... Args>
     requires std::is_invocable_v<F&&, Args&&...>
              && std::is_constructible_v<T, std::invoke_result_t<F&&, Args&&...>>
-  value_type& get_or_emplace_with(F&& f, Args&&... args) &
+  MITAMA_VARIANT_CONSTEXPR value_type&
+  get_or_emplace_with(F&& f, Args&&... args) &
   {
     return is_just() ? unwrap()
                      : (storage_.template emplace<just_t<T>>(
@@ -399,21 +413,21 @@ public:
 
   template <class U>
     requires meta::has_type<std::common_type<T&, U&&>>::value
-  std::common_type_t<value_type&, U&&> unwrap_or(U&& def) &
+  constexpr std::common_type_t<value_type&, U&&> unwrap_or(U&& def) &
   {
     return is_just() ? unwrap() : std::forward<U>(def);
   }
 
   template <class U>
     requires meta::has_type<std::common_type<const T&, U&&>>::value
-  std::common_type_t<const value_type&, U&&> unwrap_or(U&& def) const&
+  constexpr std::common_type_t<const value_type&, U&&> unwrap_or(U&& def) const&
   {
     return is_just() ? unwrap() : std::forward<U>(def);
   }
 
   template <class U>
     requires meta::has_type<std::common_type<T&&, U&&>>::value
-  std::common_type_t<value_type&&, U&&> unwrap_or(U&& def) &&
+  constexpr std::common_type_t<value_type&&, U&&> unwrap_or(U&& def) &&
   {
     return is_just() ? std::move(unwrap()) : std::forward<U>(def);
   }
@@ -422,7 +436,7 @@ public:
     requires std::is_invocable_v<F&&>
              && meta::has_type<
                  std::common_type<T&, std::invoke_result_t<F&&>>>::value
-  std::common_type_t<const value_type&, std::invoke_result_t<F&&>>
+  constexpr std::common_type_t<const value_type&, std::invoke_result_t<F&&>>
   unwrap_or_else(F&& f) &
   {
     return is_just() ? unwrap() : std::invoke(std::forward<F>(f));
@@ -432,8 +446,9 @@ public:
     requires std::is_invocable_v<F&&>
              && meta::has_type<
                  std::common_type<const T&, std::invoke_result_t<F&&>>>::value
-  std::common_type_t<const value_type&, std::invoke_result_t<F&&>>
-  unwrap_or_else(F&& f) const&
+  std::common_type_t<
+      const value_type&,
+      std::invoke_result_t<F&&>> constexpr unwrap_or_else(F&& f) const&
   {
     return is_just() ? unwrap() : std::invoke(std::forward<F>(f));
   }
@@ -442,45 +457,52 @@ public:
     requires std::is_invocable_v<F&&>
              && meta::has_type<
                  std::common_type<T&&, std::invoke_result_t<F&&>>>::value
-  std::common_type_t<const value_type&, std::invoke_result_t<F&&>>
-  unwrap_or_else(F&& f) &&
+  std::common_type_t<
+      const value_type&,
+      std::invoke_result_t<F&&>> constexpr unwrap_or_else(F&& f) &&
   {
     return is_just() ? std::move(unwrap()) : std::invoke(std::forward<F>(f));
   }
 
   template <class F, class... Args>
     requires std::is_invocable_v<F&&, value_type&, Args&&...>
-  auto map(F&& f, Args&&... args) &
+  constexpr auto map(F&& f, Args&&... args) &
   {
     using result_type = std::invoke_result_t<F&&, value_type&, Args&&...>;
-    return is_just()
-               ? maybe<result_type>{ just(std::invoke(
-                     std::forward<F>(f), unwrap(), std::forward<Args>(args)...
-                 )) }
-               : nothing;
+    return is_just() ? maybe<result_type>{ just(
+                           std::invoke(
+                               std::forward<F>(f), unwrap(),
+                               std::forward<Args>(args)...
+                           )
+                       ) }
+                     : nothing;
   }
 
   template <class F, class... Args>
     requires std::is_invocable_v<F&&, const value_type&, Args&&...>
-  auto map(F&& f, Args&&... args) const&
+  constexpr auto map(F&& f, Args&&... args) const&
   {
     using result_type = std::invoke_result_t<F&&, const value_type&, Args&&...>;
-    return is_just()
-               ? maybe<result_type>{ just(std::invoke(
-                     std::forward<F>(f), unwrap(), std::forward<Args>(args)...
-                 )) }
-               : nothing;
+    return is_just() ? maybe<result_type>{ just(
+                           std::invoke(
+                               std::forward<F>(f), unwrap(),
+                               std::forward<Args>(args)...
+                           )
+                       ) }
+                     : nothing;
   }
 
   template <class F, class... Args>
     requires std::is_invocable_v<F&&, value_type&&, Args&&...>
-  auto map(F&& f, Args&&... args) &&
+  constexpr auto map(F&& f, Args&&... args) &&
   {
     using result_type = std::invoke_result_t<F&&, value_type&&, Args&&...>;
-    return is_just() ? maybe<result_type>{ just(std::invoke(
-                           std::forward<F>(f), std::move(unwrap()),
-                           std::forward<Args>(args)...
-                       )) }
+    return is_just() ? maybe<result_type>{ just(
+                           std::invoke(
+                               std::forward<F>(f), std::move(unwrap()),
+                               std::forward<Args>(args)...
+                           )
+                       ) }
                      : nothing;
   }
 
@@ -488,7 +510,7 @@ public:
     requires std::is_invocable_v<F&&, value_type&, Args&&...>
              && meta::has_type<std::common_type<
                  U&&, std::invoke_result_t<F&&, value_type&>>>::value
-  std::invoke_result_t<F&&, value_type&, Args&&...>
+  constexpr std::invoke_result_t<F&&, value_type&, Args&&...>
   map_or(U&& def, F&& f, Args&&... args) &
   {
     return is_just()
@@ -503,7 +525,8 @@ public:
              && meta::has_type<std::common_type<
                  U&&, std::invoke_result_t<
                           F&&, const value_type&, Args&&...>>>::value
-  std::common_type_t<U&&, std::invoke_result_t<F&&, const T&, Args&&...>>
+  constexpr std::common_type_t<
+      U&&, std::invoke_result_t<F&&, const T&, Args&&...>>
   map_or(U&& def, F&& f, Args&&... args) const&
   {
     return is_just()
@@ -518,7 +541,7 @@ public:
              && meta::has_type<std::common_type<
                  U&&,
                  std::invoke_result_t<F&&, value_type&&, Args&&...>>>::value
-  std::invoke_result_t<F&&, value_type&&, Args&&...>
+  constexpr std::invoke_result_t<F&&, value_type&&, Args&&...>
   map_or(U&& def, F&& f, Args&&... args) &&
   {
     return is_just() ? std::invoke(
@@ -536,8 +559,9 @@ public:
                  std::invoke_result_t<F&&, value_type&, Args&&...>>>::value
   std::common_type_t<
       std::invoke_result_t<D&&>,
-      std::invoke_result_t<F&&, value_type&, Args&&...>>
-  map_or_else(D&& def, F&& f, Args&&... args) &
+      std::invoke_result_t<
+          F&&, value_type&,
+          Args&&...>> constexpr map_or_else(D&& def, F&& f, Args&&... args) &
   {
     return is_just()
                ? std::invoke(
@@ -553,7 +577,7 @@ public:
                  std::invoke_result_t<D&&>,
                  std::invoke_result_t<F&&, const value_type&, Args&&...>>>::
                  value
-  std::common_type_t<
+  constexpr std::common_type_t<
       std::invoke_result_t<D&&>,
       std::invoke_result_t<F&&, const value_type&, Args&&...>>
   map_or_else(D&& def, F&& f, Args&&... args) const&
@@ -571,7 +595,7 @@ public:
              && meta::has_type<std::common_type<
                  std::invoke_result_t<D&&>,
                  std::invoke_result_t<F&&, value_type&&, Args&&...>>>::value
-  std::common_type_t<
+  constexpr std::common_type_t<
       std::invoke_result_t<D&&>,
       std::invoke_result_t<F&&, value_type&&, Args&&...>>
   map_or_else(D&& def, F&& f, Args&&... args) &&
@@ -583,7 +607,7 @@ public:
                      : std::invoke(std::forward<D>(def));
   }
 
-  value_type& expect(std::string_view msg) &
+  constexpr value_type& expect(std::string_view msg) &
   {
     if (is_just())
     {
@@ -595,7 +619,7 @@ public:
     }
   }
 
-  const value_type& expect(std::string_view msg) const&
+  constexpr const value_type& expect(std::string_view msg) const&
   {
     if (is_just())
     {
@@ -607,7 +631,7 @@ public:
     }
   }
 
-  value_type&& expect(std::string_view msg) &&
+  constexpr value_type&& expect(std::string_view msg) &&
   {
     if (is_just())
     {
@@ -621,7 +645,7 @@ public:
 
   template <class Pred>
     requires std::is_invocable_r_v<bool, Pred&&, T&>
-  maybe filter(Pred&& predicate) &
+  constexpr maybe filter(Pred&& predicate) &
   {
     return is_just() && std::invoke(std::forward<Pred>(predicate), unwrap())
                ? maybe<T>(unwrap())
@@ -630,7 +654,7 @@ public:
 
   template <class Pred>
     requires std::is_invocable_r_v<bool, Pred&&, const T&>
-  maybe filter(Pred&& predicate) const&
+  constexpr maybe filter(Pred&& predicate) const&
   {
     return is_just() && std::invoke(std::forward<Pred>(predicate), unwrap())
                ? maybe<T>(unwrap())
@@ -639,7 +663,7 @@ public:
 
   template <class Pred>
     requires std::is_invocable_r_v<bool, Pred&&, T&&>
-  maybe filter(Pred&& predicate) &&
+  constexpr maybe filter(Pred&& predicate) &&
   {
     return is_just() && std::invoke(std::forward<Pred>(predicate), unwrap())
                ? maybe<T>(std::move(unwrap()))
@@ -647,7 +671,7 @@ public:
   }
 
   template <class E = std::monostate>
-  auto ok_or(E&& err = {}) &
+  constexpr auto ok_or(E&& err = {}) &
   {
     using ret_t = result<value_type, std::remove_reference_t<E>>;
     return is_just()
@@ -656,7 +680,7 @@ public:
   }
 
   template <class E = std::monostate>
-  auto ok_or(E&& err = {}) const&
+  constexpr auto ok_or(E&& err = {}) const&
   {
     using ret_t = result<value_type, std::remove_reference_t<E>>;
     return is_just()
@@ -665,7 +689,7 @@ public:
   }
 
   template <class E = std::monostate>
-  auto ok_or(E&& err = {}) &&
+  constexpr auto ok_or(E&& err = {}) &&
   {
     using ret_t = result<value_type, std::remove_reference_t<E>>;
     return is_just()
@@ -675,7 +699,7 @@ public:
 
   template <class F>
     requires std::is_invocable_v<F&&>
-  result<T, std::invoke_result_t<F&&>> ok_or_else(F&& err) const&
+  constexpr result<T, std::invoke_result_t<F&&>> ok_or_else(F&& err) const&
   {
     return is_just()
                ? result<T, std::invoke_result_t<F&&>>{ success_t{ unwrap() } }
@@ -685,7 +709,7 @@ public:
 
   template <class F>
     requires std::is_invocable_v<F&&>
-  result<T, std::invoke_result_t<F&&>> ok_or_else(F&& err) &&
+  constexpr result<T, std::invoke_result_t<F&&>> ok_or_else(F&& err) &&
   {
     return is_just() ? result<T, std::invoke_result_t<F&&>>{ success_t{
                            std::move(unwrap()) } }
@@ -694,33 +718,33 @@ public:
   }
 
   template <class U>
-  maybe<U> conj(const maybe<U>& rhs) const
+  constexpr maybe<U> conj(const maybe<U>& rhs) const
   {
     return is_just() ? rhs : nothing;
   }
 
   template <class U>
-  maybe<U> operator&&(const maybe<U>& rhs) const
+  constexpr maybe<U> operator&&(const maybe<U>& rhs) const
   {
     return this->conj(rhs);
   }
 
-  maybe<T> disj(const maybe<T>& rhs) const
+  constexpr maybe<T> disj(const maybe<T>& rhs) const
   {
     return is_nothing() ? rhs : *this;
   }
 
-  maybe<T> operator||(const maybe<T>& rhs) const
+  constexpr maybe<T> operator||(const maybe<T>& rhs) const
   {
     return this->disj(rhs);
   }
 
-  maybe<T> xdisj(const maybe<T>& rhs) const
+  constexpr maybe<T> xdisj(const maybe<T>& rhs) const
   {
     return is_just() ^ rhs.is_just() ? is_just() ? *this : rhs : nothing;
   }
 
-  maybe<T> operator^(const maybe<T>& rhs) const
+  constexpr maybe<T> operator^(const maybe<T>& rhs) const
   {
     return this->xdisj(rhs);
   }
@@ -729,7 +753,8 @@ public:
     requires std::is_invocable_v<F&&, T&, Args&&...>
              && is_maybe<
                  std::decay_t<std::invoke_result_t<F&&, T&, Args&&...>>>::value
-  std::invoke_result_t<F&&, T&, Args&&...> and_then(F&& f, Args&&... args) &
+  constexpr std::invoke_result_t<F&&, T&, Args&&...>
+  and_then(F&& f, Args&&... args) &
   {
     return is_just()
                ? std::invoke(
@@ -742,7 +767,7 @@ public:
     requires std::is_invocable_v<F&&, const T&, Args&&...>
              && is_maybe<std::decay_t<
                  std::invoke_result_t<F&&, const T&, Args&&...>>>::value
-  std::invoke_result_t<F&&, const T&, Args&&...>
+  constexpr std::invoke_result_t<F&&, const T&, Args&&...>
   and_then(F&& f, Args&&... args) const&
   {
     return is_just()
@@ -756,7 +781,8 @@ public:
     requires std::is_invocable_v<F&&, T&&, Args&&...>
              && is_maybe<
                  std::decay_t<std::invoke_result_t<F&&, T&&, Args&&...>>>::value
-  std::invoke_result_t<F&&, T&, Args&&...> and_then(F&& f, Args&&... args) &&
+  constexpr std::invoke_result_t<F&&, T&, Args&&...>
+  and_then(F&& f, Args&&... args) &&
   {
     return is_just() ? std::invoke(
                            std::forward<F>(f), std::move(unwrap()),
@@ -769,7 +795,7 @@ public:
     requires std::is_invocable_v<F&&, Args&&...>
              && is_maybe_with<
                  std::decay_t<std::invoke_result_t<F&&, Args&&...>>, T>::value
-  maybe or_else(F&& f, Args&&... args) &
+  constexpr maybe or_else(F&& f, Args&&... args) &
   {
     return is_just()
                ? just(unwrap())
@@ -780,7 +806,7 @@ public:
     requires std::is_invocable_v<F&&, Args&&...>
              && is_maybe_with<
                  std::decay_t<std::invoke_result_t<F&&, Args&&...>>, T>::value
-  maybe or_else(F&& f, Args&&... args) const&
+  constexpr maybe or_else(F&& f, Args&&... args) const&
   {
     return is_just()
                ? just(unwrap())
@@ -791,7 +817,7 @@ public:
     requires std::is_invocable_v<F&&, Args&&...>
              && is_maybe_with<
                  std::decay_t<std::invoke_result_t<F&&, Args&&...>>, T>::value
-  maybe or_else(F&& f, Args&&... args) &&
+  constexpr maybe or_else(F&& f, Args&&... args) &&
   {
     return is_just()
                ? just(std::move(unwrap()))
@@ -800,7 +826,7 @@ public:
 
   template <class F, class... Args>
     requires std::is_invocable_v<F&&, value_type&, Args&&...>
-  void and_finally(F&& f, Args&&... args) &
+  constexpr void and_finally(F&& f, Args&&... args) &
   {
     if (is_just())
       std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...);
@@ -808,14 +834,14 @@ public:
 
   template <class F, class... Args>
     requires std::is_invocable_v<F&&, const value_type&>
-  void and_finally(F&& f, Args&&... args) const&
+  constexpr void and_finally(F&& f, Args&&... args) const&
   {
     if (is_just())
       std::invoke(std::forward<F>(f), unwrap(), std::forward<Args>(args)...);
   }
 
   template <class F, class... Args>
-  void and_finally(F&& f, Args&&... args) &&
+  constexpr void and_finally(F&& f, Args&&... args) &&
   {
     if constexpr (std::is_lvalue_reference_v<T>)
     {
@@ -833,7 +859,7 @@ public:
 
   template <class F, class... Args>
     requires std::is_invocable_v<F&&, Args&&...>
-  void or_finally(F&& f, Args&&... args) &
+  constexpr void or_finally(F&& f, Args&&... args) &
   {
     if (is_nothing())
       std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
@@ -841,7 +867,7 @@ public:
 
   template <class F, class... Args>
     requires std::is_invocable_v<F&&, Args&&...>
-  void or_finally(F&& f, Args&&... args) const&
+  constexpr void or_finally(F&& f, Args&&... args) const&
   {
     if (is_nothing())
       std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
@@ -849,7 +875,7 @@ public:
 
   template <class F, class... Args>
     requires std::is_invocable_v<F&&, Args&&...>
-  void or_finally(F&& f, Args&&... args) &&
+  constexpr void or_finally(F&& f, Args&&... args) &&
   {
     if (is_nothing())
       std::invoke(std::forward<F>(f), std::forward<Args>(args)...);
@@ -857,7 +883,7 @@ public:
 
   template <class F>
     requires std::is_invocable_v<F, value_type&> || std::is_invocable_v<F>
-  constexpr maybe& and_peek(F&& f) &
+  constexpr constexpr maybe& and_peek(F&& f) &
   {
     if (is_just())
     {
@@ -876,7 +902,7 @@ public:
   template <class F>
     requires std::is_invocable_v<F&&, const value_type&>
              || std::is_invocable_v<F&&>
-  const maybe& and_peek(F&& f) const&
+  constexpr const maybe& and_peek(F&& f) const&
   {
     if (is_just())
     {
@@ -916,7 +942,7 @@ maybe(T&&) -> maybe<T>;
 
 template <class T, class U>
   requires meta::is_comparable_with<T, U>::value
-bool
+constexpr bool
 operator==(const maybe<T>& lhs, const maybe<U>& rhs)
 {
   return lhs.is_just() && rhs.is_just() ? (lhs.unwrap() == rhs.unwrap())
@@ -924,14 +950,14 @@ operator==(const maybe<T>& lhs, const maybe<U>& rhs)
 }
 
 template <class T>
-bool
+constexpr bool
 operator==(const maybe<T>& lhs, const nothing_t)
 {
   return lhs.is_nothing();
 }
 
 template <class T>
-bool
+constexpr bool
 operator==(const nothing_t, const maybe<T>& rhs)
 {
   return rhs.is_nothing();
@@ -940,7 +966,7 @@ operator==(const nothing_t, const maybe<T>& rhs)
 template <class T, class U>
   requires(!is_maybe<std::decay_t<U>>::value)
           && meta::is_comparable_with<T, U>::value
-bool
+constexpr bool
 operator==(const maybe<T>& lhs, U&& rhs)
 {
   return lhs == just(std::forward<U>(rhs));
@@ -949,7 +975,7 @@ operator==(const maybe<T>& lhs, U&& rhs)
 template <class T, class U>
   requires(!is_maybe<std::decay_t<T>>::value)
           && meta::is_comparable_with<T, U>::value
-bool
+constexpr bool
 operator==(T&& lhs, const maybe<U>& rhs)
 {
   return just(std::forward<T>(lhs)) == rhs;
@@ -957,21 +983,21 @@ operator==(T&& lhs, const maybe<U>& rhs)
 
 template <class T, class U>
   requires meta::is_comparable_with<T, U>::value
-bool
+constexpr bool
 operator!=(const maybe<T>& lhs, const maybe<U>& rhs)
 {
   return !(lhs == rhs);
 }
 
 template <class T>
-bool
+constexpr bool
 operator!=(const maybe<T>& lhs, const nothing_t)
 {
   return lhs.is_just();
 }
 
 template <class T>
-bool
+constexpr bool
 operator!=(const nothing_t, const maybe<T>& rhs)
 {
   return rhs.is_just();
@@ -980,7 +1006,7 @@ operator!=(const nothing_t, const maybe<T>& rhs)
 template <class T, class U>
   requires(!is_maybe<std::decay_t<U>>::value)
           && meta::is_comparable_with<T, U>::value
-bool
+constexpr bool
 operator!=(const maybe<T>& lhs, U&& rhs)
 {
   return lhs != just(std::forward<U>(rhs));
@@ -989,28 +1015,28 @@ operator!=(const maybe<T>& lhs, U&& rhs)
 template <class T, class U>
   requires(!is_maybe<std::decay_t<T>>::value)
           && meta::is_comparable_with<T, U>::value
-bool
+constexpr bool
 operator!=(T&& lhs, const maybe<U>& rhs)
 {
   return just(std::forward<T>(lhs)) != rhs;
 }
 
 template <class T, class U>
-bool
+constexpr bool
 operator<(const maybe<T>& lhs, const maybe<U>& rhs)
 {
   return lhs.ok_or() < rhs.ok_or();
 }
 
 template <class T>
-bool
+constexpr bool
 operator<(nothing_t, const maybe<T>& rhs)
 {
   return rhs.is_just();
 }
 
 template <class T>
-bool
+constexpr bool
 operator<(const maybe<T>&, nothing_t)
 {
   return false;
@@ -1019,7 +1045,7 @@ operator<(const maybe<T>&, nothing_t)
 template <class T, class U>
   requires(!is_maybe<std::decay_t<U>>::value)
           && meta::is_less_comparable_with<T, U>::value
-bool
+constexpr bool
 operator<(const maybe<T>& lhs, U&& rhs)
 {
   return lhs < just(std::forward<U>(rhs));
@@ -1028,28 +1054,28 @@ operator<(const maybe<T>& lhs, U&& rhs)
 template <class T, class U>
   requires(!is_maybe<std::decay_t<T>>::value)
           && meta::is_less_comparable_with<T, U>::value
-bool
+constexpr bool
 operator<(T&& lhs, const maybe<U>& rhs)
 {
   return just(std::forward<T>(lhs)) < rhs;
 }
 
 template <class T, class U>
-bool
+constexpr bool
 operator<=(const maybe<T>& lhs, const maybe<U>& rhs)
 {
   return lhs.ok_or() <= rhs.ok_or();
 }
 
 template <class T>
-bool
+constexpr bool
 operator<=(nothing_t, const maybe<T>&)
 {
   return true;
 }
 
 template <class T>
-bool
+constexpr bool
 operator<=(const maybe<T>& lhs, nothing_t)
 {
   return lhs.is_nothing();
@@ -1059,7 +1085,7 @@ template <class T, class U>
   requires(!is_maybe<std::decay_t<U>>::value)
           && meta::is_less_comparable_with<T, U>::value
           && meta::is_comparable_with<T, U>::value
-bool
+constexpr bool
 operator<=(const maybe<T>& lhs, U&& rhs)
 {
   return lhs <= just(std::forward<U>(rhs));
@@ -1069,28 +1095,28 @@ template <class T, class U>
   requires(!is_maybe<std::decay_t<T>>::value)
           && meta::is_less_comparable_with<T, U>::value
           && meta::is_comparable_with<T, U>::value
-bool
+constexpr bool
 operator<=(T&& lhs, const maybe<U>& rhs)
 {
   return just(std::forward<T>(lhs)) <= rhs;
 }
 
 template <class T, class U>
-bool
+constexpr bool
 operator>(const maybe<T>& lhs, const maybe<U>& rhs)
 {
   return lhs.ok_or() > rhs.ok_or();
 }
 
 template <class T>
-bool
+constexpr bool
 operator>(nothing_t, const maybe<T>&)
 {
   return false;
 }
 
 template <class T>
-bool
+constexpr bool
 operator>(const maybe<T>& lhs, nothing_t)
 {
   return lhs.is_just();
@@ -1099,7 +1125,7 @@ operator>(const maybe<T>& lhs, nothing_t)
 template <class T, class U>
   requires(!is_maybe<std::decay_t<U>>::value)
           && meta::is_less_comparable_with<U, T>::value
-bool
+constexpr bool
 operator>(const maybe<T>& lhs, U&& rhs)
 {
   return lhs > just(std::forward<U>(rhs));
@@ -1108,28 +1134,28 @@ operator>(const maybe<T>& lhs, U&& rhs)
 template <class T, class U>
   requires(!is_maybe<std::decay_t<T>>::value)
           && meta::is_less_comparable_with<U, T>::value
-bool
+constexpr bool
 operator>(T&& lhs, const maybe<U>& rhs)
 {
   return just(std::forward<T>(lhs)) > rhs;
 }
 
 template <class T, class U>
-bool
+constexpr bool
 operator>=(const maybe<T>& lhs, const maybe<U>& rhs)
 {
   return lhs.ok_or() >= rhs.ok_or();
 }
 
 template <class T>
-bool
+constexpr bool
 operator>=(nothing_t, const maybe<T>& rhs)
 {
   return rhs.is_nothing();
 }
 
 template <class T>
-bool
+constexpr bool
 operator>=(const maybe<T>&, nothing_t)
 {
   return true;
@@ -1139,7 +1165,7 @@ template <class T, class U>
   requires(!is_maybe<std::decay_t<U>>::value)
           && meta::is_less_comparable_with<U, T>::value
           && meta::is_comparable_with<U, T>::value
-bool
+constexpr bool
 operator>=(const maybe<T>& lhs, U&& rhs)
 {
   return lhs >= just(std::forward<U>(rhs));
@@ -1149,7 +1175,7 @@ template <class T, class U>
   requires(!is_maybe<std::decay_t<T>>::value)
           && meta::is_less_comparable_with<U, T>::value
           && meta::is_comparable_with<U, T>::value
-bool
+constexpr bool
 operator>=(T&& lhs, const maybe<U>& rhs)
 {
   return just(std::forward<T>(lhs)) >= rhs;
@@ -1178,3 +1204,5 @@ template <class T>
 struct fmt::formatter<mitama::maybe<T>> : ostream_formatter
 {
 };
+
+#undef MITAMA_VARIANT_CONSTEXPR

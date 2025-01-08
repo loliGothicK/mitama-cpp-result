@@ -23,7 +23,7 @@ concept is_adl_range = requires(Range range) {
 namespace mitama
 {
 template <class Range>
-auto
+constexpr auto
 range_to_maybe(Range&& range)
 {
   if constexpr (_range_to_maybe_detail::is_std_range<Range>)

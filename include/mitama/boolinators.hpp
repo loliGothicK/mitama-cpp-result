@@ -8,28 +8,28 @@
 
 namespace mitama
 {
-inline maybe<std::monostate>
+inline constexpr maybe<std::monostate>
 as_maybe(bool b)
 {
   return b ? maybe<std::monostate>{ std::in_place } : nothing;
 }
 
 template <class T>
-inline maybe<T>
+inline constexpr maybe<T>
 as_just(bool b, T&& some)
 {
   return b ? maybe<T>{ std::forward<T>(some) } : nothing;
 }
 
 template <class F>
-inline maybe<std::invoke_result_t<F&&>>
+inline constexpr maybe<std::invoke_result_t<F&&>>
 as_just_from(bool b, F&& some)
 {
   return b ? maybe{ std::invoke(std::forward<F>(some)) } : nothing;
 }
 
 template <class T>
-inline maybe<T>
+inline constexpr maybe<T>
 and_maybe(bool b, const maybe<T>& may)
 {
   return b ? may : nothing;
@@ -38,7 +38,7 @@ and_maybe(bool b, const maybe<T>& may)
 template <class F>
   requires std::is_invocable_v<F&&>
            && is_maybe<std::invoke_result_t<F&&>>::value
-inline auto
+inline constexpr auto
 and_maybe_from(bool b, F&& may) -> std::invoke_result_t<F&&>
 {
   return b ? std::invoke(std::forward<F>(may)) : nothing;
