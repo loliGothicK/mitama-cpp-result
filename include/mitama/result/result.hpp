@@ -20,10 +20,12 @@
 #include <variant>
 #include <version>
 
-#if __cpp_lib_variant >= 202106L
-#  define MITAMA_VARIANT_CONSTEXPR constexpr
-#else
-#  define MITAMA_VARIANT_CONSTEXPR
+#ifndef MITAMA_VARIANT_CONSTEXPR
+#  if __cpp_lib_variant >= 202106L
+#    define MITAMA_VARIANT_CONSTEXPR constexpr
+#  else
+#    define MITAMA_VARIANT_CONSTEXPR
+#  endif
 #endif
 
 namespace mitama::_result_detail
@@ -235,7 +237,8 @@ public:
   ///   copy assignment operator for convertible basic_result
   template <mutability _mu, class U, class F>
     requires std::is_constructible_v<T, U> && std::is_constructible_v<E, F>
-  MITAMA_VARIANT_CONSTEXPR basic_result& operator=(const basic_result<_mu, U, F>& res)
+  MITAMA_VARIANT_CONSTEXPR basic_result&
+  operator=(const basic_result<_mu, U, F>& res)
   {
     static_assert(
         is_mut_v<_mutability>, "Error: assignment to immutable result"
@@ -255,7 +258,8 @@ public:
   ///   move assignment operator for convertible basic_result
   template <mutability _mu, class U, class F>
     requires std::is_constructible_v<T, U> && std::is_constructible_v<E, F>
-  MITAMA_VARIANT_CONSTEXPR basic_result& operator=(basic_result<_mu, U, F>&& res)
+  MITAMA_VARIANT_CONSTEXPR basic_result& operator=(basic_result<_mu, U, F>&& res
+  )
   {
     static_assert(
         is_mut_v<_mutability>, "Error: assignment to immutable result"

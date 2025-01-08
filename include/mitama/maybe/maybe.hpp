@@ -18,10 +18,12 @@
 #include <variant>
 #include <version>
 
-#if __cpp_lib_variant >= 202106L
-#  define MITAMA_VARIANT_CONSTEXPR constexpr
-#else
-#  define MITAMA_VARIANT_CONSTEXPR
+#ifndef MITAMA_VARIANT_CONSTEXPR
+#  if __cpp_lib_variant >= 202106L
+#    define MITAMA_VARIANT_CONSTEXPR constexpr
+#  else
+#    define MITAMA_VARIANT_CONSTEXPR
+#  endif
 #endif
 
 namespace mitama::mitamagic
