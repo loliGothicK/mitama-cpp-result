@@ -235,7 +235,7 @@ public:
   ///   copy assignment operator for convertible basic_result
   template <mutability _mu, class U, class F>
     requires std::is_constructible_v<T, U> && std::is_constructible_v<E, F>
-  constexpr basic_result& operator=(const basic_result<_mu, U, F>& res)
+  MITAMA_VARIANT_CONSTEXPR basic_result& operator=(const basic_result<_mu, U, F>& res)
   {
     static_assert(
         is_mut_v<_mutability>, "Error: assignment to immutable result"
@@ -255,7 +255,7 @@ public:
   ///   move assignment operator for convertible basic_result
   template <mutability _mu, class U, class F>
     requires std::is_constructible_v<T, U> && std::is_constructible_v<E, F>
-  constexpr basic_result& operator=(basic_result<_mu, U, F>&& res)
+  MITAMA_VARIANT_CONSTEXPR basic_result& operator=(basic_result<_mu, U, F>&& res)
   {
     static_assert(
         is_mut_v<_mutability>, "Error: assignment to immutable result"
@@ -275,7 +275,7 @@ public:
   ///   copy assignment operator for convertible success_t
   template <class U>
     requires std::is_constructible_v<T, U>
-  constexpr basic_result& operator=(const success_t<U>& _ok)
+  MITAMA_VARIANT_CONSTEXPR basic_result& operator=(const success_t<U>& _ok)
   {
     static_assert(
         is_mut_v<_mutability>, "Error: assignment to immutable result"
@@ -288,7 +288,7 @@ public:
   ///   copy assignment operator for convertible failure_t
   template <class F>
     requires std::is_constructible_v<E, F>
-  constexpr basic_result& operator=(const failure_t<F>& _err)
+  MITAMA_VARIANT_CONSTEXPR basic_result& operator=(const failure_t<F>& _err)
   {
     static_assert(
         is_mut_v<_mutability>, "Error: assignment to immutable result"
@@ -301,7 +301,7 @@ public:
   ///   move assignment operator for convertible success_t
   template <class U>
     requires std::is_constructible_v<T, U>
-  constexpr basic_result& operator=(success_t<U>&& _ok)
+  MITAMA_VARIANT_CONSTEXPR basic_result& operator=(success_t<U>&& _ok)
   {
     static_assert(
         is_mut_v<_mutability>, "Error: assignment to immutable result"
@@ -314,7 +314,7 @@ public:
   ///   move assignment operator for convertible failure_t
   template <class F>
     requires std::is_constructible_v<E, F>
-  constexpr basic_result& operator=(failure_t<F>&& _err)
+  MITAMA_VARIANT_CONSTEXPR basic_result& operator=(failure_t<F>&& _err)
   {
     static_assert(
         is_mut_v<_mutability>, "Error: assignment to immutable result"
