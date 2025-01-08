@@ -79,7 +79,8 @@ public:
   friend std::ostream& operator<<(std::ostream& os, const error& err)
   {
     return os << std::apply(
-               [&](auto&&... src) {
+               [&](auto&&... src)
+               {
                  return fmt::format(fmt, std::forward<decltype(src)>(src)...);
                },
                err.sources

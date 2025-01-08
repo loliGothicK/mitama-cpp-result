@@ -625,10 +625,8 @@ public:
   /// @brief
   ///   Produces a new basic_result, containing a reference into the original,
   ///   leaving the original in place.
-  constexpr auto
-  as_ref() const& noexcept -> basic_result<
-                               _mutability, const std::remove_cvref_t<T>&,
-                               const std::remove_cvref_t<E>&>
+  constexpr auto as_ref() const& noexcept -> basic_result<
+      _mutability, const std::remove_cvref_t<T>&, const std::remove_cvref_t<E>&>
   {
     if (is_ok())
     {
@@ -651,10 +649,9 @@ public:
   /// @brief
   ///   Converts from `basic_result<mutability::mut, T, E>&` to
   ///   `basic_result<mutability::immut, T&, E&>`.
-  constexpr auto
-  as_mut() & noexcept -> basic_result<
-                          mutability::immut, std::remove_reference_t<T>&,
-                          std::remove_reference_t<E>&>
+  constexpr auto as_mut() & noexcept -> basic_result<
+      mutability::immut, std::remove_reference_t<T>&,
+      std::remove_reference_t<E>&>
   {
     static_assert(
         !std::is_const_v<std::remove_reference_t<T>>,
@@ -2019,8 +2016,8 @@ public:
   }
 
   template <class Ctx>
-  auto with_context(Ctx ctx
-  ) -> basic_result<_mutability, T, std::shared_ptr<anyhow::error>>
+  auto with_context(Ctx ctx)
+      -> basic_result<_mutability, T, std::shared_ptr<anyhow::error>>
     requires std::is_invocable_r_v<std::shared_ptr<anyhow::error>, Ctx>
   {
     return this->map_err(
