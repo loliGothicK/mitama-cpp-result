@@ -37,7 +37,7 @@ public:
   ///   Consumes the self argument then,
   ///   if success, returns the contained value,
   ///   otherwise; if Err, returns the default value for that type.
-  T unwrap_or_default() const
+  constexpr T unwrap_or_default() const
   {
     if constexpr (std::is_aggregate_v<T>)
     {
@@ -74,7 +74,7 @@ public:
   ///   Consumes the self argument then,
   ///   if success, returns the contained value,
   ///   otherwise; if failure, returns the default value for that type.
-  maybe<basic_result<_mutability, T, E>> transpose() const&
+  constexpr maybe<basic_result<_mutability, T, E>> transpose() const&
   {
     if (static_cast<const basic_result<_mutability, maybe<T>, E>*>(this)->is_ok(
         ))

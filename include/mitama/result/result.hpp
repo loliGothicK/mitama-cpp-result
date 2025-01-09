@@ -18,6 +18,15 @@
 #include <type_traits>
 #include <utility>
 #include <variant>
+#include <version>
+
+#ifndef MITAMA_VARIANT_CONSTEXPR
+#  if __cpp_lib_variant >= 202106L
+#    define MITAMA_VARIANT_CONSTEXPR constexpr
+#  else
+#    define MITAMA_VARIANT_CONSTEXPR
+#  endif
+#endif
 
 namespace mitama::_result_detail
 {
@@ -36,17 +45,17 @@ struct overload_linearly
 {
   std::tuple<Fs...> funcs;
 
-  explicit overload_linearly(Fs... fs) : funcs(std::move(fs)...) {}
+  constexpr explicit overload_linearly(Fs... fs) : funcs(std::move(fs)...) {}
 
   template <class... Args>
-  decltype(auto) operator()(Args&&... args) const
+  constexpr decltype(auto) operator()(Args&&... args) const
   {
     return invoke_impl<0>(std::forward<Args>(args)...);
   }
 
 private:
   template <std::size_t Index, class... Args>
-  decltype(auto) invoke_impl(Args&&... args) const
+  constexpr decltype(auto) invoke_impl(Args&&... args) const
   {
     if constexpr (Index < sizeof...(Fs))
     {
@@ -228,7 +237,8 @@ public:
   ///   copy assignment operator for convertible basic_result
   template <mutability _mu, class U, class F>
     requires std::is_constructible_v<T, U> && std::is_constructible_v<E, F>
-  constexpr basic_result& operator=(const basic_result<_mu, U, F>& res)
+  MITAMA_VARIANT_CONSTEXPR basic_result&
+  operator=(const basic_result<_mu, U, F>& res)
   {
     static_assert(
         is_mut_v<_mutability>, "Error: assignment to immutable result"
@@ -248,7 +258,8 @@ public:
   ///   move assignment operator for convertible basic_result
   template <mutability _mu, class U, class F>
     requires std::is_constructible_v<T, U> && std::is_constructible_v<E, F>
-  constexpr basic_result& operator=(basic_result<_mu, U, F>&& res)
+  MITAMA_VARIANT_CONSTEXPR basic_result& operator=(basic_result<_mu, U, F>&& res
+  )
   {
     static_assert(
         is_mut_v<_mutability>, "Error: assignment to immutable result"
@@ -268,7 +279,7 @@ public:
   ///   copy assignment operator for convertible success_t
   template <class U>
     requires std::is_constructible_v<T, U>
-  constexpr basic_result& operator=(const success_t<U>& _ok)
+  MITAMA_VARIANT_CONSTEXPR basic_result& operator=(const success_t<U>& _ok)
   {
     static_assert(
         is_mut_v<_mutability>, "Error: assignment to immutable result"
@@ -281,7 +292,7 @@ public:
   ///   copy assignment operator for convertible failure_t
   template <class F>
     requires std::is_constructible_v<E, F>
-  constexpr basic_result& operator=(const failure_t<F>& _err)
+  MITAMA_VARIANT_CONSTEXPR basic_result& operator=(const failure_t<F>& _err)
   {
     static_assert(
         is_mut_v<_mutability>, "Error: assignment to immutable result"
@@ -294,7 +305,7 @@ public:
   ///   move assignment operator for convertible success_t
   template <class U>
     requires std::is_constructible_v<T, U>
-  constexpr basic_result& operator=(success_t<U>&& _ok)
+  MITAMA_VARIANT_CONSTEXPR basic_result& operator=(success_t<U>&& _ok)
   {
     static_assert(
         is_mut_v<_mutability>, "Error: assignment to immutable result"
@@ -307,7 +318,7 @@ public:
   ///   move assignment operator for convertible failure_t
   template <class F>
     requires std::is_constructible_v<E, F>
-  constexpr basic_result& operator=(failure_t<F>&& _err)
+  MITAMA_VARIANT_CONSTEXPR basic_result& operator=(failure_t<F>&& _err)
   {
     static_assert(
         is_mut_v<_mutability>, "Error: assignment to immutable result"
@@ -444,6 +455,7 @@ public:
 
   template <class... Args>
     requires std::is_constructible_v<T, Args...>
+  MITAMA_VARIANT_CONSTEXPR
   basic_result(success_t<_result_detail::forward_mode<T>, Args...> fwd)
       : storage_()
   {
@@ -460,6 +472,7 @@ public:
 
   template <class... Args>
     requires std::is_constructible_v<T, Args...>
+  MITAMA_VARIANT_CONSTEXPR
   basic_result(success_t<_result_detail::forward_mode<void>, Args...> fwd)
       : storage_()
   {
@@ -476,6 +489,7 @@ public:
 
   template <class... Args>
     requires std::is_constructible_v<E, Args...>
+  MITAMA_VARIANT_CONSTEXPR
   basic_result(failure_t<_result_detail::forward_mode<E>, Args...> fwd)
       : storage_()
   {
@@ -492,6 +506,7 @@ public:
 
   template <class... Args>
     requires std::is_constructible_v<E, Args...>
+  MITAMA_VARIANT_CONSTEXPR
   basic_result(failure_t<_result_detail::forward_mode<void>, Args...> fwd)
       : storage_()
   {
@@ -548,21 +563,21 @@ public:
 
   /// @brief
   ///   Returns result storage.
-  decltype(auto) into_storage() &
+  constexpr decltype(auto) into_storage() &
   {
     return storage_;
   }
 
   /// @brief
   ///   Returns result storage.
-  decltype(auto) into_storage() const&
+  constexpr decltype(auto) into_storage() const&
   {
     return storage_;
   }
 
   /// @brief
   ///   Returns result storage.
-  decltype(auto) into_storage() &&
+  constexpr decltype(auto) into_storage() &&
   {
     return std::move(storage_);
   }
@@ -1285,7 +1300,7 @@ public:
   ///   which is lazily evaluated.
   template <class U>
     requires meta::has_common_type<T, U&&>::value
-  decltype(auto) unwrap_or(U&& optb) const& noexcept
+  constexpr decltype(auto) unwrap_or(U&& optb) const& noexcept
   {
     return is_ok() ? std::get<success_t<T>>(storage_).get()
                    : std::forward<U>(optb);
@@ -1305,7 +1320,7 @@ public:
   ///   which is lazily evaluated.
   template <class U>
     requires meta::has_common_type<std::remove_reference_t<T>&&, U&&>::value
-  decltype(auto) unwrap_or(U&& optb) && noexcept
+  constexpr decltype(auto) unwrap_or(U&& optb) && noexcept
   {
     return is_ok() ? std::move(std::get<success_t<T>>(storage_).get())
                    : std::forward<U>(optb);
@@ -1327,7 +1342,7 @@ public:
   ///     - otherwise; static_assert.
   template <class O>
     requires std::is_invocable_r_v<T, O, E> || std::is_invocable_r_v<T, O>
-  T unwrap_or_else(O&& op) const
+  constexpr T unwrap_or_else(O&& op) const
       noexcept(std::disjunction_v<
                std::conjunction<
                    std::is_invocable_r<T, O, E>,
@@ -1364,7 +1379,7 @@ public:
   /// @panics
   ///   Panics if the value is an failure, with a panic message provided by the
   ///   failure's value.
-  force_add_const_t<T>& unwrap() const&
+  constexpr force_add_const_t<T>& unwrap() const&
   {
     if constexpr (fmt::is_formattable<E>::value)
     {
@@ -1399,7 +1414,7 @@ public:
   /// @panics
   ///   Panics if the value is an failure, with a panic message provided by the
   ///   failure's value.
-  std::conditional_t<is_mut_v<_mutability>, T&, force_add_const_t<T>&>
+  constexpr std::conditional_t<is_mut_v<_mutability>, T&, force_add_const_t<T>&>
   unwrap() &
   {
     if constexpr (fmt::is_formattable<E>::value)
@@ -1435,7 +1450,7 @@ public:
   /// @panics
   ///   Panics if the value is an success, with a panic message provided by the
   ///   success's value.
-  force_add_const_t<E>& unwrap_err() const&
+  constexpr force_add_const_t<E>& unwrap_err() const&
   {
     if constexpr (fmt::is_formattable<T>::value)
     {
@@ -1470,7 +1485,7 @@ public:
   /// @panics
   ///   Panics if the value is an success, with a panic message provided by the
   ///   success's value.
-  std::conditional_t<is_mut_v<_mutability>, E&, force_add_const_t<E>&>
+  constexpr std::conditional_t<is_mut_v<_mutability>, E&, force_add_const_t<E>&>
   unwrap_err() &
   {
     if constexpr (fmt::is_formattable<T>::value)
@@ -1506,7 +1521,7 @@ public:
   /// @panics
   ///   Panics if the value is an failure, with a panic message including the
   ///   passed message, and the content of the failure.
-  force_add_const_t<T>& expect(std::string_view msg) const&
+  constexpr force_add_const_t<T>& expect(std::string_view msg) const&
   {
     if (is_err())
     {
@@ -1524,7 +1539,7 @@ public:
   /// @panics
   ///   Panics if the value is an failure, with a panic message including the
   ///   passed message, and the content of the failure.
-  decltype(auto) expect(std::string_view msg) &
+  constexpr decltype(auto) expect(std::string_view msg) &
   {
     if (is_err())
     {
@@ -1542,7 +1557,7 @@ public:
   /// @panics
   ///   Panics if the value is an success, with a panic message including the
   ///   passed message, and the content of the success.
-  force_add_const_t<E>& expect_err(std::string_view msg) const&
+  constexpr force_add_const_t<E>& expect_err(std::string_view msg) const&
   {
     if (is_ok())
     {
@@ -1560,7 +1575,7 @@ public:
   /// @panics
   ///   Panics if the value is an success, with a panic message including the
   ///   passed message, and the content of the success.
-  decltype(auto) expect_err(std::string_view msg) &
+  constexpr decltype(auto) expect_err(std::string_view msg) &
   {
     if (is_ok())
     {
@@ -1607,7 +1622,7 @@ public:
 
   template <class F>
     requires std::is_invocable_v<F, const T&> || std::is_invocable_v<F>
-  const basic_result& and_peek(F&& f) const&
+  constexpr const basic_result& and_peek(F&& f) const&
   {
     if constexpr (std::is_invocable_v<F, const T&>)
     {
@@ -1624,7 +1639,7 @@ public:
 
   template <class F>
     requires std::is_invocable_v<F, T&&> || std::is_invocable_v<F>
-  basic_result&& and_peek(F&& f) &&
+  constexpr basic_result&& and_peek(F&& f) &&
   {
     if constexpr (std::is_invocable_v<F, T&&>)
     {
@@ -1641,7 +1656,7 @@ public:
 
   template <class F>
     requires std::is_invocable_v<F, E&> || std::is_invocable_v<F>
-  basic_result& or_peek(F&& f) &
+  constexpr basic_result& or_peek(F&& f) &
   {
     if constexpr (std::is_invocable_v<F, E&>)
     {
@@ -1658,7 +1673,7 @@ public:
 
   template <class F>
     requires std::is_invocable_v<F, const E&> || std::is_invocable_v<F>
-  const basic_result& or_peek(F&& f) const&
+  constexpr const basic_result& or_peek(F&& f) const&
   {
     if constexpr (std::is_invocable_v<F, const E&>)
     {
@@ -1675,7 +1690,7 @@ public:
 
   template <class F>
     requires std::is_invocable_v<F, E&&> || std::is_invocable_v<F>
-  basic_result&& or_peek(F&& f) &&
+  constexpr basic_result&& or_peek(F&& f) &&
   {
     if constexpr (std::is_invocable_v<F, E&&>)
     {
@@ -1691,7 +1706,7 @@ public:
   }
 
   template <class F>
-  auto map_anything_else(F&& f
+  constexpr auto map_anything_else(F&& f
   ) & noexcept(std::is_nothrow_invocable_v<F, E&> && std::is_nothrow_invocable_v<F, T&>)
       -> std::common_type_t<
           std::invoke_result_t<F, T&>, std::invoke_result_t<F, E&>>
@@ -1711,7 +1726,7 @@ public:
   }
 
   template <class F>
-  auto map_anything_else(F&& f
+  constexpr auto map_anything_else(F&& f
   ) const& noexcept(std::is_nothrow_invocable_v<F, const E&> && std::is_nothrow_invocable_v<F, const T&>)
       -> std::common_type_t<
           std::invoke_result_t<F, const T&>, std::invoke_result_t<F, const E&>>
@@ -1734,7 +1749,7 @@ public:
   }
 
   template <class F>
-  auto map_anything_else(F&& f
+  constexpr auto map_anything_else(F&& f
   ) && noexcept(std::is_nothrow_invocable_v<F, E&&> && std::is_nothrow_invocable_v<F, T&&>)
       -> std::common_type_t<
           std::invoke_result_t<F, T&&>, std::invoke_result_t<F, E&&>>
@@ -1765,7 +1780,7 @@ public:
   ///   `==` found by ADL.
   template <mutability _mut, class U, class F>
     requires is_comparable_with<T, U>::value && is_comparable_with<E, F>::value
-  bool operator==(const basic_result<_mut, U, F>& rhs) const&
+  constexpr bool operator==(const basic_result<_mut, U, F>& rhs) const&
   {
     return std::visit(
         _result_detail::overload{
@@ -1791,7 +1806,7 @@ public:
   ///   by `==` found by ADL.
   template <mutability _mut, class U, class F>
     requires is_comparable_with<T, U>::value && is_comparable_with<E, F>::value
-  bool operator!=(const basic_result<_mut, U, F>& rhs) const&
+  constexpr bool operator!=(const basic_result<_mut, U, F>& rhs) const&
   {
     return !(*this == rhs);
   }
@@ -1807,7 +1822,7 @@ public:
   ///   `==` found by ADL.
   template <class U>
     requires is_comparable_with<T, U>::value
-  bool operator==(const success_t<U>& rhs) const
+  constexpr bool operator==(const success_t<U>& rhs) const
   {
     return this->is_ok() ? this->unwrap() == rhs.get() : false;
   }
@@ -1823,7 +1838,7 @@ public:
   ///   by `==` found by ADL.
   template <class U>
     requires is_comparable_with<T, U>::value
-  bool operator!=(const success_t<U>& rhs) const
+  constexpr bool operator!=(const success_t<U>& rhs) const
   {
     return this->is_ok() ? !(this->unwrap() == rhs.get()) : true;
   }
@@ -1839,7 +1854,7 @@ public:
   ///   `==` found by ADL.
   template <class F>
     requires is_comparable_with<E, F>::value
-  bool operator==(const failure_t<F>& rhs) const
+  constexpr bool operator==(const failure_t<F>& rhs) const
   {
     return this->is_err() ? this->unwrap_err() == rhs.get() : false;
   }
@@ -1855,7 +1870,7 @@ public:
   ///   `==` found by ADL.
   template <class F>
     requires is_comparable_with<E, F>::value
-  bool operator!=(const failure_t<F>& rhs) const
+  constexpr bool operator!=(const failure_t<F>& rhs) const
   {
     return this->is_err() ? !(this->unwrap_err() == rhs.get()) : true;
   }
@@ -1863,7 +1878,7 @@ public:
   template <mutability _, class U, class F>
     requires meta::is_less_comparable_with<T, U>::value
              && meta::is_less_comparable_with<E, F>::value
-  bool operator<(const basic_result<_, U, F>& rhs) const
+  constexpr bool operator<(const basic_result<_, U, F>& rhs) const
   {
     return std::visit(
         _result_detail::overload_linearly(
@@ -1881,14 +1896,14 @@ public:
 
   template <class U>
     requires meta::is_less_comparable_with<U, T>::value
-  bool operator<(const success_t<U>& rhs) const
+  constexpr bool operator<(const success_t<U>& rhs) const
   {
     return rhs > *this;
   }
 
   template <class F>
     requires meta::is_less_comparable_with<F, E>::value
-  bool operator<(const failure_t<F>& rhs) const
+  constexpr bool operator<(const failure_t<F>& rhs) const
   {
     return rhs > *this;
   }
@@ -1896,7 +1911,7 @@ public:
   template <mutability _, class U, class F>
     requires meta::is_less_comparable_with<U, T>::value
              && meta::is_less_comparable_with<F, E>::value
-  bool operator>(const basic_result<_, U, F>& rhs) const
+  constexpr bool operator>(const basic_result<_, U, F>& rhs) const
   {
     return std::visit(
         _result_detail::overload_linearly(
@@ -1914,14 +1929,14 @@ public:
 
   template <class U>
     requires meta::is_less_comparable_with<U, T>::value
-  bool operator>(const success_t<U>& rhs) const
+  constexpr bool operator>(const success_t<U>& rhs) const
   {
     return rhs < *this;
   }
 
   template <class F>
     requires meta::is_less_comparable_with<F, E>::value
-  bool operator>(const failure_t<F>& rhs) const
+  constexpr bool operator>(const failure_t<F>& rhs) const
   {
     return rhs < *this;
   }
@@ -1931,7 +1946,7 @@ public:
              && meta::is_less_comparable_with<E, F>::value
              && is_comparable_with<T, U>::value
              && is_comparable_with<E, F>::value
-  bool operator<=(const basic_result<_, U, F>& rhs) const
+  constexpr bool operator<=(const basic_result<_, U, F>& rhs) const
   {
     return std::visit(
         _result_detail::overload_linearly(
@@ -1950,7 +1965,7 @@ public:
   template <class U>
     requires meta::is_less_comparable_with<U, T>::value
              && is_comparable_with<U, T>::value
-  bool operator<=(const success_t<U>& rhs) const
+  constexpr bool operator<=(const success_t<U>& rhs) const
   {
     return rhs >= *this;
   }
@@ -1958,7 +1973,7 @@ public:
   template <class F>
     requires meta::is_less_comparable_with<F, E>::value
              && is_comparable_with<F, E>::value
-  bool operator<=(const failure_t<F>& rhs) const
+  constexpr bool operator<=(const failure_t<F>& rhs) const
   {
     return rhs >= *this;
   }
@@ -1968,7 +1983,7 @@ public:
              && meta::is_less_comparable_with<E, F>::value
              && is_comparable_with<T, U>::value
              && is_comparable_with<E, F>::value
-  bool operator>=(const basic_result<_, U, F>& rhs) const
+  constexpr bool operator>=(const basic_result<_, U, F>& rhs) const
   {
     return std::visit(
         _result_detail::overload_linearly(
@@ -1987,7 +2002,7 @@ public:
   template <class U>
     requires meta::is_less_comparable_with<U, T>::value
              && is_comparable_with<U, T>::value
-  bool operator>=(const success_t<U>& rhs) const
+  constexpr bool operator>=(const success_t<U>& rhs) const
   {
     return rhs <= *this;
   }
@@ -1995,7 +2010,7 @@ public:
   template <class F>
     requires meta::is_less_comparable_with<F, E>::value
              && is_comparable_with<F, E>::value
-  bool operator>=(const failure_t<F>& rhs) const
+  constexpr bool operator>=(const failure_t<F>& rhs) const
   {
     return rhs <= *this;
   }
@@ -2017,7 +2032,7 @@ template <mutability _, class T, class E, class U>
              || is_ok_type<std::decay_t<U>>::value
              || is_err_type<std::decay_t<U>>::value))
           && is_comparable_with<T, U>::value
-bool
+constexpr bool
 operator==(const basic_result<_, T, E>& lhs, U&& rhs)
 {
   return lhs == success_t(std::forward<U>(rhs));
@@ -2028,7 +2043,7 @@ template <mutability _, class T, class E, class U>
              || is_ok_type<std::decay_t<T>>::value
              || is_err_type<std::decay_t<T>>::value))
           && is_comparable_with<T, U>::value
-bool
+constexpr bool
 operator==(T&& lhs, const basic_result<_, U, E>& rhs)
 {
   return success_t(std::forward<T>(lhs)) == rhs;
@@ -2039,7 +2054,7 @@ template <mutability _, class T, class E, class U>
              || is_ok_type<std::decay_t<U>>::value
              || is_err_type<std::decay_t<U>>::value))
           && is_comparable_with<T, U>::value
-bool
+constexpr bool
 operator!=(const basic_result<_, T, E>& lhs, U&& rhs)
 {
   return lhs != success_t(std::forward<U>(rhs));
@@ -2050,7 +2065,7 @@ template <mutability _, class T, class E, class U>
              || is_ok_type<std::decay_t<T>>::value
              || is_err_type<std::decay_t<T>>::value))
           && is_comparable_with<T, U>::value
-bool
+constexpr bool
 operator!=(T&& lhs, const basic_result<_, U, E>& rhs)
 {
   return success_t(std::forward<T>(lhs)) != rhs;
@@ -2061,7 +2076,7 @@ template <mutability _, class T, class E, class U>
              || is_ok_type<std::decay_t<U>>::value
              || is_err_type<std::decay_t<U>>::value))
           && meta::is_less_comparable_with<T, U>::value
-bool
+constexpr bool
 operator<(const basic_result<_, T, E>& lhs, U&& rhs)
 {
   return lhs < success_t(std::forward<U>(rhs));
@@ -2072,7 +2087,7 @@ template <mutability _, class T, class E, class U>
              || is_ok_type<std::decay_t<T>>::value
              || is_err_type<std::decay_t<T>>::value))
           && meta::is_less_comparable_with<T, U>::value
-bool
+constexpr bool
 operator<(T&& lhs, const basic_result<_, U, E>& rhs)
 {
   return success_t(std::forward<T>(lhs)) < rhs;
@@ -2084,7 +2099,7 @@ template <mutability _, class T, class E, class U>
              || is_err_type<std::decay_t<U>>::value))
           && meta::is_less_comparable_with<T, U>::value
           && is_comparable_with<T, U>::value
-bool
+constexpr bool
 operator<=(const basic_result<_, T, E>& lhs, U&& rhs)
 {
   return lhs <= success_t(std::forward<U>(rhs));
@@ -2096,7 +2111,7 @@ template <mutability _, class T, class E, class U>
              || is_err_type<std::decay_t<T>>::value))
           && meta::is_less_comparable_with<T, U>::value
           && is_comparable_with<T, U>::value
-bool
+constexpr bool
 operator<=(T&& lhs, const basic_result<_, U, E>& rhs)
 {
   return success_t(std::forward<T>(lhs)) <= rhs;
@@ -2107,7 +2122,7 @@ template <mutability _, class T, class E, class U>
              || is_ok_type<std::decay_t<U>>::value
              || is_err_type<std::decay_t<U>>::value))
           && meta::is_less_comparable_with<U, T>::value
-bool
+constexpr bool
 operator>(const basic_result<_, T, E>& lhs, U&& rhs)
 {
   return lhs > success_t(std::forward<U>(rhs));
@@ -2118,7 +2133,7 @@ template <mutability _, class T, class E, class U>
              || is_ok_type<std::decay_t<T>>::value
              || is_err_type<std::decay_t<T>>::value))
           && meta::is_less_comparable_with<U, T>::value
-bool
+constexpr bool
 operator>(T&& lhs, const basic_result<_, U, E>& rhs)
 {
   return success_t(std::forward<T>(lhs)) > rhs;
@@ -2130,7 +2145,7 @@ template <mutability _, class T, class E, class U>
              || is_err_type<std::decay_t<U>>::value))
           && meta::is_less_comparable_with<U, T>::value
           && is_comparable_with<U, T>::value
-bool
+constexpr bool
 operator>=(const basic_result<_, T, E>& lhs, U&& rhs)
 {
   return lhs >= success_t(std::forward<U>(rhs));
@@ -2142,7 +2157,7 @@ template <mutability _, class T, class E, class U>
              || is_err_type<std::decay_t<T>>::value))
           && meta::is_less_comparable_with<U, T>::value
           && is_comparable_with<U, T>::value
-bool
+constexpr bool
 operator>=(T&& lhs, const basic_result<_, U, E>& rhs)
 {
   return success_t(std::forward<T>(lhs)) >= rhs;

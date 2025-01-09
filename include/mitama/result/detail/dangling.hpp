@@ -17,7 +17,7 @@ public:
   {
   }
 
-  decltype(auto) transmute() const
+  constexpr decltype(auto) transmute() const
   {
     return value_;
   }
@@ -31,7 +31,7 @@ class dangling<std::reference_wrapper<T>>
 public:
   constexpr explicit dangling(std::reference_wrapper<T> ref) : ref_(ref) {}
 
-  T& transmute() const&
+  constexpr T& transmute() const&
   {
     return ref_.get();
   }

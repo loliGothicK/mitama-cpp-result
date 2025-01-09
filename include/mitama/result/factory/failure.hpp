@@ -223,15 +223,15 @@ public:
     return rhs <= *this;
   }
 
-  E& get() &
+  constexpr E& get() &
   {
     return x;
   }
-  const E& get() const&
+  constexpr const E& get() const&
   {
     return x;
   }
-  E&& get() &&
+  constexpr E&& get() &&
   {
     return std::move(x);
   }
@@ -396,15 +396,15 @@ public:
     return rhs <= *this;
   }
 
-  E& get() &
+  constexpr E& get() &
   {
     return x.get();
   }
-  const E& get() const&
+  constexpr const E& get() const&
   {
     return x.get();
   }
-  E& get() &&
+  constexpr E& get() &&
   {
     return x.get();
   }
@@ -420,7 +420,7 @@ public:
   {
   }
 
-  auto operator()() &&
+  constexpr auto operator()() &&
   {
     return std::apply(
         [](auto&&... fwd)
@@ -431,7 +431,7 @@ public:
 };
 
 template <class Target = void, class... Types>
-inline auto
+inline constexpr auto
 failure(Types&&... v)
 {
   if constexpr (!std::is_void_v<Target>)

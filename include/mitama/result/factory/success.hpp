@@ -220,15 +220,15 @@ public:
     return true;
   }
 
-  T& get() &
+  constexpr T& get() &
   {
     return x;
   }
-  const T& get() const&
+  constexpr const T& get() const&
   {
     return x;
   }
-  T&& get() &&
+  constexpr T&& get() &&
   {
     return std::move(x);
   }
@@ -390,15 +390,15 @@ public:
     return true;
   }
 
-  T& get() &
+  constexpr T& get() &
   {
     return x.get();
   }
-  const T& get() const&
+  constexpr const T& get() const&
   {
     return x.get();
   }
-  T& get() &&
+  constexpr T& get() &&
   {
     return x.get();
   }
@@ -414,7 +414,7 @@ public:
   {
   }
 
-  auto operator()() &&
+  constexpr auto operator()() &&
   {
     return std::apply(
         [](auto&&... fwd)
@@ -425,7 +425,7 @@ public:
 };
 
 template <class Target = void, class... Types>
-inline auto
+inline constexpr auto
 success(Types&&... v)
 {
   if constexpr (!std::is_void_v<Target>)
