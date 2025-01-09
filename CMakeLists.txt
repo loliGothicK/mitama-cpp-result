@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 ## Set our project name
 project(mitama-cpp-result
-  VERSION 10.0.1
+  VERSION 10.0.2
   LANGUAGES CXX
 )
 
