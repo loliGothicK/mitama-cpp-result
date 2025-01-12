@@ -2169,25 +2169,25 @@ operator>=(T&& lhs, const basic_result<_, U, E>& rhs)
 // https://stackoverflow.com/q/5291532)
 #if defined(__clang__) || defined(__GNUC__)
 #  define MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC true
-#  define MITAMA_TRY_IMPL(...)                                                 \
-    ({                                                                         \
-      auto&& result = ::mitama::_result_detail::id(__VA_ARGS__);               \
-      static_assert(                                                           \
-          ::mitama::is_result_v<std::remove_cvref_t<decltype(result)>>,        \
-          "You should pass mitama::result type to this MITAMA_TRY macro."      \
-      );                                                                       \
-      if (result.is_err())                                                     \
-      {                                                                        \
-        using Err = ::mitama::failure_t<                                       \
-            std::remove_cvref_t<decltype(result)>::err_type>;                  \
-        return ::std::get<Err>(                                                \
-            std::forward<decltype(result)>(result).into_storage()              \
-        );                                                                     \
-      }                                                                        \
-      using Ok =                                                               \
-          ::mitama::success_t<std::remove_cvref_t<decltype(result)>::ok_type>; \
-      ::std::get<Ok>(std::forward<decltype(result)>(result).into_storage())    \
-          .get();                                                              \
+#  define MITAMA_TRY_IMPL(...)                                              \
+    ({                                                                      \
+      auto&& result = ::mitama::_result_detail::id(__VA_ARGS__);            \
+      static_assert(                                                        \
+          ::mitama::is_result_v<std::remove_cvref_t<decltype(result)>>,     \
+          "You should pass mitama::result type to this MITAMA_TRY macro."   \
+      );                                                                    \
+      if (result.is_err())                                                  \
+      {                                                                     \
+        using Err = ::mitama::failure_t<                                    \
+            typename std::remove_cvref_t<decltype(result)>::err_type>;      \
+        return ::std::get<Err>(                                             \
+            std::forward<decltype(result)>(result).into_storage()           \
+        );                                                                  \
+      }                                                                     \
+      using Ok = ::mitama::success_t<                                       \
+          typename std::remove_cvref_t<decltype(result)>::ok_type>;         \
+      ::std::get<Ok>(std::forward<decltype(result)>(result).into_storage()) \
+          .get();                                                           \
     })
 #  ifdef __clang__
 #    define MITAMA_TRY(...)                                                \
