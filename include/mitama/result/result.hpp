@@ -375,7 +375,7 @@ public:
   /// @brief
   ///   explicit constructor for unsuccessful lvalue
   template <class U>
-    requires std::is_constructible_v<T, U> && (!std::is_convertible_v<U, T>)
+    requires std::is_constructible_v<E, U> && (!std::is_convertible_v<U, E>)
   constexpr explicit basic_result(const failure_t<U>& err)
       : storage_{ std::in_place_type<failure_t<E>>, std::in_place, err.get() }
   {
@@ -393,7 +393,7 @@ public:
   /// @brief
   ///   explicit constructor for unsuccessful lvalue
   template <class U>
-    requires std::is_constructible_v<T, U> && (!std::is_convertible_v<U, T>)
+    requires std::is_constructible_v<E, U> && (!std::is_convertible_v<U, E>)
   constexpr explicit basic_result(failure_t<U>&& err)
       : storage_{ std::in_place_type<failure_t<E>>, std::move(err) }
   {
