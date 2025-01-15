@@ -582,14 +582,14 @@ TEST_CASE("format test", "[result][format]")
   {
     using namespace std::literals;
     std::stringstream ss;
-    ss << result<>{ success() };
+    ss << result<void, void>{ success() };
     REQUIRE(ss.str() == "success(())"s);
   }
   SECTION("result of void err")
   {
     using namespace std::literals;
     std::stringstream ss;
-    ss << result<>{ failure() };
+    ss << result<void, void>{ failure() };
     REQUIRE(ss.str() == "failure(())"s);
   }
   SECTION("result of range ok")
@@ -711,7 +711,7 @@ TEST_CASE("monostate success test", "[result][monostate]")
 
 TEST_CASE("monostate failure test", "[result][monostate]")
 {
-  auto func = []() -> result</*defaulted monostate*/>
+  auto func = []() -> result<void, void>
   {
     if (false)
       return success<>();
@@ -722,7 +722,7 @@ TEST_CASE("monostate failure test", "[result][monostate]")
 
 TEST_CASE("contextually convertible to bool", "[result]")
 {
-  auto err_func = []() -> result</*defaulted monostate*/>
+  auto err_func = []() -> result<void, void>
   {
     if (false)
       return failure<>();
@@ -874,7 +874,7 @@ struct is_complete_type<T, std::void_t<decltype(sizeof(T))>> : std::true_type
 TEST_CASE("incomplete type reference", "[result]")
 {
   static_assert(!is_complete_type<incomplete_type>::value);
-  [[maybe_unused]] result<incomplete_type&> res =
+  [[maybe_unused]] result<incomplete_type&, void> res =
       success<incomplete_type&>(get_incomplete_type()
       ); // use incomplete_type& for result
 }
@@ -1496,8 +1496,8 @@ TEST_CASE("MITAMA_TRY2", "[result][mitama_try]")
 {
   (void)[]
   {
-    auto res =
-        mut_result<std::unique_ptr<u32>>{ mitama::in_place_ok, new auto(42u) };
+    auto res = mut_result<std::unique_ptr<u32>, void>{ mitama::in_place_ok,
+                                                       new auto(42u) };
 
     auto&& ret = MITAMA_TRY(std::move(res));
     return mitama::failure();
