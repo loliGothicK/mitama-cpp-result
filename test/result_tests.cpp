@@ -141,7 +141,7 @@ TEST_CASE("err() test", "[result][err]")
   static_assert(x.err() == nothing);
 
   constexpr result<u32, str_ref> y = failure("Nothing here"sv);
-  static_assert(y.err() == just("Nothing here"s));
+  static_assert(y.err() == just("Nothing here"sv));
 }
 
 TEST_CASE("map() test", "[result][map]")
@@ -1359,7 +1359,7 @@ TEST_CASE("ok_or test", "[result][ok_or][boolinators]")
   constexpr basic_result x = ok_or(true, "err"sv);
   static_assert(x == success(std::monostate{}));
   constexpr basic_result y = ok_or(false, "err"sv);
-  static_assert(y == failure("err"s));
+  static_assert(y == failure("err"sv));
 }
 
 TEST_CASE("ok_or_else test", "[result][ok_or_else][boolinators]")
