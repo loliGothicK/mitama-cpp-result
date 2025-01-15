@@ -235,7 +235,7 @@ public:
   maybe& operator=(const maybe&) = default;
   maybe(maybe&&) = default;
   maybe& operator=(maybe&&) = default;
-  maybe(nothing_t) : maybe() {}
+  constexpr maybe(nothing_t) : maybe() {}
 
   template <typename U>
     requires std::is_constructible_v<T, U&&>
