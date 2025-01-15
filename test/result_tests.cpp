@@ -13,6 +13,7 @@
 #include <regex>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <tuple>
 #include <utest_utility/is_invalid_expr.hpp>
 #include <utility>
@@ -23,6 +24,7 @@ using namespace std::string_literals;
 using namespace std::string_view_literals;
 
 using str = std::string;
+using str_ref = std::string_view;
 using u32 = std::uint32_t;
 using i32 = std::int32_t;
 template <class T>
@@ -108,38 +110,38 @@ auto parse = [](str s) -> result<T, str>
 
 TEST_CASE("is_ok() test", "[result][is_ok]")
 {
-  result<u32, str> x = success(-3);
-  REQUIRE(x.is_ok() == true);
+  constexpr result<u32, str_ref> x = success(-3);
+  static_assert(x.is_ok() == true);
 
-  result<u32, str> y = failure("some error message"s);
-  REQUIRE(y.is_ok() == false);
+  constexpr result<u32, str_ref> y = failure("some error message"sv);
+  static_assert(y.is_ok() == false);
 }
 
 TEST_CASE("is_err() test", "[result][is_err]")
 {
-  result<u32, str> x = success(-3);
-  REQUIRE(x.is_err() == false);
+  constexpr result<u32, str_ref> x = success(-3);
+  static_assert(x.is_err() == false);
 
-  result<u32, str> y = failure("some error message"s);
-  REQUIRE(y.is_err() == true);
+  constexpr result<u32, str_ref> y = failure("some error message"sv);
+  static_assert(y.is_err() == true);
 }
 
 TEST_CASE("ok() test", "[result][ok]")
 {
-  result<u32, str> x = success(2);
-  REQUIRE(x.ok() == just(2u));
+  constexpr result<u32, str_ref> x = success(2);
+  static_assert(x.ok() == just(2u));
 
-  result<int, str> y = failure("Nothing here"s);
-  REQUIRE(y.ok() == nothing);
+  constexpr result<int, str_ref> y = failure("Nothing here"sv);
+  static_assert(y.ok() == nothing);
 }
 
 TEST_CASE("err() test", "[result][err]")
 {
-  result<u32, str> x = success(2u);
-  REQUIRE(x.err() == nothing);
+  constexpr result<u32, str_ref> x = success(2u);
+  static_assert(x.err() == nothing);
 
-  result<u32, str> y = failure("Nothing here"s);
-  REQUIRE(y.err() == just("Nothing here"s));
+  constexpr result<u32, str_ref> y = failure("Nothing here"sv);
+  static_assert(y.err() == just("Nothing here"s));
 }
 
 TEST_CASE("map() test", "[result][map]")
@@ -191,12 +193,12 @@ TEST_CASE("map_or_else(F, M) test", "[result][map_or_else]")
 TEST_CASE("map_anything_else(F) test", "[result][map_anything_else]")
 {
   {
-    result<str, str> x = success("foo"s);
-    REQUIRE(x.map_anything_else([](auto v) { return v.length(); }) == 3);
+    constexpr result<str_ref, str_ref> x = success("foo"sv);
+    static_assert(x.map_anything_else([](auto v) { return v.length(); }) == 3);
   }
   {
-    result<str, str> x = failure("bar"s);
-    REQUIRE(x.map_anything_else([](auto v) { return v.length(); }) == 3);
+    constexpr result<str_ref, str_ref> x = failure("bar"sv);
+    static_assert(x.map_anything_else([](auto v) { return v.length(); }) == 3);
   }
 }
 
@@ -227,57 +229,61 @@ TEST_CASE("map_apply_err() test", "[result][map_apply_err]")
 TEST_CASE("conj test", "[result][conj]")
 {
   {
-    result<u32, str> x = success(2);
-    result<str, str> y = failure("late error"s);
-    REQUIRE(x.conj(y) == failure("late error"s));
-    REQUIRE((x && y) == failure("late error"s));
+    constexpr result<u32, str_ref> x = success(2);
+    constexpr result<str_ref, str_ref> y = failure("late error"sv);
+    static_assert(x.conj(y) == failure("late error"sv));
+    static_assert((x && y) == failure("late error"sv));
   }
 
   {
-    result<u32, str> x = failure("early error"s);
-    result<str, str> y = success("foo"s);
-    REQUIRE(x.conj(y) == failure("early error"s));
-    REQUIRE((x && y) == failure("early error"s));
+    constexpr result<u32, str_ref> x = failure("early error"sv);
+    constexpr result<str_ref, str_ref> y = success("foo"sv);
+    static_assert(x.conj(y) == failure("early error"sv));
+    static_assert((x && y) == failure("early error"sv));
   }
   {
-    result<u32, str> x = failure("not a 2"s);
-    result<str, str> y = failure("late error"s);
-    REQUIRE(x.conj(y) == failure("not a 2"s));
-    REQUIRE((x && y) == failure("not a 2"s));
+    constexpr result<u32, str_ref> x = failure("not a 2"sv);
+    constexpr result<str_ref, str_ref> y = failure("late error"sv);
+    static_assert(x.conj(y) == failure("not a 2"sv));
+    static_assert((x && y) == failure("not a 2"sv));
   }
 
   {
-    result<u32, str> x = success(2);
-    result<str, str> y = success("different result type"s);
-    REQUIRE(x.conj(y) == success("different result type"s));
-    REQUIRE((x && y) == success("different result type"s));
+    constexpr result<u32, str_ref> x = success(2);
+    constexpr result<str_ref, str_ref> y = success("different result type"sv);
+    static_assert(x.conj(y) == success("different result type"sv));
+    static_assert((x && y) == success("different result type"sv));
   }
 }
 
 TEST_CASE("and_then() test", "[result][and_then]")
 {
-  auto sq = [](u32 x) -> result<u32, u32> { return success(x * x); };
-  auto err = [](u32 x) -> result<u32, u32> { return failure(x); };
-  auto eq = [](u32 x, u32 y) -> result<u32, u32>
+  constexpr auto sq = [](u32 x) -> result<u32, u32> { return success(x * x); };
+  constexpr auto err = [](u32 x) -> result<u32, u32> { return failure(x); };
+  constexpr auto eq = [](u32 x, u32 y) -> result<u32, u32>
   { return x == y ? result<u32, u32>(success(x)) : failure(x); };
 
-  REQUIRE(
+  static_assert(
       result<u32, u32>{ success(2u) }.and_then(sq).and_then(sq) == success(16u)
   );
-  REQUIRE(
+  static_assert(
       result<u32, u32>{ success(2u) }.and_then(sq).and_then(err) == failure(4u)
   );
-  REQUIRE(
+  static_assert(
       result<u32, u32>{ success(2u) }.and_then(err).and_then(sq) == failure(2u)
   );
-  REQUIRE(
+  static_assert(
       result<u32, u32>{ failure(3u) }.and_then(sq).and_then(sq) == failure(3u)
   );
-  REQUIRE(
+  static_assert(
       result<u32, u32>{ failure(3u) }.and_then(sq).and_then(sq) == failure(3u)
   );
-  REQUIRE(result<u32, u32>{ success(3u) }.and_then(eq, 3u) == success(3u));
-  REQUIRE(result<u32, u32>{ failure(3u) }.and_then(eq, 1u) == failure(3u));
+  static_assert(
+      result<u32, u32>{ success(3u) }.and_then(eq, 3u) == success(3u)
+  );
+  static_assert(
+      result<u32, u32>{ failure(3u) }.and_then(eq, 1u) == failure(3u)
+  );
 }
 
 TEST_CASE("and_then_apply() test", "[result][and_then_apply]")
@@ -317,82 +323,85 @@ TEST_CASE("or_else_apply() test", "[result][or_else_apply]")
 TEMPLATE_TEST_CASE("is_convertible_result_with meta test", "[is_convertible_result_with][meta]",
                     int, unsigned, std::string, std::vector<int>)
 {
-  REQUIRE(is_convertible_result_with_v<
-          mitama::result<int, TestType>, mitama::failure_t<TestType>>);
-  REQUIRE(!is_convertible_result_with_v<
-          result<unsigned, std::vector<TestType>>,
-          mitama::failure_t<TestType>>);
+  static_assert(is_convertible_result_with_v<
+                mitama::result<int, TestType>, mitama::failure_t<TestType>>);
+  static_assert(!is_convertible_result_with_v<
+                result<unsigned, std::vector<TestType>>,
+                mitama::failure_t<TestType>>);
 }
 
 TEST_CASE("disj test", "[result][disj]")
 {
   {
-    result<u32, str> x = success(2);
-    result<u32, str> y = failure("late error"s);
-    REQUIRE(x.disj(y) == success(2u));
-    REQUIRE((x || y) == success(2u));
+    constexpr result<u32, str_ref> x = success(2);
+    constexpr result<u32, str_ref> y = failure("late error"sv);
+    static_assert(x.disj(y) == success(2u));
+    static_assert((x || y) == success(2u));
   }
   {
-    result<u32, str> x = failure("early error"s);
-    result<u32, str> y = success(2);
-    REQUIRE(x.disj(y) == success(2u));
-    REQUIRE((x || y) == success(2u));
+    constexpr result<u32, str_ref> x = failure("early error"sv);
+    constexpr result<u32, str_ref> y = success(2);
+    static_assert(x.disj(y) == success(2u));
+    static_assert((x || y) == success(2u));
   }
   {
-    result<u32, str> x = failure("not a 2"s);
-    result<u32, str> y = failure("late error"s);
-    REQUIRE(x.disj(y) == failure("late error"s));
-    REQUIRE((x || y) == failure("late error"s));
+    constexpr result<u32, str_ref> x = failure("not a 2"sv);
+    constexpr result<u32, str_ref> y = failure("late error"sv);
+    static_assert(x.disj(y) == failure("late error"sv));
+    static_assert((x || y) == failure("late error"sv));
   }
   {
-    result<u32, str> x = success(2);
-    result<u32, str> y = success(100);
-    REQUIRE(x.disj(y) == success(2u));
-    REQUIRE((x || y) == success(2u));
+    constexpr result<u32, str_ref> x = success(2);
+    constexpr result<u32, str_ref> y = success(100);
+    static_assert(x.disj(y) == success(2u));
+    static_assert((x || y) == success(2u));
   }
 }
 
 TEST_CASE("or_else() test", "[result][or_else]")
 {
-  auto sq = [](u32 x) -> result<u32, u32> { return success(x * x); };
-  auto err = [](u32 x) -> result<u32, u32> { return failure(x); };
-  auto eq = [](u32 x, u32 y) -> result<u32, u32>
+  constexpr auto sq = [](u32 x) -> result<u32, u32> { return success(x * x); };
+  constexpr auto err = [](u32 x) -> result<u32, u32> { return failure(x); };
+  constexpr auto eq = [](u32 x, u32 y) -> result<u32, u32>
   { return x == y ? result<u32, u32>(success(x)) : failure(x); };
 
-  REQUIRE(
+  static_assert(
       result<u32, u32>{ success(2) }.or_else(sq).or_else(sq) == success(2u)
   );
-  REQUIRE(
+  static_assert(
       result<u32, u32>{ success(2) }.or_else(err).or_else(sq) == success(2u)
   );
-  REQUIRE(
+  static_assert(
       result<u32, u32>{ failure(3) }.or_else(sq).or_else(err) == success(9u)
   );
-  REQUIRE(
+  static_assert(
       result<u32, u32>{ failure(3) }.or_else(err).or_else(err) == failure(3u)
   );
-  REQUIRE(result<u32, u32>{ failure(3) }.or_else(eq, 3u) == success(3u));
-  REQUIRE(result<u32, u32>{ success(3) }.or_else(eq, 3u) == success(3u));
-  REQUIRE(result<u32, u32>{ failure(3) }.or_else(eq, 1u) == failure(3u));
+  static_assert(result<u32, u32>{ failure(3) }.or_else(eq, 3u) == success(3u));
+  static_assert(result<u32, u32>{ success(3) }.or_else(eq, 3u) == success(3u));
+  static_assert(result<u32, u32>{ failure(3) }.or_else(eq, 1u) == failure(3u));
 }
 
 TEST_CASE("unwrap_or() test", "[result][unwrap_or]")
 {
-  result<u32, u32> err = failure(2);
-  result<u32, u32> ok = success(2);
+  constexpr result<u32, u32> err = failure(2);
+  constexpr result<u32, u32> ok = success(2);
 
-  REQUIRE(ok.unwrap_or(1u) == 2u);
-  REQUIRE(err.unwrap_or(1u) == 1u);
+  static_assert(ok.unwrap_or(1u) == 2u);
+  static_assert(err.unwrap_or(1u) == 1u);
 }
 
 TEST_CASE("unwrap_or_else() test", "[result][unwrap_or_else]")
 {
-  auto count = [](str x) -> size_t { return x.size(); };
+  constexpr auto count = [](str_ref x) -> size_t { return x.size(); };
 
-  REQUIRE(result<u32, str>{ success(2) }.unwrap_or_else(count) == 2);
-  REQUIRE(result<u32, str>{ failure("foo"s) }.unwrap_or_else(count) == 3ull);
-  REQUIRE(
-      result<u32, str>{ failure("foo"s) }.unwrap_or_else([] { return 3ull; })
+  static_assert(result<u32, str_ref>{ success(2) }.unwrap_or_else(count) == 2);
+  static_assert(
+      result<u32, str_ref>{ failure("foo"sv) }.unwrap_or_else(count) == 3ull
+  );
+  static_assert(
+      result<u32, str_ref>{ failure("foo"sv) }.unwrap_or_else([]
+                                                              { return 3ull; })
       == 3ull
   );
 }
@@ -400,8 +409,8 @@ TEST_CASE("unwrap_or_else() test", "[result][unwrap_or_else]")
 TEST_CASE("unwrap() test", "[result][unwrap]")
 {
   {
-    result<u32, str> x = success(2);
-    REQUIRE(x.unwrap() == 2u);
+    constexpr result<u32, str_ref> x = success(2);
+    static_assert(x.unwrap() == 2u);
   }
   try
   {
@@ -448,8 +457,8 @@ TEST_CASE("unwrap_err() test", "[result][unwrap_err]")
   }
 
   {
-    result<u32, str> x = failure("emergency failure"s);
-    REQUIRE(x.unwrap_err() == "emergency failure"s);
+    constexpr result<u32, str_ref> x = failure("emergency failure"sv);
+    static_assert(x.unwrap_err() == "emergency failure"sv);
   }
 }
 
@@ -466,10 +475,10 @@ TEST_CASE("unwrap_or_default() test", "[result][unwrap_or_default]")
 
 TEST_CASE("transpose() test", "[result][transpose]")
 {
-  result<maybe<i32>, std::monostate> x = success(just(5));
-  maybe<result<i32, std::monostate>> y = just(success(5));
+  constexpr result<maybe<i32>, void> x = success(just(5));
+  constexpr maybe<result<i32, void>> y = just(success(5));
 
-  REQUIRE(x.transpose() == y);
+  static_assert(x.transpose() == y);
 }
 
 TEST_CASE("and_finally() test", "[result][and_finally]")
@@ -699,25 +708,25 @@ TEST_CASE("format test", "[result][format]")
 
 TEST_CASE("monostate success test", "[result][monostate]")
 {
-  auto func = []() -> result<void, std::string>
+  constexpr auto func = []() -> result<void, str_ref>
   {
     if (false)
-      return failure<std::string>("hoge"s);
+      return failure<str_ref>("hoge"sv);
     return success<>();
   };
 
-  REQUIRE(func().is_ok());
+  static_assert(func().is_ok());
 }
 
 TEST_CASE("monostate failure test", "[result][monostate]")
 {
-  auto func = []() -> result</*defaulted monostate*/>
+  constexpr auto func = []() -> result<void, void>
   {
     if (false)
       return success<>();
     return failure<>();
   };
-  REQUIRE(func().is_err());
+  static_assert(func().is_err());
 }
 
 TEST_CASE("contextually convertible to bool", "[result]")
@@ -892,488 +901,488 @@ get_incomplete_type()
 
 TEST_CASE("less compare", "[result][less]")
 {
-  result<int, int> ok1 = success(1);
-  result<int, int> ok2 = success(2);
-  result<int, int> err1 = failure(1);
-  result<int, int> err2 = failure(2);
+  constexpr result<int, int> ok1 = success(1);
+  constexpr result<int, int> ok2 = success(2);
+  constexpr result<int, int> err1 = failure(1);
+  constexpr result<int, int> err2 = failure(2);
 
-  REQUIRE(ok1 < ok2);
-  REQUIRE_FALSE(ok2 < ok1);
-  REQUIRE_FALSE(ok1 < ok1);
-  REQUIRE_FALSE(ok2 < ok2);
+  static_assert(ok1 < ok2);
+  static_assert(!(ok2 < ok1));
+  static_assert(!(ok1 < ok1));
+  static_assert(!(ok2 < ok2));
 
-  REQUIRE(success(1) < ok2);
-  REQUIRE_FALSE(success(2) < ok1);
-  REQUIRE_FALSE(success(1) < ok1);
-  REQUIRE_FALSE(success(2) < ok2);
+  static_assert(success(1) < ok2);
+  static_assert(!(success(2) < ok1));
+  static_assert(!(success(1) < ok1));
+  static_assert(!(success(2) < ok2));
 
-  REQUIRE(ok1 < success(2));
-  REQUIRE_FALSE(ok2 < success(1));
-  REQUIRE_FALSE(ok1 < success(1));
-  REQUIRE_FALSE(ok2 < success(2));
+  static_assert(ok1 < success(2));
+  static_assert(!(ok2 < success(1)));
+  static_assert(!(ok1 < success(1)));
+  static_assert(!(ok2 < success(2)));
 
-  REQUIRE(success(1) < success(2));
-  REQUIRE_FALSE(success(2) < success(1));
-  REQUIRE_FALSE(success(1) < success(1));
-  REQUIRE_FALSE(success(2) < success(2));
+  static_assert(success(1) < success(2));
+  static_assert(!(success(2) < success(1)));
+  static_assert(!(success(1) < success(1)));
+  static_assert(!(success(2) < success(2)));
 
-  REQUIRE(ok1 < 2);
-  REQUIRE_FALSE(ok2 < 1);
-  REQUIRE_FALSE(ok1 < 1);
-  REQUIRE_FALSE(ok2 < 2);
+  static_assert(ok1 < 2);
+  static_assert(!(ok2 < 1));
+  static_assert(!(ok1 < 1));
+  static_assert(!(ok2 < 2));
 
-  REQUIRE(1 < ok2);
-  REQUIRE_FALSE(2 < ok1);
-  REQUIRE_FALSE(1 < ok1);
-  REQUIRE_FALSE(2 < ok2);
+  static_assert(1 < ok2);
+  static_assert(!(2 < ok1));
+  static_assert(!(1 < ok1));
+  static_assert(!(2 < ok2));
 
-  REQUIRE(err1 < err2);
-  REQUIRE_FALSE(err2 < err1);
-  REQUIRE_FALSE(err1 < err1);
-  REQUIRE_FALSE(err2 < err2);
+  static_assert(err1 < err2);
+  static_assert(!(err2 < err1));
+  static_assert(!(err1 < err1));
+  static_assert(!(err2 < err2));
 
-  REQUIRE(failure(1) < err2);
-  REQUIRE_FALSE(failure(2) < err1);
-  REQUIRE_FALSE(failure(1) < err1);
-  REQUIRE_FALSE(failure(2) < err2);
+  static_assert(failure(1) < err2);
+  static_assert(!(failure(2) < err1));
+  static_assert(!(failure(1) < err1));
+  static_assert(!(failure(2) < err2));
 
-  REQUIRE(err1 < failure(2));
-  REQUIRE_FALSE(err2 < failure(1));
-  REQUIRE_FALSE(err1 < failure(1));
-  REQUIRE_FALSE(err2 < failure(2));
+  static_assert(err1 < failure(2));
+  static_assert(!(err2 < failure(1)));
+  static_assert(!(err1 < failure(1)));
+  static_assert(!(err2 < failure(2)));
 
-  REQUIRE(failure(1) < failure(2));
-  REQUIRE_FALSE(failure(2) < failure(1));
-  REQUIRE_FALSE(failure(1) < failure(1));
-  REQUIRE_FALSE(failure(2) < failure(2));
+  static_assert(failure(1) < failure(2));
+  static_assert(!(failure(2) < failure(1)));
+  static_assert(!(failure(1) < failure(1)));
+  static_assert(!(failure(2) < failure(2)));
 
-  REQUIRE(err1 < ok1);
-  REQUIRE(err1 < ok2);
-  REQUIRE(err2 < ok1);
-  REQUIRE(err2 < ok2);
+  static_assert(err1 < ok1);
+  static_assert(err1 < ok2);
+  static_assert(err2 < ok1);
+  static_assert(err2 < ok2);
 
-  REQUIRE(failure(1) < ok1);
-  REQUIRE(failure(1) < ok2);
-  REQUIRE(failure(2) < ok1);
-  REQUIRE(failure(2) < ok2);
+  static_assert(failure(1) < ok1);
+  static_assert(failure(1) < ok2);
+  static_assert(failure(2) < ok1);
+  static_assert(failure(2) < ok2);
 
-  REQUIRE(err1 < success(1));
-  REQUIRE(err1 < success(2));
-  REQUIRE(err2 < success(1));
-  REQUIRE(err2 < success(2));
+  static_assert(err1 < success(1));
+  static_assert(err1 < success(2));
+  static_assert(err2 < success(1));
+  static_assert(err2 < success(2));
 
-  REQUIRE(failure(1) < success(1));
-  REQUIRE(failure(1) < success(2));
-  REQUIRE(failure(2) < success(1));
-  REQUIRE(failure(2) < success(2));
+  static_assert(failure(1) < success(1));
+  static_assert(failure(1) < success(2));
+  static_assert(failure(2) < success(1));
+  static_assert(failure(2) < success(2));
 
-  REQUIRE_FALSE(ok1 < err1);
-  REQUIRE_FALSE(ok1 < err2);
-  REQUIRE_FALSE(ok2 < err1);
-  REQUIRE_FALSE(ok2 < err2);
+  static_assert(!(ok1 < err1));
+  static_assert(!(ok1 < err2));
+  static_assert(!(ok2 < err1));
+  static_assert(!(ok2 < err2));
 
-  REQUIRE_FALSE(success(1) < err1);
-  REQUIRE_FALSE(success(1) < err2);
-  REQUIRE_FALSE(success(2) < err1);
-  REQUIRE_FALSE(success(2) < err2);
+  static_assert(!(success(1) < err1));
+  static_assert(!(success(1) < err2));
+  static_assert(!(success(2) < err1));
+  static_assert(!(success(2) < err2));
 
-  REQUIRE_FALSE(ok1 < failure(1));
-  REQUIRE_FALSE(ok1 < failure(2));
-  REQUIRE_FALSE(ok2 < failure(1));
-  REQUIRE_FALSE(ok2 < failure(2));
+  static_assert(!(ok1 < failure(1)));
+  static_assert(!(ok1 < failure(2)));
+  static_assert(!(ok2 < failure(1)));
+  static_assert(!(ok2 < failure(2)));
 
-  REQUIRE_FALSE(success(1) < failure(1));
-  REQUIRE_FALSE(success(1) < failure(2));
-  REQUIRE_FALSE(success(2) < failure(1));
-  REQUIRE_FALSE(success(2) < failure(2));
+  static_assert(!(success(1) < failure(1)));
+  static_assert(!(success(1) < failure(2)));
+  static_assert(!(success(2) < failure(1)));
+  static_assert(!(success(2) < failure(2)));
 
-  REQUIRE_FALSE(1 < err1);
-  REQUIRE_FALSE(1 < err2);
-  REQUIRE_FALSE(2 < err1);
-  REQUIRE_FALSE(2 < err2);
+  static_assert(!(1 < err1));
+  static_assert(!(1 < err2));
+  static_assert(!(2 < err1));
+  static_assert(!(2 < err2));
 }
 
 TEST_CASE("less_or_equal compare", "[result][less_or_equal]")
 {
-  result<int, int> ok1 = success(1);
-  result<int, int> ok2 = success(2);
-  result<int, int> err1 = failure(1);
-  result<int, int> err2 = failure(2);
+  constexpr result<int, int> ok1 = success(1);
+  constexpr result<int, int> ok2 = success(2);
+  constexpr result<int, int> err1 = failure(1);
+  constexpr result<int, int> err2 = failure(2);
 
-  REQUIRE(ok1 <= ok2);
-  REQUIRE_FALSE(ok2 <= ok1);
-  REQUIRE(ok1 <= ok1);
-  REQUIRE(ok2 <= ok2);
+  static_assert(ok1 <= ok2);
+  static_assert(!(ok2 <= ok1));
+  static_assert(ok1 <= ok1);
+  static_assert(ok2 <= ok2);
 
-  REQUIRE(success(1) <= ok2);
-  REQUIRE_FALSE(success(2) <= ok1);
-  REQUIRE(success(1) <= ok1);
-  REQUIRE(success(2) <= ok2);
+  static_assert(success(1) <= ok2);
+  static_assert(!(success(2) <= ok1));
+  static_assert(success(1) <= ok1);
+  static_assert(success(2) <= ok2);
 
-  REQUIRE(ok1 <= success(2));
-  REQUIRE_FALSE(ok2 <= success(1));
-  REQUIRE(ok1 <= success(1));
-  REQUIRE(ok2 <= success(2));
+  static_assert(ok1 <= success(2));
+  static_assert(!(ok2 <= success(1)));
+  static_assert(ok1 <= success(1));
+  static_assert(ok2 <= success(2));
 
-  REQUIRE(success(1) <= success(2));
-  REQUIRE_FALSE(success(2) <= success(1));
-  REQUIRE(success(1) <= success(1));
-  REQUIRE(success(2) <= success(2));
+  static_assert(success(1) <= success(2));
+  static_assert(!(success(2) <= success(1)));
+  static_assert(success(1) <= success(1));
+  static_assert(success(2) <= success(2));
 
-  REQUIRE(1 <= ok2);
-  REQUIRE_FALSE(2 <= ok1);
-  REQUIRE(1 <= ok1);
-  REQUIRE(2 <= ok2);
+  static_assert(1 <= ok2);
+  static_assert(!(2 <= ok1));
+  static_assert(1 <= ok1);
+  static_assert(2 <= ok2);
 
-  REQUIRE(ok1 <= 2);
-  REQUIRE_FALSE(ok2 <= 1);
-  REQUIRE(ok1 <= 1);
-  REQUIRE(ok2 <= 2);
+  static_assert(ok1 <= 2);
+  static_assert(!(ok2 <= 1));
+  static_assert(ok1 <= 1);
+  static_assert(ok2 <= 2);
 
-  REQUIRE(err1 <= err2);
-  REQUIRE_FALSE(err2 <= err1);
-  REQUIRE(err1 <= err1);
-  REQUIRE(err2 <= err2);
+  static_assert(err1 <= err2);
+  static_assert(!(err2 <= err1));
+  static_assert(err1 <= err1);
+  static_assert(err2 <= err2);
 
-  REQUIRE(failure(1) <= err2);
-  REQUIRE_FALSE(failure(2) <= err1);
-  REQUIRE(failure(1) <= err1);
-  REQUIRE(failure(2) <= err2);
+  static_assert(failure(1) <= err2);
+  static_assert(!(failure(2) <= err1));
+  static_assert(failure(1) <= err1);
+  static_assert(failure(2) <= err2);
 
-  REQUIRE(err1 <= failure(2));
-  REQUIRE_FALSE(err2 <= failure(1));
-  REQUIRE(err1 <= failure(1));
-  REQUIRE(err2 <= failure(2));
+  static_assert(err1 <= failure(2));
+  static_assert(!(err2 <= failure(1)));
+  static_assert(err1 <= failure(1));
+  static_assert(err2 <= failure(2));
 
-  REQUIRE(failure(1) <= failure(2));
-  REQUIRE_FALSE(failure(2) <= failure(1));
-  REQUIRE(failure(1) <= failure(1));
-  REQUIRE(failure(2) <= failure(2));
+  static_assert(failure(1) <= failure(2));
+  static_assert(!(failure(2) <= failure(1)));
+  static_assert(failure(1) <= failure(1));
+  static_assert(failure(2) <= failure(2));
 
-  REQUIRE(err1 <= ok1);
-  REQUIRE(err1 <= ok2);
-  REQUIRE(err2 <= ok1);
-  REQUIRE(err2 <= ok2);
+  static_assert(err1 <= ok1);
+  static_assert(err1 <= ok2);
+  static_assert(err2 <= ok1);
+  static_assert(err2 <= ok2);
 
-  REQUIRE(failure(1) <= ok1);
-  REQUIRE(failure(1) <= ok2);
-  REQUIRE(failure(2) <= ok1);
-  REQUIRE(failure(2) <= ok2);
+  static_assert(failure(1) <= ok1);
+  static_assert(failure(1) <= ok2);
+  static_assert(failure(2) <= ok1);
+  static_assert(failure(2) <= ok2);
 
-  REQUIRE(err1 <= success(1));
-  REQUIRE(err1 <= success(2));
-  REQUIRE(err2 <= success(1));
-  REQUIRE(err2 <= success(2));
+  static_assert(err1 <= success(1));
+  static_assert(err1 <= success(2));
+  static_assert(err2 <= success(1));
+  static_assert(err2 <= success(2));
 
-  REQUIRE(failure(1) <= success(1));
-  REQUIRE(failure(1) <= success(2));
-  REQUIRE(failure(2) <= success(1));
-  REQUIRE(failure(2) <= success(2));
+  static_assert(failure(1) <= success(1));
+  static_assert(failure(1) <= success(2));
+  static_assert(failure(2) <= success(1));
+  static_assert(failure(2) <= success(2));
 
-  REQUIRE(err1 <= 1);
-  REQUIRE(err1 <= 2);
-  REQUIRE(err2 <= 1);
-  REQUIRE(err2 <= 2);
+  static_assert(err1 <= 1);
+  static_assert(err1 <= 2);
+  static_assert(err2 <= 1);
+  static_assert(err2 <= 2);
 
-  REQUIRE_FALSE(ok1 <= err1);
-  REQUIRE_FALSE(ok1 <= err2);
-  REQUIRE_FALSE(ok2 <= err1);
-  REQUIRE_FALSE(ok2 <= err2);
+  static_assert(!(ok1 <= err1));
+  static_assert(!(ok1 <= err2));
+  static_assert(!(ok2 <= err1));
+  static_assert(!(ok2 <= err2));
 
-  REQUIRE_FALSE(success(1) <= err1);
-  REQUIRE_FALSE(success(1) <= err2);
-  REQUIRE_FALSE(success(2) <= err1);
-  REQUIRE_FALSE(success(2) <= err2);
+  static_assert(!(success(1) <= err1));
+  static_assert(!(success(1) <= err2));
+  static_assert(!(success(2) <= err1));
+  static_assert(!(success(2) <= err2));
 
-  REQUIRE_FALSE(ok1 <= failure(1));
-  REQUIRE_FALSE(ok1 <= failure(2));
-  REQUIRE_FALSE(ok2 <= failure(1));
-  REQUIRE_FALSE(ok2 <= failure(2));
+  static_assert(!(ok1 <= failure(1)));
+  static_assert(!(ok1 <= failure(2)));
+  static_assert(!(ok2 <= failure(1)));
+  static_assert(!(ok2 <= failure(2)));
 
-  REQUIRE_FALSE(success(1) <= failure(1));
-  REQUIRE_FALSE(success(1) <= failure(2));
-  REQUIRE_FALSE(success(2) <= failure(1));
-  REQUIRE_FALSE(success(2) <= failure(2));
+  static_assert(!(success(1) <= failure(1)));
+  static_assert(!(success(1) <= failure(2)));
+  static_assert(!(success(2) <= failure(1)));
+  static_assert(!(success(2) <= failure(2)));
 
-  REQUIRE_FALSE(1 <= err1);
-  REQUIRE_FALSE(1 <= err2);
-  REQUIRE_FALSE(2 <= err1);
-  REQUIRE_FALSE(2 <= err2);
+  static_assert(!(1 <= err1));
+  static_assert(!(1 <= err2));
+  static_assert(!(2 <= err1));
+  static_assert(!(2 <= err2));
 }
 
 TEST_CASE("greater compare", "[result][greater]")
 {
-  result<int, int> ok1 = success(1);
-  result<int, int> ok2 = success(2);
-  result<int, int> err1 = failure(1);
-  result<int, int> err2 = failure(2);
+  constexpr result<int, int> ok1 = success(1);
+  constexpr result<int, int> ok2 = success(2);
+  constexpr result<int, int> err1 = failure(1);
+  constexpr result<int, int> err2 = failure(2);
 
-  REQUIRE_FALSE(ok1 > ok2);
-  REQUIRE(ok2 > ok1);
-  REQUIRE_FALSE(ok1 > ok1);
-  REQUIRE_FALSE(ok2 > ok2);
+  static_assert(!(ok1 > ok2));
+  static_assert(ok2 > ok1);
+  static_assert(!(ok1 > ok1));
+  static_assert(!(ok2 > ok2));
 
-  REQUIRE_FALSE(success(1) > ok2);
-  REQUIRE(success(2) > ok1);
-  REQUIRE_FALSE(success(1) > ok1);
-  REQUIRE_FALSE(success(2) > ok2);
+  static_assert(!(success(1) > ok2));
+  static_assert(success(2) > ok1);
+  static_assert(!(success(1) > ok1));
+  static_assert(!(success(2) > ok2));
 
-  REQUIRE_FALSE(ok1 > success(2));
-  REQUIRE(ok2 > success(1));
-  REQUIRE_FALSE(ok1 > success(1));
-  REQUIRE_FALSE(ok2 > success(2));
+  static_assert(!(ok1 > success(2)));
+  static_assert(ok2 > success(1));
+  static_assert(!(ok1 > success(1)));
+  static_assert(!(ok2 > success(2)));
 
-  REQUIRE_FALSE(success(1) > success(2));
-  REQUIRE(success(2) > success(1));
-  REQUIRE_FALSE(success(1) > success(1));
-  REQUIRE_FALSE(success(2) > success(2));
+  static_assert(!(success(1) > success(2)));
+  static_assert(success(2) > success(1));
+  static_assert(!(success(1) > success(1)));
+  static_assert(!(success(2) > success(2)));
 
-  REQUIRE_FALSE(1 > ok2);
-  REQUIRE(2 > ok1);
-  REQUIRE_FALSE(1 > ok1);
-  REQUIRE_FALSE(2 > ok2);
+  static_assert(!(1 > ok2));
+  static_assert(2 > ok1);
+  static_assert(!(1 > ok1));
+  static_assert(!(2 > ok2));
 
-  REQUIRE_FALSE(ok1 > 2);
-  REQUIRE(ok2 > 1);
-  REQUIRE_FALSE(ok1 > 1);
-  REQUIRE_FALSE(ok2 > 2);
+  static_assert(!(ok1 > 2));
+  static_assert(ok2 > 1);
+  static_assert(!(ok1 > 1));
+  static_assert(!(ok2 > 2));
 
-  REQUIRE_FALSE(err1 > err2);
-  REQUIRE(err2 > err1);
-  REQUIRE_FALSE(err1 > err1);
-  REQUIRE_FALSE(err2 > err2);
+  static_assert(!(err1 > err2));
+  static_assert(err2 > err1);
+  static_assert(!(err1 > err1));
+  static_assert(!(err2 > err2));
 
-  REQUIRE_FALSE(failure(1) > err2);
-  REQUIRE(failure(2) > err1);
-  REQUIRE_FALSE(failure(1) > err1);
-  REQUIRE_FALSE(failure(2) > err2);
+  static_assert(!(failure(1) > err2));
+  static_assert(failure(2) > err1);
+  static_assert(!(failure(1) > err1));
+  static_assert(!(failure(2) > err2));
 
-  REQUIRE_FALSE(err1 > failure(2));
-  REQUIRE(err2 > failure(1));
-  REQUIRE_FALSE(err1 > failure(1));
-  REQUIRE_FALSE(err2 > failure(2));
+  static_assert(!(err1 > failure(2)));
+  static_assert(err2 > failure(1));
+  static_assert(!(err1 > failure(1)));
+  static_assert(!(err2 > failure(2)));
 
-  REQUIRE_FALSE(failure(1) > failure(2));
-  REQUIRE(failure(2) > failure(1));
-  REQUIRE_FALSE(failure(1) > failure(1));
-  REQUIRE_FALSE(failure(2) > failure(2));
+  static_assert(!(failure(1) > failure(2)));
+  static_assert(failure(2) > failure(1));
+  static_assert(!(failure(1) > failure(1)));
+  static_assert(!(failure(2) > failure(2)));
 
-  REQUIRE_FALSE(err1 > ok1);
-  REQUIRE_FALSE(err1 > ok2);
-  REQUIRE_FALSE(err2 > ok1);
-  REQUIRE_FALSE(err2 > ok2);
+  static_assert(!(err1 > ok1));
+  static_assert(!(err1 > ok2));
+  static_assert(!(err2 > ok1));
+  static_assert(!(err2 > ok2));
 
-  REQUIRE_FALSE(failure(1) > ok1);
-  REQUIRE_FALSE(failure(1) > ok2);
-  REQUIRE_FALSE(failure(2) > ok1);
-  REQUIRE_FALSE(failure(2) > ok2);
+  static_assert(!(failure(1) > ok1));
+  static_assert(!(failure(1) > ok2));
+  static_assert(!(failure(2) > ok1));
+  static_assert(!(failure(2) > ok2));
 
-  REQUIRE_FALSE(err1 > success(1));
-  REQUIRE_FALSE(err1 > success(2));
-  REQUIRE_FALSE(err2 > success(1));
-  REQUIRE_FALSE(err2 > success(2));
+  static_assert(!(err1 > success(1)));
+  static_assert(!(err1 > success(2)));
+  static_assert(!(err2 > success(1)));
+  static_assert(!(err2 > success(2)));
 
-  REQUIRE_FALSE(failure(1) > success(1));
-  REQUIRE_FALSE(failure(1) > success(2));
-  REQUIRE_FALSE(failure(2) > success(1));
-  REQUIRE_FALSE(failure(2) > success(2));
+  static_assert(!(failure(1) > success(1)));
+  static_assert(!(failure(1) > success(2)));
+  static_assert(!(failure(2) > success(1)));
+  static_assert(!(failure(2) > success(2)));
 
-  REQUIRE_FALSE(err1 > 1);
-  REQUIRE_FALSE(err1 > 2);
-  REQUIRE_FALSE(err2 > 1);
-  REQUIRE_FALSE(err2 > 2);
+  static_assert(!(err1 > 1));
+  static_assert(!(err1 > 2));
+  static_assert(!(err2 > 1));
+  static_assert(!(err2 > 2));
 
-  REQUIRE(ok1 > err1);
-  REQUIRE(ok1 > err2);
-  REQUIRE(ok2 > err1);
-  REQUIRE(ok2 > err2);
+  static_assert(ok1 > err1);
+  static_assert(ok1 > err2);
+  static_assert(ok2 > err1);
+  static_assert(ok2 > err2);
 
-  REQUIRE(success(1) > err1);
-  REQUIRE(success(1) > err2);
-  REQUIRE(success(2) > err1);
-  REQUIRE(success(2) > err2);
+  static_assert(success(1) > err1);
+  static_assert(success(1) > err2);
+  static_assert(success(2) > err1);
+  static_assert(success(2) > err2);
 
-  REQUIRE(ok1 > failure(1));
-  REQUIRE(ok1 > failure(2));
-  REQUIRE(ok2 > failure(1));
-  REQUIRE(ok2 > failure(2));
+  static_assert(ok1 > failure(1));
+  static_assert(ok1 > failure(2));
+  static_assert(ok2 > failure(1));
+  static_assert(ok2 > failure(2));
 
-  REQUIRE(success(1) > failure(1));
-  REQUIRE(success(1) > failure(2));
-  REQUIRE(success(2) > failure(1));
-  REQUIRE(success(2) > failure(2));
+  static_assert(success(1) > failure(1));
+  static_assert(success(1) > failure(2));
+  static_assert(success(2) > failure(1));
+  static_assert(success(2) > failure(2));
 
-  REQUIRE(1 > err1);
-  REQUIRE(1 > err2);
-  REQUIRE(2 > err1);
-  REQUIRE(2 > err2);
+  static_assert(1 > err1);
+  static_assert(1 > err2);
+  static_assert(2 > err1);
+  static_assert(2 > err2);
 }
 
 TEST_CASE("greater_or_equal compare", "[result][greater_or_equal]")
 {
-  result<int, int> ok1 = success(1);
-  result<int, int> ok2 = success(2);
-  result<int, int> err1 = failure(1);
-  result<int, int> err2 = failure(2);
+  constexpr result<int, int> ok1 = success(1);
+  constexpr result<int, int> ok2 = success(2);
+  constexpr result<int, int> err1 = failure(1);
+  constexpr result<int, int> err2 = failure(2);
 
-  REQUIRE_FALSE(ok1 >= ok2);
-  REQUIRE(ok2 >= ok1);
-  REQUIRE(ok1 >= ok1);
-  REQUIRE(ok2 >= ok2);
+  static_assert(!(ok1 >= ok2));
+  static_assert(ok2 >= ok1);
+  static_assert(ok1 >= ok1);
+  static_assert(ok2 >= ok2);
 
-  REQUIRE_FALSE(success(1) >= ok2);
-  REQUIRE(success(2) >= ok1);
-  REQUIRE(success(1) >= ok1);
-  REQUIRE(success(2) >= ok2);
+  static_assert(!(success(1) >= ok2));
+  static_assert(success(2) >= ok1);
+  static_assert(success(1) >= ok1);
+  static_assert(success(2) >= ok2);
 
-  REQUIRE_FALSE(ok1 >= success(2));
-  REQUIRE(ok2 >= success(1));
-  REQUIRE(ok1 >= success(1));
-  REQUIRE(ok2 >= success(2));
+  static_assert(!(ok1 >= success(2)));
+  static_assert(ok2 >= success(1));
+  static_assert(ok1 >= success(1));
+  static_assert(ok2 >= success(2));
 
-  REQUIRE_FALSE(success(1) >= success(2));
-  REQUIRE(success(2) >= success(1));
-  REQUIRE(success(1) >= success(1));
-  REQUIRE(success(2) >= success(2));
+  static_assert(!(success(1) >= success(2)));
+  static_assert(success(2) >= success(1));
+  static_assert(success(1) >= success(1));
+  static_assert(success(2) >= success(2));
 
-  REQUIRE_FALSE(1 >= ok2);
-  REQUIRE(2 >= ok1);
-  REQUIRE(1 >= ok1);
-  REQUIRE(2 >= ok2);
+  static_assert(!(1 >= ok2));
+  static_assert(2 >= ok1);
+  static_assert(1 >= ok1);
+  static_assert(2 >= ok2);
 
-  REQUIRE_FALSE(ok1 >= 2);
-  REQUIRE(ok2 >= 1);
-  REQUIRE(ok1 >= 1);
-  REQUIRE(ok2 >= 2);
+  static_assert(!(ok1 >= 2));
+  static_assert(ok2 >= 1);
+  static_assert(ok1 >= 1);
+  static_assert(ok2 >= 2);
 
-  REQUIRE_FALSE(err1 >= err2);
-  REQUIRE(err2 >= err1);
-  REQUIRE(err1 >= err1);
-  REQUIRE(err2 >= err2);
+  static_assert(!(err1 >= err2));
+  static_assert(err2 >= err1);
+  static_assert(err1 >= err1);
+  static_assert(err2 >= err2);
 
-  REQUIRE_FALSE(failure(1) >= err2);
-  REQUIRE(failure(2) >= err1);
-  REQUIRE(failure(1) >= err1);
-  REQUIRE(failure(2) >= err2);
+  static_assert(!(failure(1) >= err2));
+  static_assert(failure(2) >= err1);
+  static_assert(failure(1) >= err1);
+  static_assert(failure(2) >= err2);
 
-  REQUIRE_FALSE(err1 >= failure(2));
-  REQUIRE(err2 >= failure(1));
-  REQUIRE(err1 >= failure(1));
-  REQUIRE(err2 >= failure(2));
+  static_assert(!(err1 >= failure(2)));
+  static_assert(err2 >= failure(1));
+  static_assert(err1 >= failure(1));
+  static_assert(err2 >= failure(2));
 
-  REQUIRE_FALSE(failure(1) >= failure(2));
-  REQUIRE(failure(2) >= failure(1));
-  REQUIRE(failure(1) >= failure(1));
-  REQUIRE(failure(2) >= failure(2));
+  static_assert(!(failure(1) >= failure(2)));
+  static_assert(failure(2) >= failure(1));
+  static_assert(failure(1) >= failure(1));
+  static_assert(failure(2) >= failure(2));
 
-  REQUIRE_FALSE(err1 >= ok1);
-  REQUIRE_FALSE(err1 >= ok2);
-  REQUIRE_FALSE(err2 >= ok1);
-  REQUIRE_FALSE(err2 >= ok2);
+  static_assert(!(err1 >= ok1));
+  static_assert(!(err1 >= ok2));
+  static_assert(!(err2 >= ok1));
+  static_assert(!(err2 >= ok2));
 
-  REQUIRE_FALSE(failure(1) >= ok1);
-  REQUIRE_FALSE(failure(1) >= ok2);
-  REQUIRE_FALSE(failure(2) >= ok1);
-  REQUIRE_FALSE(failure(2) >= ok2);
+  static_assert(!(failure(1) >= ok1));
+  static_assert(!(failure(1) >= ok2));
+  static_assert(!(failure(2) >= ok1));
+  static_assert(!(failure(2) >= ok2));
 
-  REQUIRE_FALSE(err1 >= success(1));
-  REQUIRE_FALSE(err1 >= success(2));
-  REQUIRE_FALSE(err2 >= success(1));
-  REQUIRE_FALSE(err2 >= success(2));
+  static_assert(!(err1 >= success(1)));
+  static_assert(!(err1 >= success(2)));
+  static_assert(!(err2 >= success(1)));
+  static_assert(!(err2 >= success(2)));
 
-  REQUIRE_FALSE(failure(1) >= success(1));
-  REQUIRE_FALSE(failure(1) >= success(2));
-  REQUIRE_FALSE(failure(2) >= success(1));
-  REQUIRE_FALSE(failure(2) >= success(2));
+  static_assert(!(failure(1) >= success(1)));
+  static_assert(!(failure(1) >= success(2)));
+  static_assert(!(failure(2) >= success(1)));
+  static_assert(!(failure(2) >= success(2)));
 
-  REQUIRE_FALSE(err1 >= 1);
-  REQUIRE_FALSE(err1 >= 2);
-  REQUIRE_FALSE(err2 >= 1);
-  REQUIRE_FALSE(err2 >= 2);
+  static_assert(!(err1 >= 1));
+  static_assert(!(err1 >= 2));
+  static_assert(!(err2 >= 1));
+  static_assert(!(err2 >= 2));
 
-  REQUIRE(ok1 >= err1);
-  REQUIRE(ok1 >= err2);
-  REQUIRE(ok2 >= err1);
-  REQUIRE(ok2 >= err2);
+  static_assert(ok1 >= err1);
+  static_assert(ok1 >= err2);
+  static_assert(ok2 >= err1);
+  static_assert(ok2 >= err2);
 
-  REQUIRE(success(1) >= err1);
-  REQUIRE(success(1) >= err2);
-  REQUIRE(success(2) >= err1);
-  REQUIRE(success(2) >= err2);
+  static_assert(success(1) >= err1);
+  static_assert(success(1) >= err2);
+  static_assert(success(2) >= err1);
+  static_assert(success(2) >= err2);
 
-  REQUIRE(ok1 >= failure(1));
-  REQUIRE(ok1 >= failure(2));
-  REQUIRE(ok2 >= failure(1));
-  REQUIRE(ok2 >= failure(2));
+  static_assert(ok1 >= failure(1));
+  static_assert(ok1 >= failure(2));
+  static_assert(ok2 >= failure(1));
+  static_assert(ok2 >= failure(2));
 
-  REQUIRE(success(1) >= failure(1));
-  REQUIRE(success(1) >= failure(2));
-  REQUIRE(success(2) >= failure(1));
-  REQUIRE(success(2) >= failure(2));
+  static_assert(success(1) >= failure(1));
+  static_assert(success(1) >= failure(2));
+  static_assert(success(2) >= failure(1));
+  static_assert(success(2) >= failure(2));
 
-  REQUIRE(1 >= err1);
-  REQUIRE(1 >= err2);
-  REQUIRE(2 >= err1);
-  REQUIRE(2 >= err2);
+  static_assert(1 >= err1);
+  static_assert(1 >= err2);
+  static_assert(2 >= err1);
+  static_assert(2 >= err2);
 }
 
 #include <mitama/boolinators.hpp>
 
 TEST_CASE("as_ok test", "[result][as_ok][boolinators]")
 {
-  basic_result x = as_ok(true, 1);
-  REQUIRE(x == success(1));
-  basic_result y = as_ok(false, 1);
-  REQUIRE(y == failure());
+  constexpr basic_result x = as_ok(true, 1);
+  static_assert(x == success(1));
+  constexpr basic_result y = as_ok(false, 1);
+  static_assert(y == failure());
 }
 
 TEST_CASE("as_result test", "[result][as_result][boolinators]")
 {
-  basic_result x = as_result(true, 1, "err"s);
-  REQUIRE(x == success(1));
-  basic_result y = as_result(false, 1, "err"s);
-  REQUIRE(y == failure("err"));
+  constexpr basic_result x = as_result(true, 1, "err"sv);
+  static_assert(x == success(1));
+  constexpr basic_result y = as_result(false, 1, "err"sv);
+  static_assert(y == failure("err"));
 }
 
 TEST_CASE("as_result_from test", "[result][as_result_from][boolinators]")
 {
-  basic_result x =
-      as_result_from(true, [] { return 1; }, [] { return "err"s; });
-  REQUIRE(x == success(1));
-  basic_result y =
-      as_result_from(false, [] { return 1; }, [] { return "err"s; });
-  REQUIRE(y == failure("err"));
+  constexpr basic_result x =
+      as_result_from(true, [] { return 1; }, [] { return "err"sv; });
+  static_assert(x == success(1));
+  constexpr basic_result y =
+      as_result_from(false, [] { return 1; }, [] { return "err"sv; });
+  static_assert(y == failure("err"));
 }
 
 TEST_CASE("ok_or test", "[result][ok_or][boolinators]")
 {
-  basic_result x = ok_or(true, "err"s);
-  REQUIRE(x == success(std::monostate{}));
-  basic_result y = ok_or(false, "err"s);
-  REQUIRE(y == failure("err"s));
+  constexpr basic_result x = ok_or(true, "err"sv);
+  static_assert(x == success(std::monostate{}));
+  constexpr basic_result y = ok_or(false, "err"sv);
+  static_assert(y == failure("err"s));
 }
 
 TEST_CASE("ok_or_else test", "[result][ok_or_else][boolinators]")
 {
-  basic_result x = ok_or_else(true, [] { return "err"s; });
-  REQUIRE(x == success(std::monostate{}));
-  basic_result y = ok_or_else(false, [] { return "err"s; });
-  REQUIRE(y == failure("err"s));
+  constexpr basic_result x = ok_or_else(true, [] { return "err"sv; });
+  static_assert(x == success(std::monostate{}));
+  constexpr basic_result y = ok_or_else(false, [] { return "err"sv; });
+  static_assert(y == failure("err"sv));
 }
 
 TEST_CASE("result with void", "[result][void]")
 {
-  result<void, str> ok1 = success();
-  REQUIRE(ok1.is_ok() == true);
+  constexpr result<void, str_ref> ok1 = success();
+  static_assert(ok1.is_ok() == true);
 
-  result<void, void> ok2 = success(std::monostate{});
-  REQUIRE(ok2.is_ok() == true);
+  constexpr result<void, void> ok2 = success(std::monostate{});
+  static_assert(ok2.is_ok() == true);
 
-  result<u32, void> err1 = failure(std::monostate{});
-  REQUIRE(err1.is_ok() == false);
+  constexpr result<u32, void> err1 = failure(std::monostate{});
+  static_assert(err1.is_ok() == false);
 
-  result<void, void> err2 = failure();
-  REQUIRE(err2.is_ok() == false);
+  constexpr result<void, void> err2 = failure();
+  static_assert(err2.is_ok() == false);
 }
 
 TEST_CASE("map(F(u32) -> void)", "[result][map][u32][void]")
@@ -1475,21 +1484,21 @@ TEST_CASE("map & map_err with void", "[result][map][map_err][void]")
 
 TEST_CASE("MITAMA_TRY", "[result][mitama_try]")
 {
-  auto func = []() -> result<u32, str>
+  auto func = []() -> result<u32, str_ref>
   {
-    result<u32, str> a = success(1);
+    result<u32, str_ref> a = success(1);
     u32 b = 2, c = 3;
     u32 d = MITAMA_TRY(
-        [&a, &b, &c]() -> ::result<u32, str>
+        [&a, &b, &c]() -> ::result<u32, str_ref>
         { return a.map([&b, &c](u32 x) -> u32 { return x + b + c; }); }()
     );
     return success(d);
   };
 
-  result<u32, str> x = func();
-  REQUIRE(MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC == true);
-  REQUIRE(x.is_ok() == true);
-  REQUIRE(x.unwrap() == 6);
+  constexpr result<u32, str_ref> x = func();
+  static_assert(MITAMA_CPP_RESULT_TRY_MAY_NOT_PANIC == true);
+  static_assert(x.is_ok() == true);
+  static_assert(x.unwrap() == 6);
 }
 
 TEST_CASE("MITAMA_TRY2", "[result][mitama_try]")
