@@ -11,11 +11,7 @@ enum class mutability: bool {
 template < mutability Mut >
 inline constexpr bool is_mut_v = !static_cast<bool>(Mut);
 
-template <mutability,
-          class = std::monostate,   // success type
-          class = std::monostate,   // failure type
-          class = decltype(nullptr) // for detection idiom
->
+template <mutability, class /* success type */, class /* failure type */>
 class basic_result;
 ```
 
@@ -101,7 +97,7 @@ using namespace mitama;
 int main() {
   static_assert(!is_complete_type<incomplete_type>::value);
   [[maybe_unused]]
-  result<incomplete_type&> res = success<incomplete_type&>(get_incomplete_type()); // use incomplete_type& for result
+  result<incomplete_type&, void> res = success<incomplete_type&>(get_incomplete_type()); // use incomplete_type& for result
 }
 
 struct incomplete_type {};

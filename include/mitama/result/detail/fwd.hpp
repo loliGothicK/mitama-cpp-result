@@ -34,20 +34,16 @@ template <class T>
 using void_to_monostate_t =
     std::conditional_t<std::is_void_v<T>, std::monostate, T>;
 
-template <
-    mutability,
-    class = std::monostate, // success type
-    class = std::monostate // failure type
-    >
+template <mutability, class /* success type */, class /* failure type */>
 class basic_result;
 
 /// alias template for immutable result
-template <class T = std::monostate, class E = std::monostate>
+template <class T, class E>
 using result = basic_result<
     mutability::immut, void_to_monostate_t<T>, void_to_monostate_t<E>>;
 
 /// alias template for mutable result
-template <class T = std::monostate, class E = std::monostate>
+template <class T, class E>
 using mut_result = basic_result<
     mutability::mut, void_to_monostate_t<T>, void_to_monostate_t<E>>;
 
