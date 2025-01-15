@@ -170,7 +170,7 @@ class [[nodiscard]] basic_result<_mutability, T, E>
   /// result storage
   std::variant<std::monostate, success_t<T>, failure_t<E>> storage_;
   /// friend accessors
-  template <mutability, class, class, class>
+  template <mutability, class, class>
   friend class basic_result;
   /// private aliases
   template <mutability _mut, class T_, class E_>

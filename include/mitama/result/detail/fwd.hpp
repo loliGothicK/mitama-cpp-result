@@ -37,8 +37,7 @@ using void_to_monostate_t =
 template <
     mutability,
     class = std::monostate, // success type
-    class = std::monostate, // failure type
-    class = std::nullptr_t // for detection idiom
+    class = std::monostate // failure type
     >
 class basic_result;
 
