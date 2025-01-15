@@ -542,26 +542,6 @@ public:
   }
 
   /// @brief
-  ///   Converts from basic_result to bool.
-  ///
-  /// @note
-  ///   Covert result to bool and returns true if the result is succsess.
-  explicit constexpr operator bool() const noexcept
-  {
-    return std::holds_alternative<success_t<T>>(storage_);
-  }
-
-  /// @brief
-  ///   Converts from basic_result to bool.
-  ///
-  /// @note
-  ///   Covert result to bool and returns true if the result is failure.
-  constexpr bool operator!() const noexcept
-  {
-    return std::holds_alternative<failure_t<E>>(storage_);
-  }
-
-  /// @brief
   ///   Returns result storage.
   constexpr decltype(auto) into_storage() &
   {
