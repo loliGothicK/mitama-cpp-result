@@ -927,8 +927,8 @@ using namespace mitama;
 using namespace std::string_literals;
 
 int main() {
-    result<int> good = success(1909);
-    result<int> bad = failure<>();
+    result<int, void> good = success(1909);
+    result<int, void> bad = failure<>();
     auto good_year = good.unwrap_or_default();
     auto bad_year = bad.unwrap_or_default();
     assert(1909 == good_year);
