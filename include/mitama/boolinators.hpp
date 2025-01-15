@@ -45,10 +45,10 @@ and_maybe_from(bool b, F&& may) -> std::invoke_result_t<F&&>
 }
 
 template <class T>
-inline constexpr result<T>
+inline constexpr result<T, void>
 as_ok(bool b, T&& ok)
 {
-  return b ? result<T>(success(std::forward<T>(ok))) : failure();
+  return b ? result<T, void>(success(std::forward<T>(ok))) : failure();
 }
 
 template <class T, class E>
