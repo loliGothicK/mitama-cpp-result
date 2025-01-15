@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
 
+env:
+  PYTHON_VERSION: 3.13
+  POETRY_VERSION: 2.0.1
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
@@ -14,12 +18,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.8"
+          python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Set up Poetry 1.6.1
-        uses: abatilo/actions-poetry@v3.0.1
+      - name: Set up Poetry
+        uses: abatilo/actions-poetry@v4.0.0
         with:
-          poetry-version: 1.6.1
+          poetry-version: ${{ env.POETRY_VERSION }}
 
       - name: Restore & Cache Poetry and Dependences
         uses: actions/cache@v4
@@ -28,7 +32,8 @@ jobs:
           path: |
             ~/.poetry
             ~/.cache/pypoetry
-          key: ${{ hashFiles('docs/poetry.lock') }}
+          key: ${{ env.PYTHON_VERSION }}-${{ env.POETRY_VERSION }}-${{ hashFiles('docs/poetry.lock') }}
+
       - name: poetry install
         if: steps.poetry-cache.outputs.cache-hit != 'true'
         run: poetry install --no-root
