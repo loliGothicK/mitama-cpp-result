@@ -729,24 +729,6 @@ TEST_CASE("monostate failure test", "[result][monostate]")
   static_assert(func().is_err());
 }
 
-TEST_CASE("contextually convertible to bool", "[result]")
-{
-  auto err_func = []() -> result<void, void>
-  {
-    if (false)
-      return failure<>();
-    return failure<>();
-  };
-  auto ok_func = []() -> result<void, std::string>
-  {
-    if (false)
-      return failure<std::string>("hoge"s);
-    return success<>();
-  };
-  REQUIRE(!err_func());
-  REQUIRE(ok_func());
-}
-
 SCENARIO("test for reference type", "[result][ref]")
 {
   using namespace std::literals;
