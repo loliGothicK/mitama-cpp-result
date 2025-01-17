@@ -8,10 +8,7 @@ For example, if you want to write `data_store_error`, you can write the followin
 ```cpp
 #include <mitama/thiserror/thiserror.hpp>
 
-class data_store_error {
-  template <mitama::thiserror::fixed_string S, class ...T>
-  using error = mitama::thiserror::error<S, T...>;
-public:
+struct data_store_error : mitama::thiserror::derive_error {
   using disconnect
       = error<"data store disconnected">;
   using redaction
@@ -47,10 +44,7 @@ Examples:
 namespace anyhow = mitama::anyhow;
 using namespace std::literals;
 
-class data_store_error {
-  template <mitama::thiserror::fixed_string S, class ...T>
-  using error = mitama::thiserror::error<S, T...>;
-public:
+struct data_store_error : mitama::thiserror::derive_error {
   using disconnect
         = error<"data store disconnected">;
   using redaction

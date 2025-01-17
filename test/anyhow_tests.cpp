@@ -49,9 +49,8 @@ TEST_CASE("try with context", "[anyhow][context]")
   std::cout << res << std::endl;
 }
 
-class data_store_error : mitama::thiserror::derive_error
+struct data_store_error : mitama::thiserror::derive_error
 {
-public:
   using disconnect = error<"data store disconnected">;
   using redaction = error<"for key `{0}` isn't available", std::string>;
   using invalid_header =

@@ -88,8 +88,9 @@ public:
   }
 };
 
-struct derive_error
+class derive_error
 {
+protected:
   template <fixed_string Msg, class... Sources>
   using error = error<Msg, Sources...>;
 };
