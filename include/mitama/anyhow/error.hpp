@@ -3,8 +3,7 @@
 #include <mitama/mitamagic/format.hpp>
 #include <mitama/result/factory/failure.hpp>
 
-#include <exception>
-#include <functional>
+#include <fmt/core.h>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -158,6 +157,13 @@ anyhow(E&& err) -> std::shared_ptr<mitama::anyhow::error>
       std::forward<E>(err)
   );
 }
+template <class... E>
+  requires(fmt::is_formattable<E>::value && ...)
+inline auto
+anyhow(fmt::format_string<E...> f, E&&... args)
+{
+  return anyhow(fmt::format(f, std::forward<E>(args)...));
+}
 
 inline std::ostream&
 operator<<(
@@ -174,6 +180,7 @@ failure(Args&&... args) -> mitama::failure_t<std::shared_ptr<Err>>
 {
   return mitama::failure(std::make_shared<Err>(std::forward<Args>(args)...));
 }
+
 } // namespace mitama::anyhow
 
 template <>
