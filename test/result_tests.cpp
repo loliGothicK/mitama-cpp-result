@@ -44,69 +44,22 @@ split(std::string s, std::string pattern)
 }
 
 template <class T>
-auto parse = [](str s) -> result<T, str>
+constexpr auto
+parse(str_ref s) -> result<T, str_ref>
 {
-  try
-  {
-    if (std::is_integral_v<T>)
-    {
-      if (s.empty())
-        return failure("parse error at empty string"s);
+  if (s.empty())
+    return failure("parse error at empty string"sv);
 
-      for (const char c : s)
-        if (c < '0' || '9' < c)
-          return failure("parse error at string: "s + s);
-
-      if constexpr (std::is_same_v<T, int>)
-      {
-        return success(std::stoi(s));
-      }
-      // NOLINTNEXTLINE(runtime/int)
-      else if constexpr (std::is_same_v<T, long>)
-      {
-        return success(std::stol(s));
-      }
-      // NOLINTNEXTLINE(runtime/int)
-      else if constexpr (std::is_same_v<T, unsigned long>)
-      {
-        return success(std::stoul(s));
-      }
-      // NOLINTNEXTLINE(runtime/int)
-      else if constexpr (std::is_same_v<T, long long>)
-      {
-        return success(std::stoll(s));
-      }
-      // NOLINTNEXTLINE(runtime/int)
-      else if constexpr (std::is_same_v<T, unsigned long long>)
-      {
-        return success(std::stoull(s));
-      }
-    }
-    else if constexpr (std::is_floating_point_v<T>)
-    {
-      if constexpr (std::is_same_v<T, float>)
-      {
-        return success(std::stof(s));
-      }
-      else if constexpr (std::is_same_v<T, double>)
-      {
-        return success(std::stod(s));
-      }
-      else if constexpr (std::is_same_v<T, long double>)
-      {
-        return success(std::stold(s));
-      }
-    }
-    else
-    {
-      static_assert(mitama::always_true_v<T>);
-    }
-  }
-  catch (const std::invalid_argument& e)
+  T res = T{};
+  for (std::size_t i = 0; i < s.size(); ++i)
   {
-    return failure(e.what());
+    char c = s[i];
+    if (c < '0' || c > '9')
+      return failure("parse error"sv);
+    res = res * 10 + (c - '0');
   }
-};
+  return success(res);
+}
 
 TEST_CASE("is_ok() test", "[result][is_ok]")
 {
@@ -169,21 +122,21 @@ TEST_CASE("map_apply() test", "[result][map_apply]")
 
 TEST_CASE("map_or_else(F, M) test", "[result][map_or_else]")
 {
-  auto k = 21;
+  constexpr auto k = 21;
   {
-    result<str, str> x = success("foo"s);
-    REQUIRE(
+    constexpr result<str_ref, str_ref> x = success("foo"sv);
+    static_assert(
         x.map_or_else(
-            [k](auto) { return k * 2; }, [](auto v) { return v.length(); }
+            [](auto) { return k * 2; }, [](auto v) { return v.length(); }
         )
         == 3
     );
   }
   {
-    result<str, str> x = failure("bar"s);
-    REQUIRE(
+    constexpr result<str_ref, str_ref> x = failure("bar"sv);
+    static_assert(
         x.map_or_else(
-            [k](auto) { return k * 2; }, [](auto v) { return v.length(); }
+            [](auto) { return k * 2; }, [](auto v) { return v.length(); }
         )
         == 42
     );
@@ -213,9 +166,9 @@ TEST_CASE("map_err() test", "[result][map_err]")
   result<u32, u32> y = failure(13);
   REQUIRE(y.map_err(stringify) == failure("error code: 13"s));
 
-  result<int, int> some_num = failure(1);
-  result<int, int> z = some_num.map_err(std::plus{}, 1);
-  REQUIRE(z == failure(2));
+  constexpr result<int, int> some_num = failure(1);
+  constexpr result<int, int> z = some_num.map_err(std::plus{}, 1);
+  static_assert(z == failure(2));
 }
 
 TEST_CASE("map_apply_err() test", "[result][map_apply_err]")
@@ -464,13 +417,14 @@ TEST_CASE("unwrap_err() test", "[result][unwrap_err]")
 
 TEST_CASE("unwrap_or_default() test", "[result][unwrap_or_default]")
 {
-  auto good_year_from_input = "1909"s;
-  auto bad_year_from_input = "190blarg"s;
-  auto good_year = parse<int>(good_year_from_input).unwrap_or_default();
-  auto bad_year = parse<int>(bad_year_from_input).unwrap_or_default();
+  constexpr auto good_year_from_input = "1909"sv;
+  constexpr auto bad_year_from_input = "190blarg"sv;
+  constexpr auto good_year =
+      parse<int>(good_year_from_input).unwrap_or_default();
+  constexpr auto bad_year = parse<int>(bad_year_from_input).unwrap_or_default();
 
-  REQUIRE(1909 == good_year);
-  REQUIRE(0 == bad_year);
+  static_assert(1909 == good_year);
+  static_assert(0 == bad_year);
 }
 
 TEST_CASE("transpose() test", "[result][transpose]")
@@ -519,22 +473,22 @@ TEST_CASE("or_peek() test", "[result][and_peek]")
 
 TEST_CASE("basics test", "[result][basics]")
 {
-  auto even = [](u32 u) -> result<u32, str>
+  constexpr auto even = [](u32 u) -> result<u32, str_ref>
   {
     if (u % 2 == 0)
       return success(u);
     else
-      return failure("odd"s);
+      return failure("odd"sv);
   };
-  auto func = [](auto u) -> result<u32, str>
+  constexpr auto func = [](auto u) -> result<u32, str_ref>
   {
     if (u % 3 == 0)
       return success(1u);
     else
-      return failure("error"s);
+      return failure("error"sv);
   };
-  REQUIRE(even(2).and_then(func) == failure("error"s));
-  REQUIRE(even(2) == success(2u));
+  static_assert(even(2).and_then(func) == failure("error"sv));
+  static_assert(even(2) == success(2u));
 }
 
 TEST_CASE(
