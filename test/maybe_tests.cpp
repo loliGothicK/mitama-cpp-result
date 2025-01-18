@@ -14,30 +14,31 @@
 
 using namespace mitama;
 using namespace std::string_literals;
+using namespace std::string_view_literals;
 
 TEST_CASE("is_just()", "[maybe][is_just]")
 {
-  maybe<int> x = just(2);
-  REQUIRE(x.is_just());
+  constexpr maybe<int> x = just(2);
+  static_assert(x.is_just());
 
-  maybe<int> y = nothing;
-  REQUIRE_FALSE(y.is_just());
+  constexpr maybe<int> y = nothing;
+  static_assert(!y.is_just());
 }
 
 TEST_CASE("is_nothing()", "[maybe][is_nothing]")
 {
-  maybe<int> x = just(2);
-  REQUIRE_FALSE(x.is_nothing());
+  constexpr maybe<int> x = just(2);
+  static_assert(!x.is_nothing());
 
-  maybe<int> y = nothing;
-  REQUIRE(y.is_nothing());
+  constexpr maybe<int> y = nothing;
+  static_assert(y.is_nothing());
 }
 
 TEST_CASE("unwrap()", "[maybe][unwrap]")
 {
   {
-    maybe x = just("air"s);
-    REQUIRE(x.unwrap() == "air"s);
+    constexpr maybe x = just("air"sv);
+    static_assert(x.unwrap() == "air"sv);
   }
   try
   {
@@ -56,8 +57,8 @@ TEST_CASE("unwrap()", "[maybe][unwrap]")
 TEST_CASE("expect()", "[maybe][expect]")
 {
   {
-    maybe x = just("air"s);
-    REQUIRE(x.expect("the world is ending") == "air"s);
+    constexpr maybe x = just("air"sv);
+    static_assert(x.expect("the world is ending") == "air"sv);
   }
   try
   {
@@ -89,60 +90,63 @@ TEST_CASE("cloned()", "[maybe][cloned]")
 
 TEST_CASE("unwrap_or()", "[maybe][unwrap_or]")
 {
-  REQUIRE(maybe{ just("car"s) }.unwrap_or("bike"s) == "car"s);
-  REQUIRE(maybe<std::string>{ nothing }.unwrap_or("bike"s) == "bike"s);
+  static_assert(maybe{ just("car"sv) }.unwrap_or("bike"sv) == "car"sv);
+  static_assert(
+      maybe<std::string_view>{ nothing }.unwrap_or("bike"sv) == "bike"sv
+  );
 }
 
 TEST_CASE("unwrap_or_else()", "[maybe][unwrap_or_else]")
 {
-  int k = 10;
-  REQUIRE(maybe{ just(4) }.unwrap_or_else([k] { return 2 * k; }) == 4);
-  REQUIRE(maybe<int>{}.unwrap_or_else([k] { return 2 * k; }) == 20);
+  constexpr int k = 10;
+  static_assert(maybe{ just(4) }.unwrap_or_else([] { return 2 * k; }) == 4);
+  static_assert(maybe<int>{}.unwrap_or_else([] { return 2 * k; }) == 20);
 }
 
 TEST_CASE("map()", "[maybe][map]")
 {
 
-  maybe maybe_some_string = just("Hello, World!"s);
+  constexpr maybe maybe_some_string = just("Hello, World!"sv);
   // `maybe::map` takes self *by ref*,
   // *not* consuming `maybe_some_string`
-  maybe maybe_some_len = maybe_some_string.map(&std::string::size);
+  constexpr maybe maybe_some_len =
+      maybe_some_string.map(&std::string_view::size);
 
-  REQUIRE(maybe_some_len == just(13u));
+  static_assert(maybe_some_len == just(13u));
 
-  maybe some_list = just(std::vector<int>{ 1, 2, 3, 4, 5 });
-  auto acc = [](auto&& range, auto init) -> double
+  constexpr maybe some_list = just(std::array{ 1, 2, 3, 4, 5 });
+  constexpr auto acc = [](auto&& range, auto init) -> double
   { return std::accumulate(range.begin(), range.end(), init); };
-  maybe sum = some_list.map(acc, 0.0);
+  constexpr maybe sum = some_list.map(acc, 0.0);
 
-  REQUIRE(sum == just(15));
+  static_assert(sum == just(15));
 }
 
 TEST_CASE("map_or()", "[maybe][map_or]")
 {
 
-  maybe x = just("foo"s);
-  REQUIRE(x.map_or(42, &std::string::size) == 3);
+  constexpr maybe x = just("foo"sv);
+  static_assert(x.map_or(42, &std::string_view::size) == 3);
 
-  maybe<std::string> y = nothing;
-  REQUIRE(y.map_or(42, &std::string::size) == 42);
+  constexpr maybe<std::string_view> y = nothing;
+  static_assert(y.map_or(42, &std::string_view::size) == 42);
 
-  maybe some_num = just(1);
+  constexpr maybe some_num = just(1);
 
-  maybe z = some_num.map_or(0, std::plus{}, 1);
+  constexpr maybe z = some_num.map_or(0, std::plus{}, 1);
 
-  REQUIRE(z == just(2));
+  static_assert(z == just(2));
 }
 
 TEST_CASE("map_or_else()", "[maybe][map_or_else]")
 {
-  int k = 21;
+  constexpr int k = 21;
 
   maybe x = just("foo"s);
-  REQUIRE(x.map_or_else([k] { return 2 * k; }, &std::string::size) == 3);
+  REQUIRE(x.map_or_else([] { return 2 * k; }, &std::string::size) == 3);
 
   maybe<std::string> y = nothing;
-  REQUIRE(y.map_or_else([k] { return 2 * k; }, &std::string::size) == 42);
+  REQUIRE(y.map_or_else([] { return 2 * k; }, &std::string::size) == 42);
   REQUIRE(
       x.map_or_else([] { return "default"s; }, std::plus{}, "bar"s) == "foobar"s
   );
@@ -151,154 +155,157 @@ TEST_CASE("map_or_else()", "[maybe][map_or_else]")
       == "default"s
   );
 
-  maybe z = just(1);
-  REQUIRE(z.map_or_else([k] { return 2 * k; }, std::plus{}, 1) == 2);
+  constexpr maybe z = just(1);
+  static_assert(z.map_or_else([] { return 2 * k; }, std::plus{}, 1) == 2);
 }
 
 TEST_CASE("ok_or()", "[maybe][ok_or]")
 {
+  constexpr maybe x = just("foo"sv);
+  static_assert(x.ok_or(0) == success("foo"sv));
 
-  maybe x = just("foo"s);
-  REQUIRE(x.ok_or(0) == success("foo"s));
+  constexpr maybe<std::string_view> y = nothing;
+  static_assert(y.ok_or(0) == failure(0));
 
-  maybe<std::string> y = nothing;
-  REQUIRE(y.ok_or(0) == failure(0));
-
-  REQUIRE(y.ok_or() == failure<>());
-  REQUIRE(y.ok_or<int>() == failure(int{}));
+  static_assert(y.ok_or() == failure<>());
+  static_assert(y.ok_or<int>() == failure(int{}));
 }
 
 TEST_CASE("ok_or_else()", "[maybe][ok_or_else]")
 {
+  constexpr maybe x = just("foo"sv);
+  static_assert(x.ok_or_else([] { return 0; }) == success("foo"sv));
 
-  maybe x = just("foo"s);
-  REQUIRE(x.ok_or_else([] { return 0; }) == success("foo"s));
-
-  maybe<std::string> y = nothing;
-  REQUIRE(y.ok_or_else([] { return 0; }) == failure(0));
+  constexpr maybe<std::string_view> y = nothing;
+  static_assert(y.ok_or_else([] { return 0; }) == failure(0));
 }
 
 TEST_CASE("conj()", "[maybe][conj]")
 {
   {
-    maybe x = just(2);
-    maybe<std::string> y = nothing;
-    REQUIRE(x.conj(y) == nothing);
-    REQUIRE((x && y) == nothing);
+    constexpr maybe x = just(2);
+    constexpr maybe<std::string_view> y = nothing;
+    static_assert(x.conj(y) == nothing);
+    static_assert((x && y) == nothing);
   }
   {
-    maybe<int> x = nothing;
-    maybe y = just("foo"s);
-    REQUIRE(x.conj(y) == nothing);
-    REQUIRE((x && y) == nothing);
+    constexpr maybe<int> x = nothing;
+    constexpr maybe y = just("foo"sv);
+    static_assert(x.conj(y) == nothing);
+    static_assert((x && y) == nothing);
   }
   {
-    maybe x = just(2);
-    maybe y = just("foo"s);
-    REQUIRE(x.conj(y) == just("foo"s));
-    REQUIRE((x && y) == just("foo"s));
+    constexpr maybe x = just(2);
+    constexpr maybe y = just("foo"sv);
+    static_assert(x.conj(y) == just("foo"sv));
+    static_assert((x && y) == just("foo"sv));
   }
   {
-    maybe<int> x = nothing;
-    maybe<std::string> y = nothing;
-    REQUIRE(x.conj(y) == nothing);
-    REQUIRE((x && y) == nothing);
+    constexpr maybe<int> x = nothing;
+    constexpr maybe<std::string_view> y = nothing;
+    static_assert(x.conj(y) == nothing);
+    static_assert((x && y) == nothing);
   }
 }
 
 TEST_CASE("and_then()", "[maybe][and_then]")
 {
+  constexpr auto sq = [](int x) -> maybe<int> { return just(x * x); };
+  constexpr auto nope = [](...) -> maybe<int> { return nothing; };
+  constexpr auto is_eq = [](int a, int b)
+  { return a == b ? maybe<int>{ a } : nothing; };
 
-  auto sq = [](int x) -> maybe<int> { return just(x * x); };
-  auto nope = [](...) -> maybe<int> { return nothing; };
-  auto is_eq = [](int a, int b) { return a == b ? maybe<int>{ a } : nothing; };
-
-  REQUIRE(maybe{ just(2) }.and_then(sq).and_then(sq) == just(16));
-  REQUIRE(maybe{ just(2) }.and_then(sq).and_then(nope) == nothing);
-  REQUIRE(maybe{ just(2) }.and_then(nope).and_then(sq) == nothing);
-  REQUIRE(maybe{ just(2) }.and_then(is_eq, 2) == just(2));
-  REQUIRE(nope().and_then(sq).and_then(sq) == nothing);
+  static_assert(maybe{ just(2) }.and_then(sq).and_then(sq) == just(16));
+  static_assert(maybe{ just(2) }.and_then(sq).and_then(nope) == nothing);
+  static_assert(maybe{ just(2) }.and_then(nope).and_then(sq) == nothing);
+  static_assert(maybe{ just(2) }.and_then(is_eq, 2) == just(2));
+  static_assert(nope().and_then(sq).and_then(sq) == nothing);
 }
 
 TEST_CASE("filter()", "[maybe][filter]")
 {
+  constexpr auto is_even = [](int n) -> bool { return n % 2 == 0; };
 
-  auto is_even = [](int n) -> bool { return n % 2 == 0; };
-
-  REQUIRE(maybe<int>{}.filter(is_even) == nothing);
-  REQUIRE(maybe{ just(3) }.filter(is_even) == nothing);
-  REQUIRE(maybe{ just(4) }.filter(is_even) == just(4));
+  static_assert(maybe<int>{}.filter(is_even) == nothing);
+  static_assert(maybe{ just(3) }.filter(is_even) == nothing);
+  static_assert(maybe{ just(4) }.filter(is_even) == just(4));
 }
 
 TEST_CASE("disj()", "[maybe][disj]")
 {
   {
-    maybe x = just(2);
-    maybe<int> y = nothing;
-    assert(x.disj(y) == just(2));
-    assert((x || y) == just(2));
+    constexpr maybe x = just(2);
+    constexpr maybe<int> y = nothing;
+    static_assert(x.disj(y) == just(2));
+    static_assert((x || y) == just(2));
   }
   {
-    maybe<int> x = nothing;
-    maybe y = just(100);
-    assert(x.disj(y) == just(100));
-    assert((x || y) == just(100));
+    constexpr maybe<int> x = nothing;
+    constexpr maybe y = just(100);
+    static_assert(x.disj(y) == just(100));
+    static_assert((x || y) == just(100));
   }
   {
-    maybe x = just(2);
-    maybe y = just(100);
-    assert(x.disj(y) == just(2));
-    assert((x || y) == just(2));
+    constexpr maybe x = just(2);
+    constexpr maybe y = just(100);
+    static_assert(x.disj(y) == just(2));
+    static_assert((x || y) == just(2));
   }
   {
-    maybe<int> x = nothing;
-    maybe<int> y = nothing;
-    assert(x.disj(y) == nothing);
-    assert((x || y) == nothing);
+    constexpr maybe<int> x = nothing;
+    constexpr maybe<int> y = nothing;
+    static_assert(x.disj(y) == nothing);
+    static_assert((x || y) == nothing);
   }
 }
 
 TEST_CASE("or_else()", "[maybe][or_else]")
 {
 
-  auto nobody = []() -> maybe<std::string> { return nothing; };
-  auto vikings = []() -> maybe<std::string> { return just("vikings"s); };
-  auto to_maybe = [](auto&& e) -> maybe<std::decay_t<decltype(e)>>
+  constexpr auto nobody = []() -> maybe<std::string_view> { return nothing; };
+  constexpr auto vikings = []() -> maybe<std::string_view>
+  { return just("vikings"sv); };
+  constexpr auto to_maybe = [](auto&& e) -> maybe<std::decay_t<decltype(e)>>
   { return just(std::forward<decltype(e)>(e)); };
 
-  REQUIRE(maybe{ just("barbarians"s) }.or_else(vikings) == just("barbarians"s));
-  REQUIRE(maybe<std::string>{}.or_else(vikings) == just("vikings"s));
-  REQUIRE(
-      maybe<std::string>{}.or_else(to_maybe, "vikings"s) == just("vikings"s)
+  static_assert(
+      maybe{ just("barbarians"sv) }.or_else(vikings) == just("barbarians"sv)
   );
-  REQUIRE(maybe<std::string>{}.or_else(nobody) == nothing);
+  static_assert(
+      maybe<std::string_view>{}.or_else(vikings) == just("vikings"sv)
+  );
+  static_assert(
+      maybe<std::string_view>{}.or_else(to_maybe, "vikings"sv)
+      == just("vikings"sv)
+  );
+  static_assert(maybe<std::string_view>{}.or_else(nobody) == nothing);
 }
 
 TEST_CASE("xdisj()", "[maybe][xdisj]")
 {
   {
-    maybe x = just(2);
-    maybe<int> y = nothing;
-    assert(x.xdisj(y) == just(2));
-    assert((x ^ y) == just(2));
+    constexpr maybe x = just(2);
+    constexpr maybe<int> y = nothing;
+    static_assert(x.xdisj(y) == just(2));
+    static_assert((x ^ y) == just(2));
   }
   {
-    maybe<int> x = nothing;
-    maybe y = just(100);
-    assert(x.xdisj(y) == just(100));
-    assert((x ^ y) == just(100));
+    constexpr maybe<int> x = nothing;
+    constexpr maybe y = just(100);
+    static_assert(x.xdisj(y) == just(100));
+    static_assert((x ^ y) == just(100));
   }
   {
-    maybe x = just(2);
-    maybe y = just(100);
-    assert(x.xdisj(y) == nothing);
-    assert((x ^ y) == nothing);
+    constexpr maybe x = just(2);
+    constexpr maybe y = just(100);
+    static_assert(x.xdisj(y) == nothing);
+    static_assert((x ^ y) == nothing);
   }
   {
-    maybe<int> x = nothing;
-    maybe<int> y = nothing;
-    assert(x.xdisj(y) == nothing);
-    assert((x ^ y) == nothing);
+    constexpr maybe<int> x = nothing;
+    constexpr maybe<int> y = nothing;
+    static_assert(x.xdisj(y) == nothing);
+    static_assert((x ^ y) == nothing);
   }
 }
 
@@ -400,34 +407,31 @@ TEST_CASE("replace()", "[maybe][replace]")
 
 TEST_CASE("transpose()", "[maybe][transpose]")
 {
-
-  result<maybe<int>, std::string> x = success(just(5));
-  maybe<result<int, std::string>> y = just(success(5));
-  REQUIRE(x == y.transpose());
+  constexpr result<maybe<int>, std::string_view> x = success(just(5));
+  constexpr maybe<result<int, std::string_view>> y = just(success(5));
+  static_assert(x == y.transpose());
 }
 
 TEST_CASE("unwrap_or_default()", "[maybe][unwrap_or_default]")
 {
-
-  maybe<std::string> x = nothing;
-  REQUIRE(x.unwrap_or_default() == ""s);
+  constexpr maybe<std::string_view> x = nothing;
+  static_assert(x.unwrap_or_default() == ""sv);
 }
 
 TEST_CASE("flatten()", "[maybe][flatten]")
 {
+  constexpr maybe<maybe<int>> x = just(just(6));
+  static_assert(just(6) == x.flatten());
 
-  maybe<maybe<int>> x = just(just(6));
-  REQUIRE(just(6) == x.flatten());
+  constexpr maybe<maybe<int>> y = just(nothing);
+  static_assert(nothing == y.flatten());
 
-  maybe<maybe<int>> y = just(nothing);
-  REQUIRE(nothing == y.flatten());
-
-  maybe<maybe<int>> z = nothing;
-  REQUIRE(nothing == z.flatten());
+  constexpr maybe<maybe<int>> z = nothing;
+  static_assert(nothing == z.flatten());
 
   // Flattening once only removes one level of nesting:
-  maybe<maybe<maybe<int>>> nest = just(just(just(6)));
-  REQUIRE(just(6) == nest.flatten().flatten());
+  constexpr maybe<maybe<maybe<int>>> nest = just(just(just(6)));
+  static_assert(just(6) == nest.flatten().flatten());
 }
 
 TEST_CASE("and_finally()", "[maybe][and_finally]")
@@ -499,440 +503,440 @@ TEST_CASE("reference of abstract", "[maybe][abstract]")
 
 TEST_CASE("equal", "[maybe][equal]")
 {
-  maybe<int> just1 = just(1);
-  maybe<int> just2 = just(2);
-  maybe<int> none = nothing;
+  constexpr maybe<int> just1 = just(1);
+  constexpr maybe<int> just2 = just(2);
+  constexpr maybe<int> none = nothing;
 
-  REQUIRE_FALSE(just1 == just2);
-  REQUIRE_FALSE(just2 == just1);
-  REQUIRE(just1 == just1);
-  REQUIRE(just2 == just2);
+  static_assert(!(just1 == just2));
+  static_assert(!(just2 == just1));
+  static_assert(just1 == just1);
+  static_assert(just2 == just2);
 
-  REQUIRE_FALSE(just1 == 2);
-  REQUIRE_FALSE(just2 == 1);
-  REQUIRE(just1 == 1);
-  REQUIRE(just2 == 2);
+  static_assert(!(just1 == 2));
+  static_assert(!(just2 == 1));
+  static_assert(just1 == 1);
+  static_assert(just2 == 2);
 
-  REQUIRE_FALSE(1 == just2);
-  REQUIRE_FALSE(2 == just1);
-  REQUIRE(1 == just1);
-  REQUIRE(2 == just2);
+  static_assert(!(1 == just2));
+  static_assert(!(2 == just1));
+  static_assert(1 == just1);
+  static_assert(2 == just2);
 
-  REQUIRE_FALSE(just(1) == just2);
-  REQUIRE_FALSE(just(2) == just1);
-  REQUIRE(just(1) == just1);
-  REQUIRE(just(2) == just2);
+  static_assert(!(just(1) == just2));
+  static_assert(!(just(2) == just1));
+  static_assert(just(1) == just1);
+  static_assert(just(2) == just2);
 
-  REQUIRE_FALSE(just1 == just(2));
-  REQUIRE_FALSE(just2 == just(1));
-  REQUIRE(just1 == just(1));
-  REQUIRE(just2 == just(2));
+  static_assert(!(just1 == just(2)));
+  static_assert(!(just2 == just(1)));
+  static_assert(just1 == just(1));
+  static_assert(just2 == just(2));
 
-  REQUIRE_FALSE(just(1) == just(2));
-  REQUIRE_FALSE(just(2) == just(1));
-  REQUIRE(just(1) == just(1));
-  REQUIRE(just(2) == just(2));
+  static_assert(!(just(1) == just(2)));
+  static_assert(!(just(2) == just(1)));
+  static_assert(just(1) == just(1));
+  static_assert(just(2) == just(2));
 
-  REQUIRE(none == none);
-  REQUIRE(nothing == none);
-  REQUIRE(none == nothing);
-  REQUIRE(nothing == nothing);
+  static_assert(none == none);
+  static_assert(nothing == none);
+  static_assert(none == nothing);
+  static_assert(nothing == nothing);
 
-  REQUIRE_FALSE(none == just1);
-  REQUIRE_FALSE(none == just2);
-  REQUIRE_FALSE(none == 1);
-  REQUIRE_FALSE(none == 2);
+  static_assert(!(none == just1));
+  static_assert(!(none == just2));
+  static_assert(!(none == 1));
+  static_assert(!(none == 2));
 
-  REQUIRE_FALSE(1 == none);
-  REQUIRE_FALSE(2 == none);
+  static_assert(!(1 == none));
+  static_assert(!(2 == none));
 
-  REQUIRE_FALSE(just1 == none);
-  REQUIRE_FALSE(just2 == none);
+  static_assert(!(just1 == none));
+  static_assert(!(just2 == none));
 
-  REQUIRE_FALSE(nothing == just1);
-  REQUIRE_FALSE(nothing == just2);
+  static_assert(!(nothing == just1));
+  static_assert(!(nothing == just2));
 
-  REQUIRE_FALSE(none == just(1));
-  REQUIRE_FALSE(none == just(2));
+  static_assert(!(none == just(1)));
+  static_assert(!(none == just(2)));
 
-  REQUIRE_FALSE(nothing == just(1));
-  REQUIRE_FALSE(nothing == just(2));
+  static_assert(!(nothing == just(1)));
+  static_assert(!(nothing == just(2)));
 
-  REQUIRE_FALSE(just1 == none);
-  REQUIRE_FALSE(just2 == none);
+  static_assert(!(just1 == none));
+  static_assert(!(just2 == none));
 
-  REQUIRE_FALSE(just(1) == none);
-  REQUIRE_FALSE(just(2) == none);
+  static_assert(!(just(1) == none));
+  static_assert(!(just(2) == none));
 
-  REQUIRE_FALSE(just1 == nothing);
-  REQUIRE_FALSE(just2 == nothing);
+  static_assert(!(just1 == nothing));
+  static_assert(!(just2 == nothing));
 
-  REQUIRE_FALSE(just(1) == nothing);
-  REQUIRE_FALSE(just(2) == nothing);
+  static_assert(!(just(1) == nothing));
+  static_assert(!(just(2) == nothing));
 }
 
 TEST_CASE("not_equal", "[maybe][not_equal]")
 {
-  maybe<int> just1 = just(1);
-  maybe<int> just2 = just(2);
-  maybe<int> none = nothing;
+  constexpr maybe<int> just1 = just(1);
+  constexpr maybe<int> just2 = just(2);
+  constexpr maybe<int> none = nothing;
 
-  REQUIRE(just1 != just2);
-  REQUIRE(just2 != just1);
-  REQUIRE_FALSE(just1 != just1);
-  REQUIRE_FALSE(just2 != just2);
+  static_assert(just1 != just2);
+  static_assert(just2 != just1);
+  static_assert(!(just1 != just1));
+  static_assert(!(just2 != just2));
 
-  REQUIRE(just1 != 2);
-  REQUIRE(just2 != 1);
-  REQUIRE_FALSE(just1 != 1);
-  REQUIRE_FALSE(just2 != 2);
+  static_assert(just1 != 2);
+  static_assert(just2 != 1);
+  static_assert(!(just1 != 1));
+  static_assert(!(just2 != 2));
 
-  REQUIRE(1 != just2);
-  REQUIRE(2 != just1);
-  REQUIRE_FALSE(1 != just1);
-  REQUIRE_FALSE(2 != just2);
+  static_assert(1 != just2);
+  static_assert(2 != just1);
+  static_assert(!(1 != just1));
+  static_assert(!(2 != just2));
 
-  REQUIRE(just(1) != just2);
-  REQUIRE(just(2) != just1);
-  REQUIRE_FALSE(just(1) != just1);
-  REQUIRE_FALSE(just(2) != just2);
+  static_assert(just(1) != just2);
+  static_assert(just(2) != just1);
+  static_assert(!(just(1) != just1));
+  static_assert(!(just(2) != just2));
 
-  REQUIRE(just1 != just(2));
-  REQUIRE(just2 != just(1));
-  REQUIRE_FALSE(just1 != just(1));
-  REQUIRE_FALSE(just2 != just(2));
+  static_assert(just1 != just(2));
+  static_assert(just2 != just(1));
+  static_assert(!(just1 != just(1)));
+  static_assert(!(just2 != just(2)));
 
-  REQUIRE(just(1) != just(2));
-  REQUIRE(just(2) != just(1));
-  REQUIRE_FALSE(just(1) != just(1));
-  REQUIRE_FALSE(just(2) != just(2));
+  static_assert(just(1) != just(2));
+  static_assert(just(2) != just(1));
+  static_assert(!(just(1) != just(1)));
+  static_assert(!(just(2) != just(2)));
 
-  REQUIRE_FALSE(none != none);
-  REQUIRE_FALSE(nothing != none);
-  REQUIRE_FALSE(none != nothing);
-  REQUIRE_FALSE(nothing != nothing);
+  static_assert(!(none != none));
+  static_assert(!(nothing != none));
+  static_assert(!(none != nothing));
+  static_assert(!(nothing != nothing));
 
-  REQUIRE(none != just1);
-  REQUIRE(none != just2);
-  REQUIRE(none != 1);
-  REQUIRE(none != 2);
+  static_assert(none != just1);
+  static_assert(none != just2);
+  static_assert(none != 1);
+  static_assert(none != 2);
 
-  REQUIRE(1 != none);
-  REQUIRE(2 != none);
+  static_assert(1 != none);
+  static_assert(2 != none);
 
-  REQUIRE(just1 != none);
-  REQUIRE(just2 != none);
+  static_assert(just1 != none);
+  static_assert(just2 != none);
 
-  REQUIRE(nothing != just1);
-  REQUIRE(nothing != just2);
+  static_assert(nothing != just1);
+  static_assert(nothing != just2);
 
-  REQUIRE(none != just(1));
-  REQUIRE(none != just(2));
+  static_assert(none != just(1));
+  static_assert(none != just(2));
 
-  REQUIRE(nothing != just(1));
-  REQUIRE(nothing != just(2));
+  static_assert(nothing != just(1));
+  static_assert(nothing != just(2));
 
-  REQUIRE(just1 != none);
-  REQUIRE(just2 != none);
+  static_assert(just1 != none);
+  static_assert(just2 != none);
 
-  REQUIRE(just(1) != none);
-  REQUIRE(just(2) != none);
+  static_assert(just(1) != none);
+  static_assert(just(2) != none);
 
-  REQUIRE(just1 != nothing);
-  REQUIRE(just2 != nothing);
+  static_assert(just1 != nothing);
+  static_assert(just2 != nothing);
 
-  REQUIRE(just(1) != nothing);
-  REQUIRE(just(2) != nothing);
+  static_assert(just(1) != nothing);
+  static_assert(just(2) != nothing);
 }
 
 TEST_CASE("less compare", "[maybe][less]")
 {
-  maybe<int> just1 = just(1);
-  maybe<int> just2 = just(2);
-  maybe<int> none = nothing;
+  constexpr maybe<int> just1 = just(1);
+  constexpr maybe<int> just2 = just(2);
+  constexpr maybe<int> none = nothing;
 
-  REQUIRE(just1 < just2);
-  REQUIRE_FALSE(just2 < just1);
-  REQUIRE_FALSE(just1 < just1);
-  REQUIRE_FALSE(just2 < just2);
+  static_assert(just1 < just2);
+  static_assert(!(just2 < just1));
+  static_assert(!(just1 < just1));
+  static_assert(!(just2 < just2));
 
-  REQUIRE(just1 < 2);
-  REQUIRE_FALSE(just2 < 1);
-  REQUIRE_FALSE(just1 < 1);
-  REQUIRE_FALSE(just2 < 2);
+  static_assert(just1 < 2);
+  static_assert(!(just2 < 1));
+  static_assert(!(just1 < 1));
+  static_assert(!(just2 < 2));
 
-  REQUIRE(1 < just2);
-  REQUIRE_FALSE(2 < just1);
-  REQUIRE_FALSE(1 < just1);
-  REQUIRE_FALSE(2 < just2);
+  static_assert(1 < just2);
+  static_assert(!(2 < just1));
+  static_assert(!(1 < just1));
+  static_assert(!(2 < just2));
 
-  REQUIRE(just(1) < just2);
-  REQUIRE_FALSE(just(2) < just1);
-  REQUIRE_FALSE(just(1) < just1);
-  REQUIRE_FALSE(just(2) < just2);
+  static_assert(just(1) < just2);
+  static_assert(!(just(2) < just1));
+  static_assert(!(just(1) < just1));
+  static_assert(!(just(2) < just2));
 
-  REQUIRE(just1 < just(2));
-  REQUIRE_FALSE(just2 < just(1));
-  REQUIRE_FALSE(just1 < just(1));
-  REQUIRE_FALSE(just2 < just(2));
+  static_assert(just1 < just(2));
+  static_assert(!(just2 < just(1)));
+  static_assert(!(just1 < just(1)));
+  static_assert(!(just2 < just(2)));
 
-  REQUIRE(just(1) < just(2));
-  REQUIRE_FALSE(just(2) < just(1));
-  REQUIRE_FALSE(just(1) < just(1));
-  REQUIRE_FALSE(just(2) < just(2));
+  static_assert(just(1) < just(2));
+  static_assert(!(just(2) < just(1)));
+  static_assert(!(just(1) < just(1)));
+  static_assert(!(just(2) < just(2)));
 
-  REQUIRE_FALSE(none < none);
-  REQUIRE_FALSE(nothing < none);
-  REQUIRE_FALSE(none < nothing);
-  REQUIRE_FALSE(nothing < nothing);
+  static_assert(!(none < none));
+  static_assert(!(nothing < none));
+  static_assert(!(none < nothing));
+  static_assert(!(nothing < nothing));
 
-  REQUIRE(none < just1);
-  REQUIRE(none < just2);
-  REQUIRE(none < 1);
-  REQUIRE(none < 2);
+  static_assert(none < just1);
+  static_assert(none < just2);
+  static_assert(none < 1);
+  static_assert(none < 2);
 
-  REQUIRE_FALSE(1 < none);
-  REQUIRE_FALSE(2 < none);
+  static_assert(!(1 < none));
+  static_assert(!(2 < none));
 
-  REQUIRE_FALSE(just1 < none);
-  REQUIRE_FALSE(just2 < none);
+  static_assert(!(just1 < none));
+  static_assert(!(just2 < none));
 
-  REQUIRE(nothing < just1);
-  REQUIRE(nothing < just2);
+  static_assert(nothing < just1);
+  static_assert(nothing < just2);
 
-  REQUIRE(none < just(1));
-  REQUIRE(none < just(2));
+  static_assert(none < just(1));
+  static_assert(none < just(2));
 
-  REQUIRE(nothing < just(1));
-  REQUIRE(nothing < just(2));
+  static_assert(nothing < just(1));
+  static_assert(nothing < just(2));
 
-  REQUIRE_FALSE(just1 < none);
-  REQUIRE_FALSE(just2 < none);
+  static_assert(!(just1 < none));
+  static_assert(!(just2 < none));
 
-  REQUIRE_FALSE(just(1) < none);
-  REQUIRE_FALSE(just(2) < none);
+  static_assert(!(just(1) < none));
+  static_assert(!(just(2) < none));
 
-  REQUIRE_FALSE(just1 < nothing);
-  REQUIRE_FALSE(just2 < nothing);
+  static_assert(!(just1 < nothing));
+  static_assert(!(just2 < nothing));
 
-  REQUIRE_FALSE(just(1) < nothing);
-  REQUIRE_FALSE(just(2) < nothing);
+  static_assert(!(just(1) < nothing));
+  static_assert(!(just(2) < nothing));
 }
 
 TEST_CASE("less_or_equal compare", "[maybe][less_or_equal]")
 {
-  maybe<int> just1 = just(1);
-  maybe<int> just2 = just(2);
-  maybe<int> none = nothing;
+  constexpr maybe<int> just1 = just(1);
+  constexpr maybe<int> just2 = just(2);
+  constexpr maybe<int> none = nothing;
 
-  REQUIRE(just1 <= just2);
-  REQUIRE_FALSE(just2 <= just1);
-  REQUIRE(just1 <= just1);
-  REQUIRE(just2 <= just2);
+  static_assert(just1 <= just2);
+  static_assert(!(just2 <= just1));
+  static_assert(just1 <= just1);
+  static_assert(just2 <= just2);
 
-  REQUIRE(just1 <= 2);
-  REQUIRE_FALSE(just2 <= 1);
-  REQUIRE(just1 <= 1);
-  REQUIRE(just2 <= 2);
+  static_assert(just1 <= 2);
+  static_assert(!(just2 <= 1));
+  static_assert(just1 <= 1);
+  static_assert(just2 <= 2);
 
-  REQUIRE(1 <= just2);
-  REQUIRE_FALSE(2 <= just1);
-  REQUIRE(1 <= just1);
-  REQUIRE(2 <= just2);
+  static_assert(1 <= just2);
+  static_assert(!(2 <= just1));
+  static_assert(1 <= just1);
+  static_assert(2 <= just2);
 
-  REQUIRE(just(1) <= just2);
-  REQUIRE_FALSE(just(2) <= just1);
-  REQUIRE(just(1) <= just1);
-  REQUIRE(just(2) <= just2);
+  static_assert(just(1) <= just2);
+  static_assert(!(just(2) <= just1));
+  static_assert(just(1) <= just1);
+  static_assert(just(2) <= just2);
 
-  REQUIRE(just1 <= just(2));
-  REQUIRE_FALSE(just2 <= just(1));
-  REQUIRE(just1 <= just(1));
-  REQUIRE(just2 <= just(2));
+  static_assert(just1 <= just(2));
+  static_assert(!(just2 <= just(1)));
+  static_assert(just1 <= just(1));
+  static_assert(just2 <= just(2));
 
-  REQUIRE(just(1) <= just(2));
-  REQUIRE_FALSE(just(2) <= just(1));
-  REQUIRE(just(1) <= just(1));
-  REQUIRE(just(2) <= just(2));
+  static_assert(just(1) <= just(2));
+  static_assert(!(just(2) <= just(1)));
+  static_assert(just(1) <= just(1));
+  static_assert(just(2) <= just(2));
 
-  REQUIRE(none <= none);
-  REQUIRE(nothing <= none);
-  REQUIRE(none <= nothing);
-  REQUIRE(nothing <= nothing);
+  static_assert(none <= none);
+  static_assert(nothing <= none);
+  static_assert(none <= nothing);
+  static_assert(nothing <= nothing);
 
-  REQUIRE(none <= just1);
-  REQUIRE(none <= just2);
+  static_assert(none <= just1);
+  static_assert(none <= just2);
 
-  REQUIRE(none <= 1);
-  REQUIRE(none <= 2);
+  static_assert(none <= 1);
+  static_assert(none <= 2);
 
-  REQUIRE(nothing <= just1);
-  REQUIRE(nothing <= just2);
+  static_assert(nothing <= just1);
+  static_assert(nothing <= just2);
 
-  REQUIRE(none <= just(1));
-  REQUIRE(none <= just(2));
+  static_assert(none <= just(1));
+  static_assert(none <= just(2));
 
-  REQUIRE(nothing <= just(1));
-  REQUIRE(nothing <= just(2));
+  static_assert(nothing <= just(1));
+  static_assert(nothing <= just(2));
 
-  REQUIRE_FALSE(just1 <= none);
-  REQUIRE_FALSE(just2 <= none);
+  static_assert(!(just1 <= none));
+  static_assert(!(just2 <= none));
 
-  REQUIRE_FALSE(1 <= none);
-  REQUIRE_FALSE(2 <= none);
+  static_assert(!(1 <= none));
+  static_assert(!(2 <= none));
 
-  REQUIRE_FALSE(just(1) <= none);
-  REQUIRE_FALSE(just(2) <= none);
+  static_assert(!(just(1) <= none));
+  static_assert(!(just(2) <= none));
 
-  REQUIRE_FALSE(just1 <= nothing);
-  REQUIRE_FALSE(just2 <= nothing);
+  static_assert(!(just1 <= nothing));
+  static_assert(!(just2 <= nothing));
 
-  REQUIRE_FALSE(just(1) <= nothing);
-  REQUIRE_FALSE(just(2) <= nothing);
+  static_assert(!(just(1) <= nothing));
+  static_assert(!(just(2) <= nothing));
 }
 
 TEST_CASE("greater compare", "[maybe][greater]")
 {
-  maybe<int> just1 = just(1);
-  maybe<int> just2 = just(2);
-  maybe<int> none = nothing;
+  constexpr maybe<int> just1 = just(1);
+  constexpr maybe<int> just2 = just(2);
+  constexpr maybe<int> none = nothing;
 
-  REQUIRE_FALSE(just1 > just2);
-  REQUIRE(just2 > just1);
-  REQUIRE_FALSE(just1 > just1);
-  REQUIRE_FALSE(just2 > just2);
+  static_assert(!(just1 > just2));
+  static_assert(just2 > just1);
+  static_assert(!(just1 > just1));
+  static_assert(!(just2 > just2));
 
-  REQUIRE_FALSE(just1 > 2);
-  REQUIRE(just2 > 1);
-  REQUIRE_FALSE(just1 > 1);
-  REQUIRE_FALSE(just2 > 2);
+  static_assert(!(just1 > 2));
+  static_assert(just2 > 1);
+  static_assert(!(just1 > 1));
+  static_assert(!(just2 > 2));
 
-  REQUIRE_FALSE(1 > just2);
-  REQUIRE(2 > just1);
-  REQUIRE_FALSE(1 > just1);
-  REQUIRE_FALSE(2 > just2);
+  static_assert(!(1 > just2));
+  static_assert(2 > just1);
+  static_assert(!(1 > just1));
+  static_assert(!(2 > just2));
 
-  REQUIRE_FALSE(just(1) > just2);
-  REQUIRE(just(2) > just1);
-  REQUIRE_FALSE(just(1) > just1);
-  REQUIRE_FALSE(just(2) > just2);
+  static_assert(!(just(1) > just2));
+  static_assert(just(2) > just1);
+  static_assert(!(just(1) > just1));
+  static_assert(!(just(2) > just2));
 
-  REQUIRE_FALSE(just1 > just(2));
-  REQUIRE(just2 > just(1));
-  REQUIRE_FALSE(just1 > just(1));
-  REQUIRE_FALSE(just2 > just(2));
+  static_assert(!(just1 > just(2)));
+  static_assert(just2 > just(1));
+  static_assert(!(just1 > just(1)));
+  static_assert(!(just2 > just(2)));
 
-  REQUIRE_FALSE(just(1) > just(2));
-  REQUIRE(just(2) > just(1));
-  REQUIRE_FALSE(just(1) > just(1));
-  REQUIRE_FALSE(just(2) > just(2));
+  static_assert(!(just(1) > just(2)));
+  static_assert(just(2) > just(1));
+  static_assert(!(just(1) > just(1)));
+  static_assert(!(just(2) > just(2)));
 
-  REQUIRE_FALSE(none > none);
-  REQUIRE_FALSE(nothing > none);
-  REQUIRE_FALSE(none > nothing);
-  REQUIRE_FALSE(nothing > nothing);
+  static_assert(!(none > none));
+  static_assert(!(nothing > none));
+  static_assert(!(none > nothing));
+  static_assert(!(nothing > nothing));
 
-  REQUIRE_FALSE(none > just1);
-  REQUIRE_FALSE(none > just2);
+  static_assert(!(none > just1));
+  static_assert(!(none > just2));
 
-  REQUIRE_FALSE(none > 1);
-  REQUIRE_FALSE(none > 2);
+  static_assert(!(none > 1));
+  static_assert(!(none > 2));
 
-  REQUIRE_FALSE(nothing > just1);
-  REQUIRE_FALSE(nothing > just2);
+  static_assert(!(nothing > just1));
+  static_assert(!(nothing > just2));
 
-  REQUIRE_FALSE(none > just(1));
-  REQUIRE_FALSE(none > just(2));
+  static_assert(!(none > just(1)));
+  static_assert(!(none > just(2)));
 
-  REQUIRE_FALSE(nothing > just(1));
-  REQUIRE_FALSE(nothing > just(2));
+  static_assert(!(nothing > just(1)));
+  static_assert(!(nothing > just(2)));
 
-  REQUIRE(just1 > none);
-  REQUIRE(just2 > none);
+  static_assert(just1 > none);
+  static_assert(just2 > none);
 
-  REQUIRE(1 > none);
-  REQUIRE(2 > none);
+  static_assert(1 > none);
+  static_assert(2 > none);
 
-  REQUIRE(just(1) > none);
-  REQUIRE(just(2) > none);
+  static_assert(just(1) > none);
+  static_assert(just(2) > none);
 
-  REQUIRE(just1 > nothing);
-  REQUIRE(just2 > nothing);
+  static_assert(just1 > nothing);
+  static_assert(just2 > nothing);
 
-  REQUIRE(just(1) > nothing);
-  REQUIRE(just(2) > nothing);
+  static_assert(just(1) > nothing);
+  static_assert(just(2) > nothing);
 }
 
 TEST_CASE("greater_or_equal compare", "[maybe][greater_or_equal]")
 {
-  maybe<int> just1 = just(1);
-  maybe<int> just2 = just(2);
-  maybe<int> none = nothing;
+  constexpr maybe<int> just1 = just(1);
+  constexpr maybe<int> just2 = just(2);
+  constexpr maybe<int> none = nothing;
 
-  REQUIRE_FALSE(just1 >= just2);
-  REQUIRE(just2 >= just1);
-  REQUIRE(just1 >= just1);
-  REQUIRE(just2 >= just2);
+  static_assert(!(just1 >= just2));
+  static_assert(just2 >= just1);
+  static_assert(just1 >= just1);
+  static_assert(just2 >= just2);
 
-  REQUIRE_FALSE(just1 >= 2);
-  REQUIRE(just2 >= 1);
-  REQUIRE(just1 >= 1);
-  REQUIRE(just2 >= 2);
+  static_assert(!(just1 >= 2));
+  static_assert(just2 >= 1);
+  static_assert(just1 >= 1);
+  static_assert(just2 >= 2);
 
-  REQUIRE_FALSE(1 >= just2);
-  REQUIRE(2 >= just1);
-  REQUIRE(1 >= just1);
-  REQUIRE(2 >= just2);
+  static_assert(!(1 >= just2));
+  static_assert(2 >= just1);
+  static_assert(1 >= just1);
+  static_assert(2 >= just2);
 
-  REQUIRE_FALSE(just(1) >= just2);
-  REQUIRE(just(2) >= just1);
-  REQUIRE(just(1) >= just1);
-  REQUIRE(just(2) >= just2);
+  static_assert(!(just(1) >= just2));
+  static_assert(just(2) >= just1);
+  static_assert(just(1) >= just1);
+  static_assert(just(2) >= just2);
 
-  REQUIRE_FALSE(just1 >= just(2));
-  REQUIRE(just2 >= just(1));
-  REQUIRE(just1 >= just(1));
-  REQUIRE(just2 >= just(2));
+  static_assert(!(just1 >= just(2)));
+  static_assert(just2 >= just(1));
+  static_assert(just1 >= just(1));
+  static_assert(just2 >= just(2));
 
-  REQUIRE_FALSE(just(1) >= just(2));
-  REQUIRE(just(2) >= just(1));
-  REQUIRE(just(1) >= just(1));
-  REQUIRE(just(2) >= just(2));
+  static_assert(!(just(1) >= just(2)));
+  static_assert(just(2) >= just(1));
+  static_assert(just(1) >= just(1));
+  static_assert(just(2) >= just(2));
 
-  REQUIRE(none >= none);
-  REQUIRE(nothing >= none);
-  REQUIRE(none >= nothing);
-  REQUIRE(nothing >= nothing);
+  static_assert(none >= none);
+  static_assert(nothing >= none);
+  static_assert(none >= nothing);
+  static_assert(nothing >= nothing);
 
-  REQUIRE_FALSE(nothing >= just1);
-  REQUIRE_FALSE(nothing >= just2);
+  static_assert(!(nothing >= just1));
+  static_assert(!(nothing >= just2));
 
-  REQUIRE_FALSE(none >= just1);
-  REQUIRE_FALSE(none >= just2);
+  static_assert(!(none >= just1));
+  static_assert(!(none >= just2));
 
-  REQUIRE_FALSE(none >= 1);
-  REQUIRE_FALSE(none >= 2);
+  static_assert(!(none >= 1));
+  static_assert(!(none >= 2));
 
-  REQUIRE_FALSE(none >= just(1));
-  REQUIRE_FALSE(none >= just(2));
+  static_assert(!(none >= just(1)));
+  static_assert(!(none >= just(2)));
 
-  REQUIRE_FALSE(nothing >= just(1));
-  REQUIRE_FALSE(nothing >= just(2));
+  static_assert(!(nothing >= just(1)));
+  static_assert(!(nothing >= just(2)));
 
-  REQUIRE(just1 >= none);
-  REQUIRE(just2 >= none);
+  static_assert(just1 >= none);
+  static_assert(just2 >= none);
 
-  REQUIRE(1 >= none);
-  REQUIRE(2 >= none);
+  static_assert(1 >= none);
+  static_assert(2 >= none);
 
-  REQUIRE(just(1) >= none);
-  REQUIRE(just(2) >= none);
+  static_assert(just(1) >= none);
+  static_assert(just(2) >= none);
 
-  REQUIRE(just1 >= nothing);
-  REQUIRE(just2 >= nothing);
+  static_assert(just1 >= nothing);
+  static_assert(just2 >= nothing);
 
-  REQUIRE(just(1) >= nothing);
-  REQUIRE(just(2) >= nothing);
+  static_assert(just(1) >= nothing);
+  static_assert(just(2) >= nothing);
 }
 
 TEST_CASE("format test", "[maybe][format]")
@@ -1030,40 +1034,40 @@ TEST_CASE("forward mode test", "[maybe][forward]")
 
 TEST_CASE("range_to_maybe test", "[maybe][range_to_maybe]")
 {
-  std::vector v{ 1, 2, 3 };
-  maybe x = range_to_maybe(v);
-  REQUIRE(x == just(1));
+  constexpr std::array v{ 1, 2, 3 };
+  constexpr maybe x = range_to_maybe(v);
+  static_assert(x == just(1));
 
-  maybe y = range_to_maybe(std::vector<int>{});
-  REQUIRE(y == nothing);
+  constexpr maybe y = range_to_maybe(std::array<int, 0>{});
+  static_assert(y == nothing);
 
-  int a[] = { 1 };
-  maybe z = range_to_maybe(a);
-  REQUIRE(z == 1);
+  constexpr int a[] = { 1 };
+  constexpr maybe z = range_to_maybe(a);
+  static_assert(z == 1);
 }
 
 #include <mitama/boolinators.hpp>
 
 TEST_CASE("as_maybe test", "[maybe][as_maybe][boolinators]")
 {
-  maybe x = as_maybe(true);
-  REQUIRE(x == just(std::monostate{}));
-  maybe y = as_maybe(false);
-  REQUIRE(y == nothing);
+  constexpr maybe x = as_maybe(true);
+  static_assert(x == just(std::monostate{}));
+  constexpr maybe y = as_maybe(false);
+  static_assert(y == nothing);
 }
 
 TEST_CASE("as_just test", "[maybe][as_just][boolinators]")
 {
-  maybe x = as_just(true, 1);
-  REQUIRE(x == just(1));
-  maybe y = as_just(false, 1);
-  REQUIRE(y == nothing);
+  constexpr maybe x = as_just(true, 1);
+  static_assert(x == just(1));
+  constexpr maybe y = as_just(false, 1);
+  static_assert(y == nothing);
 }
 
 TEST_CASE("as_just_from test", "[maybe][as_just_from][boolinators]")
 {
-  maybe x = as_just_from(true, [] { return 1; });
-  REQUIRE(x == just(1));
-  maybe y = as_just_from(false, [] { return 1; });
-  REQUIRE(y == nothing);
+  constexpr maybe x = as_just_from(true, [] { return 1; });
+  static_assert(x == just(1));
+  constexpr maybe y = as_just_from(false, [] { return 1; });
+  static_assert(y == nothing);
 }
