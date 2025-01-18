@@ -20,8 +20,24 @@ TEST_CASE("anyhow::result from success", "[anyhow][101]")
 
 TEST_CASE("anyhow::result from failure", "[anyhow][101]")
 {
-  anyhow::result<int> res = mitama::failure(anyhow::anyhow("error"s));
-  REQUIRE(res.is_err());
+  {
+    const auto res = [](int x) -> anyhow::result<int>
+    {
+      if (x % 2 != 0)
+        return mitama::failure(anyhow::anyhow("invalid input"s));
+      return mitama::success(0);
+    };
+    REQUIRE(res(13).unwrap_err()->what() == "invalid input"s);
+  }
+  {
+    const auto res = [](int x) -> anyhow::result<int>
+    {
+      if (x % 2 != 0)
+        return mitama::failure(anyhow::anyhow("invalid input: {}", x));
+      return mitama::success(0);
+    };
+    REQUIRE(res(13).unwrap_err()->what() == "invalid input: 13"s);
+  }
 }
 
 TEST_CASE("with context", "[anyhow][context]")
