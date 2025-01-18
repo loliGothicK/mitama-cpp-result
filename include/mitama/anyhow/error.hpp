@@ -188,3 +188,6 @@ struct fmt::formatter<std::shared_ptr<mitama::anyhow::error>>
     : ostream_formatter
 {
 };
+
+#define MITAMA_BAIL(...) \
+  return ::mitama::failure(::mitama::anyhow::anyhow(__VA_ARGS__))
