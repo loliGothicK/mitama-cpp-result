@@ -47,6 +47,14 @@ TEST_CASE("anyhow::result from failure", "[anyhow][101]")
     };
     REQUIRE(res(13).unwrap_err()->what() == "invalid input: 13");
   }
+  {
+    const auto res = [](int x) -> anyhow::result<int>
+    {
+      MITAMA_ENSURE(x % 2 == 0, "invalid input: {}", x);
+      return mitama::success(0);
+    };
+    REQUIRE(res(13).unwrap_err()->what() == "invalid input: 13");
+  }
 }
 
 TEST_CASE("with context", "[anyhow][context]")

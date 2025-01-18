@@ -191,3 +191,12 @@ struct fmt::formatter<std::shared_ptr<mitama::anyhow::error>>
 
 #define MITAMA_BAIL(...) \
   return ::mitama::failure(::mitama::anyhow::anyhow(__VA_ARGS__))
+
+#define MITAMA_ENSURE(COND, ...) \
+  do                             \
+  {                              \
+    if (!(COND))                 \
+    {                            \
+      MITAMA_BAIL(__VA_ARGS__);  \
+    }                            \
+  } while (false)
