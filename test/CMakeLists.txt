@@ -26,7 +26,6 @@ foreach(TEST_NAME ${TEST_NAMES})
   target_include_directories(${TEST_NAME}
     PRIVATE ${CMAKE_SOURCE_DIR}/include
     PRIVATE ${CMAKE_SOURCE_DIR}/Catch2/single_include
-    PRIVATE ${CMAKE_SOURCE_DIR}/mitama-utest-utilities/include
   )
 
   target_link_libraries(${TEST_NAME} fmt::fmt-header-only)
