@@ -247,9 +247,36 @@ public:
   {
   }
 
+  // maybe<bool>(maybe<U>)
+  //
+  // This constructor is to prevent maybe<U>.operator bool() from being called.
+  // If it is called, maybe<bool>(maybe<U>) always results in just.
+  template <typename U>
+    requires is_maybe<std::remove_cvref_t<U>>::value
+             && std::is_same_v<std::remove_cvref_t<T>, bool>
+             && std::is_constructible_v<T, U>
+             && (!std::is_convertible_v<std::decay_t<U>, T>)
+  constexpr maybe(U&& u)
+  {
+    if (std::holds_alternative<nothing_t>(u.storage_))
+    {
+      storage_ = nothing;
+    }
+    else
+    {
+      storage_ = static_cast<just_t<T>>(
+          std::get<just_t<typename std::remove_cvref_t<U>::value_type>>(
+              std::forward<U>(u).storage_
+          )
+      );
+    }
+  }
+
   template <typename U>
     requires std::is_constructible_v<T, U&&>
              && (!std::is_convertible_v<std::decay_t<U>, T>)
+             && (!std::is_same_v<std::remove_cvref_t<T>, bool>)
+             && (!is_maybe<std::remove_cvref_t<U>>::value)
   explicit constexpr maybe(U&& u)
       : storage_(
             std::in_place_type<just_t<T>>, std::in_place, std::forward<U>(u)
