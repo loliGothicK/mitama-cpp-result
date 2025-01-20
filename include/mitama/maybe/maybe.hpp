@@ -330,11 +330,6 @@ public:
   {
   }
 
-  explicit constexpr operator bool() const
-  {
-    return is_just();
-  }
-
   constexpr value_type* operator->() &
   {
     return &(std::get<just_t<T>>(storage_).get());
