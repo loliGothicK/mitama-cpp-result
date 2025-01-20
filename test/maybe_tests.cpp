@@ -27,11 +27,21 @@ TEST_CASE("is_just()", "[maybe][is_just]")
 
 TEST_CASE("is_nothing()", "[maybe][is_nothing]")
 {
-  constexpr maybe<int> x = just(2);
-  static_assert(!x.is_nothing());
+  {
+    constexpr maybe<int> x = just(2);
+    static_assert(!x.is_nothing());
 
-  constexpr maybe<int> y = nothing;
-  static_assert(y.is_nothing());
+    constexpr maybe<int> y = nothing;
+    static_assert(y.is_nothing());
+  }
+  {
+    maybe<bool> x = nothing;
+    REQUIRE(x.is_nothing());
+
+    // Issue #412
+    maybe<bool> y(x);
+    REQUIRE(y.is_nothing());
+  }
 }
 
 TEST_CASE("unwrap()", "[maybe][unwrap]")

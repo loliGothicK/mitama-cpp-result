@@ -14,9 +14,9 @@ foreach(TEST_NAME ${TEST_NAMES})
   add_executable(${TEST_NAME} ${TEST_NAME}.cpp)
   target_compile_features(${TEST_NAME} PRIVATE cxx_std_20)
   if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    target_compile_options(${TEST_NAME} PRIVATE -Wall -Wextra -ftemplate-backtrace-limit=0)
+    target_compile_options(${TEST_NAME} PRIVATE -Wall -Wextra -ftemplate-backtrace-limit=0 -fno-rtti)
   else()
-    target_compile_options(${TEST_NAME} PRIVATE -Wall -Wextra -pedantic-errors -ftemplate-backtrace-limit=0)
+    target_compile_options(${TEST_NAME} PRIVATE -Wall -Wextra -ftemplate-backtrace-limit=0 -fno-rtti -pedantic-errors)
   endif()
 
   if(APPLE)
@@ -26,7 +26,6 @@ foreach(TEST_NAME ${TEST_NAMES})
   target_include_directories(${TEST_NAME}
     PRIVATE ${CMAKE_SOURCE_DIR}/include
     PRIVATE ${CMAKE_SOURCE_DIR}/Catch2/single_include
-    PRIVATE ${CMAKE_SOURCE_DIR}/mitama-utest-utilities/include
   )
 
   target_link_libraries(${TEST_NAME} fmt::fmt-header-only)

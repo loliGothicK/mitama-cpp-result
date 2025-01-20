@@ -81,7 +81,8 @@ public:
     {
       if (const auto& may =
               static_cast<const basic_result<_mutability, maybe<T>, E>*>(this)
-                  ->unwrap())
+                  ->unwrap();
+          may.is_just())
       {
         return maybe<basic_result<_mutability, T, E>>{ std::in_place,
                                                        in_place_ok,

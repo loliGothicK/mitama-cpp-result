@@ -27,7 +27,6 @@ command = "cabin"
 args = [
     "lint",
     "--exclude", "Catch2",
-    "--exclude", "mitama-utest-utilities",
 ]
 
 [tasks.fmt-lib]
