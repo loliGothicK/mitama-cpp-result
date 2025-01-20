@@ -358,27 +358,26 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prerequisites_and_installation" class="md-nav__link">
-    Prerequisites and installation
-  </a>
-  
-    <nav class="md-nav" aria-label="Prerequisites and installation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
-    Prerequisites
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#installation" class="md-nav__link">
     Installation
   </a>
   
     <nav class="md-nav" aria-label="Installation">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dependencies" class="md-nav__link">
+    Dependencies
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supported_os_compiler_language_standard" class="md-nav__link">
+    Supported OS / Compiler / Language Standard
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#cmake" class="md-nav__link">
@@ -391,11 +390,6 @@
   <a href="#manually" class="md-nav__link">
     Manually
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -1526,27 +1520,26 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prerequisites_and_installation" class="md-nav__link">
-    Prerequisites and installation
-  </a>
-  
-    <nav class="md-nav" aria-label="Prerequisites and installation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#prerequisites" class="md-nav__link">
-    Prerequisites
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#installation" class="md-nav__link">
     Installation
   </a>
   
     <nav class="md-nav" aria-label="Installation">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dependencies" class="md-nav__link">
+    Dependencies
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#supported_os_compiler_language_standard" class="md-nav__link">
+    Supported OS / Compiler / Language Standard
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#cmake" class="md-nav__link">
@@ -1559,11 +1552,6 @@
   <a href="#manually" class="md-nav__link">
     Manually
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -1595,41 +1583,39 @@
 
 
 <h1 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h1>
-<p><code>Mitama.Result</code> is a header only C++17 library for error handling.</p>
-<h2 id="prerequisites_and_installation">Prerequisites and installation<a class="headerlink" href="#prerequisites_and_installation" title="Permanent link">&para;</a></h2>
-<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th style="text-align: center;">Compiler/Toolchain</th>
-<th style="text-align: center;">Status</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: center;">clang &gt;= 7.0.0</td>
-<td style="text-align: center;">Testing on CircleCI; tested on each push to GitHub</td>
-</tr>
-<tr>
-<td style="text-align: center;">gcc &gt;= 8.3.0</td>
-<td style="text-align: center;">Testing on CircleCI; tested on each push to GitHub</td>
-</tr>
-</tbody>
-</table>
-<p>More specifically, <code>Mitama.Result</code> requires a compiler/standard library supporting the following C++17 features:</p>
+<p><code>Mitama.Result</code> is a header only C++20 library for error handling.</p>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
+<h3 id="dependencies">Dependencies<a class="headerlink" href="#dependencies" title="Permanent link">&para;</a></h3>
 <ul>
-<li>constexpr if</li>
-<li>constexpr lambda</li>
-<li>inline variables</li>
-<li>fold expressions</li>
-<li>class template deduction and deduction guide</li>
-<li>All the C++17 type traits from the <code>&lt;type_traits&gt;</code> header</li>
-<li><code>std::{invoke, apply}</code> from the <code>&lt;functional&gt;</code> header</li>
-<li><code>std::string_view</code> from the <code>&lt;string_view&gt;</code> header</li>
-<li><code>std::monostate</code> from the <code>&lt;variant&gt;</code> header</li>
+<li>fmt: 9.0.0 or higher</li>
 </ul>
-<h3 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h3>
-<h4 id="cmake">CMake<a class="headerlink" href="#cmake" title="Permanent link">&para;</a></h4>
+<h3 id="supported_os_compiler_language_standard">Supported OS / Compiler / Language Standard<a class="headerlink" href="#supported_os_compiler_language_standard" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>OS</p>
+<ul>
+<li>Linux</li>
+<li>Apple Darwin</li>
+<li>(Windows)</li>
+</ul>
+</li>
+<li>
+<p>Compilers</p>
+<ul>
+<li>gcc &gt;= 11</li>
+<li>clang &gt;= 15</li>
+<li>Latest preview version of MSVC only</li>
+</ul>
+</li>
+<li>
+<p>Language Standards</p>
+<ul>
+<li>C++20</li>
+<li>(MSVC: only support <code>/std:c++latest</code>)</li>
+</ul>
+</li>
+</ul>
+<h3 id="cmake">CMake<a class="headerlink" href="#cmake" title="Permanent link">&para;</a></h3>
 <ul>
 <li>First, clone mitama-cpp-result repository.</li>
 </ul>
@@ -1642,7 +1628,7 @@
 $<span class="w"> </span>cmake<span class="w"> </span>..
 $<span class="w"> </span>make<span class="w"> </span>install
 </code></pre></div>
-<h4 id="manually">Manually<a class="headerlink" href="#manually" title="Permanent link">&para;</a></h4>
+<h3 id="manually">Manually<a class="headerlink" href="#manually" title="Permanent link">&para;</a></h3>
 <ul>
 <li>First, clone mitama-cpp-result repository.</li>
 </ul>
