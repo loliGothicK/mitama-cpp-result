@@ -2,6 +2,3 @@
 	path = Catch2
 	url = https://github.com/catchorg/Catch2.git
 	branch = v2.13.8
-[submodule "mitama-utest-utilities"]
-	path = mitama-utest-utilities
-	url = https://github.com/LoliGothick/mitama-utest-utilities.git
