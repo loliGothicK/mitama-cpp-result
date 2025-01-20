@@ -120,17 +120,17 @@ This constructor shall not participate in overload resolution unless
 
 If `is_trivially_move_constructible_v<T, U> && is_trivially_move_constructible_v<E, F>` is true, this constructor shall be a constexpr constructor.
 
-## non-explicit copy constructor from success [5/16]
+## non-explicit copy constructor from ok [5/16]
 
 ```cpp
 template<class U >
-basic_result::basic_result(success<U> const& ok)
+basic_result::basic_result(ok_t<U> const& ok)
 noexcept(see below)
 ```
 
 **Effects**
 
-Initializes the contained variant as if in-place-initializing an object of type `success<T>`.
+Initializes the contained variant as if in-place-initializing an object of type `ok_t<T>`.
 
 **Exceptions**
 
@@ -142,17 +142,17 @@ If `is_nothrow_move_constructible_v<T, U>` is true, this constructor shall be a 
 
 This constructor shall not participate in overload resolution unless `is_constructible_v<T, U> && is_convertible_v<U, T>` is true.
 
-## explicit copy constructor from success [6/16]
+## explicit copy constructor from ok [6/16]
 
 ```cpp
 template<class U >
-explicit basic_result::basic_result(success<U> const& ok)
+explicit basic_result::basic_result(ok_t<U> const& ok)
 noexcept(see below)
 ```
 
 **Effects**
 
-Initializes the contained variant as if in-place-initializing an object of type `success<T>`.
+Initializes the contained variant as if in-place-initializing an object of type `ok_t<T>`.
 
 **Exceptions**
 
@@ -164,17 +164,17 @@ If `is_nothrow_move_constructible_v<T, U>` is true, this constructor shall be a 
 
 This constructor shall not participate in overload resolution unless `is_constructible_v<T, U> && !is_convertible_v<U, T>` is true.
 
-## non-explicit move constructor from success [7/16]
+## non-explicit move constructor from ok [7/16]
 
 ```cpp
 template<class U >
-basic_result::basic_result(success<U>&& ok)
+basic_result::basic_result(ok_t<U>&& ok)
 noexcept(see below)
 ```
 
 **Effects**
 
-Initializes the contained variant as if in-place-initializing an object of type `success<T>`.
+Initializes the contained variant as if in-place-initializing an object of type `ok_t<T>`.
 
 **Exceptions**
 
@@ -186,17 +186,17 @@ If `is_nothrow_move_constructible_v<T, U>` is true, this constructor shall be a 
 
 This constructor shall not participate in overload resolution unless `is_constructible_v<T, U> && is_convertible_v<U, T>` is true.
 
-## explicit move constructor from success [8/16]
+## explicit move constructor from ok [8/16]
 
 ```cpp
 template<class U >
-explicit basic_result::basic_result(success<U>&& ok)
+explicit basic_result::basic_result(ok_t<U>&& ok)
 noexcept(see below)
 ```
 
 **Effects**
 
-Initializes the contained variant as if in-place-initializing an object of type `success<T>`.
+Initializes the contained variant as if in-place-initializing an object of type `ok_t<T>`.
 
 **Exceptions**
 
@@ -208,17 +208,17 @@ If `is_nothrow_move_constructible_v<T, U>` is true, this constructor shall be a 
 
 This constructor shall not participate in overload resolution unless `is_constructible_v<T, U> && !is_convertible_v<U, T>` is true.
 
-## non-explicit copy constructor from failure [9/16]
+## non-explicit copy constructor from err [9/16]
 
 ```cpp
 template <class F>
-basic_result::basic_result(failure<F> const& err)
+basic_result::basic_result(err_t<F> const& err)
 noexcept(see below)
 ```
 
 **Effects**
 
-Initializes the contained variant as if in-place-initializing an object of type `failure<E>`.
+Initializes the contained variant as if in-place-initializing an object of type `err_t<E>`.
 
 **Exceptions**
 
@@ -230,17 +230,17 @@ If `is_nothrow_move_constructible_v<E, F>` is true, this constructor shall be a 
 
 This constructor shall not participate in overload resolution unless `is_constructible_v<E, F> && is_convertible_v<F, E>` is true.
 
-## explicit copy constructor from failure [10/16]
+## explicit copy constructor from err [10/16]
 
 ```cpp
 template <class F>
-explicit basic_result::basic_result(failure<F> const& err)
+explicit basic_result::basic_result(err_t<F> const& err)
 noexcept(see below)
 ```
 
 **Effects**
 
-Initializes the contained variant as if in-place-initializing an object of type `failure<E>`.
+Initializes the contained variant as if in-place-initializing an object of type `err_t<E>`.
 
 **Exceptions**
 
@@ -252,17 +252,17 @@ If `is_nothrow_move_constructible_v<E, F>` is true, this constructor shall be a 
 
 This constructor shall not participate in overload resolution unless `is_constructible_v<E, F> && !is_convertible_v<F, E>` is true.
 
-## non-explicit move constructor from failure [11/16]
+## non-explicit move constructor from err [11/16]
 
 ```cpp
 template <class F>
-basic_result::basic_result(failure<F>&& err)
+basic_result::basic_result(err_t<F>&& err)
 noexcept(see below)
 ```
 
 **Effects**
 
-Initializes the contained variant as if in-place-initializing an object of type `failure<E>`.
+Initializes the contained variant as if in-place-initializing an object of type `err_t<E>`.
 
 **Exceptions**
 
@@ -274,17 +274,17 @@ If `is_nothrow_move_constructible_v<E, F>` is true, this constructor shall be a 
 
 This constructor shall not participate in overload resolution unless `is_constructible_v<E, F> && is_convertible_v<F, E>` is true.
 
-## explicit move constructor from failure [12/16]
+## explicit move constructor from err [12/16]
 
 ```cpp
 template <class F>
-explicit basic_result::basic_result(failure<F>&& err)
+explicit basic_result::basic_result(err_t<F>&& err)
 noexcept(see below)
 ```
 
 **Effects**
 
-Initializes the contained variant as if in-place-initializing an object of type `failure<E>&&`.
+Initializes the contained variant as if in-place-initializing an object of type `err_t<E>&&`.
 
 **Exceptions**
 
@@ -296,7 +296,7 @@ If `is_nothrow_move_constructible_v<E, F>` is true, this constructor shall be a 
 
 This constructor shall not participate in overload resolution unless `is_constructible_v<E, U> && !is_convertible_v<U, E>` is true.
 
-## emplace constructor for successful results [13/16]
+## emplace constructor for ok results [13/16]
 
 ```cpp
 template <class... Args>
@@ -306,7 +306,7 @@ noexcept(see below)
 
 **Effects**
 
-Initializes the contained variant as if in-place-initializing an object of type with expression `(success<T>(std::forward<Args>(args)...))`.
+Initializes the contained variant as if in-place-initializing an object of type with expression `(ok_t<T>(std::forward<Args>(args)...))`.
 
 **Exceptions**
 
@@ -319,10 +319,10 @@ If `is_nothrow_move_constructible_v<T, Args&&...>` is true, this constructor sha
 ```cpp
 using my_result = result<std::tuple<int, int>, std::string>;
 auto res = my_result( mitama::in_place_ok, 1, 1 );
-// same as `my_result(success(std::tuple{1,1}))`
+// same as `my_result(ok(std::tuple{1,1}))`
 ```
 
-## emplace constructor for unsuccessful results [14/16]
+## emplace constructor for non-ok results [14/16]
 
 ```cpp
 template <class... Args>
@@ -331,7 +331,7 @@ explicit basic_result::basic_result(in_place_err_t, Args&&... args)
 
 **Effects**
 
-Initializes the contained variant as if in-place-initializing an object of type with expression `(failure<E>(std::forward<Args>(args)...))`.
+Initializes the contained variant as if in-place-initializing an object of type with expression `(err_t<E>(std::forward<Args>(args)...))`.
 
 **Exceptions**
 
@@ -343,10 +343,10 @@ If `is_nothrow_move_constructible_v<E, Args&&...>` is true, this constructor sha
 
 ```cpp
 using my_result = result<int, std::string>;
-auto res = my_result( mitama::in_place_err, 'a', 5 ); // failure("aaaaa")
+auto res = my_result( mitama::in_place_err, 'a', 5 ); // err("aaaaa")
 ```
 
-## emplace constructor with initializer_list for successful results [15/16]
+## emplace constructor with initializer_list for ok results [15/16]
 
 ```cpp
 template <class U , class... Args>
@@ -357,7 +357,7 @@ explicit basic_result::basic_result(in_place_ok_t,
 
 **Effects**
 
-Initializes the contained variant as if in-place-initializing an object of type with expression `(success<T>(il, std::forward<Args>(args)...))`.
+Initializes the contained variant as if in-place-initializing an object of type with expression `(ok_t<T>(il, std::forward<Args>(args)...))`.
 
 **Exceptions**
 
@@ -367,10 +367,10 @@ Any exception thrown by the selected constructor of T.
 
 ```cpp
 using my_result = result<std::vector<int>, std::string>;
-auto res = my_result( in_place_ok, {1,2,3,4}, std::allocator<int>()); // success([1,2,3,4])
+auto res = my_result( in_place_ok, {1,2,3,4}, std::allocator<int>()); // ok([1,2,3,4])
 ```
 
-## emplace constructor with initializer_list for unsuccessful results [16/16]
+## emplace constructor with initializer_list for non-ok results [16/16]
 
 ```cpp
 template <class U , class... Args>
@@ -381,7 +381,7 @@ explicit basic_result::basic_result(in_place_ok_t ,
 
 **Effects**
 
-Initializes the contained variant as if in-place-initializing an object of type with expression `(failure<E>(il, std::forward<Args>(args)...))`.
+Initializes the contained variant as if in-place-initializing an object of type with expression `(err_t<E>(il, std::forward<Args>(args)...))`.
 
 **Exceptions**
 
@@ -391,7 +391,7 @@ Any exception thrown by the selected constructor of `E`.
 
 ```cpp
 using my_result = result<std::string, std::vector<int>>;
-auto res = my_result( in_place_err, {1,2,3,4}); // failure([1,2,3,4])
+auto res = my_result( in_place_err, {1,2,3,4}); // err([1,2,3,4])
 ```
 
 # Assignment operators
@@ -441,17 +441,17 @@ Any exception thrown by the selected constructor of `T` or `E`.
 
 This operator fails by static assertion unless self is mutable.
 
-## copy assignment operator for success [3/6]
+## copy assignment operator for ok [3/6]
 
 ```cpp
   template <class U,
             where<std::is_constructible<T, U>> = required>
-  constexpr basic_result& basic_result::operator=(success<U> const& _ok)
+  constexpr basic_result& basic_result::operator=(ok_t<U> const& _ok)
 ```
 
 **Effects**
 
-Destroy the contained value and replace it with the successful value `_ok`.
+Destroy the contained value and replace it with the ok value `_ok`.
 
 **Exceptions**
 
@@ -461,17 +461,17 @@ Any exception thrown by the selected constructor of `T`.
 
 This operator fails by static assertion unless self is mutable.
 
-## move assignment operator for success [4/6]
+## move assignment operator for ok [4/6]
 
 ```cpp
   template <class U,
             where<std::is_constructible<T, U>> = required>
-  constexpr basic_result& basic_result::operator=(success<U>&& _ok)
+  constexpr basic_result& basic_result::operator=(ok_t<U>&& _ok)
 ```
 
 **Effects**
 
-Destroy the contained value and replace it with the successful value `_ok`.
+Destroy the contained value and replace it with the ok value `_ok`.
 
 **Exceptions**
 
@@ -481,17 +481,17 @@ Any exception thrown by the selected constructor of `T`.
 
 This operator fails by static assertion unless self is mutable.
 
-## copy assignment operator for failure [5/6]
+## copy assignment operator for err [5/6]
 
 ```cpp
   template <class F,
             where<std::is_constructible<E, F>> = required>
-  constexpr basic_result& basic_result::operator=(failure<F> const& _err)
+  constexpr basic_result& basic_result::operator=(err_t<F> const& _err)
 ```
 
 **Effects**
 
-Destroy the contained value and replace it with the unsuccessful value `_err`.
+Destroy the contained value and replace it with the non-ok value `_err`.
 
 **Exceptions**
 
@@ -501,17 +501,17 @@ Any exception thrown by the selected constructor of `E`.
 
 This operator fails by static assertion unless self is mutable.
 
-## move assignment operator for failure [6/6]
+## move assignment operator for err [6/6]
 
 ```cpp
   template <class F,
             where<std::is_constructible<E, F>> = required>
-  constexpr basic_result& basic_result::operator=(failure<F>&& _err)
+  constexpr basic_result& basic_result::operator=(err_t<F>&& _err)
 ```
 
 **Effects**
 
-Destroy the contained value and replace it with the unsuccessful value `_err`.
+Destroy the contained value and replace it with the non-ok value `_err`.
 
 **Exceptions**
 

@@ -34,7 +34,7 @@ template <class T>
 using void_to_monostate_t =
     std::conditional_t<std::is_void_v<T>, std::monostate, T>;
 
-template <mutability, class /* success type */, class /* failure type */>
+template <mutability, class /* ok type */, class /* err type */>
 class basic_result;
 
 /// alias template for immutable result
@@ -48,14 +48,14 @@ using mut_result = basic_result<
     mutability::mut, void_to_monostate_t<T>, void_to_monostate_t<E>>;
 
 template <class = std::monostate, class...>
-class success_t;
+class ok_t;
 template <class T>
-success_t(T&&) -> success_t<T>;
+ok_t(T&&) -> ok_t<T>;
 
 template <class = std::monostate, class...>
-class failure_t;
+class err_t;
 template <class E>
-failure_t(E&&) -> failure_t<E>;
+err_t(E&&) -> err_t<E>;
 
 class in_place_ok_t
 {

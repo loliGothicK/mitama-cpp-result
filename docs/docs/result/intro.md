@@ -11,7 +11,7 @@ enum class mutability: bool {
 template < mutability Mut >
 inline constexpr bool is_mut_v = !static_cast<bool>(Mut);
 
-template <mutability, class /* success type */, class /* failure type */>
+template <mutability, class /* ok type */, class /* err type */>
 class basic_result;
 ```
 
@@ -34,27 +34,27 @@ The library provides two type synonyms of `basic_result` as follows:
 You should use `mut_result<T, E>` if you want to resubstitute,
 `result<T, E>` do not provides assignment operators or mutable accessors.
 
-## success/failure the in-place factory classes
+## ok/err the in-place factory classes
 
-`success_t` and `failure_t` are in-place factory classes for `basic_result`.
+`ok_t` and `err_t` are in-place factory classes for `basic_result`.
 
-If you want to initialize `result<T, E>` with successful value of `T`, initialize with `success_t<T>`.
+If you want to initialize `result<T, E>` with ok value of `T`, initialize with `ok_t<T>`.
 
 ```cpp
-result<int, std::string> res = success_t{42};
+result<int, std::string> res = ok_t{42};
 ```
 
-Similarly, if you want to initialize `result<T, E>` with unsuccessful value of `E`, initialize with `failure_t<E>`.
+Similarly, if you want to initialize `result<T, E>` with non-ok value of `E`, initialize with `err_t<E>`.
 
 ```cpp
-result<int, std::string> res = failure_t{"error"};
+result<int, std::string> res = err_t{"error"};
 ```
 
-However, using `success` and `failure` (factory methods) is recommended.
+However, using `ok` and `err` (factory methods) is recommended.
 
 ```cpp
-result<int, std::string> ok = success(42);
-result<int, std::string> ng = failure("error");
+result<int, std::string> ok = ok(42);
+result<int, std::string> ng = err("error");
 ```
 
 ## Result with reference types
@@ -70,7 +70,7 @@ using namespace mitama;
 
 int main() {
     int i = 1;
-    mut_result<int&, std::string&> res = success(i);
+    mut_result<int&, std::string&> res = ok(i);
     res.unwrap() = 2; // get reference to `i`, and assign `2`.
 
     assert(i == 2);
@@ -97,7 +97,7 @@ using namespace mitama;
 int main() {
   static_assert(!is_complete_type<incomplete_type>::value);
   [[maybe_unused]]
-  result<incomplete_type&, void> res = success<incomplete_type&>(get_incomplete_type()); // use incomplete_type& for result
+  result<incomplete_type&, void> res = ok_t<incomplete_type&>(get_incomplete_type()); // use incomplete_type& for result
 }
 
 struct incomplete_type {};

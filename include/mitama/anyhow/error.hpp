@@ -1,7 +1,7 @@
 #pragma once
 
 #include <mitama/mitamagic/format.hpp>
-#include <mitama/result/factory/failure.hpp>
+#include <mitama/result/factory/err.hpp>
 
 #include <fmt/core.h>
 #include <memory>
@@ -175,10 +175,10 @@ operator<<(
 
 template <class Err, class... Args>
 inline auto
-failure(Args&&... args) -> mitama::failure_t<std::shared_ptr<Err>>
+err(Args&&... args) -> mitama::err_t<std::shared_ptr<Err>>
   requires std::is_base_of_v<mitama::anyhow::error, Err>
 {
-  return mitama::failure(std::make_shared<Err>(std::forward<Args>(args)...));
+  return mitama::err(std::make_shared<Err>(std::forward<Args>(args)...));
 }
 
 } // namespace mitama::anyhow
@@ -190,7 +190,7 @@ struct fmt::formatter<std::shared_ptr<mitama::anyhow::error>>
 };
 
 #define MITAMA_BAIL(...) \
-  return ::mitama::failure(::mitama::anyhow::anyhow(__VA_ARGS__))
+  return ::mitama::err(::mitama::anyhow::anyhow(__VA_ARGS__))
 
 #define MITAMA_ENSURE(COND, ...) \
   do                             \

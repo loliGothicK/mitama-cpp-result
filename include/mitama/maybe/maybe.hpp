@@ -6,8 +6,8 @@
 #include <mitama/panic.hpp>
 #include <mitama/result/detail/fwd.hpp>
 #include <mitama/result/detail/meta.hpp>
-#include <mitama/result/factory/failure.hpp>
-#include <mitama/result/factory/success.hpp>
+#include <mitama/result/factory/err.hpp>
+#include <mitama/result/factory/ok.hpp>
 
 #include <cassert>
 #include <functional>
@@ -91,8 +91,7 @@ public:
   constexpr basic_result<_, maybe<T>, E> transpose() const&
   {
     const auto* self = static_cast<const maybe<basic_result<_, T, E>>*>(this);
-    return self->is_nothing()
-               ? basic_result<_, maybe<T>, E>{ success_t{ nothing } }
+    return self->is_nothing() ? basic_result<_, maybe<T>, E>{ ok_t{ nothing } }
            : self->unwrap().is_ok()
                ? basic_result<_, maybe<T>, E>{ in_place_ok, std::in_place,
                                                self->unwrap().unwrap() }
@@ -665,46 +664,42 @@ public:
   constexpr auto ok_or(E&& err = {}) &
   {
     using ret_t = result<value_type, std::remove_reference_t<E>>;
-    return is_just()
-               ? ret_t{ success_t{ unwrap() } }
-               : ret_t{ failure_t{ std::forward<E>(std::forward<E>(err)) } };
+    return is_just() ? ret_t{ ok_t{ unwrap() } }
+                     : ret_t{ err_t{ std::forward<E>(std::forward<E>(err)) } };
   }
 
   template <class E = std::monostate>
   constexpr auto ok_or(E&& err = {}) const&
   {
     using ret_t = result<value_type, std::remove_reference_t<E>>;
-    return is_just()
-               ? ret_t{ success_t{ unwrap() } }
-               : ret_t{ failure_t{ std::forward<E>(std::forward<E>(err)) } };
+    return is_just() ? ret_t{ ok_t{ unwrap() } }
+                     : ret_t{ err_t{ std::forward<E>(std::forward<E>(err)) } };
   }
 
   template <class E = std::monostate>
   constexpr auto ok_or(E&& err = {}) &&
   {
     using ret_t = result<value_type, std::remove_reference_t<E>>;
-    return is_just()
-               ? ret_t{ success_t{ std::move(unwrap()) } }
-               : ret_t{ failure_t{ std::forward<E>(std::forward<E>(err)) } };
+    return is_just() ? ret_t{ ok_t{ std::move(unwrap()) } }
+                     : ret_t{ err_t{ std::forward<E>(std::forward<E>(err)) } };
   }
 
   template <class F>
     requires std::is_invocable_v<F&&>
   constexpr result<T, std::invoke_result_t<F&&>> ok_or_else(F&& err) const&
   {
-    return is_just()
-               ? result<T, std::invoke_result_t<F&&>>{ success_t{ unwrap() } }
-               : result<T, std::invoke_result_t<F&&>>{ failure_t{
-                     std::invoke(std::forward<F>(err)) } };
+    return is_just() ? result<T, std::invoke_result_t<F&&>>{ ok_t{ unwrap() } }
+                     : result<T, std::invoke_result_t<F&&>>{ err_t{
+                           std::invoke(std::forward<F>(err)) } };
   }
 
   template <class F>
     requires std::is_invocable_v<F&&>
   constexpr result<T, std::invoke_result_t<F&&>> ok_or_else(F&& err) &&
   {
-    return is_just() ? result<T, std::invoke_result_t<F&&>>{ success_t{
+    return is_just() ? result<T, std::invoke_result_t<F&&>>{ ok_t{
                            std::move(unwrap()) } }
-                     : result<T, std::invoke_result_t<F&&>>{ failure_t{
+                     : result<T, std::invoke_result_t<F&&>>{ err_t{
                            std::invoke(std::forward<F>(err)) } };
   }
 

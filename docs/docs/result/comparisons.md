@@ -22,80 +22,80 @@ template< class T, class E, class U, class F >
 constexpr bool operator>=( const basic_result<T, E>& lhs,
                            const basic_result<U, F>& rhs ); // (6)
 
-// Compare a basic_result object with a success(value)
+// Compare a basic_result object with an ok(value)
 template< class T, class E, class U >
 constexpr bool operator==( const basic_result<T, E>& res,
-                           success<U> const& ok );          // (7)
+                           ok_t<U> const& ok );          // (7)
 template< class T, class E, class U >
-constexpr bool operator==( success<T> const& ok,
+constexpr bool operator==( ok_t<T> const& ok,
                            const basic_result<U, E>& res ); // (8)
 template< class T, class E, class U >
 constexpr bool operator!=( const basic_result<T, E>& res,
-                           success<U> const& ok );          // (9)
+                           ok_t<U> const& ok );          // (9)
 template< class T, class E, class U >
-constexpr bool operator!=( success<T> const& ok,
+constexpr bool operator!=( ok_t<T> const& ok,
                            const basic_result<U, E>& res ); // (10)
 template< class T, class E, class U >
 constexpr bool operator<( const basic_result<T, E>& res,
-                          success<U> const& ok );           // (11)
+                          ok_t<U> const& ok );           // (11)
 template< class T, class E, class U >
-constexpr bool operator<( success<T> const& ok,
+constexpr bool operator<( ok_t<T> const& ok,
                           const basic_result<U, E>& res );  // (12)
 template< class T, class E, class U >
 constexpr bool operator<=( const basic_result<T, E>& res,
-                           success<U> const& ok );          // (13)
+                           ok_t<U> const& ok );          // (13)
 template< class T, class E, class U >
-constexpr bool operator<=( success<T> const& ok,
+constexpr bool operator<=( ok_t<T> const& ok,
                            const basic_result<U, E>& res ); // (14)
 template< class T, class E, class U >
 constexpr bool operator>( const basic_result<T, E>& res,
-                          success<U> const& ok );           // (15)
+                          ok_t<U> const& ok );           // (15)
 template< class T, class E, class U >
-constexpr bool operator>( success<T> const& ok,
+constexpr bool operator>( ok_t<T> const& ok,
                           const basic_result<U, E>& res );  // (16)
 template< class T, class E, class U >
 constexpr bool operator>=( const basic_result<T, E>& res,
-                           success<U> const& ok );          // (17)
+                           ok_t<U> const& ok );          // (17)
 template< class T, class E, class U >
-constexpr bool operator>=( success<T> const& ok, 
+constexpr bool operator>=( ok_t<T> const& ok,
                            const basic_result<U, E>& res ); // (18)
 
-// Compare a basic_result object with a failure(value)
+// Compare a basic_result object with an err(value)
 template< class T, class E, class F >
 constexpr bool operator==( const basic_result<T, E>& res,
-                           failure<F> const& err );         // (19)
+                           err_t<F> const& err );         // (19)
 template< class T, class E, class U >
-constexpr bool operator==( failure<E> const& err,
+constexpr bool operator==( err_t<E> const& err,
                            const basic_result<T, F>& res ); // (20)
 template< class T, class E, class U >
 constexpr bool operator!=( const basic_result<T, E>& res,
-                           failure<F> const& err );         // (21)
+                           err_t<F> const& err );         // (21)
 template< class T, class E, class U >
-constexpr bool operator!=( failure<E> const& err,
+constexpr bool operator!=( err_t<E> const& err,
                            const basic_result<T, F>& res ); // (22)
 template< class T, class E, class U >
 constexpr bool operator<( const basic_result<T, E>& res,
-                          failure<F> const& err );          // (23)
+                          err_t<F> const& err );          // (23)
 template< class T, class E, class U >
-constexpr bool operator<( failure<E> const& err,
+constexpr bool operator<( err_t<E> const& err,
                           const basic_result<T, F>& res );  // (24)
 template< class T, class E, class U >
 constexpr bool operator<=( const basic_result<T, E>& res,
-                          failure<F> const& err );          // (25)
+                          err_t<F> const& err );          // (25)
 template< class T, class E, class U >
-constexpr bool operator<=( failure<E> const& err,
+constexpr bool operator<=( err_t<E> const& err,
                           const basic_result<T, F>& res );  // (26)
 template< class T, class E, class U >
 constexpr bool operator>( const basic_result<T, E>& res,
-                          failure<F> const& err );          // (27)
+                          err_t<F> const& err );          // (27)
 template< class T, class E, class U >
-constexpr bool operator>( failure<E> const& err,
+constexpr bool operator>( err_t<E> const& err,
                           const basic_result<T, F>& res );  // (28)
 template< class T, class E, class U >
 constexpr bool operator>=( const basic_result<T, E>& res,
-                          failure<F> const& err );          // (29)
+                          err_t<F> const& err );          // (29)
 template< class T, class E, class U >
-constexpr bool operator>=( failure<E> const& err,
+constexpr bool operator>=( err_t<E> const& err,
                           const basic_result<T, F>& res );  // (30)
 
 // Compare a basic_result object with a T
@@ -140,32 +140,32 @@ constexpr bool operator>=( const T& value,
 
 Performs comparison operations on basic_result objects.
 
-1-6) Compares two basic_result objects, `lhs` and `rhs`. The contained values are compared (using the corresponding operator of `T` and `U` or `E` and `F`) only if the contents of `lhs` and `rhs` are either both success values or are both failure values.
+1-6) Compares two basic_result objects, `lhs` and `rhs`. The contained values are compared (using the corresponding operator of `T` and `U` or `E` and `F`) only if the contents of `lhs` and `rhs` are either both ok values or are both err values.
 
 Otherwise,
 
-- `lhs` is considered less than `rhs` if, and only if, `rhs` contains a success value and `lhs` contains failure value.
-- `lhs` is considered less than `rhs` if, and only if, `rhs` contains a failure value and `lhs` contains success value.
+- `lhs` is considered less than `rhs` if, and only if, `rhs` contains an ok value and `lhs` contains err value.
+- `lhs` is considered less than `rhs` if, and only if, `rhs` contains an err value and `lhs` contains ok value.
 
-7-18) Compares `res` with a `ok`. The values are compared (using the corresponding operator of `E` and `F`) only if `res` contains a success value.
+7-18) Compares `res` with an `ok`. The values are compared (using the corresponding operator of `E` and `F`) only if `res` contains an ok value.
 Otherwise, `res` is considered less than `ok`.
 
-If the corresponding comparison expression between `res.unwrap()` and success value is not well-formed, or if its result is not convertible to bool, the behavior is undefined.
+If the corresponding comparison expression between `res.unwrap()` and ok value is not well-formed, or if its result is not convertible to bool, the behavior is undefined.
 
-19-30) Compares `res` with a `err`. The values are compared (using the corresponding operator of `T` and `U`) only if `res` contains a success value.
+19-30) Compares `res` with an `err`. The values are compared (using the corresponding operator of `T` and `U`) only if `res` contains an ok value.
 Otherwise, `res` is considered greater than `err`.
 
-If the corresponding comparison expression between `res.unwrap()` and failure value is not well-formed, or if its result is not convertible to bool, the behavior is undefined.
+If the corresponding comparison expression between `res.unwrap()` and err value is not well-formed, or if its result is not convertible to bool, the behavior is undefined.
 
-31-42) Compares `res` with a `value`. Equivalent to (7-18) expression `res ~ success(value)` or `success(value) ~ res`.
+31-42) Compares `res` with a `value`. Equivalent to (7-18) expression `res ~ ok(value)` or `ok(value) ~ res`.
 
 **Parameters**
 
 `lhs`, `rhs`, `res`	- basic_result object to compare
 
-`ok` - a success object to compare
+`ok` - an ok object to compare
 
-`err` - a failure object to compare
+`err` - an err object to compare
 
 `value`	- value to compare to the contained value
 
@@ -264,30 +264,30 @@ If the corresponding comparison expression between `res.unwrap()` and failure va
 
 30. Returns `res.is_err() ? err.value >= res.unwrap_err() : true`.
 
-31. Returns `res == success(value)`.
+31. Returns `res == ok(value)`.
 
-32. Returns `success(value) == res`.
+32. Returns `ok(value) == res`.
 
-33. Returns `res != success(value)`.
+33. Returns `res != ok(value)`.
 
-34. Returns `success(value) != res`.
+34. Returns `ok(value) != res`.
 
-35. Returns `res < success(value)`.
+35. Returns `res < ok(value)`.
 
-36. Returns `success(value) < res`.
+36. Returns `ok(value) < res`.
 
-37. Returns `res <= success(value)`.
+37. Returns `res <= ok(value)`.
 
-38. Returns `success(value) <= res`.
+38. Returns `ok(value) <= res`.
 
-39. Returns `res > success(value)`.
+39. Returns `res > ok(value)`.
 
-40. Returns `success(value) > res`.
+40. Returns `ok(value) > res`.
 
-41. Returns `res >= success(value)`.
+41. Returns `res >= ok(value)`.
 
-42. Returns `success(value) >= res`.
+42. Returns `ok(value) >= res`.
 
 **Note**
 
-- `err.value`, `ok.value`: `value` is a private member of `success` or `failure` (actually, cannot access to it).
+- `err.value`, `ok.value`: `value` is a private member of `ok` or `err` (actually, cannot access to it).

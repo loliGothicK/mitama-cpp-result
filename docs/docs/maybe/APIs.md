@@ -450,7 +450,7 @@ int main() {
 
 !!! summary "maybe&lt;T&gt; --> E [default=std::monostate] --> result&lt;T, E&gt;"
 
-    Transforms the `maybe<T>` into a `result<T, E>`, mapping `just(v)` to `success(v)` and `nothing` to `failure(err)`.
+    Transforms the `maybe<T>` into a `result<T, E>`, mapping `just(v)` to `ok(v)` and `nothing` to `err(e)`.
 
     Arguments passed to ok_or are eagerly evaluated; if you are passing the result of a function call, it is recommended to use ok_or_else, which is lazily evaluated.
 
@@ -479,11 +479,11 @@ using namespace std::string_literals;
 
 int main() {
   maybe x = just("foo"s);
-  assert(x.ok_or(0) == success("foo"s));
+  assert(x.ok_or(0) == ok("foo"s));
 
   maybe<std::string> y = nothing;
-  assert(y.ok_or(0) == failure(0));
-  assert(y.ok_or() == failure<>());
+  assert(y.ok_or(0) == err(0));
+  assert(y.ok_or() == err<>());
 }
 // end example
 ```
@@ -492,7 +492,7 @@ int main() {
 
 !!! summary "maybe&lt;T&gt; --> F --> result&lt;T, E&gt;"
 
-    Transforms the `maybe<T>` into a `result<T, E>`, mapping `just(v)` to `success(v)` and `nothing` to `failure(err())`.
+    Transforms the `maybe<T>` into a `result<T, E>`, mapping `just(v)` to `ok(v)` and `nothing` to `err(err())`.
 
 
 !!! note "constraints"
@@ -530,10 +530,10 @@ using namespace std::string_literals;
 
 int main() {
   maybe x = just("foo"s);
-  assert(x.ok_or_else([]{ return 0; }) == success("foo"s));
+  assert(x.ok_or_else([]{ return 0; }) == ok("foo"s));
 
   maybe<std::string> y = nothing;
-  assert(y.ok_or_else([]{ return 0; }) == failure(0));
+  assert(y.ok_or_else([]{ return 0; }) == err(0));
 }
 // end example
 ```
@@ -1093,8 +1093,8 @@ int main() {
 
     Transposes a `maybe` of a `result` into a `result` of a `maybe`.
 
-    `nothing` will be mapped to `success(nothing)`.
-    `just(success(_))` and `just(failure(_))` will be mapped to `success(just(_))` and `failure(_)`　(_ is a placeholder).
+    `nothing` will be mapped to `ok(nothing)`.
+    `just(ok(_))` and `just(err(_))` will be mapped to `ok(just(_))` and `err(_)`　(_ is a placeholder).
 
 !!! info "declarations"
 
@@ -1119,8 +1119,8 @@ using namespace mitama;
 using namespace std::string_literals;
 
 int main() {
-  result<maybe<int>, std::string> x = success(just(5));
-  maybe<result<int, std::string>> y = just(success(5));
+  result<maybe<int>, std::string> x = ok(just(5));
+  maybe<result<int, std::string>> y = just(ok(5));
   assert(x == y.transpose());
 }
 // end example

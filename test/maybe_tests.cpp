@@ -172,22 +172,22 @@ TEST_CASE("map_or_else()", "[maybe][map_or_else]")
 TEST_CASE("ok_or()", "[maybe][ok_or]")
 {
   constexpr maybe x = just("foo"sv);
-  static_assert(x.ok_or(0) == success("foo"sv));
+  static_assert(x.ok_or(0) == ok("foo"sv));
 
   constexpr maybe<std::string_view> y = nothing;
-  static_assert(y.ok_or(0) == failure(0));
+  static_assert(y.ok_or(0) == err(0));
 
-  static_assert(y.ok_or() == failure<>());
-  static_assert(y.ok_or<int>() == failure(int{}));
+  static_assert(y.ok_or() == err<>());
+  static_assert(y.ok_or<int>() == err(int{}));
 }
 
 TEST_CASE("ok_or_else()", "[maybe][ok_or_else]")
 {
   constexpr maybe x = just("foo"sv);
-  static_assert(x.ok_or_else([] { return 0; }) == success("foo"sv));
+  static_assert(x.ok_or_else([] { return 0; }) == ok("foo"sv));
 
   constexpr maybe<std::string_view> y = nothing;
-  static_assert(y.ok_or_else([] { return 0; }) == failure(0));
+  static_assert(y.ok_or_else([] { return 0; }) == err(0));
 }
 
 TEST_CASE("conj()", "[maybe][conj]")
@@ -417,8 +417,8 @@ TEST_CASE("replace()", "[maybe][replace]")
 
 TEST_CASE("transpose()", "[maybe][transpose]")
 {
-  constexpr result<maybe<int>, std::string_view> x = success(just(5));
-  constexpr maybe<result<int, std::string_view>> y = just(success(5));
+  constexpr result<maybe<int>, std::string_view> x = ok(just(5));
+  constexpr maybe<result<int, std::string_view>> y = just(ok(5));
   static_assert(x == y.transpose());
 }
 

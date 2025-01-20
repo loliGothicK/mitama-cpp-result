@@ -11,32 +11,32 @@
 
 namespace mitama
 {
-/// class success_t:
-/// The main use of this class is to propagate successful results to the
+/// class ok_t:
+/// The main use of this class is to propagate ok results to the
 /// constructor of the result class.
 template <class T>
-class [[nodiscard]] success_t<T>
+class [[nodiscard]] ok_t<T>
 {
   template <class, class...>
-  friend class success_t;
+  friend class ok_t;
   T x;
 
   template <class U>
-  using not_self = std::negation<std::is_same<success_t, U>>;
+  using not_self = std::negation<std::is_same<ok_t, U>>;
 
 public:
-  using ok_type = T;
+  using value_type = T;
 
   template <class U = T>
     requires std::is_same_v<std::monostate, U>
-  constexpr success_t(std::nullptr_t = nullptr)
+  constexpr ok_t(std::nullptr_t = nullptr)
   { /* whatever */
   }
 
   template <class U>
     requires not_self<std::decay_t<U>>::value
              && std::is_constructible_v<T, U> && std::is_convertible_v<U, T>
-  constexpr success_t(U&& u) noexcept(std::is_nothrow_constructible_v<T, U>)
+  constexpr ok_t(U&& u) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::forward<U>(u))
   {
   }
@@ -44,8 +44,7 @@ public:
   template <class U>
     requires not_self<std::decay_t<U>>::value
              && std::is_constructible_v<T, U> && (!std::is_convertible_v<U, T>)
-  explicit constexpr success_t(U&& u
-  ) noexcept(std::is_nothrow_constructible_v<T, U>)
+  explicit constexpr ok_t(U&& u) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::forward<U>(u))
   {
   }
@@ -53,7 +52,7 @@ public:
   template <typename U>
     requires(!std::is_same_v<T, U>) && std::is_constructible_v<T, const U&>
             && std::is_convertible_v<const U&, T>
-  constexpr success_t(const success_t<U>& t
+  constexpr ok_t(const ok_t<U>& t
   ) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(t.get())
   {
@@ -62,7 +61,7 @@ public:
   template <typename U>
     requires(!std::is_same_v<T, U>) && std::is_constructible_v<T, const U&>
             && (!std::is_convertible_v<const U&, T>)
-  explicit constexpr success_t(const success_t<U>& t
+  explicit constexpr ok_t(const ok_t<U>& t
   ) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(t.get())
   {
@@ -71,8 +70,7 @@ public:
   template <typename U>
     requires(!std::is_same_v<T, U>)
             && std::is_constructible_v<T, U&&> && std::is_convertible_v<U&&, T>
-  constexpr success_t(success_t<U>&& t
-  ) noexcept(std::is_nothrow_constructible_v<T, U>)
+  constexpr ok_t(ok_t<U>&& t) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::move(t.get()))
   {
   }
@@ -80,7 +78,7 @@ public:
   template <typename U>
     requires(!std::is_same_v<T, U>) && std::is_constructible_v<T, U&&>
             && (!std::is_convertible_v<U &&, T>)
-  explicit constexpr success_t(success_t<U>&& t
+  explicit constexpr ok_t(ok_t<U>&& t
   ) noexcept(std::is_nothrow_constructible_v<T, U>)
       : x(std::move(t.get()))
   {
@@ -88,7 +86,7 @@ public:
 
   template <class... Args>
     requires std::is_constructible_v<T, Args...>
-  explicit constexpr success_t(
+  explicit constexpr ok_t(
       std::in_place_t, Args&&... args
   ) noexcept(std::is_nothrow_constructible_v<T, Args...>)
       : x(std::forward<Args>(args)...)
@@ -104,13 +102,13 @@ public:
 
   template <class T_>
     requires meta::is_comparable_with<T, T_>::value
-  constexpr bool operator==(const success_t<T_>& rhs) const
+  constexpr bool operator==(const ok_t<T_>& rhs) const
   {
     return this->x == rhs.x;
   }
 
   template <class E_>
-  constexpr bool operator==(const failure_t<E_>&) const
+  constexpr bool operator==(const err_t<E_>&) const
   {
     return false;
   }
@@ -124,13 +122,13 @@ public:
 
   template <class T_>
     requires meta::is_comparable_with<T, T_>::value
-  constexpr bool operator!=(const success_t<T_>& rhs) const
+  constexpr bool operator!=(const ok_t<T_>& rhs) const
   {
     return !(this->x == rhs.x);
   }
 
   template <class E_>
-  constexpr bool operator!=(const failure_t<E_>&) const
+  constexpr bool operator!=(const err_t<E_>&) const
   {
     return true;
   }
@@ -144,13 +142,13 @@ public:
 
   template <class T_>
     requires meta::is_less_comparable_with<T, T_>::value
-  constexpr bool operator<(const success_t<T_>& rhs) const
+  constexpr bool operator<(const ok_t<T_>& rhs) const
   {
     return this->x < rhs.x;
   }
 
   template <class E_>
-  constexpr bool operator<(const failure_t<E_>&) const
+  constexpr bool operator<(const err_t<E_>&) const
   {
     return false;
   }
@@ -167,13 +165,13 @@ public:
   template <class T_>
     requires meta::is_comparable_with<T, T_>::value
              && meta::is_less_comparable_with<T, T_>::value
-  constexpr bool operator<=(const success_t<T_>& rhs) const
+  constexpr bool operator<=(const ok_t<T_>& rhs) const
   {
     return (this->x == rhs.x) || (this->x < rhs.x);
   }
 
   template <class E_>
-  constexpr bool operator<=(const failure_t<E_>&) const
+  constexpr bool operator<=(const err_t<E_>&) const
   {
     return false;
   }
@@ -187,13 +185,13 @@ public:
 
   template <class T_>
     requires meta::is_less_comparable_with<T_, T>::value
-  constexpr bool operator>(const success_t<T_>& rhs) const
+  constexpr bool operator>(const ok_t<T_>& rhs) const
   {
     return rhs < *this;
   }
 
   template <class E_>
-  constexpr bool operator>(const failure_t<E_>&) const
+  constexpr bool operator>(const err_t<E_>&) const
   {
     return true;
   }
@@ -209,13 +207,13 @@ public:
 
   template <class T_>
     requires meta::is_comparable_with<T, T_>::value
-  constexpr bool operator>=(const success_t<T_>& rhs) const
+  constexpr bool operator>=(const ok_t<T_>& rhs) const
   {
     return rhs <= *this;
   }
 
   template <class E_>
-  constexpr bool operator>=(const failure_t<E_>&) const
+  constexpr bool operator>=(const err_t<E_>&) const
   {
     return true;
   }
@@ -235,35 +233,35 @@ public:
 };
 
 template <class T>
-class [[nodiscard]] success_t<T&>
+class [[nodiscard]] ok_t<T&>
 {
   template <class, class...>
-  friend class success_t;
+  friend class ok_t;
   std::reference_wrapper<T> x;
 
   template <class U>
-  using not_self = std::negation<std::is_same<success_t, U>>;
+  using not_self = std::negation<std::is_same<ok_t, U>>;
 
 public:
-  using ok_type = T&;
+  using value_type = T&;
 
-  success_t() = delete;
-  explicit constexpr success_t(T& ok) : x(ok) {}
-  explicit constexpr success_t(std::in_place_t, T& ok) : x(ok) {}
+  ok_t() = delete;
+  explicit constexpr ok_t(T& ok) : x(ok) {}
+  explicit constexpr ok_t(std::in_place_t, T& ok) : x(ok) {}
 
   template <class U>
-  explicit constexpr success_t(U& value) : x(value)
+  explicit constexpr ok_t(U& value) : x(value)
   {
   }
   template <class U>
-  explicit constexpr success_t(std::in_place_t, U& value) : x(value)
+  explicit constexpr ok_t(std::in_place_t, U& value) : x(value)
   {
   }
 
-  explicit constexpr success_t(success_t&&) = default;
-  explicit constexpr success_t(const success_t&) = default;
-  constexpr success_t& operator=(success_t&&) = default;
-  constexpr success_t& operator=(const success_t&) = default;
+  explicit constexpr ok_t(ok_t&&) = default;
+  explicit constexpr ok_t(const ok_t&) = default;
+  constexpr ok_t& operator=(ok_t&&) = default;
+  constexpr ok_t& operator=(const ok_t&) = default;
 
   template <mutability _mut, class T_, class E_>
     requires meta::is_comparable_with<T, T_>::value
@@ -274,13 +272,13 @@ public:
 
   template <class T_>
     requires meta::is_comparable_with<T, T_>::value
-  constexpr bool operator==(const success_t<T_>& rhs) const
+  constexpr bool operator==(const ok_t<T_>& rhs) const
   {
     return this->x == rhs.x;
   }
 
   template <class E_>
-  constexpr bool operator==(const failure_t<E_>&) const
+  constexpr bool operator==(const err_t<E_>&) const
   {
     return false;
   }
@@ -294,13 +292,13 @@ public:
 
   template <class T_>
     requires meta::is_comparable_with<T, T_>::value
-  constexpr bool operator!=(const success_t<T_>& rhs) const
+  constexpr bool operator!=(const ok_t<T_>& rhs) const
   {
     return !(this->x == rhs.x);
   }
 
   template <class E_>
-  constexpr bool operator!=(const failure_t<E_>&) const
+  constexpr bool operator!=(const err_t<E_>&) const
   {
     return true;
   }
@@ -314,13 +312,13 @@ public:
 
   template <class T_>
     requires meta::is_less_comparable_with<T, T_>::value
-  constexpr bool operator<(const success_t<T_>& rhs) const
+  constexpr bool operator<(const ok_t<T_>& rhs) const
   {
     return this->x < rhs.x;
   }
 
   template <class E_>
-  constexpr bool operator<(const failure_t<E_>&) const
+  constexpr bool operator<(const err_t<E_>&) const
   {
     return false;
   }
@@ -337,13 +335,13 @@ public:
   template <class T_>
     requires meta::is_comparable_with<T, T_>::value
              && meta::is_less_comparable_with<T, T_>::value
-  constexpr bool operator<=(const success_t<T_>& rhs) const
+  constexpr bool operator<=(const ok_t<T_>& rhs) const
   {
     return (this->x == rhs.x) || (this->x < rhs.x);
   }
 
   template <class E_>
-  constexpr bool operator<=(const failure_t<E_>&) const
+  constexpr bool operator<=(const err_t<E_>&) const
   {
     return false;
   }
@@ -357,13 +355,13 @@ public:
 
   template <class T_>
     requires meta::is_less_comparable_with<T_, T>::value
-  constexpr bool operator>(const success_t<T_>& rhs) const
+  constexpr bool operator>(const ok_t<T_>& rhs) const
   {
     return rhs < *this;
   }
 
   template <class E_>
-  constexpr bool operator>(const failure_t<E_>&) const
+  constexpr bool operator>(const err_t<E_>&) const
   {
     return true;
   }
@@ -379,13 +377,13 @@ public:
 
   template <class T_>
     requires meta::is_comparable_with<T, T_>::value
-  constexpr bool operator>=(const success_t<T_>& rhs) const
+  constexpr bool operator>=(const ok_t<T_>& rhs) const
   {
     return rhs <= *this;
   }
 
   template <class E_>
-  constexpr bool operator>=(const failure_t<E_>&) const
+  constexpr bool operator>=(const err_t<E_>&) const
   {
     return true;
   }
@@ -405,14 +403,12 @@ public:
 };
 
 template <class T, class... Args>
-class [[nodiscard]] success_t<_result_detail::forward_mode<T>, Args...>
+class [[nodiscard]] ok_t<_result_detail::forward_mode<T>, Args...>
 {
   std::tuple<Args...> args;
 
 public:
-  constexpr explicit success_t(Args... args) : args(std::forward<Args>(args)...)
-  {
-  }
+  constexpr explicit ok_t(Args... args) : args(std::forward<Args>(args)...) {}
 
   constexpr auto operator()() &&
   {
@@ -426,25 +422,25 @@ public:
 
 template <class Target = void, class... Types>
 inline constexpr auto
-success(Types&&... v)
+ok(Types&&... v)
 {
   if constexpr (!std::is_void_v<Target>)
   {
     if constexpr (sizeof...(Types) < 2)
-      return success_t<Target>{ std::forward<Types>(v)... };
+      return ok_t<Target>{ std::forward<Types>(v)... };
     else
-      return success_t<_result_detail::forward_mode<Target>, Types&&...>{
+      return ok_t<_result_detail::forward_mode<Target>, Types&&...>{
         std::forward<Types>(v)...
       };
   }
   else
   {
     if constexpr (sizeof...(Types) == 0)
-      return success_t<>{};
+      return ok_t<>{};
     else if constexpr (sizeof...(Types) == 1)
-      return success_t<Types...>{ std::forward<Types>(v)... };
+      return ok_t<Types...>{ std::forward<Types>(v)... };
     else
-      return success_t<_result_detail::forward_mode<>, Types&&...>{
+      return ok_t<_result_detail::forward_mode<>, Types&&...>{
         std::forward<Types>(v)...
       };
   }
@@ -462,14 +458,14 @@ success(Types&&... v)
 ///   found by ADL.
 template <class T>
 inline std::ostream&
-operator<<(std::ostream& os, const success_t<T>& ok)
+operator<<(std::ostream& os, const ok_t<T>& ok)
 {
-  return os << fmt::format("success({})", quote_str(ok.get()));
+  return os << fmt::format("ok({})", quote_str(ok.get()));
 }
 
 } // namespace mitama
 
 template <class T>
-struct fmt::formatter<mitama::success_t<T>> : ostream_formatter
+struct fmt::formatter<mitama::ok_t<T>> : ostream_formatter
 {
 };

@@ -11,20 +11,20 @@
 namespace anyhow = mitama::anyhow;
 using namespace std::literals;
 
-TEST_CASE("anyhow::result from success", "[anyhow][101]")
+TEST_CASE("anyhow::result from ok", "[anyhow][101]")
 {
-  anyhow::result<int> res = mitama::success(1);
-  REQUIRE(res == mitama::success(1));
+  anyhow::result<int> res = mitama::ok(1);
+  REQUIRE(res == mitama::ok(1));
 }
 
-TEST_CASE("anyhow::result from failure", "[anyhow][101]")
+TEST_CASE("anyhow::result from err", "[anyhow][101]")
 {
   {
     const auto res = [](int x) -> anyhow::result<int>
     {
       if (x % 2 != 0)
-        return mitama::failure(anyhow::anyhow("invalid input"s));
-      return mitama::success(0);
+        return mitama::err(anyhow::anyhow("invalid input"s));
+      return mitama::ok(0);
     };
     REQUIRE(res(13).unwrap_err()->what() == "invalid input"s);
   }
@@ -32,8 +32,8 @@ TEST_CASE("anyhow::result from failure", "[anyhow][101]")
     const auto res = [](int x) -> anyhow::result<int>
     {
       if (x % 2 != 0)
-        return mitama::failure(anyhow::anyhow("invalid input: {}", x));
-      return mitama::success(0);
+        return mitama::err(anyhow::anyhow("invalid input: {}", x));
+      return mitama::ok(0);
     };
     REQUIRE(res(13).unwrap_err()->what() == "invalid input: 13"s);
   }
@@ -42,7 +42,7 @@ TEST_CASE("anyhow::result from failure", "[anyhow][101]")
     {
       if (x % 2 != 0)
         MITAMA_BAIL("invalid input: {}", x);
-      return mitama::success(0);
+      return mitama::ok(0);
     };
     REQUIRE(res(13).unwrap_err()->what() == "invalid input: 13");
   }
@@ -50,7 +50,7 @@ TEST_CASE("anyhow::result from failure", "[anyhow][101]")
     const auto res = [](int x) -> anyhow::result<int>
     {
       MITAMA_ENSURE(x % 2 == 0, "invalid input: {}", x);
-      return mitama::success(0);
+      return mitama::ok(0);
     };
     REQUIRE(res(13).unwrap_err()->what() == "invalid input: 13");
   }
@@ -59,7 +59,7 @@ TEST_CASE("anyhow::result from failure", "[anyhow][101]")
 TEST_CASE("with context", "[anyhow][context]")
 {
   anyhow::result<int> res =
-      mitama::failure(anyhow::anyhow("unknown error occurred"s));
+      mitama::err(anyhow::anyhow("unknown error occurred"s));
   auto ctx = res.with_context([] { return anyhow::anyhow("internal error"); });
   REQUIRE(ctx.is_err());
   REQUIRE(ctx.unwrap_err()->what() == R"(internal error
@@ -74,13 +74,13 @@ TEST_CASE("try with context", "[anyhow][context]")
   auto res = []() -> anyhow::result<int>
   {
     anyhow::result<int> res =
-        mitama::failure(anyhow::anyhow("unknown error occurred"s));
-    auto ok = MITAMA_TRY(
+        mitama::err(anyhow::anyhow("unknown error occurred"s));
+    auto o = MITAMA_TRY(
         res.with_context([] { return anyhow::anyhow("internal error"s); })
     );
     // early return
     REQUIRE(false);
-    return mitama::success(ok);
+    return mitama::ok(o);
   }();
   REQUIRE(res.is_err());
   REQUIRE(res.unwrap_err()->what() == R"(internal error
@@ -101,7 +101,7 @@ struct data_store_error : mitama::thiserror::derive_error
 
 TEST_CASE("data_store_error::disconnect", "[anyhow][thiserror]")
 {
-  anyhow::result<int> data = anyhow::failure<data_store_error::disconnect>();
+  anyhow::result<int> data = anyhow::err<data_store_error::disconnect>();
   auto res =
       data.with_context([] { return anyhow::anyhow("data store failed."s); });
   REQUIRE(data.is_err());
@@ -115,7 +115,7 @@ Caused by:
 TEST_CASE("data_store_error::redaction", "[anyhow][thiserror]")
 {
   anyhow::result<int> data =
-      anyhow::failure<data_store_error::redaction>("invalid key");
+      anyhow::err<data_store_error::redaction>("invalid key");
   auto res =
       data.with_context([] { return anyhow::anyhow("data store failed."s); });
   REQUIRE(data.is_err());

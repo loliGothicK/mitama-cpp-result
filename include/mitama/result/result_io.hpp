@@ -22,8 +22,8 @@ std::ostream&
 operator<<(std::ostream& os, const basic_result<_, T, E>& res)
 {
   return res.is_ok()
-             ? os << fmt::format("success({})", quote_str(res.unwrap()))
-             : os << fmt::format("failure({})", quote_str(res.unwrap_err()));
+             ? os << fmt::format("ok({})", quote_str(res.unwrap()))
+             : os << fmt::format("err({})", quote_str(res.unwrap_err()));
 }
 
 } // namespace mitama

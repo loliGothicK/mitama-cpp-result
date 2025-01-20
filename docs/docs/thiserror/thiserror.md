@@ -25,11 +25,11 @@ The format string should be a string compliant with [**{fmt}**](https://github.c
 The second template argument onwards is a list of formattable arguments.
 
 `mitama::thiserror::error` inherits from `anyhow::error`, so it can be used together with anyhow.
-The factory function `anyhow::failure` is used to create a `shared_ptr` for `thiserror::error`.
+The factory function `anyhow::err` is used to create a `shared_ptr` for `thiserror::error`.
 
 ```cpp
 anyhow::result<int> data
-    = anyhow::failure<data_store_error::disconnect>();
+    = anyhow::err<data_store_error::disconnect>();
 ```
 
 Examples:
@@ -57,7 +57,7 @@ struct data_store_error : mitama::thiserror::derive_error {
 
 int main() {
   anyhow::result<int> data
-      = anyhow::failure<data_store_error::redaction>("invalid key");
+      = anyhow::err<data_store_error::redaction>("invalid key");
   auto res = data
       .with_context([] { return anyhow::anyhow("data store failed."s); });
 }

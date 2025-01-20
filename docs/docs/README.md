@@ -80,13 +80,13 @@ Rewrite this code using result.
 ```cpp
 auto func(int a) -> mitama::result<int, std::string> {
   if ( first check )
-    return mitama::failure("first check failed"); // early return
+    return mitama::err("first check failed"); // early return
   if ( second check )
-    return mitama::failure("second check failed"); // early return
+    return mitama::err("second check failed"); // early return
   if ( third check )
-    return mitama::failure("third check failed"); // early return
+    return mitama::err("third check failed"); // early return
   // function body...
-  return mitama::success(42);
+  return mitama::ok(42);
 }
 // ...
 int value = func(42).unwrap();

@@ -46,43 +46,43 @@ and_maybe_from(bool b, F&& may) -> std::invoke_result_t<F&&>
 
 template <class T>
 inline constexpr result<T, void>
-as_ok(bool b, T&& ok)
+as_ok(bool b, T&& o)
 {
-  return b ? result<T, void>(success(std::forward<T>(ok))) : failure();
+  return b ? result<T, void>(ok(std::forward<T>(o))) : err();
 }
 
 template <class T, class E>
 inline constexpr result<T, E>
-as_result(bool b, T&& ok, E&& err)
+as_result(bool b, T&& o, E&& e)
 {
-  return b ? result<T, E>{ success(std::forward<T>(ok)) }
-           : result<T, E>{ failure(std::forward<E>(err)) };
+  return b ? result<T, E>{ ok(std::forward<T>(o)) }
+           : result<T, E>{ err(std::forward<E>(e)) };
 }
 
 template <class F, class G>
 inline constexpr result<std::invoke_result_t<F>, std::invoke_result_t<G&&>>
-as_result_from(bool b, F&& ok, G&& err)
+as_result_from(bool b, F&& o, G&& e)
 {
   using result_type =
       result<std::invoke_result_t<F>, std::invoke_result_t<G&&>>;
-  return b ? result_type{ success(std::invoke(std::forward<F>(ok))) }
-           : result_type{ failure(std::invoke(std::forward<G>(err))) };
+  return b ? result_type{ ok(std::invoke(std::forward<F>(o))) }
+           : result_type{ err(std::invoke(std::forward<G>(e))) };
 }
 
 template <class E>
 inline constexpr result<void, E>
-ok_or(bool b, E&& err)
+ok_or(bool b, E&& e)
 {
-  return b ? result<void, E>{ success() }
-           : result<void, E>{ failure(std::forward<E>(err)) };
+  return b ? result<void, E>{ ok() }
+           : result<void, E>{ err(std::forward<E>(e)) };
 }
 
 template <class G>
 inline constexpr result<void, std::invoke_result_t<G&&>>
-ok_or_else(bool b, G&& err)
+ok_or_else(bool b, G&& e)
 {
   using result_type = result<void, std::invoke_result_t<G>>;
-  return b ? result_type{ success() }
-           : result_type{ failure(std::invoke(std::forward<G>(err))) };
+  return b ? result_type{ ok() }
+           : result_type{ err(std::invoke(std::forward<G>(e))) };
 }
 } // namespace mitama

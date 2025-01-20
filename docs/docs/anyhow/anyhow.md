@@ -27,13 +27,13 @@ In the first example, we replace `mitama::result` with `anyhow::result`.
 namespace anyhow = mitama::anyhow;
 
 int main() {
-  anyhow::result<int> res = mitama::success(1);
+  anyhow::result<int> res = mitama::ok(1);
 }
 ```
 
-In the second example, we make a error with `anyhow::anyhow`.
+In the second example, we make an error with `anyhow::anyhow`.
 `anyhow::anyhow` creates `std::shared_ptr<anyhow::cause<T>>` from a given argument type of `T`.
-An expression `mitama::failure(anyhow::anyhow("error "s))` can be converted to `anyhow::result` since `anyhow::cause` inherits from `anyhow::error`.
+An expression `mitama::err(anyhow::anyhow("error "s))` can be converted to `anyhow::result` since `anyhow::cause` inherits from `anyhow::error`.
 
 ```cpp
 // begin example
@@ -44,7 +44,7 @@ namespace anyhow = mitama::anyhow;
 using namespace std::literals::string_literals;
 
 int main() {
-  anyhow::result<int> res = mitama::failure(anyhow::anyhow("error"s));
+  anyhow::result<int> res = mitama::err(anyhow::anyhow("error"s));
 }
 ```
 
@@ -87,7 +87,7 @@ using namespace std::literals::string_literals;
 struct database_t {}; // dummy
 
 auto connect_to_db() -> anyhow::result<database_t> {
-  return mitama::failure(anyhow::anyhow("Failed to connect to the database."s));
+  return mitama::err(anyhow::anyhow("Failed to connect to the database."s));
 }
 
 auto read_db() -> anyhow::result<int> {
@@ -105,6 +105,6 @@ int main() {
   
   std::cout << res << std::endl;
   // outputs:
-  // failure(cause: Failed to read the database. source: Failed to connect to the database.)
+  // err(cause: Failed to read the database. source: Failed to connect to the database.)
 }
 ```

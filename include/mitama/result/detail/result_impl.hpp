@@ -35,7 +35,7 @@ public:
   ///
   /// @note
   ///   Consumes the self argument then,
-  ///   if success, returns the contained value,
+  ///   if ok, returns the contained value,
   ///   otherwise; if Err, returns the default value for that type.
   constexpr T unwrap_or_default() const
   {
@@ -72,8 +72,8 @@ public:
   ///
   /// @note
   ///   Consumes the self argument then,
-  ///   if success, returns the contained value,
-  ///   otherwise; if failure, returns the default value for that type.
+  ///   if ok, returns the contained value,
+  ///   otherwise; if err, returns the default value for that type.
   constexpr maybe<basic_result<_mutability, T, E>> transpose() const&
   {
     if (static_cast<const basic_result<_mutability, maybe<T>, E>*>(this)->is_ok(
@@ -166,7 +166,7 @@ public:
   /// @note
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
-  ///   additionally coercing the success arm of the basic_result via
+  ///   additionally coercing the ok arm of the basic_result via
   ///   `operator*`.
   constexpr auto indirect_ok() & -> indirect_ok_result
   {
@@ -195,7 +195,7 @@ public:
   /// @note
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
-  ///   additionally coercing the failure arm of the basic_result via
+  ///   additionally coercing the err arm of the basic_result via
   ///   `operator*`.
   constexpr auto indirect_err() & -> indirect_err_result
   {
@@ -226,7 +226,7 @@ public:
   /// @note
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
-  ///   additionally coercing the success and failure arm of the basic_result
+  ///   additionally coercing the ok and err arm of the basic_result
   ///   via `operator*`.
   constexpr auto indirect() & -> indirect_result
   {
@@ -256,7 +256,7 @@ public:
   /// @note
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
-  ///   additionally coercing the success arm of the basic_result via
+  ///   additionally coercing the ok arm of the basic_result via
   ///   `operator*`.
   constexpr auto indirect_ok() const& -> const_indirect_ok_result
   {
@@ -286,7 +286,7 @@ public:
   /// @note
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
-  ///   additionally coercing the failure arm of the basic_result via
+  ///   additionally coercing the err arm of the basic_result via
   ///   `operator*`.
   constexpr auto indirect_err() const& -> const_indirect_err_result
   {
@@ -317,7 +317,7 @@ public:
   /// @note
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
-  ///   additionally coercing the success and failure arm of the basic_result
+  ///   additionally coercing the ok and err arm of the basic_result
   ///   via `operator*`.
   constexpr auto indirect() const& -> const_indirect_result
   {
@@ -347,7 +347,7 @@ public:
   /// @note
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
-  ///   additionally coercing the success arm of the basic_result via
+  ///   additionally coercing the ok arm of the basic_result via
   ///   `operator*`.
   ///
   /// @warning
@@ -381,7 +381,7 @@ public:
   /// @note
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
-  ///   additionally coercing the failure arm of the basic_result via
+  ///   additionally coercing the err arm of the basic_result via
   ///   `operator*`.
   ///
   /// @warning
@@ -417,7 +417,7 @@ public:
   /// @note
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
-  ///   additionally coercing the success and failure arm of the basic_result
+  ///   additionally coercing the ok and err arm of the basic_result
   ///   via `operator*`.
   ///
   /// @warning
@@ -478,7 +478,7 @@ public:
   /// @note
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
-  ///   additionally coercing the success arm of the basic_result via
+  ///   additionally coercing the ok arm of the basic_result via
   ///   `operator*`.
   constexpr auto indirect_ok() & -> indirect_ok_result
   {
@@ -510,7 +510,7 @@ public:
   /// @note
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
-  ///   additionally coercing the success arm of the basic_result via
+  ///   additionally coercing the ok arm of the basic_result via
   ///   `operator*`.
   constexpr auto indirect_ok() const& -> const_indirect_ok_result
   {
@@ -542,7 +542,7 @@ public:
   /// @note
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
-  ///   additionally coercing the success arm of the basic_result via
+  ///   additionally coercing the ok arm of the basic_result via
   ///   `operator*`.
   ///
   /// @warning
@@ -602,7 +602,7 @@ public:
   /// @note
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
-  ///   additionally coercing the failure arm of the basic_result via
+  ///   additionally coercing the err arm of the basic_result via
   ///   `operator*`.
   constexpr auto indirect_err() & -> indirect_err_result
   {
@@ -634,7 +634,7 @@ public:
   /// @note
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
-  ///   additionally coercing the failure arm of the basic_result via
+  ///   additionally coercing the err arm of the basic_result via
   ///   `operator*`.
   constexpr auto indirect_err() const& -> const_indirect_err_result
   {
@@ -666,7 +666,7 @@ public:
   /// @note
   ///   Leaves the original basic_result in-place,
   ///   creating a new one with a reference to the original one,
-  ///   additionally coercing the failure arm of the basic_result via
+  ///   additionally coercing the err arm of the basic_result via
   ///   `operator*`.
   ///
   /// @warning
@@ -711,8 +711,8 @@ class map_apply_friend_injector<basic_result<_mu, T, E>>
 {
 public:
   ///   Maps a basic_result<(Ts...), E> to basic_result<U, E> by applying a
-  ///   function to a contained tuple elements if holds success values,
-  ///   otherwise; returns the failure value of self.
+  ///   function to a contained tuple elements if holds ok values,
+  ///   otherwise; returns the err value of self.
   ///
   /// @note
   ///   This function can be used to compose the results of two functions.
@@ -730,7 +730,7 @@ public:
         )),
         E>;
     return static_cast<const basic_result<_mu, T, E>*>(this)->is_ok()
-               ? static_cast<result_type>(success_t{ std::apply(
+               ? static_cast<result_type>(ok_t{ std::apply(
                      std::forward<O>(op),
                      std::tuple_cat(
                          static_cast<const basic_result<_mu, T, E>*>(this)
@@ -738,7 +738,7 @@ public:
                          std::forward_as_tuple(std::forward<Args>(args))...
                      )
                  ) })
-               : static_cast<result_type>(failure_t{
+               : static_cast<result_type>(err_t{
                      static_cast<const basic_result<_mu, T, E>*>(this)
                          ->unwrap_err() });
   }
@@ -757,8 +757,8 @@ class map_err_apply_friend_injector<basic_result<_mu, T, E>>
 {
 public:
   ///   Maps a basic_result<T, (Ts...)> to basic_result<T, F> by applying a
-  ///   function to a contained tuple elements if holds failure values,
-  ///   otherwise; returns the success value of self.
+  ///   function to a contained tuple elements if holds err values,
+  ///   otherwise; returns the ok value of self.
   ///
   /// @note
   ///   This function can be used to compose the results of two functions.
@@ -775,9 +775,9 @@ public:
             )
         ))>;
     return static_cast<basic_result<_mu, T, E>*>(this)->is_ok()
-               ? static_cast<result_type>(success_t{
+               ? static_cast<result_type>(ok_t{
                      static_cast<basic_result<_mu, T, E>*>(this)->unwrap() })
-               : static_cast<result_type>(failure_t{ std::apply(
+               : static_cast<result_type>(err_t{ std::apply(
                      std::forward<O>(op),
                      std::tuple_cat(
                          static_cast<basic_result<_mu, T, E>*>(this)
@@ -800,10 +800,10 @@ public:
             )
         ))>;
     return static_cast<const basic_result<_mu, T, E>*>(this)->is_ok()
-               ? static_cast<result_type>(success_t{
+               ? static_cast<result_type>(ok_t{
                      static_cast<const basic_result<_mu, T, E>*>(this)->unwrap(
                      ) })
-               : static_cast<result_type>(failure_t{ std::apply(
+               : static_cast<result_type>(err_t{ std::apply(
                      std::forward<O>(op),
                      std::tuple_cat(
                          static_cast<const basic_result<_mu, T, E>*>(this)
@@ -826,9 +826,9 @@ public:
             )
         ))>;
     return static_cast<basic_result<_mu, T, E>*>(this)->is_ok()
-               ? static_cast<result_type>(success_t{
+               ? static_cast<result_type>(ok_t{
                      static_cast<basic_result<_mu, T, E>*>(this)->unwrap() })
-               : static_cast<result_type>(failure_t{ std::apply(
+               : static_cast<result_type>(err_t{ std::apply(
                      std::forward<O>(op),
                      std::tuple_cat(
                          std::move(static_cast<basic_result<_mu, T, E>*>(this)
@@ -860,7 +860,7 @@ public:
                 std::forward_as_tuple(std::declval<Args&&>()...)
             )
         )),
-        failure_t<E>>
+        err_t<E>>
   constexpr auto and_then_apply(O&& op, Args&&... args) &
   {
     using result_type = decltype(std::apply(
@@ -879,7 +879,7 @@ public:
                          std::forward_as_tuple(std::forward<Args>(args))...
                      )
                  ))
-               : static_cast<result_type>(failure(
+               : static_cast<result_type>(err(
                      static_cast<basic_result<_mu, T, E>*>(this)->unwrap_err()
                  ));
   }
@@ -893,7 +893,7 @@ public:
                 std::forward_as_tuple(std::declval<Args&&>()...)
             )
         )),
-        failure_t<E>>
+        err_t<E>>
   constexpr auto and_then_apply(O&& op, Args&&... args) const&
   {
     using result_type = decltype(std::apply(
@@ -914,8 +914,8 @@ public:
                      )
                  ))
                : static_cast<result_type>(
-                     failure(static_cast<const basic_result<_mu, T, E>*>(this)
-                                 ->unwrap_err())
+                     err(static_cast<const basic_result<_mu, T, E>*>(this)
+                             ->unwrap_err())
                  );
   }
 
@@ -928,7 +928,7 @@ public:
                 std::forward_as_tuple(std::declval<Args&&>()...)
             )
         )),
-        failure_t<E>>
+        err_t<E>>
   constexpr auto and_then_apply(O&& op, Args&&... args) &&
   {
     using result_type = decltype(std::apply(
@@ -948,7 +948,7 @@ public:
                          std::forward_as_tuple(std::forward<Args>(args)...)
                      )
                  ))
-               : static_cast<result_type>(failure(std::move(
+               : static_cast<result_type>(err(std::move(
                      static_cast<basic_result<_mu, T, E>*>(this)->unwrap_err()
                  )));
   }
@@ -975,7 +975,7 @@ public:
                 std::forward_as_tuple(std::declval<Args&&>()...)
             )
         )),
-        success_t<T>>
+        ok_t<T>>
   constexpr auto or_else_apply(O&& op, Args&&... args) const&
   {
     using result_type = decltype(std::apply(
@@ -995,7 +995,7 @@ public:
                          std::forward_as_tuple(std::forward<Args>(args))...
                      )
                  ))
-               : static_cast<result_type>(success(
+               : static_cast<result_type>(ok(
                      static_cast<const basic_result<_mu, T, E>*>(this)->unwrap()
                  ));
   }

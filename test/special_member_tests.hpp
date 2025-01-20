@@ -4,546 +4,525 @@
 #include <type_traits>
 
 static_assert(
-    std::is_copy_constructible_v<success<TestClass<true, true, true, true>>>
+    std::is_copy_constructible_v<ok_t<TestClass<true, true, true, true>>>
     == true
 );
 static_assert(
-    std::is_copy_assignable_v<success<TestClass<true, true, true, true>>>
+    std::is_copy_assignable_v<ok_t<TestClass<true, true, true, true>>> == true
+);
+static_assert(
+    std::is_move_constructible_v<ok_t<TestClass<true, true, true, true>>>
     == true
 );
 static_assert(
-    std::is_move_constructible_v<success<TestClass<true, true, true, true>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<success<TestClass<true, true, true, true>>>
-    == true
+    std::is_move_assignable_v<ok_t<TestClass<true, true, true, true>>> == true
 );
 
 static_assert(
-    std::is_copy_constructible_v<success<TestClass<true, true, true, false>>>
+    std::is_copy_constructible_v<ok_t<TestClass<true, true, true, false>>>
     == true
 );
 static_assert(
-    std::is_copy_assignable_v<success<TestClass<true, true, true, false>>>
+    std::is_copy_assignable_v<ok_t<TestClass<true, true, true, false>>> == true
+);
+static_assert(
+    std::is_move_constructible_v<ok_t<TestClass<true, true, true, false>>>
     == true
 );
 static_assert(
-    std::is_move_constructible_v<success<TestClass<true, true, true, false>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<success<TestClass<true, true, true, false>>>
-    == true
+    std::is_move_assignable_v<ok_t<TestClass<true, true, true, false>>> == true
 );
 
 static_assert(
-    std::is_copy_constructible_v<success<TestClass<true, false, true, true>>>
+    std::is_copy_constructible_v<ok_t<TestClass<true, false, true, true>>>
     == true
 );
 static_assert(
-    std::is_copy_assignable_v<success<TestClass<true, false, true, true>>>
+    std::is_copy_assignable_v<ok_t<TestClass<true, false, true, true>>> == false
+);
+static_assert(
+    std::is_move_constructible_v<ok_t<TestClass<true, false, true, true>>>
+    == true
+);
+static_assert(
+    std::is_move_assignable_v<ok_t<TestClass<true, false, true, true>>> == true
+);
+
+static_assert(
+    std::is_copy_constructible_v<ok_t<TestClass<true, false, true, false>>>
+    == true
+);
+static_assert(
+    std::is_copy_assignable_v<ok_t<TestClass<true, false, true, false>>>
     == false
 );
 static_assert(
-    std::is_move_constructible_v<success<TestClass<true, false, true, true>>>
+    std::is_move_constructible_v<ok_t<TestClass<true, false, true, false>>>
     == true
 );
 static_assert(
-    std::is_move_assignable_v<success<TestClass<true, false, true, true>>>
-    == true
-);
-
-static_assert(
-    std::is_copy_constructible_v<success<TestClass<true, false, true, false>>>
-    == true
-);
-static_assert(
-    std::is_copy_assignable_v<success<TestClass<true, false, true, false>>>
-    == false
-);
-static_assert(
-    std::is_move_constructible_v<success<TestClass<true, false, true, false>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<success<TestClass<true, false, true, false>>>
+    std::is_move_assignable_v<ok_t<TestClass<true, false, true, false>>>
     == false
 );
 
 static_assert(
-    std::is_copy_constructible_v<success<TestClass<true, true, false, true>>>
+    std::is_copy_constructible_v<ok_t<TestClass<true, true, false, true>>>
     == true
 );
 static_assert(
-    std::is_copy_assignable_v<success<TestClass<true, true, false, true>>>
+    std::is_copy_assignable_v<ok_t<TestClass<true, true, false, true>>> == true
+);
+static_assert(
+    std::is_move_constructible_v<ok_t<TestClass<true, true, false, true>>>
     == true
 );
 static_assert(
-    std::is_move_constructible_v<success<TestClass<true, true, false, true>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<success<TestClass<true, true, false, true>>>
-    == true
+    std::is_move_assignable_v<ok_t<TestClass<true, true, false, true>>> == true
 );
 
 static_assert(
-    std::is_copy_constructible_v<success<TestClass<true, true, false, false>>>
+    std::is_copy_constructible_v<ok_t<TestClass<true, true, false, false>>>
     == true
 );
 static_assert(
-    std::is_copy_assignable_v<success<TestClass<true, true, false, false>>>
+    std::is_copy_assignable_v<ok_t<TestClass<true, true, false, false>>> == true
+);
+static_assert(
+    std::is_move_constructible_v<ok_t<TestClass<true, true, false, false>>>
     == true
 );
 static_assert(
-    std::is_move_constructible_v<success<TestClass<true, true, false, false>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<success<TestClass<true, true, false, false>>>
-    == true
+    std::is_move_assignable_v<ok_t<TestClass<true, true, false, false>>> == true
 );
 
 static_assert(
-    std::is_copy_constructible_v<success<TestClass<true, false, false, true>>>
+    std::is_copy_constructible_v<ok_t<TestClass<true, false, false, true>>>
     == true
 );
 static_assert(
-    std::is_copy_assignable_v<success<TestClass<true, false, false, true>>>
+    std::is_copy_assignable_v<ok_t<TestClass<true, false, false, true>>>
     == false
 );
 static_assert(
-    std::is_move_constructible_v<success<TestClass<true, false, false, true>>>
+    std::is_move_constructible_v<ok_t<TestClass<true, false, false, true>>>
     == true
 );
 static_assert(
-    std::is_move_assignable_v<success<TestClass<true, false, false, true>>>
+    std::is_move_assignable_v<ok_t<TestClass<true, false, false, true>>>
     == false
 );
 
 static_assert(
-    std::is_copy_constructible_v<success<TestClass<true, false, false, false>>>
+    std::is_copy_constructible_v<ok_t<TestClass<true, false, false, false>>>
     == true
 );
 static_assert(
-    std::is_copy_assignable_v<success<TestClass<true, false, false, false>>>
+    std::is_copy_assignable_v<ok_t<TestClass<true, false, false, false>>>
     == false
 );
 static_assert(
-    std::is_move_constructible_v<success<TestClass<true, false, false, false>>>
+    std::is_move_constructible_v<ok_t<TestClass<true, false, false, false>>>
     == true
 );
 static_assert(
-    std::is_move_assignable_v<success<TestClass<true, false, false, false>>>
+    std::is_move_assignable_v<ok_t<TestClass<true, false, false, false>>>
     == false
 );
 
 static_assert(
-    std::is_copy_constructible_v<success<TestClass<false, true, true, true>>>
+    std::is_copy_constructible_v<ok_t<TestClass<false, true, true, true>>>
     == false
 );
 static_assert(
-    std::is_copy_assignable_v<success<TestClass<false, true, true, true>>>
-    == false
+    std::is_copy_assignable_v<ok_t<TestClass<false, true, true, true>>> == false
 );
 static_assert(
-    std::is_move_constructible_v<success<TestClass<false, true, true, true>>>
+    std::is_move_constructible_v<ok_t<TestClass<false, true, true, true>>>
     == true
 );
 static_assert(
-    std::is_move_assignable_v<success<TestClass<false, true, true, true>>>
-    == true
+    std::is_move_assignable_v<ok_t<TestClass<false, true, true, true>>> == true
 );
 
 static_assert(
-    std::is_copy_constructible_v<success<TestClass<false, true, true, false>>>
+    std::is_copy_constructible_v<ok_t<TestClass<false, true, true, false>>>
     == false
 );
 static_assert(
-    std::is_copy_assignable_v<success<TestClass<false, true, true, false>>>
+    std::is_copy_assignable_v<ok_t<TestClass<false, true, true, false>>>
     == false
 );
 static_assert(
-    std::is_move_constructible_v<success<TestClass<false, true, true, false>>>
+    std::is_move_constructible_v<ok_t<TestClass<false, true, true, false>>>
     == true
 );
 static_assert(
-    std::is_move_assignable_v<success<TestClass<false, true, true, false>>>
-    == false
-);
-
-static_assert(
-    std::is_copy_constructible_v<success<TestClass<false, false, true, true>>>
-    == false
-);
-static_assert(
-    std::is_copy_assignable_v<success<TestClass<false, false, true, true>>>
-    == false
-);
-static_assert(
-    std::is_move_constructible_v<success<TestClass<false, false, true, true>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<success<TestClass<false, false, true, true>>>
-    == true
-);
-
-static_assert(
-    std::is_copy_constructible_v<success<TestClass<false, false, true, false>>>
-    == false
-);
-static_assert(
-    std::is_copy_assignable_v<success<TestClass<false, false, true, false>>>
-    == false
-);
-static_assert(
-    std::is_move_constructible_v<success<TestClass<false, false, true, false>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<success<TestClass<false, false, true, false>>>
+    std::is_move_assignable_v<ok_t<TestClass<false, true, true, false>>>
     == false
 );
 
 static_assert(
-    std::is_copy_constructible_v<success<TestClass<false, true, false, true>>>
+    std::is_copy_constructible_v<ok_t<TestClass<false, false, true, true>>>
     == false
 );
 static_assert(
-    std::is_copy_assignable_v<success<TestClass<false, true, false, true>>>
+    std::is_copy_assignable_v<ok_t<TestClass<false, false, true, true>>>
     == false
 );
 static_assert(
-    std::is_move_constructible_v<success<TestClass<false, true, false, true>>>
+    std::is_move_constructible_v<ok_t<TestClass<false, false, true, true>>>
+    == true
+);
+static_assert(
+    std::is_move_assignable_v<ok_t<TestClass<false, false, true, true>>> == true
+);
+
+static_assert(
+    std::is_copy_constructible_v<ok_t<TestClass<false, false, true, false>>>
     == false
 );
 static_assert(
-    std::is_move_assignable_v<success<TestClass<false, true, false, true>>>
+    std::is_copy_assignable_v<ok_t<TestClass<false, false, true, false>>>
+    == false
+);
+static_assert(
+    std::is_move_constructible_v<ok_t<TestClass<false, false, true, false>>>
+    == true
+);
+static_assert(
+    std::is_move_assignable_v<ok_t<TestClass<false, false, true, false>>>
     == false
 );
 
 static_assert(
-    std::is_copy_constructible_v<success<TestClass<false, true, false, false>>>
+    std::is_copy_constructible_v<ok_t<TestClass<false, true, false, true>>>
     == false
 );
 static_assert(
-    std::is_copy_assignable_v<success<TestClass<false, true, false, false>>>
+    std::is_copy_assignable_v<ok_t<TestClass<false, true, false, true>>>
     == false
 );
 static_assert(
-    std::is_move_constructible_v<success<TestClass<false, true, false, false>>>
+    std::is_move_constructible_v<ok_t<TestClass<false, true, false, true>>>
     == false
 );
 static_assert(
-    std::is_move_assignable_v<success<TestClass<false, true, false, false>>>
-    == false
-);
-
-static_assert(
-    std::is_copy_constructible_v<success<TestClass<false, false, false, true>>>
-    == false
-);
-static_assert(
-    std::is_copy_assignable_v<success<TestClass<false, false, false, true>>>
-    == false
-);
-static_assert(
-    std::is_move_constructible_v<success<TestClass<false, false, false, true>>>
-    == false
-);
-static_assert(
-    std::is_move_assignable_v<success<TestClass<false, false, false, true>>>
+    std::is_move_assignable_v<ok_t<TestClass<false, true, false, true>>>
     == false
 );
 
 static_assert(
-    std::is_copy_constructible_v<success<TestClass<false, false, false, false>>>
+    std::is_copy_constructible_v<ok_t<TestClass<false, true, false, false>>>
     == false
 );
 static_assert(
-    std::is_copy_assignable_v<success<TestClass<false, false, false, false>>>
+    std::is_copy_assignable_v<ok_t<TestClass<false, true, false, false>>>
     == false
 );
 static_assert(
-    std::is_move_constructible_v<success<TestClass<false, false, false, false>>>
+    std::is_move_constructible_v<ok_t<TestClass<false, true, false, false>>>
     == false
 );
 static_assert(
-    std::is_move_assignable_v<success<TestClass<false, false, false, false>>>
-    == false
-);
-
-static_assert(
-    std::is_copy_constructible_v<failure<TestClass<true, true, true, true>>>
-    == true
-);
-static_assert(
-    std::is_copy_assignable_v<failure<TestClass<true, true, true, true>>>
-    == true
-);
-static_assert(
-    std::is_move_constructible_v<failure<TestClass<true, true, true, true>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<failure<TestClass<true, true, true, true>>>
-    == true
-);
-
-static_assert(
-    std::is_copy_constructible_v<failure<TestClass<true, true, true, false>>>
-    == true
-);
-static_assert(
-    std::is_copy_assignable_v<failure<TestClass<true, true, true, false>>>
-    == true
-);
-static_assert(
-    std::is_move_constructible_v<failure<TestClass<true, true, true, false>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<failure<TestClass<true, true, true, false>>>
-    == true
-);
-
-static_assert(
-    std::is_copy_constructible_v<failure<TestClass<true, false, true, true>>>
-    == true
-);
-static_assert(
-    std::is_copy_assignable_v<failure<TestClass<true, false, true, true>>>
-    == false
-);
-static_assert(
-    std::is_move_constructible_v<failure<TestClass<true, false, true, true>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<failure<TestClass<true, false, true, true>>>
-    == true
-);
-
-static_assert(
-    std::is_copy_constructible_v<failure<TestClass<true, false, true, false>>>
-    == true
-);
-static_assert(
-    std::is_copy_assignable_v<failure<TestClass<true, false, true, false>>>
-    == false
-);
-static_assert(
-    std::is_move_constructible_v<failure<TestClass<true, false, true, false>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<failure<TestClass<true, false, true, false>>>
+    std::is_move_assignable_v<ok_t<TestClass<false, true, false, false>>>
     == false
 );
 
 static_assert(
-    std::is_copy_constructible_v<failure<TestClass<true, true, false, true>>>
-    == true
-);
-static_assert(
-    std::is_copy_assignable_v<failure<TestClass<true, true, false, true>>>
-    == true
-);
-static_assert(
-    std::is_move_constructible_v<failure<TestClass<true, true, false, true>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<failure<TestClass<true, true, false, true>>>
-    == true
-);
-
-static_assert(
-    std::is_copy_constructible_v<failure<TestClass<true, true, false, false>>>
-    == true
-);
-static_assert(
-    std::is_copy_assignable_v<failure<TestClass<true, true, false, false>>>
-    == true
-);
-static_assert(
-    std::is_move_constructible_v<failure<TestClass<true, true, false, false>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<failure<TestClass<true, true, false, false>>>
-    == true
-);
-
-static_assert(
-    std::is_copy_constructible_v<failure<TestClass<true, false, false, true>>>
-    == true
-);
-static_assert(
-    std::is_copy_assignable_v<failure<TestClass<true, false, false, true>>>
+    std::is_copy_constructible_v<ok_t<TestClass<false, false, false, true>>>
     == false
 );
 static_assert(
-    std::is_move_constructible_v<failure<TestClass<true, false, false, true>>>
-    == true
+    std::is_copy_assignable_v<ok_t<TestClass<false, false, false, true>>>
+    == false
 );
 static_assert(
-    std::is_move_assignable_v<failure<TestClass<true, false, false, true>>>
+    std::is_move_constructible_v<ok_t<TestClass<false, false, false, true>>>
+    == false
+);
+static_assert(
+    std::is_move_assignable_v<ok_t<TestClass<false, false, false, true>>>
     == false
 );
 
 static_assert(
-    std::is_copy_constructible_v<failure<TestClass<true, false, false, false>>>
-    == true
-);
-static_assert(
-    std::is_copy_assignable_v<failure<TestClass<true, false, false, false>>>
+    std::is_copy_constructible_v<ok_t<TestClass<false, false, false, false>>>
     == false
 );
 static_assert(
-    std::is_move_constructible_v<failure<TestClass<true, false, false, false>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<failure<TestClass<true, false, false, false>>>
-    == false
-);
-
-static_assert(
-    std::is_copy_constructible_v<failure<TestClass<false, true, true, true>>>
+    std::is_copy_assignable_v<ok_t<TestClass<false, false, false, false>>>
     == false
 );
 static_assert(
-    std::is_copy_assignable_v<failure<TestClass<false, true, true, true>>>
+    std::is_move_constructible_v<ok_t<TestClass<false, false, false, false>>>
     == false
 );
 static_assert(
-    std::is_move_constructible_v<failure<TestClass<false, true, true, true>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<failure<TestClass<false, true, true, true>>>
-    == true
-);
-
-static_assert(
-    std::is_copy_constructible_v<failure<TestClass<false, true, true, false>>>
-    == false
-);
-static_assert(
-    std::is_copy_assignable_v<failure<TestClass<false, true, true, false>>>
-    == false
-);
-static_assert(
-    std::is_move_constructible_v<failure<TestClass<false, true, true, false>>>
-    == true
-);
-static_assert(
-    std::is_move_assignable_v<failure<TestClass<false, true, true, false>>>
+    std::is_move_assignable_v<ok_t<TestClass<false, false, false, false>>>
     == false
 );
 
 static_assert(
-    std::is_copy_constructible_v<failure<TestClass<false, false, true, true>>>
-    == false
-);
-static_assert(
-    std::is_copy_assignable_v<failure<TestClass<false, false, true, true>>>
-    == false
-);
-static_assert(
-    std::is_move_constructible_v<failure<TestClass<false, false, true, true>>>
+    std::is_copy_constructible_v<err_t<TestClass<true, true, true, true>>>
     == true
 );
 static_assert(
-    std::is_move_assignable_v<failure<TestClass<false, false, true, true>>>
+    std::is_copy_assignable_v<err_t<TestClass<true, true, true, true>>> == true
+);
+static_assert(
+    std::is_move_constructible_v<err_t<TestClass<true, true, true, true>>>
+    == true
+);
+static_assert(
+    std::is_move_assignable_v<err_t<TestClass<true, true, true, true>>> == true
+);
+
+static_assert(
+    std::is_copy_constructible_v<err_t<TestClass<true, true, true, false>>>
+    == true
+);
+static_assert(
+    std::is_copy_assignable_v<err_t<TestClass<true, true, true, false>>> == true
+);
+static_assert(
+    std::is_move_constructible_v<err_t<TestClass<true, true, true, false>>>
+    == true
+);
+static_assert(
+    std::is_move_assignable_v<err_t<TestClass<true, true, true, false>>> == true
+);
+
+static_assert(
+    std::is_copy_constructible_v<err_t<TestClass<true, false, true, true>>>
+    == true
+);
+static_assert(
+    std::is_copy_assignable_v<err_t<TestClass<true, false, true, true>>>
+    == false
+);
+static_assert(
+    std::is_move_constructible_v<err_t<TestClass<true, false, true, true>>>
+    == true
+);
+static_assert(
+    std::is_move_assignable_v<err_t<TestClass<true, false, true, true>>> == true
+);
+
+static_assert(
+    std::is_copy_constructible_v<err_t<TestClass<true, false, true, false>>>
+    == true
+);
+static_assert(
+    std::is_copy_assignable_v<err_t<TestClass<true, false, true, false>>>
+    == false
+);
+static_assert(
+    std::is_move_constructible_v<err_t<TestClass<true, false, true, false>>>
+    == true
+);
+static_assert(
+    std::is_move_assignable_v<err_t<TestClass<true, false, true, false>>>
+    == false
+);
+
+static_assert(
+    std::is_copy_constructible_v<err_t<TestClass<true, true, false, true>>>
+    == true
+);
+static_assert(
+    std::is_copy_assignable_v<err_t<TestClass<true, true, false, true>>> == true
+);
+static_assert(
+    std::is_move_constructible_v<err_t<TestClass<true, true, false, true>>>
+    == true
+);
+static_assert(
+    std::is_move_assignable_v<err_t<TestClass<true, true, false, true>>> == true
+);
+
+static_assert(
+    std::is_copy_constructible_v<err_t<TestClass<true, true, false, false>>>
+    == true
+);
+static_assert(
+    std::is_copy_assignable_v<err_t<TestClass<true, true, false, false>>>
+    == true
+);
+static_assert(
+    std::is_move_constructible_v<err_t<TestClass<true, true, false, false>>>
+    == true
+);
+static_assert(
+    std::is_move_assignable_v<err_t<TestClass<true, true, false, false>>>
     == true
 );
 
 static_assert(
-    std::is_copy_constructible_v<failure<TestClass<false, false, true, false>>>
-    == false
-);
-static_assert(
-    std::is_copy_assignable_v<failure<TestClass<false, false, true, false>>>
-    == false
-);
-static_assert(
-    std::is_move_constructible_v<failure<TestClass<false, false, true, false>>>
+    std::is_copy_constructible_v<err_t<TestClass<true, false, false, true>>>
     == true
 );
 static_assert(
-    std::is_move_assignable_v<failure<TestClass<false, false, true, false>>>
+    std::is_copy_assignable_v<err_t<TestClass<true, false, false, true>>>
+    == false
+);
+static_assert(
+    std::is_move_constructible_v<err_t<TestClass<true, false, false, true>>>
+    == true
+);
+static_assert(
+    std::is_move_assignable_v<err_t<TestClass<true, false, false, true>>>
     == false
 );
 
 static_assert(
-    std::is_copy_constructible_v<failure<TestClass<false, true, false, true>>>
+    std::is_copy_constructible_v<err_t<TestClass<true, false, false, false>>>
+    == true
+);
+static_assert(
+    std::is_copy_assignable_v<err_t<TestClass<true, false, false, false>>>
     == false
 );
 static_assert(
-    std::is_copy_assignable_v<failure<TestClass<false, true, false, true>>>
-    == false
+    std::is_move_constructible_v<err_t<TestClass<true, false, false, false>>>
+    == true
 );
 static_assert(
-    std::is_move_constructible_v<failure<TestClass<false, true, false, true>>>
-    == false
-);
-static_assert(
-    std::is_move_assignable_v<failure<TestClass<false, true, false, true>>>
-    == false
-);
-
-static_assert(
-    std::is_copy_constructible_v<failure<TestClass<false, true, false, false>>>
-    == false
-);
-static_assert(
-    std::is_copy_assignable_v<failure<TestClass<false, true, false, false>>>
-    == false
-);
-static_assert(
-    std::is_move_constructible_v<failure<TestClass<false, true, false, false>>>
-    == false
-);
-static_assert(
-    std::is_move_assignable_v<failure<TestClass<false, true, false, false>>>
+    std::is_move_assignable_v<err_t<TestClass<true, false, false, false>>>
     == false
 );
 
 static_assert(
-    std::is_copy_constructible_v<failure<TestClass<false, false, false, true>>>
+    std::is_copy_constructible_v<err_t<TestClass<false, true, true, true>>>
     == false
 );
 static_assert(
-    std::is_copy_assignable_v<failure<TestClass<false, false, false, true>>>
+    std::is_copy_assignable_v<err_t<TestClass<false, true, true, true>>>
     == false
 );
 static_assert(
-    std::is_move_constructible_v<failure<TestClass<false, false, false, true>>>
+    std::is_move_constructible_v<err_t<TestClass<false, true, true, true>>>
+    == true
+);
+static_assert(
+    std::is_move_assignable_v<err_t<TestClass<false, true, true, true>>> == true
+);
+
+static_assert(
+    std::is_copy_constructible_v<err_t<TestClass<false, true, true, false>>>
     == false
 );
 static_assert(
-    std::is_move_assignable_v<failure<TestClass<false, false, false, true>>>
+    std::is_copy_assignable_v<err_t<TestClass<false, true, true, false>>>
+    == false
+);
+static_assert(
+    std::is_move_constructible_v<err_t<TestClass<false, true, true, false>>>
+    == true
+);
+static_assert(
+    std::is_move_assignable_v<err_t<TestClass<false, true, true, false>>>
     == false
 );
 
 static_assert(
-    std::is_copy_constructible_v<failure<TestClass<false, false, false, false>>>
+    std::is_copy_constructible_v<err_t<TestClass<false, false, true, true>>>
     == false
 );
 static_assert(
-    std::is_copy_assignable_v<failure<TestClass<false, false, false, false>>>
+    std::is_copy_assignable_v<err_t<TestClass<false, false, true, true>>>
     == false
 );
 static_assert(
-    std::is_move_constructible_v<failure<TestClass<false, false, false, false>>>
+    std::is_move_constructible_v<err_t<TestClass<false, false, true, true>>>
+    == true
+);
+static_assert(
+    std::is_move_assignable_v<err_t<TestClass<false, false, true, true>>>
+    == true
+);
+
+static_assert(
+    std::is_copy_constructible_v<err_t<TestClass<false, false, true, false>>>
     == false
 );
 static_assert(
-    std::is_move_assignable_v<failure<TestClass<false, false, false, false>>>
+    std::is_copy_assignable_v<err_t<TestClass<false, false, true, false>>>
+    == false
+);
+static_assert(
+    std::is_move_constructible_v<err_t<TestClass<false, false, true, false>>>
+    == true
+);
+static_assert(
+    std::is_move_assignable_v<err_t<TestClass<false, false, true, false>>>
+    == false
+);
+
+static_assert(
+    std::is_copy_constructible_v<err_t<TestClass<false, true, false, true>>>
+    == false
+);
+static_assert(
+    std::is_copy_assignable_v<err_t<TestClass<false, true, false, true>>>
+    == false
+);
+static_assert(
+    std::is_move_constructible_v<err_t<TestClass<false, true, false, true>>>
+    == false
+);
+static_assert(
+    std::is_move_assignable_v<err_t<TestClass<false, true, false, true>>>
+    == false
+);
+
+static_assert(
+    std::is_copy_constructible_v<err_t<TestClass<false, true, false, false>>>
+    == false
+);
+static_assert(
+    std::is_copy_assignable_v<err_t<TestClass<false, true, false, false>>>
+    == false
+);
+static_assert(
+    std::is_move_constructible_v<err_t<TestClass<false, true, false, false>>>
+    == false
+);
+static_assert(
+    std::is_move_assignable_v<err_t<TestClass<false, true, false, false>>>
+    == false
+);
+
+static_assert(
+    std::is_copy_constructible_v<err_t<TestClass<false, false, false, true>>>
+    == false
+);
+static_assert(
+    std::is_copy_assignable_v<err_t<TestClass<false, false, false, true>>>
+    == false
+);
+static_assert(
+    std::is_move_constructible_v<err_t<TestClass<false, false, false, true>>>
+    == false
+);
+static_assert(
+    std::is_move_assignable_v<err_t<TestClass<false, false, false, true>>>
+    == false
+);
+
+static_assert(
+    std::is_copy_constructible_v<err_t<TestClass<false, false, false, false>>>
+    == false
+);
+static_assert(
+    std::is_copy_assignable_v<err_t<TestClass<false, false, false, false>>>
+    == false
+);
+static_assert(
+    std::is_move_constructible_v<err_t<TestClass<false, false, false, false>>>
+    == false
+);
+static_assert(
+    std::is_move_assignable_v<err_t<TestClass<false, false, false, false>>>
     == false
 );
 

@@ -46,52 +46,52 @@ constexpr auto
 parse(str_ref s) -> result<T, str_ref>
 {
   if (s.empty())
-    return failure("parse error at empty string"sv);
+    return err("parse error at empty string"sv);
 
   T res = T{};
   for (std::size_t i = 0; i < s.size(); ++i)
   {
     char c = s[i];
     if (c < '0' || c > '9')
-      return failure("parse error"sv);
+      return err("parse error"sv);
     res = res * 10 + (c - '0');
   }
-  return success(res);
+  return ok(res);
 }
 
 TEST_CASE("is_ok() test", "[result][is_ok]")
 {
-  constexpr result<u32, str_ref> x = success(-3);
+  constexpr result<u32, str_ref> x = ok(-3);
   static_assert(x.is_ok() == true);
 
-  constexpr result<u32, str_ref> y = failure("some error message"sv);
+  constexpr result<u32, str_ref> y = err("some error message"sv);
   static_assert(y.is_ok() == false);
 }
 
 TEST_CASE("is_err() test", "[result][is_err]")
 {
-  constexpr result<u32, str_ref> x = success(-3);
+  constexpr result<u32, str_ref> x = ok(-3);
   static_assert(x.is_err() == false);
 
-  constexpr result<u32, str_ref> y = failure("some error message"sv);
+  constexpr result<u32, str_ref> y = err("some error message"sv);
   static_assert(y.is_err() == true);
 }
 
 TEST_CASE("ok() test", "[result][ok]")
 {
-  constexpr result<u32, str_ref> x = success(2);
+  constexpr result<u32, str_ref> x = ok(2);
   static_assert(x.ok() == just(2u));
 
-  constexpr result<int, str_ref> y = failure("Nothing here"sv);
+  constexpr result<int, str_ref> y = err("Nothing here"sv);
   static_assert(y.ok() == nothing);
 }
 
 TEST_CASE("err() test", "[result][err]")
 {
-  constexpr result<u32, str_ref> x = success(2u);
+  constexpr result<u32, str_ref> x = ok(2u);
   static_assert(x.err() == nothing);
 
-  constexpr result<u32, str_ref> y = failure("Nothing here"sv);
+  constexpr result<u32, str_ref> y = err("Nothing here"sv);
   static_assert(y.err() == just("Nothing here"sv));
 }
 
@@ -106,23 +106,23 @@ TEST_CASE("map() test", "[result][map]")
     REQUIRE(res.ok().unwrap() % 2 == 0);
   }
 
-  result<int, int> some_num = success(1);
+  result<int, int> some_num = ok(1);
   result<int, int> z = some_num.map(std::plus{}, 1);
-  REQUIRE(z == success(2));
+  REQUIRE(z == ok(2));
 }
 
 TEST_CASE("map_apply() test", "[result][map_apply]")
 {
-  result<std::tuple<int, int>, int> res = success(1, 2);
+  result<std::tuple<int, int>, int> res = ok(1, 2);
   result<int, int> z = res.map_apply(std::plus<>{});
-  REQUIRE(z == success(3));
+  REQUIRE(z == ok(3));
 }
 
 TEST_CASE("map_or_else(F, M) test", "[result][map_or_else]")
 {
   constexpr auto k = 21;
   {
-    constexpr result<str_ref, str_ref> x = success("foo"sv);
+    constexpr result<str_ref, str_ref> x = ok("foo"sv);
     static_assert(
         x.map_or_else(
             [](auto) { return k * 2; }, [](auto v) { return v.length(); }
@@ -131,7 +131,7 @@ TEST_CASE("map_or_else(F, M) test", "[result][map_or_else]")
     );
   }
   {
-    constexpr result<str_ref, str_ref> x = failure("bar"sv);
+    constexpr result<str_ref, str_ref> x = err("bar"sv);
     static_assert(
         x.map_or_else(
             [](auto) { return k * 2; }, [](auto v) { return v.length(); }
@@ -144,11 +144,11 @@ TEST_CASE("map_or_else(F, M) test", "[result][map_or_else]")
 TEST_CASE("map_anything_else(F) test", "[result][map_anything_else]")
 {
   {
-    constexpr result<str_ref, str_ref> x = success("foo"sv);
+    constexpr result<str_ref, str_ref> x = ok("foo"sv);
     static_assert(x.map_anything_else([](auto v) { return v.length(); }) == 3);
   }
   {
-    constexpr result<str_ref, str_ref> x = failure("bar"sv);
+    constexpr result<str_ref, str_ref> x = err("bar"sv);
     static_assert(x.map_anything_else([](auto v) { return v.length(); }) == 3);
   }
 }
@@ -158,83 +158,79 @@ TEST_CASE("map_err() test", "[result][map_err]")
   auto stringify = [](u32 x) -> str
   { return "error code: "s + std::to_string(x); };
 
-  result<u32, u32> x = success(2);
-  REQUIRE(x.map_err(stringify) == success(2u));
+  result<u32, u32> x = ok(2);
+  REQUIRE(x.map_err(stringify) == ok(2u));
 
-  result<u32, u32> y = failure(13);
-  REQUIRE(y.map_err(stringify) == failure("error code: 13"s));
+  result<u32, u32> y = err(13);
+  REQUIRE(y.map_err(stringify) == err("error code: 13"s));
 
-  constexpr result<int, int> some_num = failure(1);
+  constexpr result<int, int> some_num = err(1);
   constexpr result<int, int> z = some_num.map_err(std::plus{}, 1);
-  static_assert(z == failure(2));
+  static_assert(z == err(2));
 }
 
 TEST_CASE("map_apply_err() test", "[result][map_apply_err]")
 {
-  result<int, std::tuple<int, int>> res = failure(1, 1);
+  result<int, std::tuple<int, int>> res = err(1, 1);
   result<int, int> z =
       res.map_apply_err([](auto... a) { return (... + a); }, 1);
-  REQUIRE(z == failure(3));
+  REQUIRE(z == err(3));
 }
 
 TEST_CASE("conj test", "[result][conj]")
 {
   {
-    constexpr result<u32, str_ref> x = success(2);
-    constexpr result<str_ref, str_ref> y = failure("late error"sv);
-    static_assert(x.conj(y) == failure("late error"sv));
-    static_assert((x && y) == failure("late error"sv));
+    constexpr result<u32, str_ref> x = ok(2);
+    constexpr result<str_ref, str_ref> y = err("late error"sv);
+    static_assert(x.conj(y) == err("late error"sv));
+    static_assert((x && y) == err("late error"sv));
   }
 
   {
-    constexpr result<u32, str_ref> x = failure("early error"sv);
-    constexpr result<str_ref, str_ref> y = success("foo"sv);
-    static_assert(x.conj(y) == failure("early error"sv));
-    static_assert((x && y) == failure("early error"sv));
+    constexpr result<u32, str_ref> x = err("early error"sv);
+    constexpr result<str_ref, str_ref> y = ok("foo"sv);
+    static_assert(x.conj(y) == err("early error"sv));
+    static_assert((x && y) == err("early error"sv));
   }
   {
-    constexpr result<u32, str_ref> x = failure("not a 2"sv);
-    constexpr result<str_ref, str_ref> y = failure("late error"sv);
-    static_assert(x.conj(y) == failure("not a 2"sv));
-    static_assert((x && y) == failure("not a 2"sv));
+    constexpr result<u32, str_ref> x = err("not a 2"sv);
+    constexpr result<str_ref, str_ref> y = err("late error"sv);
+    static_assert(x.conj(y) == err("not a 2"sv));
+    static_assert((x && y) == err("not a 2"sv));
   }
 
   {
-    constexpr result<u32, str_ref> x = success(2);
-    constexpr result<str_ref, str_ref> y = success("different result type"sv);
-    static_assert(x.conj(y) == success("different result type"sv));
-    static_assert((x && y) == success("different result type"sv));
+    constexpr result<u32, str_ref> x = ok(2);
+    constexpr result<str_ref, str_ref> y = ok("different result type"sv);
+    static_assert(x.conj(y) == ok("different result type"sv));
+    static_assert((x && y) == ok("different result type"sv));
   }
 }
 
 TEST_CASE("and_then() test", "[result][and_then]")
 {
-  constexpr auto sq = [](u32 x) -> result<u32, u32> { return success(x * x); };
-  constexpr auto err = [](u32 x) -> result<u32, u32> { return failure(x); };
+  constexpr auto sq = [](u32 x) -> result<u32, u32> { return ok(x * x); };
+  constexpr auto er = [](u32 x) -> result<u32, u32> { return err(x); };
   constexpr auto eq = [](u32 x, u32 y) -> result<u32, u32>
-  { return x == y ? result<u32, u32>(success(x)) : failure(x); };
+  { return x == y ? result<u32, u32>(ok(x)) : err(x); };
 
   static_assert(
-      result<u32, u32>{ success(2u) }.and_then(sq).and_then(sq) == success(16u)
+      result<u32, u32>{ ok(2u) }.and_then(sq).and_then(sq) == ok(16u)
   );
   static_assert(
-      result<u32, u32>{ success(2u) }.and_then(sq).and_then(err) == failure(4u)
+      result<u32, u32>{ ok(2u) }.and_then(sq).and_then(er) == err(4u)
   );
   static_assert(
-      result<u32, u32>{ success(2u) }.and_then(err).and_then(sq) == failure(2u)
+      result<u32, u32>{ ok(2u) }.and_then(er).and_then(sq) == err(2u)
   );
   static_assert(
-      result<u32, u32>{ failure(3u) }.and_then(sq).and_then(sq) == failure(3u)
+      result<u32, u32>{ err(3u) }.and_then(sq).and_then(sq) == err(3u)
   );
   static_assert(
-      result<u32, u32>{ failure(3u) }.and_then(sq).and_then(sq) == failure(3u)
+      result<u32, u32>{ err(3u) }.and_then(sq).and_then(sq) == err(3u)
   );
-  static_assert(
-      result<u32, u32>{ success(3u) }.and_then(eq, 3u) == success(3u)
-  );
-  static_assert(
-      result<u32, u32>{ failure(3u) }.and_then(eq, 1u) == failure(3u)
-  );
+  static_assert(result<u32, u32>{ ok(3u) }.and_then(eq, 3u) == ok(3u));
+  static_assert(result<u32, u32>{ err(3u) }.and_then(eq, 1u) == err(3u));
 }
 
 TEST_CASE("and_then_apply() test", "[result][and_then_apply]")
@@ -242,16 +238,16 @@ TEST_CASE("and_then_apply() test", "[result][and_then_apply]")
   auto fn = [](u32 x, u32 y) -> result<u32, u32>
   {
     if ((x + y) % 2 == 0)
-      return success(x + y);
+      return ok(x + y);
     else
-      return failure(x + y);
+      return err(x + y);
   };
-  result<std::tuple<u32, u32>, u32> ok1 = success(1u, 2u);
-  result<std::tuple<u32, u32>, u32> ok2 = success(1u, 1u);
-  result<std::tuple<u32, u32>, u32> err = failure(1u);
-  REQUIRE(ok1.and_then_apply(fn) == failure(3u));
-  REQUIRE(ok2.and_then_apply(fn) == success(2u));
-  REQUIRE(err.and_then_apply(fn) == failure(1u));
+  result<std::tuple<u32, u32>, u32> ok1 = ok(1u, 2u);
+  result<std::tuple<u32, u32>, u32> ok2 = ok(1u, 1u);
+  result<std::tuple<u32, u32>, u32> e = err(1u);
+  REQUIRE(ok1.and_then_apply(fn) == err(3u));
+  REQUIRE(ok2.and_then_apply(fn) == ok(2u));
+  REQUIRE(e.and_then_apply(fn) == err(1u));
 }
 
 TEST_CASE("or_else_apply() test", "[result][or_else_apply]")
@@ -259,100 +255,91 @@ TEST_CASE("or_else_apply() test", "[result][or_else_apply]")
   auto fn = [](u32 x, u32 y) -> result<u32, u32>
   {
     if ((x + y) % 2 == 0)
-      return success(x + y);
+      return ok(x + y);
     else
-      return failure(x + y);
+      return err(x + y);
   };
-  result<u32, std::tuple<u32, u32>> ok = success(1u);
-  result<u32, std::tuple<u32, u32>> err1 = failure(1u, 1u);
-  result<u32, std::tuple<u32, u32>> err2 = failure(1u, 2u);
-  REQUIRE(ok.or_else_apply(fn) == success(1u));
-  REQUIRE(err1.or_else_apply(fn) == success(2u));
-  REQUIRE(err2.or_else_apply(fn) == failure(3u));
+  result<u32, std::tuple<u32, u32>> ok1 = ok(1u);
+  result<u32, std::tuple<u32, u32>> e1 = err(1u, 1u);
+  result<u32, std::tuple<u32, u32>> e2 = err(1u, 2u);
+  REQUIRE(ok1.or_else_apply(fn) == ok(1u));
+  REQUIRE(e1.or_else_apply(fn) == ok(2u));
+  REQUIRE(e2.or_else_apply(fn) == err(3u));
 }
 
 TEMPLATE_TEST_CASE("is_convertible_result_with meta test", "[is_convertible_result_with][meta]",
                     int, unsigned, std::string, std::vector<int>)
 {
   static_assert(is_convertible_result_with_v<
-                mitama::result<int, TestType>, mitama::failure_t<TestType>>);
+                mitama::result<int, TestType>, mitama::err_t<TestType>>);
   static_assert(!is_convertible_result_with_v<
                 result<unsigned, std::vector<TestType>>,
-                mitama::failure_t<TestType>>);
+                mitama::err_t<TestType>>);
 }
 
 TEST_CASE("disj test", "[result][disj]")
 {
   {
-    constexpr result<u32, str_ref> x = success(2);
-    constexpr result<u32, str_ref> y = failure("late error"sv);
-    static_assert(x.disj(y) == success(2u));
-    static_assert((x || y) == success(2u));
+    constexpr result<u32, str_ref> x = ok(2);
+    constexpr result<u32, str_ref> y = err("late error"sv);
+    static_assert(x.disj(y) == ok(2u));
+    static_assert((x || y) == ok(2u));
   }
   {
-    constexpr result<u32, str_ref> x = failure("early error"sv);
-    constexpr result<u32, str_ref> y = success(2);
-    static_assert(x.disj(y) == success(2u));
-    static_assert((x || y) == success(2u));
+    constexpr result<u32, str_ref> x = err("early error"sv);
+    constexpr result<u32, str_ref> y = ok(2);
+    static_assert(x.disj(y) == ok(2u));
+    static_assert((x || y) == ok(2u));
   }
   {
-    constexpr result<u32, str_ref> x = failure("not a 2"sv);
-    constexpr result<u32, str_ref> y = failure("late error"sv);
-    static_assert(x.disj(y) == failure("late error"sv));
-    static_assert((x || y) == failure("late error"sv));
+    constexpr result<u32, str_ref> x = err("not a 2"sv);
+    constexpr result<u32, str_ref> y = err("late error"sv);
+    static_assert(x.disj(y) == err("late error"sv));
+    static_assert((x || y) == err("late error"sv));
   }
   {
-    constexpr result<u32, str_ref> x = success(2);
-    constexpr result<u32, str_ref> y = success(100);
-    static_assert(x.disj(y) == success(2u));
-    static_assert((x || y) == success(2u));
+    constexpr result<u32, str_ref> x = ok(2);
+    constexpr result<u32, str_ref> y = ok(100);
+    static_assert(x.disj(y) == ok(2u));
+    static_assert((x || y) == ok(2u));
   }
 }
 
 TEST_CASE("or_else() test", "[result][or_else]")
 {
-  constexpr auto sq = [](u32 x) -> result<u32, u32> { return success(x * x); };
-  constexpr auto err = [](u32 x) -> result<u32, u32> { return failure(x); };
+  constexpr auto sq = [](u32 x) -> result<u32, u32> { return ok(x * x); };
+  constexpr auto er = [](u32 x) -> result<u32, u32> { return err(x); };
   constexpr auto eq = [](u32 x, u32 y) -> result<u32, u32>
-  { return x == y ? result<u32, u32>(success(x)) : failure(x); };
+  { return x == y ? result<u32, u32>(ok(x)) : err(x); };
 
-  static_assert(
-      result<u32, u32>{ success(2) }.or_else(sq).or_else(sq) == success(2u)
-  );
-  static_assert(
-      result<u32, u32>{ success(2) }.or_else(err).or_else(sq) == success(2u)
-  );
-  static_assert(
-      result<u32, u32>{ failure(3) }.or_else(sq).or_else(err) == success(9u)
-  );
-  static_assert(
-      result<u32, u32>{ failure(3) }.or_else(err).or_else(err) == failure(3u)
-  );
-  static_assert(result<u32, u32>{ failure(3) }.or_else(eq, 3u) == success(3u));
-  static_assert(result<u32, u32>{ success(3) }.or_else(eq, 3u) == success(3u));
-  static_assert(result<u32, u32>{ failure(3) }.or_else(eq, 1u) == failure(3u));
+  static_assert(result<u32, u32>{ ok(2) }.or_else(sq).or_else(sq) == ok(2u));
+  static_assert(result<u32, u32>{ ok(2) }.or_else(er).or_else(sq) == ok(2u));
+  static_assert(result<u32, u32>{ err(3) }.or_else(sq).or_else(er) == ok(9u));
+  static_assert(result<u32, u32>{ err(3) }.or_else(er).or_else(er) == err(3u));
+  static_assert(result<u32, u32>{ err(3) }.or_else(eq, 3u) == ok(3u));
+  static_assert(result<u32, u32>{ ok(3) }.or_else(eq, 3u) == ok(3u));
+  static_assert(result<u32, u32>{ err(3) }.or_else(eq, 1u) == err(3u));
 }
 
 TEST_CASE("unwrap_or() test", "[result][unwrap_or]")
 {
-  constexpr result<u32, u32> err = failure(2);
-  constexpr result<u32, u32> ok = success(2);
+  constexpr result<u32, u32> e = err(2);
+  constexpr result<u32, u32> o = ok(2);
 
-  static_assert(ok.unwrap_or(1u) == 2u);
-  static_assert(err.unwrap_or(1u) == 1u);
+  static_assert(o.unwrap_or(1u) == 2u);
+  static_assert(e.unwrap_or(1u) == 1u);
 }
 
 TEST_CASE("unwrap_or_else() test", "[result][unwrap_or_else]")
 {
   constexpr auto count = [](str_ref x) -> size_t { return x.size(); };
 
-  static_assert(result<u32, str_ref>{ success(2) }.unwrap_or_else(count) == 2);
+  static_assert(result<u32, str_ref>{ ok(2) }.unwrap_or_else(count) == 2);
   static_assert(
-      result<u32, str_ref>{ failure("foo"sv) }.unwrap_or_else(count) == 3ull
+      result<u32, str_ref>{ err("foo"sv) }.unwrap_or_else(count) == 3ull
   );
   static_assert(
-      result<u32, str_ref>{ failure("foo"sv) }.unwrap_or_else([]
-                                                              { return 3ull; })
+      result<u32, str_ref>{ err("foo"sv) }.unwrap_or_else([] { return 3ull; })
       == 3ull
   );
 }
@@ -360,19 +347,19 @@ TEST_CASE("unwrap_or_else() test", "[result][unwrap_or_else]")
 TEST_CASE("unwrap() test", "[result][unwrap]")
 {
   {
-    constexpr result<u32, str_ref> x = success(2);
+    constexpr result<u32, str_ref> x = ok(2);
     static_assert(x.unwrap() == 2u);
   }
   try
   {
-    result<u32, str> x = failure("emergency failure"s);
-    x.unwrap(); // panics with `emergency failure`
+    result<u32, str> x = err("emergency error"s);
+    x.unwrap(); // panics with `emergency error`
   }
   catch (const runtime_panic& p)
   {
     const std::string_view expected =
         "runtime panicked at 'called `basic_result::unwrap()` on a "
-        "value: `failure(\"emergency failure\")`', ";
+        "value: `err(\"emergency error\")`', ";
 
     const std::string_view what = p.what();
     REQUIRE(what.starts_with(expected));
@@ -389,13 +376,13 @@ TEST_CASE("unwrap_err() test", "[result][unwrap_err]")
 {
   try
   {
-    result<u32, str> x = success(2);
+    result<u32, str> x = ok(2);
     x.unwrap_err(); // panics with `2`
   }
   catch (const runtime_panic& p)
   {
     const std::string_view expected =
-        R"(runtime panicked at 'called `basic_result::unwrap_err()` on a value: `success(2)`', )";
+        R"(runtime panicked at 'called `basic_result::unwrap_err()` on a value: `ok(2)`', )";
 
     const std::string_view what = p.what();
     REQUIRE(what.starts_with(expected));
@@ -408,8 +395,8 @@ TEST_CASE("unwrap_err() test", "[result][unwrap_err]")
   }
 
   {
-    constexpr result<u32, str_ref> x = failure("emergency failure"sv);
-    static_assert(x.unwrap_err() == "emergency failure"sv);
+    constexpr result<u32, str_ref> x = err("emergency error"sv);
+    static_assert(x.unwrap_err() == "emergency error"sv);
   }
 }
 
@@ -427,8 +414,8 @@ TEST_CASE("unwrap_or_default() test", "[result][unwrap_or_default]")
 
 TEST_CASE("transpose() test", "[result][transpose]")
 {
-  constexpr result<maybe<i32>, void> x = success(just(5));
-  constexpr maybe<result<i32, void>> y = just(success(5));
+  constexpr result<maybe<i32>, void> x = ok(just(5));
+  constexpr maybe<result<i32, void>> y = just(ok(5));
 
   static_assert(x.transpose() == y);
 }
@@ -436,11 +423,11 @@ TEST_CASE("transpose() test", "[result][transpose]")
 TEST_CASE("and_finally() test", "[result][and_finally]")
 {
   int hook = 0;
-  result<int, std::string> x = failure("error"s);
+  result<int, std::string> x = err("error"s);
   x.and_finally([&hook](int v) { hook = v; });
   REQUIRE(hook == 0);
 
-  result<int, std::string> y = success(1);
+  result<int, std::string> y = ok(1);
   y.and_finally([&hook](int v) { hook = v; });
   REQUIRE(hook == 1);
 }
@@ -448,25 +435,25 @@ TEST_CASE("and_finally() test", "[result][and_finally]")
 TEST_CASE("or_finally() test", "[result][or_finally]")
 {
   std::string hook = "default";
-  result<int, std::string> x = success(42);
+  result<int, std::string> x = ok(42);
   x.or_finally([&hook](std::string v) { hook = v; });
   REQUIRE(hook == "default"s);
 
-  result<int, std::string> y = failure("error"s);
+  result<int, std::string> y = err("error"s);
   y.or_finally([&hook](std::string v) { hook = v; });
   REQUIRE(hook == "error"s);
 }
 
 TEST_CASE("and_peek() test", "[result][and_peek]")
 {
-  mut_result<int, std::string> x = success(42);
-  REQUIRE(x.and_peek([](int& v) { v = 57; }) == success(57));
+  mut_result<int, std::string> x = ok(42);
+  REQUIRE(x.and_peek([](int& v) { v = 57; }) == ok(57));
 }
 
 TEST_CASE("or_peek() test", "[result][and_peek]")
 {
-  mut_result<int, std::string> x = failure("foo"s);
-  REQUIRE(x.or_peek([](std::string& v) { v = "bar"; }) == failure("bar"s));
+  mut_result<int, std::string> x = err("foo"s);
+  REQUIRE(x.or_peek([](std::string& v) { v = "bar"; }) == err("bar"s));
 }
 
 TEST_CASE("basics test", "[result][basics]")
@@ -474,19 +461,19 @@ TEST_CASE("basics test", "[result][basics]")
   constexpr auto even = [](u32 u) -> result<u32, str_ref>
   {
     if (u % 2 == 0)
-      return success(u);
+      return ok(u);
     else
-      return failure("odd"sv);
+      return err("odd"sv);
   };
   constexpr auto func = [](auto u) -> result<u32, str_ref>
   {
     if (u % 3 == 0)
-      return success(1u);
+      return ok(1u);
     else
-      return failure("error"sv);
+      return err("error"sv);
   };
-  static_assert(even(2).and_then(func) == failure("error"sv));
-  static_assert(even(2) == success(2u));
+  static_assert(even(2).and_then(func) == err("error"sv));
+  static_assert(even(2) == ok(2u));
 }
 
 TEST_CASE(
@@ -494,8 +481,8 @@ TEST_CASE(
 )
 {
   {
-    auto res = result<int, int>{ success(2) };
-    res = result<int, int>{ failure(2) };
+    auto res = result<int, int>{ ok(2) };
+    res = result<int, int>{ err(2) };
     (void)result<std::string, double>{ in_place_ok, "hoge" };
     (void)result<double, std::string>{ in_place_err, "hoge" };
     (void)result<std::vector<int>, double>{ in_place_ok, { 1, 2, 3, 4 } };
@@ -503,96 +490,96 @@ TEST_CASE(
                                                { 1., 2., 3., 4. } };
   }
   {
-    auto res = mut_result<int, int>{ success(2) };
-    res = success(1);
-    res = failure(2);
+    auto res = mut_result<int, int>{ ok(2) };
+    res = ok(1);
+    res = err(2);
   }
 }
 
 TEST_CASE("format test", "[result][format]")
 {
-  SECTION("success")
+  SECTION("ok")
   {
     using namespace std::literals;
     std::stringstream ss;
-    ss << success(1);
-    REQUIRE(ss.str() == "success(1)"s);
+    ss << ok(1);
+    REQUIRE(ss.str() == "ok(1)"s);
   }
-  SECTION("failure")
+  SECTION("err")
   {
     using namespace std::literals;
     std::stringstream ss;
-    ss << failure(1);
-    REQUIRE(ss.str() == "failure(1)"s);
+    ss << err(1);
+    REQUIRE(ss.str() == "err(1)"s);
   }
   SECTION("result ok")
   {
     using namespace std::literals;
     std::stringstream ss;
-    ss << result<int, std::string>{ success(1) };
-    REQUIRE(ss.str() == "success(1)"s);
+    ss << result<int, std::string>{ ok(1) };
+    REQUIRE(ss.str() == "ok(1)"s);
   }
   SECTION("result err")
   {
     using namespace std::literals;
     std::stringstream ss;
-    ss << result<int, std::string>{ failure("hoge"s) };
-    REQUIRE(ss.str() == "failure(\"hoge\")"s);
+    ss << result<int, std::string>{ err("hoge"s) };
+    REQUIRE(ss.str() == "err(\"hoge\")"s);
   }
   SECTION("result of void ok")
   {
     using namespace std::literals;
     std::stringstream ss;
-    ss << result<void, void>{ success() };
-    REQUIRE(ss.str() == "success(())"s);
+    ss << result<void, void>{ ok() };
+    REQUIRE(ss.str() == "ok(())"s);
   }
   SECTION("result of void err")
   {
     using namespace std::literals;
     std::stringstream ss;
-    ss << result<void, void>{ failure() };
-    REQUIRE(ss.str() == "failure(())"s);
+    ss << result<void, void>{ err() };
+    REQUIRE(ss.str() == "err(())"s);
   }
   SECTION("result of range ok")
   {
     using namespace std::literals;
     std::stringstream ss;
-    ss << success(std::vector<std::string>{ "foo"s, "bar"s });
-    REQUIRE(ss.str() == "success([\"foo\", \"bar\"])"s);
+    ss << ok(std::vector<std::string>{ "foo"s, "bar"s });
+    REQUIRE(ss.str() == "ok([\"foo\", \"bar\"])"s);
   }
   SECTION("result of range err")
   {
     using namespace std::literals;
     std::stringstream ss;
-    ss << failure(std::vector<std::string>{ "foo"s, "bar"s });
-    REQUIRE(ss.str() == "failure([\"foo\", \"bar\"])"s);
+    ss << err(std::vector<std::string>{ "foo"s, "bar"s });
+    REQUIRE(ss.str() == "err([\"foo\", \"bar\"])"s);
   }
-  SECTION("success of tuple")
+  SECTION("ok of tuple")
   {
     using namespace std::literals;
     std::stringstream ss;
-    ss << success(std::tuple{ "foo"s, 1 });
-    REQUIRE(ss.str() == "success((\"foo\", 1))"s);
+    ss << ok(std::tuple{ "foo"s, 1 });
+    REQUIRE(ss.str() == "ok((\"foo\", 1))"s);
   }
-  SECTION("failure of tuple")
+  SECTION("err of tuple")
   {
     using namespace std::literals;
     std::stringstream ss;
-    ss << failure(std::tuple{ "foo"s, 1 });
-    REQUIRE(ss.str() == "failure((\"foo\", 1))"s);
+    ss << err(std::tuple{ "foo"s, 1 });
+    REQUIRE(ss.str() == "err((\"foo\", 1))"s);
   }
   SECTION("result of tuple")
   {
     using namespace std::literals;
     {
       std::stringstream ss;
-      ss << result<std::tuple<str, int>, int>(success(std::tuple{ "foo"s, 1 }));
-      REQUIRE(ss.str() == "success((\"foo\", 1))"s);
+      ss << result<std::tuple<str, int>, int>(ok(std::tuple{ "foo"s, 1 }));
+      REQUIRE(ss.str() == "ok((\"foo\", 1))"s);
     }
     {
       std::stringstream ss;
-      ss << result<int, std::tuple<str, int>>(failure(std::tuple{ "foo"s, 1 }));
-      REQUIRE(ss.str() == "failure((\"foo\", 1))"s);
+      ss << result<int, std::tuple<str, int>>(err(std::tuple{ "foo"s, 1 }));
+      REQUIRE(ss.str() == "err((\"foo\", 1))"s);
     }
   }
   SECTION("result of dictionary")
@@ -600,9 +587,9 @@ TEST_CASE("format test", "[result][format]")
     using namespace std::literals;
     {
       std::stringstream ss;
-      ss << result<std::map<str, int>, int>(success(std::map<str, int>{
+      ss << result<std::map<str, int>, int>(ok(std::map<str, int>{
           { "foo"s, 1 } }));
-      REQUIRE(ss.str() == "success({\"foo\": 1})"s);
+      REQUIRE(ss.str() == "ok({\"foo\": 1})"s);
     }
   }
   SECTION("result of tuple of tuple")
@@ -610,10 +597,9 @@ TEST_CASE("format test", "[result][format]")
     using namespace std::literals;
     {
       std::stringstream ss;
-      ss << result<std::tuple<std::tuple<int, int>, int>, int>(
-          success(std::tuple{ std::tuple{ 1, 1 }, 1 })
-      );
-      REQUIRE(ss.str() == "success(((1, 1), 1))"s);
+      ss << result<std::tuple<std::tuple<int, int>, int>, int>(ok(std::tuple{
+          std::tuple{ 1, 1 }, 1 }));
+      REQUIRE(ss.str() == "ok(((1, 1), 1))"s);
     }
   }
   SECTION("result of range of tuple")
@@ -621,62 +607,62 @@ TEST_CASE("format test", "[result][format]")
     using namespace std::literals;
     {
       std::stringstream ss;
-      ss << result<std::vector<std::tuple<int, int>>, int>(success(std::vector{
+      ss << result<std::vector<std::tuple<int, int>>, int>(ok(std::vector{
           std::tuple{ 1, 1 }, std::tuple{ 1, 1 } }));
-      REQUIRE(ss.str() == "success([(1, 1), (1, 1)])"s);
+      REQUIRE(ss.str() == "ok([(1, 1), (1, 1)])"s);
     }
   }
-  SECTION("failure")
+  SECTION("err")
   {
     using namespace std::literals;
     std::stringstream ss;
-    ss << failure("foo"s);
-    REQUIRE(ss.str() == "failure(\"foo\")"s);
+    ss << err("foo"s);
+    REQUIRE(ss.str() == "err(\"foo\")"s);
   }
-  SECTION("failure of string_view")
+  SECTION("err of string_view")
   {
     using namespace std::literals;
     std::stringstream ss;
     constexpr std::string_view foo = "foo";
-    ss << failure(foo);
-    REQUIRE(ss.str() == "failure(\"foo\")"s);
+    ss << err(foo);
+    REQUIRE(ss.str() == "err(\"foo\")"s);
   }
-  SECTION("failure of char*")
+  SECTION("err of char*")
   {
     using namespace std::literals;
     std::stringstream ss;
-    ss << failure("foo");
-    REQUIRE(ss.str() == "failure(\"foo\")"s);
+    ss << err("foo");
+    REQUIRE(ss.str() == "err(\"foo\")"s);
   }
   SECTION("replace")
   {
     using namespace std::literals;
     auto res = mut_result<int, std::vector<int>>{ in_place_err, { 1, 2, 3 } };
-    REQUIRE(fmt::format("{}", res) == "failure([1, 2, 3])"s);
-    res = success(1);
-    REQUIRE(fmt::format("{}", res) == "success(1)"s);
+    REQUIRE(fmt::format("{}", res) == "err([1, 2, 3])"s);
+    res = ok(1);
+    REQUIRE(fmt::format("{}", res) == "ok(1)"s);
   }
 }
 
-TEST_CASE("monostate success test", "[result][monostate]")
+TEST_CASE("monostate ok test", "[result][monostate]")
 {
   constexpr auto func = []() -> result<void, str_ref>
   {
     if (false)
-      return failure<str_ref>("hoge"sv);
-    return success<>();
+      return err<str_ref>("hoge"sv);
+    return ok<>();
   };
 
   static_assert(func().is_ok());
 }
 
-TEST_CASE("monostate failure test", "[result][monostate]")
+TEST_CASE("monostate err test", "[result][monostate]")
 {
   constexpr auto func = []() -> result<void, void>
   {
     if (false)
-      return success<>();
-    return failure<>();
+      return ok<>();
+    return err<>();
   };
   static_assert(func().is_err());
 }
@@ -687,7 +673,7 @@ SCENARIO("test for reference type", "[result][ref]")
   GIVEN("A result that refer to some string")
   {
     str hoge = "foo";
-    mut_result<str&, str&> res(success<str&>(hoge));
+    mut_result<str&, str&> res(ok<str&>(hoge));
 
     REQUIRE(hoge == "foo"s);
     REQUIRE(res.unwrap() == "foo"s);
@@ -710,12 +696,12 @@ SCENARIO("test for as_ref", "[result][as_ref]")
   using namespace std::literals;
   GIVEN("A new result, containing a reference into the original")
   {
-    mut_result<str, str> res(success<str>("foo"s));
+    mut_result<str, str> res(ok<str>("foo"s));
     auto ref /* mut_result<str&, str&> */ = res.as_ref();
 
     REQUIRE(res == ref);
-    REQUIRE(res == success("foo"s));
-    REQUIRE(ref == success("foo"s));
+    REQUIRE(res == ok("foo"s));
+    REQUIRE(ref == ok("foo"s));
   }
 }
 
@@ -725,11 +711,11 @@ SCENARIO("test for as_mut", "[result][as_mut]")
   GIVEN("A new result, containing a reference into the original")
   {
     auto ptr = std::make_shared<str>("foo"s);
-    mut_result<Rc<str>, Rc<str>> res(success<Rc<str>>(ptr));
+    mut_result<Rc<str>, Rc<str>> res(ok<Rc<str>>(ptr));
     auto ref /* result<str const&, str const&> */ = res.as_mut();
 
-    REQUIRE(res == success(ptr));
-    REQUIRE(ref == success(ptr));
+    REQUIRE(res == ok(ptr));
+    REQUIRE(ref == ok(ptr));
 
     WHEN("The new result is overwritten")
     {
@@ -753,11 +739,11 @@ SCENARIO("test for indirect", "[result][indirect]")
   GIVEN("A new result, containing a indirect reference into the original")
   {
     std::vector<int> vec{ 1, 2, 3 };
-    mut_result<vec_iter, vec_iter> res(success<vec_iter>(vec.begin()));
+    mut_result<vec_iter, vec_iter> res(ok<vec_iter>(vec.begin()));
     auto indirect = res.indirect();
 
     REQUIRE(*res.unwrap() == indirect.unwrap());
-    REQUIRE(indirect == success(1));
+    REQUIRE(indirect == ok(1));
 
     WHEN("The new result is overwritten")
     {
@@ -767,7 +753,7 @@ SCENARIO("test for indirect", "[result][indirect]")
       THEN("the original result change")
       {
         REQUIRE(vec[0] == 42);
-        REQUIRE(indirect == success(42));
+        REQUIRE(indirect == ok(42));
       }
     }
   }
@@ -783,7 +769,7 @@ SCENARIO("test for dangling indirect", "[result][indirect][dangling]")
   )
   {
     auto indirect = mut_result<std::unique_ptr<int>, std::unique_ptr<int>>(
-                        success(std::make_unique<int>(1))
+                        ok(std::make_unique<int>(1))
     )
                         .as_ref()
                         .indirect();
@@ -796,7 +782,7 @@ SCENARIO("test for dangling indirect", "[result][indirect][dangling]")
   GIVEN("A new result which is containing a reference into the living vector")
   {
     std::vector<int> vec{ 1, 3 };
-    auto indirect = result<vec_iter, vec_iter>(success(vec.begin())).indirect();
+    auto indirect = result<vec_iter, vec_iter>(ok(vec.begin())).indirect();
 
     REQUIRE(indirect.unwrap().transmute() == 1);
     //       ^~~~~~~~~~~~~~~~~~~~~~~~~~ OK!
@@ -818,7 +804,7 @@ TEST_CASE("incomplete type reference", "[result]")
 {
   static_assert(!is_complete_type<incomplete_type>::value);
   [[maybe_unused]] result<incomplete_type&, void> res =
-      success<incomplete_type&>(get_incomplete_type()
+      ok<incomplete_type&>(get_incomplete_type()
       ); // use incomplete_type& for result
 }
 
@@ -835,30 +821,30 @@ get_incomplete_type()
 
 TEST_CASE("less compare", "[result][less]")
 {
-  constexpr result<int, int> ok1 = success(1);
-  constexpr result<int, int> ok2 = success(2);
-  constexpr result<int, int> err1 = failure(1);
-  constexpr result<int, int> err2 = failure(2);
+  constexpr result<int, int> ok1 = ok(1);
+  constexpr result<int, int> ok2 = ok(2);
+  constexpr result<int, int> err1 = err(1);
+  constexpr result<int, int> err2 = err(2);
 
   static_assert(ok1 < ok2);
   static_assert(!(ok2 < ok1));
   static_assert(!(ok1 < ok1));
   static_assert(!(ok2 < ok2));
 
-  static_assert(success(1) < ok2);
-  static_assert(!(success(2) < ok1));
-  static_assert(!(success(1) < ok1));
-  static_assert(!(success(2) < ok2));
+  static_assert(ok(1) < ok2);
+  static_assert(!(ok(2) < ok1));
+  static_assert(!(ok(1) < ok1));
+  static_assert(!(ok(2) < ok2));
 
-  static_assert(ok1 < success(2));
-  static_assert(!(ok2 < success(1)));
-  static_assert(!(ok1 < success(1)));
-  static_assert(!(ok2 < success(2)));
+  static_assert(ok1 < ok(2));
+  static_assert(!(ok2 < ok(1)));
+  static_assert(!(ok1 < ok(1)));
+  static_assert(!(ok2 < ok(2)));
 
-  static_assert(success(1) < success(2));
-  static_assert(!(success(2) < success(1)));
-  static_assert(!(success(1) < success(1)));
-  static_assert(!(success(2) < success(2)));
+  static_assert(ok(1) < ok(2));
+  static_assert(!(ok(2) < ok(1)));
+  static_assert(!(ok(1) < ok(1)));
+  static_assert(!(ok(2) < ok(2)));
 
   static_assert(ok1 < 2);
   static_assert(!(ok2 < 1));
@@ -875,60 +861,60 @@ TEST_CASE("less compare", "[result][less]")
   static_assert(!(err1 < err1));
   static_assert(!(err2 < err2));
 
-  static_assert(failure(1) < err2);
-  static_assert(!(failure(2) < err1));
-  static_assert(!(failure(1) < err1));
-  static_assert(!(failure(2) < err2));
+  static_assert(err(1) < err2);
+  static_assert(!(err(2) < err1));
+  static_assert(!(err(1) < err1));
+  static_assert(!(err(2) < err2));
 
-  static_assert(err1 < failure(2));
-  static_assert(!(err2 < failure(1)));
-  static_assert(!(err1 < failure(1)));
-  static_assert(!(err2 < failure(2)));
+  static_assert(err1 < err(2));
+  static_assert(!(err2 < err(1)));
+  static_assert(!(err1 < err(1)));
+  static_assert(!(err2 < err(2)));
 
-  static_assert(failure(1) < failure(2));
-  static_assert(!(failure(2) < failure(1)));
-  static_assert(!(failure(1) < failure(1)));
-  static_assert(!(failure(2) < failure(2)));
+  static_assert(err(1) < err(2));
+  static_assert(!(err(2) < err(1)));
+  static_assert(!(err(1) < err(1)));
+  static_assert(!(err(2) < err(2)));
 
   static_assert(err1 < ok1);
   static_assert(err1 < ok2);
   static_assert(err2 < ok1);
   static_assert(err2 < ok2);
 
-  static_assert(failure(1) < ok1);
-  static_assert(failure(1) < ok2);
-  static_assert(failure(2) < ok1);
-  static_assert(failure(2) < ok2);
+  static_assert(err(1) < ok1);
+  static_assert(err(1) < ok2);
+  static_assert(err(2) < ok1);
+  static_assert(err(2) < ok2);
 
-  static_assert(err1 < success(1));
-  static_assert(err1 < success(2));
-  static_assert(err2 < success(1));
-  static_assert(err2 < success(2));
+  static_assert(err1 < ok(1));
+  static_assert(err1 < ok(2));
+  static_assert(err2 < ok(1));
+  static_assert(err2 < ok(2));
 
-  static_assert(failure(1) < success(1));
-  static_assert(failure(1) < success(2));
-  static_assert(failure(2) < success(1));
-  static_assert(failure(2) < success(2));
+  static_assert(err(1) < ok(1));
+  static_assert(err(1) < ok(2));
+  static_assert(err(2) < ok(1));
+  static_assert(err(2) < ok(2));
 
   static_assert(!(ok1 < err1));
   static_assert(!(ok1 < err2));
   static_assert(!(ok2 < err1));
   static_assert(!(ok2 < err2));
 
-  static_assert(!(success(1) < err1));
-  static_assert(!(success(1) < err2));
-  static_assert(!(success(2) < err1));
-  static_assert(!(success(2) < err2));
+  static_assert(!(ok(1) < err1));
+  static_assert(!(ok(1) < err2));
+  static_assert(!(ok(2) < err1));
+  static_assert(!(ok(2) < err2));
 
-  static_assert(!(ok1 < failure(1)));
-  static_assert(!(ok1 < failure(2)));
-  static_assert(!(ok2 < failure(1)));
-  static_assert(!(ok2 < failure(2)));
+  static_assert(!(ok1 < err(1)));
+  static_assert(!(ok1 < err(2)));
+  static_assert(!(ok2 < err(1)));
+  static_assert(!(ok2 < err(2)));
 
-  static_assert(!(success(1) < failure(1)));
-  static_assert(!(success(1) < failure(2)));
-  static_assert(!(success(2) < failure(1)));
-  static_assert(!(success(2) < failure(2)));
+  static_assert(!(ok(1) < err(1)));
+  static_assert(!(ok(1) < err(2)));
+  static_assert(!(ok(2) < err(1)));
+  static_assert(!(ok(2) < err(2)));
 
   static_assert(!(1 < err1));
   static_assert(!(1 < err2));
@@ -938,30 +924,30 @@ TEST_CASE("less compare", "[result][less]")
 
 TEST_CASE("less_or_equal compare", "[result][less_or_equal]")
 {
-  constexpr result<int, int> ok1 = success(1);
-  constexpr result<int, int> ok2 = success(2);
-  constexpr result<int, int> err1 = failure(1);
-  constexpr result<int, int> err2 = failure(2);
+  constexpr result<int, int> ok1 = ok(1);
+  constexpr result<int, int> ok2 = ok(2);
+  constexpr result<int, int> err1 = err(1);
+  constexpr result<int, int> err2 = err(2);
 
   static_assert(ok1 <= ok2);
   static_assert(!(ok2 <= ok1));
   static_assert(ok1 <= ok1);
   static_assert(ok2 <= ok2);
 
-  static_assert(success(1) <= ok2);
-  static_assert(!(success(2) <= ok1));
-  static_assert(success(1) <= ok1);
-  static_assert(success(2) <= ok2);
+  static_assert(ok(1) <= ok2);
+  static_assert(!(ok(2) <= ok1));
+  static_assert(ok(1) <= ok1);
+  static_assert(ok(2) <= ok2);
 
-  static_assert(ok1 <= success(2));
-  static_assert(!(ok2 <= success(1)));
-  static_assert(ok1 <= success(1));
-  static_assert(ok2 <= success(2));
+  static_assert(ok1 <= ok(2));
+  static_assert(!(ok2 <= ok(1)));
+  static_assert(ok1 <= ok(1));
+  static_assert(ok2 <= ok(2));
 
-  static_assert(success(1) <= success(2));
-  static_assert(!(success(2) <= success(1)));
-  static_assert(success(1) <= success(1));
-  static_assert(success(2) <= success(2));
+  static_assert(ok(1) <= ok(2));
+  static_assert(!(ok(2) <= ok(1)));
+  static_assert(ok(1) <= ok(1));
+  static_assert(ok(2) <= ok(2));
 
   static_assert(1 <= ok2);
   static_assert(!(2 <= ok1));
@@ -978,40 +964,40 @@ TEST_CASE("less_or_equal compare", "[result][less_or_equal]")
   static_assert(err1 <= err1);
   static_assert(err2 <= err2);
 
-  static_assert(failure(1) <= err2);
-  static_assert(!(failure(2) <= err1));
-  static_assert(failure(1) <= err1);
-  static_assert(failure(2) <= err2);
+  static_assert(err(1) <= err2);
+  static_assert(!(err(2) <= err1));
+  static_assert(err(1) <= err1);
+  static_assert(err(2) <= err2);
 
-  static_assert(err1 <= failure(2));
-  static_assert(!(err2 <= failure(1)));
-  static_assert(err1 <= failure(1));
-  static_assert(err2 <= failure(2));
+  static_assert(err1 <= err(2));
+  static_assert(!(err2 <= err(1)));
+  static_assert(err1 <= err(1));
+  static_assert(err2 <= err(2));
 
-  static_assert(failure(1) <= failure(2));
-  static_assert(!(failure(2) <= failure(1)));
-  static_assert(failure(1) <= failure(1));
-  static_assert(failure(2) <= failure(2));
+  static_assert(err(1) <= err(2));
+  static_assert(!(err(2) <= err(1)));
+  static_assert(err(1) <= err(1));
+  static_assert(err(2) <= err(2));
 
   static_assert(err1 <= ok1);
   static_assert(err1 <= ok2);
   static_assert(err2 <= ok1);
   static_assert(err2 <= ok2);
 
-  static_assert(failure(1) <= ok1);
-  static_assert(failure(1) <= ok2);
-  static_assert(failure(2) <= ok1);
-  static_assert(failure(2) <= ok2);
+  static_assert(err(1) <= ok1);
+  static_assert(err(1) <= ok2);
+  static_assert(err(2) <= ok1);
+  static_assert(err(2) <= ok2);
 
-  static_assert(err1 <= success(1));
-  static_assert(err1 <= success(2));
-  static_assert(err2 <= success(1));
-  static_assert(err2 <= success(2));
+  static_assert(err1 <= ok(1));
+  static_assert(err1 <= ok(2));
+  static_assert(err2 <= ok(1));
+  static_assert(err2 <= ok(2));
 
-  static_assert(failure(1) <= success(1));
-  static_assert(failure(1) <= success(2));
-  static_assert(failure(2) <= success(1));
-  static_assert(failure(2) <= success(2));
+  static_assert(err(1) <= ok(1));
+  static_assert(err(1) <= ok(2));
+  static_assert(err(2) <= ok(1));
+  static_assert(err(2) <= ok(2));
 
   static_assert(err1 <= 1);
   static_assert(err1 <= 2);
@@ -1023,20 +1009,20 @@ TEST_CASE("less_or_equal compare", "[result][less_or_equal]")
   static_assert(!(ok2 <= err1));
   static_assert(!(ok2 <= err2));
 
-  static_assert(!(success(1) <= err1));
-  static_assert(!(success(1) <= err2));
-  static_assert(!(success(2) <= err1));
-  static_assert(!(success(2) <= err2));
+  static_assert(!(ok(1) <= err1));
+  static_assert(!(ok(1) <= err2));
+  static_assert(!(ok(2) <= err1));
+  static_assert(!(ok(2) <= err2));
 
-  static_assert(!(ok1 <= failure(1)));
-  static_assert(!(ok1 <= failure(2)));
-  static_assert(!(ok2 <= failure(1)));
-  static_assert(!(ok2 <= failure(2)));
+  static_assert(!(ok1 <= err(1)));
+  static_assert(!(ok1 <= err(2)));
+  static_assert(!(ok2 <= err(1)));
+  static_assert(!(ok2 <= err(2)));
 
-  static_assert(!(success(1) <= failure(1)));
-  static_assert(!(success(1) <= failure(2)));
-  static_assert(!(success(2) <= failure(1)));
-  static_assert(!(success(2) <= failure(2)));
+  static_assert(!(ok(1) <= err(1)));
+  static_assert(!(ok(1) <= err(2)));
+  static_assert(!(ok(2) <= err(1)));
+  static_assert(!(ok(2) <= err(2)));
 
   static_assert(!(1 <= err1));
   static_assert(!(1 <= err2));
@@ -1046,30 +1032,30 @@ TEST_CASE("less_or_equal compare", "[result][less_or_equal]")
 
 TEST_CASE("greater compare", "[result][greater]")
 {
-  constexpr result<int, int> ok1 = success(1);
-  constexpr result<int, int> ok2 = success(2);
-  constexpr result<int, int> err1 = failure(1);
-  constexpr result<int, int> err2 = failure(2);
+  constexpr result<int, int> ok1 = ok(1);
+  constexpr result<int, int> ok2 = ok(2);
+  constexpr result<int, int> err1 = err(1);
+  constexpr result<int, int> err2 = err(2);
 
   static_assert(!(ok1 > ok2));
   static_assert(ok2 > ok1);
   static_assert(!(ok1 > ok1));
   static_assert(!(ok2 > ok2));
 
-  static_assert(!(success(1) > ok2));
-  static_assert(success(2) > ok1);
-  static_assert(!(success(1) > ok1));
-  static_assert(!(success(2) > ok2));
+  static_assert(!(ok(1) > ok2));
+  static_assert(ok(2) > ok1);
+  static_assert(!(ok(1) > ok1));
+  static_assert(!(ok(2) > ok2));
 
-  static_assert(!(ok1 > success(2)));
-  static_assert(ok2 > success(1));
-  static_assert(!(ok1 > success(1)));
-  static_assert(!(ok2 > success(2)));
+  static_assert(!(ok1 > ok(2)));
+  static_assert(ok2 > ok(1));
+  static_assert(!(ok1 > ok(1)));
+  static_assert(!(ok2 > ok(2)));
 
-  static_assert(!(success(1) > success(2)));
-  static_assert(success(2) > success(1));
-  static_assert(!(success(1) > success(1)));
-  static_assert(!(success(2) > success(2)));
+  static_assert(!(ok(1) > ok(2)));
+  static_assert(ok(2) > ok(1));
+  static_assert(!(ok(1) > ok(1)));
+  static_assert(!(ok(2) > ok(2)));
 
   static_assert(!(1 > ok2));
   static_assert(2 > ok1);
@@ -1086,40 +1072,40 @@ TEST_CASE("greater compare", "[result][greater]")
   static_assert(!(err1 > err1));
   static_assert(!(err2 > err2));
 
-  static_assert(!(failure(1) > err2));
-  static_assert(failure(2) > err1);
-  static_assert(!(failure(1) > err1));
-  static_assert(!(failure(2) > err2));
+  static_assert(!(err(1) > err2));
+  static_assert(err(2) > err1);
+  static_assert(!(err(1) > err1));
+  static_assert(!(err(2) > err2));
 
-  static_assert(!(err1 > failure(2)));
-  static_assert(err2 > failure(1));
-  static_assert(!(err1 > failure(1)));
-  static_assert(!(err2 > failure(2)));
+  static_assert(!(err1 > err(2)));
+  static_assert(err2 > err(1));
+  static_assert(!(err1 > err(1)));
+  static_assert(!(err2 > err(2)));
 
-  static_assert(!(failure(1) > failure(2)));
-  static_assert(failure(2) > failure(1));
-  static_assert(!(failure(1) > failure(1)));
-  static_assert(!(failure(2) > failure(2)));
+  static_assert(!(err(1) > err(2)));
+  static_assert(err(2) > err(1));
+  static_assert(!(err(1) > err(1)));
+  static_assert(!(err(2) > err(2)));
 
   static_assert(!(err1 > ok1));
   static_assert(!(err1 > ok2));
   static_assert(!(err2 > ok1));
   static_assert(!(err2 > ok2));
 
-  static_assert(!(failure(1) > ok1));
-  static_assert(!(failure(1) > ok2));
-  static_assert(!(failure(2) > ok1));
-  static_assert(!(failure(2) > ok2));
+  static_assert(!(err(1) > ok1));
+  static_assert(!(err(1) > ok2));
+  static_assert(!(err(2) > ok1));
+  static_assert(!(err(2) > ok2));
 
-  static_assert(!(err1 > success(1)));
-  static_assert(!(err1 > success(2)));
-  static_assert(!(err2 > success(1)));
-  static_assert(!(err2 > success(2)));
+  static_assert(!(err1 > ok(1)));
+  static_assert(!(err1 > ok(2)));
+  static_assert(!(err2 > ok(1)));
+  static_assert(!(err2 > ok(2)));
 
-  static_assert(!(failure(1) > success(1)));
-  static_assert(!(failure(1) > success(2)));
-  static_assert(!(failure(2) > success(1)));
-  static_assert(!(failure(2) > success(2)));
+  static_assert(!(err(1) > ok(1)));
+  static_assert(!(err(1) > ok(2)));
+  static_assert(!(err(2) > ok(1)));
+  static_assert(!(err(2) > ok(2)));
 
   static_assert(!(err1 > 1));
   static_assert(!(err1 > 2));
@@ -1131,20 +1117,20 @@ TEST_CASE("greater compare", "[result][greater]")
   static_assert(ok2 > err1);
   static_assert(ok2 > err2);
 
-  static_assert(success(1) > err1);
-  static_assert(success(1) > err2);
-  static_assert(success(2) > err1);
-  static_assert(success(2) > err2);
+  static_assert(ok(1) > err1);
+  static_assert(ok(1) > err2);
+  static_assert(ok(2) > err1);
+  static_assert(ok(2) > err2);
 
-  static_assert(ok1 > failure(1));
-  static_assert(ok1 > failure(2));
-  static_assert(ok2 > failure(1));
-  static_assert(ok2 > failure(2));
+  static_assert(ok1 > err(1));
+  static_assert(ok1 > err(2));
+  static_assert(ok2 > err(1));
+  static_assert(ok2 > err(2));
 
-  static_assert(success(1) > failure(1));
-  static_assert(success(1) > failure(2));
-  static_assert(success(2) > failure(1));
-  static_assert(success(2) > failure(2));
+  static_assert(ok(1) > err(1));
+  static_assert(ok(1) > err(2));
+  static_assert(ok(2) > err(1));
+  static_assert(ok(2) > err(2));
 
   static_assert(1 > err1);
   static_assert(1 > err2);
@@ -1154,30 +1140,30 @@ TEST_CASE("greater compare", "[result][greater]")
 
 TEST_CASE("greater_or_equal compare", "[result][greater_or_equal]")
 {
-  constexpr result<int, int> ok1 = success(1);
-  constexpr result<int, int> ok2 = success(2);
-  constexpr result<int, int> err1 = failure(1);
-  constexpr result<int, int> err2 = failure(2);
+  constexpr result<int, int> ok1 = ok(1);
+  constexpr result<int, int> ok2 = ok(2);
+  constexpr result<int, int> err1 = err(1);
+  constexpr result<int, int> err2 = err(2);
 
   static_assert(!(ok1 >= ok2));
   static_assert(ok2 >= ok1);
   static_assert(ok1 >= ok1);
   static_assert(ok2 >= ok2);
 
-  static_assert(!(success(1) >= ok2));
-  static_assert(success(2) >= ok1);
-  static_assert(success(1) >= ok1);
-  static_assert(success(2) >= ok2);
+  static_assert(!(ok(1) >= ok2));
+  static_assert(ok(2) >= ok1);
+  static_assert(ok(1) >= ok1);
+  static_assert(ok(2) >= ok2);
 
-  static_assert(!(ok1 >= success(2)));
-  static_assert(ok2 >= success(1));
-  static_assert(ok1 >= success(1));
-  static_assert(ok2 >= success(2));
+  static_assert(!(ok1 >= ok(2)));
+  static_assert(ok2 >= ok(1));
+  static_assert(ok1 >= ok(1));
+  static_assert(ok2 >= ok(2));
 
-  static_assert(!(success(1) >= success(2)));
-  static_assert(success(2) >= success(1));
-  static_assert(success(1) >= success(1));
-  static_assert(success(2) >= success(2));
+  static_assert(!(ok(1) >= ok(2)));
+  static_assert(ok(2) >= ok(1));
+  static_assert(ok(1) >= ok(1));
+  static_assert(ok(2) >= ok(2));
 
   static_assert(!(1 >= ok2));
   static_assert(2 >= ok1);
@@ -1194,40 +1180,40 @@ TEST_CASE("greater_or_equal compare", "[result][greater_or_equal]")
   static_assert(err1 >= err1);
   static_assert(err2 >= err2);
 
-  static_assert(!(failure(1) >= err2));
-  static_assert(failure(2) >= err1);
-  static_assert(failure(1) >= err1);
-  static_assert(failure(2) >= err2);
+  static_assert(!(err(1) >= err2));
+  static_assert(err(2) >= err1);
+  static_assert(err(1) >= err1);
+  static_assert(err(2) >= err2);
 
-  static_assert(!(err1 >= failure(2)));
-  static_assert(err2 >= failure(1));
-  static_assert(err1 >= failure(1));
-  static_assert(err2 >= failure(2));
+  static_assert(!(err1 >= err(2)));
+  static_assert(err2 >= err(1));
+  static_assert(err1 >= err(1));
+  static_assert(err2 >= err(2));
 
-  static_assert(!(failure(1) >= failure(2)));
-  static_assert(failure(2) >= failure(1));
-  static_assert(failure(1) >= failure(1));
-  static_assert(failure(2) >= failure(2));
+  static_assert(!(err(1) >= err(2)));
+  static_assert(err(2) >= err(1));
+  static_assert(err(1) >= err(1));
+  static_assert(err(2) >= err(2));
 
   static_assert(!(err1 >= ok1));
   static_assert(!(err1 >= ok2));
   static_assert(!(err2 >= ok1));
   static_assert(!(err2 >= ok2));
 
-  static_assert(!(failure(1) >= ok1));
-  static_assert(!(failure(1) >= ok2));
-  static_assert(!(failure(2) >= ok1));
-  static_assert(!(failure(2) >= ok2));
+  static_assert(!(err(1) >= ok1));
+  static_assert(!(err(1) >= ok2));
+  static_assert(!(err(2) >= ok1));
+  static_assert(!(err(2) >= ok2));
 
-  static_assert(!(err1 >= success(1)));
-  static_assert(!(err1 >= success(2)));
-  static_assert(!(err2 >= success(1)));
-  static_assert(!(err2 >= success(2)));
+  static_assert(!(err1 >= ok(1)));
+  static_assert(!(err1 >= ok(2)));
+  static_assert(!(err2 >= ok(1)));
+  static_assert(!(err2 >= ok(2)));
 
-  static_assert(!(failure(1) >= success(1)));
-  static_assert(!(failure(1) >= success(2)));
-  static_assert(!(failure(2) >= success(1)));
-  static_assert(!(failure(2) >= success(2)));
+  static_assert(!(err(1) >= ok(1)));
+  static_assert(!(err(1) >= ok(2)));
+  static_assert(!(err(2) >= ok(1)));
+  static_assert(!(err(2) >= ok(2)));
 
   static_assert(!(err1 >= 1));
   static_assert(!(err1 >= 2));
@@ -1239,20 +1225,20 @@ TEST_CASE("greater_or_equal compare", "[result][greater_or_equal]")
   static_assert(ok2 >= err1);
   static_assert(ok2 >= err2);
 
-  static_assert(success(1) >= err1);
-  static_assert(success(1) >= err2);
-  static_assert(success(2) >= err1);
-  static_assert(success(2) >= err2);
+  static_assert(ok(1) >= err1);
+  static_assert(ok(1) >= err2);
+  static_assert(ok(2) >= err1);
+  static_assert(ok(2) >= err2);
 
-  static_assert(ok1 >= failure(1));
-  static_assert(ok1 >= failure(2));
-  static_assert(ok2 >= failure(1));
-  static_assert(ok2 >= failure(2));
+  static_assert(ok1 >= err(1));
+  static_assert(ok1 >= err(2));
+  static_assert(ok2 >= err(1));
+  static_assert(ok2 >= err(2));
 
-  static_assert(success(1) >= failure(1));
-  static_assert(success(1) >= failure(2));
-  static_assert(success(2) >= failure(1));
-  static_assert(success(2) >= failure(2));
+  static_assert(ok(1) >= err(1));
+  static_assert(ok(1) >= err(2));
+  static_assert(ok(2) >= err(1));
+  static_assert(ok(2) >= err(2));
 
   static_assert(1 >= err1);
   static_assert(1 >= err2);
@@ -1265,57 +1251,57 @@ TEST_CASE("greater_or_equal compare", "[result][greater_or_equal]")
 TEST_CASE("as_ok test", "[result][as_ok][boolinators]")
 {
   constexpr basic_result x = as_ok(true, 1);
-  static_assert(x == success(1));
+  static_assert(x == ok(1));
   constexpr basic_result y = as_ok(false, 1);
-  static_assert(y == failure());
+  static_assert(y == err());
 }
 
 TEST_CASE("as_result test", "[result][as_result][boolinators]")
 {
   constexpr basic_result x = as_result(true, 1, "err"sv);
-  static_assert(x == success(1));
+  static_assert(x == ok(1));
   constexpr basic_result y = as_result(false, 1, "err"sv);
-  static_assert(y == failure("err"));
+  static_assert(y == err("err"));
 }
 
 TEST_CASE("as_result_from test", "[result][as_result_from][boolinators]")
 {
   constexpr basic_result x =
       as_result_from(true, [] { return 1; }, [] { return "err"sv; });
-  static_assert(x == success(1));
+  static_assert(x == ok(1));
   constexpr basic_result y =
       as_result_from(false, [] { return 1; }, [] { return "err"sv; });
-  static_assert(y == failure("err"));
+  static_assert(y == err("err"));
 }
 
 TEST_CASE("ok_or test", "[result][ok_or][boolinators]")
 {
   constexpr basic_result x = ok_or(true, "err"sv);
-  static_assert(x == success(std::monostate{}));
+  static_assert(x == ok(std::monostate{}));
   constexpr basic_result y = ok_or(false, "err"sv);
-  static_assert(y == failure("err"sv));
+  static_assert(y == err("err"sv));
 }
 
 TEST_CASE("ok_or_else test", "[result][ok_or_else][boolinators]")
 {
   constexpr basic_result x = ok_or_else(true, [] { return "err"sv; });
-  static_assert(x == success(std::monostate{}));
+  static_assert(x == ok(std::monostate{}));
   constexpr basic_result y = ok_or_else(false, [] { return "err"sv; });
-  static_assert(y == failure("err"sv));
+  static_assert(y == err("err"sv));
 }
 
 TEST_CASE("result with void", "[result][void]")
 {
-  constexpr result<void, str_ref> ok1 = success();
+  constexpr result<void, str_ref> ok1 = ok();
   static_assert(ok1.is_ok() == true);
 
-  constexpr result<void, void> ok2 = success(std::monostate{});
+  constexpr result<void, void> ok2 = ok(std::monostate{});
   static_assert(ok2.is_ok() == true);
 
-  constexpr result<u32, void> err1 = failure(std::monostate{});
+  constexpr result<u32, void> err1 = err(std::monostate{});
   static_assert(err1.is_ok() == false);
 
-  constexpr result<void, void> err2 = failure();
+  constexpr result<void, void> err2 = err();
   static_assert(err2.is_ok() == false);
 }
 
@@ -1324,7 +1310,7 @@ TEST_CASE("map(F(u32) -> void)", "[result][map][u32][void]")
   u32 val = 3;
   auto lambda = [&](u32 y) { val += y; };
 
-  result<u32, str> x = success(1);
+  result<u32, str> x = ok(1);
   result<void, str> y = x.map(lambda);
 
   REQUIRE(y.is_ok() == true);
@@ -1337,7 +1323,7 @@ TEST_CASE("map(F(void) -> u32)", "[result][map][void][u32]")
   u32 val = 3;
   auto lambda = [&]() -> u32 { return val + 1; };
 
-  result<void, str> x = success();
+  result<void, str> x = ok();
   result<u32, str> y = x.map(lambda);
 
   REQUIRE(y.is_ok() == true);
@@ -1350,7 +1336,7 @@ TEST_CASE("map(F(void) -> void)", "[result][map][void][void]")
   u32 val = 3;
   auto lambda = [&] { val += 1; };
 
-  result<void, str> x = success();
+  result<void, str> x = ok();
   result<void, str> y = x.map(lambda);
 
   REQUIRE(y.is_ok() == true);
@@ -1363,7 +1349,7 @@ TEST_CASE("map_err(F(u32) -> void)", "[result][map_err][u32][void]")
   u32 val = 3;
   auto lambda = [&](u32 y) { val += y; };
 
-  result<str, u32> x = failure(1);
+  result<str, u32> x = err(1);
   result<str, void> y = x.map_err(lambda);
 
   REQUIRE(y.is_ok() == false);
@@ -1376,7 +1362,7 @@ TEST_CASE("map_err(F(void) -> u32)", "[result][map_err][void][u32]")
   u32 val = 3;
   auto lambda = [&]() -> u32 { return val += 1; };
 
-  result<str, void> x = failure();
+  result<str, void> x = err();
   result<str, u32> y = x.map_err(lambda);
 
   REQUIRE(y.is_ok() == false);
@@ -1389,7 +1375,7 @@ TEST_CASE("map_err(F(void) -> void)", "[result][map_err][void][void]")
   u32 val = 3;
   auto lambda = [&] { val += 1; };
 
-  result<str, void> x = failure();
+  result<str, void> x = err();
   result<str, void> y = x.map_err(lambda);
 
   REQUIRE(y.is_ok() == false);
@@ -1403,7 +1389,7 @@ TEST_CASE("map & map_err with void", "[result][map][map_err][void]")
   auto add_one_val = [&] { val += 1; };
   auto add_one_arg = [&]([[maybe_unused]] u32 e) { e += 1; };
 
-  result<void, u32> x = success();
+  result<void, u32> x = ok();
   result<void, void> y = x.map(add_one_val) // 4
                              .map(add_one_val) // 5
                              .map(add_one_val) // 6
@@ -1420,13 +1406,13 @@ TEST_CASE("MITAMA_TRY", "[result][mitama_try]")
 {
   auto func = []() -> result<u32, str_ref>
   {
-    result<u32, str_ref> a = success(1);
+    result<u32, str_ref> a = ok(1);
     u32 b = 2, c = 3;
     u32 d = MITAMA_TRY(
         [&a, &b, &c]() -> ::result<u32, str_ref>
         { return a.map([&b, &c](u32 x) -> u32 { return x + b + c; }); }()
     );
-    return success(d);
+    return ok(d);
   };
 
   constexpr result<u32, str_ref> x = func();
@@ -1443,7 +1429,7 @@ TEST_CASE("MITAMA_TRY2", "[result][mitama_try]")
                                                        new auto(42u) };
 
     auto&& ret = MITAMA_TRY(std::move(res));
-    return mitama::failure();
+    return mitama::err();
   }
   ();
 }
