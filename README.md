@@ -9,11 +9,40 @@ and [Option](https://doc.rust-lang.org/std/option/enum.Option.html) in Programmi
 ## Test Status
 [![Full Test](https://github.com/LoliGothick/mitama-cpp-result/actions/workflows/full-test.yml/badge.svg)](https://github.com/LoliGothick/mitama-cpp-result/actions/workflows/full-test.yml)
 
-## References
+## Installation
 
-[the User Reference](https://loligothick.github.io/mitama-cpp-result/).
+Read [Installation](https://loligothick.github.io/mitama-cpp-result/#installation) in [the User Reference](https://loligothick.github.io/mitama-cpp-result/).
 
-If you need information on the nightly only API, please build the latest documentation in develop branch.
+## Contributing
+
+### Development
+
+```shell
+$ cmake -B build -DBUILD_TESTING=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+$ make -C build -j $(nproc)
+$ ln -s $PWD/build/compile_commands.json $PWD
+```
+
+### Run tests
+
+```shell
+$ cmake -B build -DBUILD_TESTING=ON
+$ make -C build -j $(nproc)
+$ cd build
+$ ctest --output-on-failure
+```
+
+### Run linter
+
+```shell
+$ cabin lint --exclude Catch2
+```
+
+### Run formatter
+
+```shell
+$ cabin fmt --exclude Catch2
+```
 
 ### Build the latest document (requires [poetry](https://python-poetry.org/))
 
@@ -22,23 +51,3 @@ mitama-cpp-result> $ cd docs
 mitama-cpp-result/docs> $ poetry install --no-root
 mitama-cpp-result/docs> $ poetry run mkdocs serve
 ```
-
-## Dependencies
-
-* fmt: 9.0.0 or higher
-
-## Supported OS / Compiler / Language Standard
-
-- OS
-    - Linux
-    - Apple Darwin
-    - (Windows)
-
-- Compilers
-    - gcc >= 11
-    - clang >= 15
-    - Latest preview version of MSVC only
-
-- Language Standards
-    - C++20
-    - (MSVC: only support `/std:c++latest`)

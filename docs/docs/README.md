@@ -1,32 +1,34 @@
 # Introduction
 
-`Mitama.Result` is a header only C++17 library for error handling.
+`Mitama.Result` is a header only C++20 library for error handling.
 
 
-## Prerequisites and installation
+## Installation
 
-### Prerequisites
 
-| Compiler/Toolchain |                       Status                       |
-| :----------------: | :------------------------------------------------: |
-|   clang >= 7.0.0   | Testing on CircleCI; tested on each push to GitHub |
-|    gcc >= 8.3.0    | Testing on CircleCI; tested on each push to GitHub |
+### Dependencies
 
-More specifically, `Mitama.Result` requires a compiler/standard library supporting the following C++17 features:
+* fmt: 9.0.0 or higher
 
-- constexpr if
-- constexpr lambda
-- inline variables
-- fold expressions
-- class template deduction and deduction guide
-- All the C++17 type traits from the `<type_traits>` header
-- `std::{invoke, apply}` from the `<functional>` header
-- `std::string_view` from the `<string_view>` header
-- `std::monostate` from the `<variant>` header
 
-### Installation
+### Supported OS / Compiler / Language Standard
 
-#### CMake
+- OS
+    - Linux
+    - Apple Darwin
+    - (Windows)
+
+- Compilers
+    - gcc >= 11
+    - clang >= 15
+    - Latest preview version of MSVC only
+
+- Language Standards
+    - C++20
+    - (MSVC: only support `/std:c++latest`)
+
+
+### CMake
 
 - First, clone mitama-cpp-result repository.
 
@@ -43,7 +45,7 @@ $ make install
 ```
 
 
-#### Manually
+### Manually
 
 - First, clone mitama-cpp-result repository.
 
