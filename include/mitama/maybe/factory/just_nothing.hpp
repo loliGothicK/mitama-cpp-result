@@ -189,14 +189,14 @@ public:
     requires meta::is_comparable_with<T, U>::value
   friend constexpr bool operator==(const maybe<U>& lhs, const just_t& rhs)
   {
-    return lhs && (lhs.unwrap() == rhs.get());
+    return lhs.is_just() && (lhs.unwrap() == rhs.get());
   }
 
   template <class U>
     requires meta::is_comparable_with<T, U>::value
   friend constexpr bool operator==(const just_t& lhs, const maybe<U>& rhs)
   {
-    return rhs && (lhs.get() == rhs.unwrap());
+    return rhs.is_just() && (lhs.get() == rhs.unwrap());
   }
 
   friend constexpr bool operator!=(const nothing_t, const just_t&)
@@ -251,14 +251,14 @@ public:
     requires meta::is_less_comparable_with<T, U>::value
   friend constexpr bool operator<(const just_t& lhs, const maybe<U>& rhs)
   {
-    return rhs ? lhs.get() < rhs.unwrap() : false;
+    return rhs.is_just() ? lhs.get() < rhs.unwrap() : false;
   }
 
   template <class U>
     requires meta::is_less_comparable_with<T, U>::value
   friend constexpr bool operator<(const maybe<U>& lhs, const just_t& rhs)
   {
-    return lhs ? lhs.unwrap() < rhs.get() : true;
+    return lhs.is_just() ? lhs.unwrap() < rhs.get() : true;
   }
 
   friend constexpr bool operator<=(const nothing_t, const just_t&)
@@ -284,7 +284,8 @@ public:
              && meta::is_comparable_with<T, U>::value
   friend constexpr bool operator<=(const just_t& lhs, const maybe<U>& rhs)
   {
-    return rhs ? (lhs.get() < rhs.unwrap() || lhs.get() == rhs.unwrap())
+    return rhs.is_just()
+               ? (lhs.get() < rhs.unwrap() || lhs.get() == rhs.unwrap())
                : false;
   }
 
@@ -293,7 +294,9 @@ public:
              && meta::is_comparable_with<T, U>::value
   friend constexpr bool operator<=(const maybe<U>& lhs, const just_t& rhs)
   {
-    return lhs ? (lhs.unwrap() < rhs.get() || lhs.unwrap() == rhs.get()) : true;
+    return lhs.is_just()
+               ? (lhs.unwrap() < rhs.get() || lhs.unwrap() == rhs.get())
+               : true;
   }
 
   friend constexpr bool operator>(const nothing_t, const just_t&)
@@ -429,14 +432,14 @@ public:
     requires meta::is_comparable_with<T, U>::value
   friend constexpr bool operator==(const maybe<U>& lhs, const just_t& rhs)
   {
-    return lhs && (lhs.unwrap() == rhs.get());
+    return lhs.is_just() && (lhs.unwrap() == rhs.get());
   }
 
   template <class U>
     requires meta::is_comparable_with<T, U>::value
   friend constexpr bool operator==(const just_t& lhs, const maybe<U>& rhs)
   {
-    return rhs && (lhs.get() == rhs.unwrap());
+    return rhs.is_just() && (lhs.get() == rhs.unwrap());
   }
 
   friend constexpr bool operator!=(const nothing_t, const just_t&)
@@ -491,14 +494,14 @@ public:
     requires meta::is_less_comparable_with<T, U>::value
   friend constexpr bool operator<(const just_t& lhs, const maybe<U>& rhs)
   {
-    return rhs ? lhs.get() < rhs.unwrap() : false;
+    return rhs.is_just() ? lhs.get() < rhs.unwrap() : false;
   }
 
   template <class U>
     requires meta::is_less_comparable_with<T, U>::value
   friend constexpr bool operator<(const maybe<U>& lhs, const just_t& rhs)
   {
-    return lhs ? lhs.unwrap() < rhs.get() : true;
+    return lhs.is_just() ? lhs.unwrap() < rhs.get() : true;
   }
 
   friend constexpr bool operator<=(const nothing_t, const just_t&)
@@ -524,7 +527,8 @@ public:
              && meta::is_comparable_with<T, U>::value
   friend constexpr bool operator<=(const just_t& lhs, const maybe<U>& rhs)
   {
-    return rhs ? (lhs.get() < rhs.unwrap() || lhs.get() == rhs.unwrap())
+    return rhs.is_just()
+               ? (lhs.get() < rhs.unwrap() || lhs.get() == rhs.unwrap())
                : false;
   }
 
@@ -533,7 +537,9 @@ public:
              && meta::is_comparable_with<T, U>::value
   friend constexpr bool operator<=(const maybe<U>& lhs, const just_t& rhs)
   {
-    return lhs ? (lhs.unwrap() < rhs.get() || lhs.unwrap() == rhs.get()) : true;
+    return lhs.is_just()
+               ? (lhs.unwrap() < rhs.get() || lhs.unwrap() == rhs.get())
+               : true;
   }
 
   friend constexpr bool operator>(const nothing_t, const just_t&)

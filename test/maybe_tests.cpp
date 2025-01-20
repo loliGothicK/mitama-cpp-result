@@ -26,11 +26,21 @@ TEST_CASE("is_just()", "[maybe][is_just]")
 
 TEST_CASE("is_nothing()", "[maybe][is_nothing]")
 {
-  maybe<int> x = just(2);
-  REQUIRE_FALSE(x.is_nothing());
+  {
+    maybe<int> x = just(2);
+    REQUIRE_FALSE(x.is_nothing());
 
-  maybe<int> y = nothing;
-  REQUIRE(y.is_nothing());
+    maybe<int> y = nothing;
+    REQUIRE(y.is_nothing());
+  }
+  {
+    maybe<bool> x = nothing;
+    REQUIRE(x.is_nothing());
+
+    // Issue #412
+    maybe<bool> y(x);
+    REQUIRE(y.is_nothing());
+  }
 }
 
 TEST_CASE("unwrap()", "[maybe][unwrap]")
