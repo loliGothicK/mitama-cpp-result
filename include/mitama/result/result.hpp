@@ -13,6 +13,7 @@
 #include <fmt/std.h>
 #include <functional>
 #include <memory>
+#include <source_location>
 #include <string_view>
 #include <tuple>
 #include <type_traits>
@@ -1359,7 +1360,9 @@ public:
   /// @panics
   ///   Panics if the value is an failure, with a panic message provided by the
   ///   failure's value.
-  constexpr force_add_const_t<T>& unwrap() const&
+  constexpr force_add_const_t<T>& unwrap(
+      const std::source_location& loc = std::source_location::current()
+  ) const&
   {
     if constexpr (fmt::is_formattable<E>::value)
     {
@@ -1371,7 +1374,7 @@ public:
       {
         PANIC(
             "called `basic_result::unwrap()` on a value: `{}`",
-            std::get<failure_t<E>>(storage_)
+            std::get<failure_t<E>>(storage_), loc
         );
       }
     }
@@ -1383,7 +1386,7 @@ public:
       }
       else
       {
-        PANIC("called `basic_result::unwrap()` on a value `failure(?)`");
+        PANIC("called `basic_result::unwrap()` on a value `failure(?)`", loc);
       }
     }
   }
@@ -1395,7 +1398,7 @@ public:
   ///   Panics if the value is an failure, with a panic message provided by the
   ///   failure's value.
   constexpr std::conditional_t<is_mut_v<_mutability>, T&, force_add_const_t<T>&>
-  unwrap() &
+  unwrap(const std::source_location& loc = std::source_location::current()) &
   {
     if constexpr (fmt::is_formattable<E>::value)
     {
@@ -1407,7 +1410,7 @@ public:
       {
         PANIC(
             "called `basic_result::unwrap()` on a value: `{}`",
-            std::get<failure_t<E>>(storage_)
+            std::get<failure_t<E>>(storage_), loc
         );
       }
     }
@@ -1419,7 +1422,7 @@ public:
       }
       else
       {
-        PANIC("called `basic_result::unwrap()` on a value `failure_t(?)`");
+        PANIC("called `basic_result::unwrap()` on a value `failure_t(?)`", loc);
       }
     }
   }
@@ -1430,7 +1433,9 @@ public:
   /// @panics
   ///   Panics if the value is an success, with a panic message provided by the
   ///   success's value.
-  constexpr force_add_const_t<E>& unwrap_err() const&
+  constexpr force_add_const_t<E>& unwrap_err(
+      const std::source_location& loc = std::source_location::current()
+  ) const&
   {
     if constexpr (fmt::is_formattable<T>::value)
     {
@@ -1442,7 +1447,7 @@ public:
       {
         PANIC(
             "called `basic_result::unwrap_err()` on a value: `{}`",
-            std::get<success_t<T>>(storage_)
+            std::get<success_t<T>>(storage_), loc
         );
       }
     }
@@ -1454,7 +1459,9 @@ public:
       }
       else
       {
-        PANIC("called `basic_result::unwrap_err()` on a value `success_t(?)`");
+        PANIC(
+            "called `basic_result::unwrap_err()` on a value `success_t(?)`", loc
+        );
       }
     }
   }
@@ -1466,7 +1473,9 @@ public:
   ///   Panics if the value is an success, with a panic message provided by the
   ///   success's value.
   constexpr std::conditional_t<is_mut_v<_mutability>, E&, force_add_const_t<E>&>
-  unwrap_err() &
+  unwrap_err(
+      const std::source_location& loc = std::source_location::current()
+  ) &
   {
     if constexpr (fmt::is_formattable<T>::value)
     {
@@ -1478,7 +1487,7 @@ public:
       {
         PANIC(
             "called `basic_result::unwrap_err()` on a value: `{}`",
-            std::get<success_t<T>>(storage_)
+            std::get<success_t<T>>(storage_), loc
         );
       }
     }
@@ -1490,7 +1499,10 @@ public:
       }
       else
       {
-        PANIC("called `basic_result::unwrap_err()` on a value `success_t(?)`)");
+        PANIC(
+            "called `basic_result::unwrap_err()` on a value `success_t(?)`)",
+            loc
+        );
       }
     }
   }
@@ -1501,11 +1513,14 @@ public:
   /// @panics
   ///   Panics if the value is an failure, with a panic message including the
   ///   passed message, and the content of the failure.
-  constexpr force_add_const_t<T>& expect(std::string_view msg) const&
+  constexpr force_add_const_t<T>& expect(
+      std::string_view msg,
+      const std::source_location& loc = std::source_location::current()
+  ) const&
   {
     if (is_err())
     {
-      PANIC("{}: {}", msg, unwrap_err());
+      PANIC("{}: {}", msg, unwrap_err(), loc);
     }
     else
     {
@@ -1519,11 +1534,14 @@ public:
   /// @panics
   ///   Panics if the value is an failure, with a panic message including the
   ///   passed message, and the content of the failure.
-  constexpr decltype(auto) expect(std::string_view msg) &
+  constexpr decltype(auto) expect(
+      std::string_view msg,
+      const std::source_location& loc = std::source_location::current()
+  ) &
   {
     if (is_err())
     {
-      PANIC("{}: {}", msg, unwrap_err());
+      PANIC("{}: {}", msg, unwrap_err(), loc);
     }
     else
     {
@@ -1537,11 +1555,14 @@ public:
   /// @panics
   ///   Panics if the value is an success, with a panic message including the
   ///   passed message, and the content of the success.
-  constexpr force_add_const_t<E>& expect_err(std::string_view msg) const&
+  constexpr force_add_const_t<E>& expect_err(
+      std::string_view msg,
+      const std::source_location& loc = std::source_location::current()
+  ) const&
   {
     if (is_ok())
     {
-      PANIC("{}: {}", msg, unwrap_err());
+      PANIC("{}: {}", msg, unwrap_err(), loc);
     }
     else
     {
@@ -1555,11 +1576,14 @@ public:
   /// @panics
   ///   Panics if the value is an success, with a panic message including the
   ///   passed message, and the content of the success.
-  constexpr decltype(auto) expect_err(std::string_view msg) &
+  constexpr decltype(auto) expect_err(
+      std::string_view msg,
+      const std::source_location& loc = std::source_location::current()
+  ) &
   {
     if (is_ok())
     {
-      PANIC("{}: {}", msg, unwrap_err());
+      PANIC("{}: {}", msg, unwrap_err(), loc);
     }
     else
     {
