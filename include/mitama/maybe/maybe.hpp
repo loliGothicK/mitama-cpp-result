@@ -11,6 +11,7 @@
 
 #include <cassert>
 #include <functional>
+#include <source_location>
 #include <string_view>
 #include <tuple>
 #include <type_traits>
@@ -350,24 +351,28 @@ public:
     return !is_just();
   }
 
-  constexpr value_type& unwrap() &
+  constexpr value_type&
+  unwrap(const std::source_location& loc = std::source_location::current()) &
   {
     if (is_nothing())
-      PANIC("called `maybe::unwrap()` on a `nothing` value");
+      PANIC("called `maybe::unwrap()` on a `nothing` value", loc);
     return std::get<just_t<T>>(storage_).get();
   }
 
-  constexpr std::add_const_t<std::remove_reference_t<T>>& unwrap() const&
+  constexpr std::add_const_t<std::remove_reference_t<T>>& unwrap(
+      const std::source_location& loc = std::source_location::current()
+  ) const&
   {
     if (is_nothing())
-      PANIC("called `maybe::unwrap()` on a `nothing` value");
+      PANIC("called `maybe::unwrap()` on a `nothing` value", loc);
     return std::get<just_t<T>>(storage_).get();
   }
 
-  constexpr value_type unwrap() &&
+  constexpr value_type
+  unwrap(const std::source_location& loc = std::source_location::current()) &&
   {
     if (is_nothing())
-      PANIC("called `maybe::unwrap()` on a `nothing` value");
+      PANIC("called `maybe::unwrap()` on a `nothing` value", loc);
     return std::move(std::get<just_t<T>>(storage_).get());
   }
 
@@ -598,7 +603,10 @@ public:
                      : std::invoke(std::forward<D>(def));
   }
 
-  constexpr value_type& expect(std::string_view msg) &
+  constexpr value_type& expect(
+      std::string_view msg,
+      const std::source_location& loc = std::source_location::current()
+  ) &
   {
     if (is_just())
     {
@@ -606,11 +614,14 @@ public:
     }
     else
     {
-      PANIC("{}", msg);
+      PANIC("{}", msg, loc);
     }
   }
 
-  constexpr const value_type& expect(std::string_view msg) const&
+  constexpr const value_type& expect(
+      std::string_view msg,
+      const std::source_location& loc = std::source_location::current()
+  ) const&
   {
     if (is_just())
     {
@@ -618,11 +629,14 @@ public:
     }
     else
     {
-      PANIC("{}", msg);
+      PANIC("{}", msg, loc);
     }
   }
 
-  constexpr value_type&& expect(std::string_view msg) &&
+  constexpr value_type&& expect(
+      std::string_view msg,
+      const std::source_location& loc = std::source_location::current()
+  ) &&
   {
     if (is_just())
     {
@@ -630,7 +644,7 @@ public:
     }
     else
     {
-      PANIC("{}", msg);
+      PANIC("{}", msg, loc);
     }
   }
 
