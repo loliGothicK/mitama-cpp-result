@@ -21,7 +21,7 @@ struct data_store_error : mitama::thiserror::derive_error {
 ```
 
 The first template argument of `mitama::thiserror::error` is embedded with a format string.
-The format string should be a string compliant with [**{fmt}**](https://github.com/fmtlib/fmt), check the documentation if you need it.
+The format string follows the `std::format` grammar.
 The second template argument onwards is a list of formattable arguments.
 
 `mitama::thiserror::error` inherits from `anyhow::error`, so it can be used together with anyhow.

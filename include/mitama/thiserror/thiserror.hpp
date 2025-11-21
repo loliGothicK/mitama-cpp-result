@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <iostream>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <string_view>
 #include <tuple>
@@ -81,7 +82,7 @@ public:
     return os << std::apply(
                [&](auto&&... src)
                {
-                 return fmt::format(fmt, std::forward<decltype(src)>(src)...);
+                 return std::format(fmt, std::forward<decltype(src)>(src)...);
                },
                err.sources
            );
@@ -97,38 +98,21 @@ protected:
 } // namespace mitama::thiserror
 
 template <mitama::thiserror::fixed_string Fmt, class... Sources>
-struct fmt::formatter<mitama::thiserror::error<Fmt, Sources...>>
+struct std::formatter<mitama::thiserror::error<Fmt, Sources...>, char>
+    : std::formatter<std::string, char>
 {
   using type = mitama::thiserror::error<Fmt, Sources...>;
-
-  constexpr auto parse(format_parse_context& ctx)
-  {
-    auto it = ctx.begin(), end = ctx.end();
-    // Check if reached the end of the range:
-    if (it != end && *it != '}')
-    {
-      throw format_error(
-          fmt::format(
-              "invalid format for thiserror: (expected {{}}, found {{:{})",
-              std::string_view{
-                  it, static_cast<std::size_t>(std::distance(it, end)) }
-          )
-      );
-    }
-
-    // Return an iterator past the end of the parsed range:
-    return it;
-  }
 
   template <typename FormatContext>
   auto format(
       const mitama::thiserror::error<Fmt, Sources...>& err, FormatContext& ctx
   )
   {
-    return std::apply(
-        [&ctx](const auto&... sources)
-        { return format_to(ctx.out(), type::fmt, sources...); }, err.sources
+    auto rendered = std::apply(
+        [](const auto&... sources)
+        { return std::format(type::fmt, sources...); }, err.sources
     );
+    return std::formatter<std::string, char>::format(rendered, ctx);
   }
 };
 

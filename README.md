@@ -1,6 +1,6 @@
 # mitama-cpp-result
 
-**mitama-cpp-result** is the C++20 libraries for error handling without exceptions.
+**mitama-cpp-result** is the C++23 libraries for error handling without exceptions.
 
 **mitama-cpp-result** provides `result<T, E>`, `maybe<T>`, and associated monadic functions
 (like [Result](https://doc.rust-lang.org/std/result/enum.Result.html)

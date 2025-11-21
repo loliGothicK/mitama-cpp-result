@@ -12,6 +12,7 @@
 #include <cassert>
 #include <functional>
 #include <source_location>
+#include <string>
 #include <string_view>
 #include <tuple>
 #include <type_traits>
@@ -355,7 +356,7 @@ public:
   unwrap(const std::source_location& loc = std::source_location::current()) &
   {
     if (is_nothing())
-      PANIC("called `maybe::unwrap()` on a `nothing` value", loc);
+      PANIC(loc, "called `maybe::unwrap()` on a `nothing` value");
     return std::get<just_t<T>>(storage_).get();
   }
 
@@ -364,7 +365,7 @@ public:
   ) const&
   {
     if (is_nothing())
-      PANIC("called `maybe::unwrap()` on a `nothing` value", loc);
+      PANIC(loc, "called `maybe::unwrap()` on a `nothing` value");
     return std::get<just_t<T>>(storage_).get();
   }
 
@@ -372,7 +373,7 @@ public:
   unwrap(const std::source_location& loc = std::source_location::current()) &&
   {
     if (is_nothing())
-      PANIC("called `maybe::unwrap()` on a `nothing` value", loc);
+      PANIC(loc, "called `maybe::unwrap()` on a `nothing` value");
     return std::move(std::get<just_t<T>>(storage_).get());
   }
 
@@ -620,7 +621,7 @@ public:
     }
     else
     {
-      PANIC("{}", msg, loc);
+      PANIC(loc, "{}", msg);
     }
   }
 
@@ -635,7 +636,7 @@ public:
     }
     else
     {
-      PANIC("{}", msg, loc);
+      PANIC(loc, "{}", msg);
     }
   }
 
@@ -650,7 +651,7 @@ public:
     }
     else
     {
-      PANIC("{}", msg, loc);
+      PANIC(loc, "{}", msg);
     }
   }
 
@@ -1205,13 +1206,22 @@ template <class T>
 std::ostream&
 operator<<(std::ostream& os, const maybe<T>& may)
 {
-  return may.is_just() ? os << fmt::format("just({})", quote_str(may.unwrap()))
+  return may.is_just() ? os << std::format("just({})", quote_str(may.unwrap()))
                        : os << "nothing";
 }
 
 } // namespace mitama
 
 template <class T>
-struct fmt::formatter<mitama::maybe<T>> : ostream_formatter
+struct std::formatter<mitama::maybe<T>, char>
+    : std::formatter<std::string, char>
 {
+  template <class FormatContext>
+  auto format(const mitama::maybe<T>& value, FormatContext& ctx) const
+  {
+    auto rendered = value.is_just()
+                        ? std::format("just({})", quote_str(value.unwrap()))
+                        : std::string{ "nothing" };
+    return std::formatter<std::string, char>::format(rendered, ctx);
+  }
 };

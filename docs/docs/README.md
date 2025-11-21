@@ -1,6 +1,6 @@
 # Introduction
 
-`Mitama.Result` is a header only C++20 library for error handling.
+`Mitama.Result` is a header only C++23 library for error handling.
 
 
 ## Installation
@@ -8,7 +8,7 @@
 
 ### Dependencies
 
-* fmt: 9.0.0 or higher
+* No external dependencies
 
 
 ### Supported OS / Compiler / Language Standard
@@ -24,7 +24,7 @@
     - Latest preview version of MSVC only
 
 - Language Standards
-    - C++20
+    - C++23
     - (MSVC: only support `/std:c++latest`)
 
 

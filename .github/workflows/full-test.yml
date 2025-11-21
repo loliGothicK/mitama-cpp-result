@@ -14,35 +14,15 @@ jobs:
         compiler:
           - cc: clang
             cxx: clang++
-            ver: 15
-            os: ubuntu-22.04
-          - cc: clang
-            cxx: clang++
-            ver: 16
-            os: ubuntu-22.04
-          - cc: clang
-            cxx: clang++
-            ver: 17
-            os: ubuntu-24.04
-          - cc: clang
-            cxx: clang++
-            ver: 18
-            os: ubuntu-24.04
-          - cc: clang
-            cxx: clang++
             ver: 19
             os: ubuntu-24.04
-          - cc: gcc
-            cxx: g++
-            ver: 11
-            os: ubuntu-22.04
-          - cc: gcc
-            cxx: g++
-            ver: 12
+          - cc: clang
+            cxx: clang++
+            ver: 20
             os: ubuntu-24.04
-          - cc: gcc
-            cxx: g++
-            ver: 13
+          - cc: clang
+            cxx: clang++
+            ver: 21
             os: ubuntu-24.04
           - cc: gcc
             cxx: g++
@@ -61,21 +41,16 @@ jobs:
           sudo apt-get -qq update
           sudo apt-get install -y -qq pkg-config cmake
 
-      - name: Install Clang
+      - name: Install Clang ${{ matrix.compiler.ver }}
         if: startsWith(matrix.compiler.cxx, 'clang')
         run: |
           wget https://apt.llvm.org/llvm.sh
           chmod +x ./llvm.sh
           sudo ./llvm.sh ${{ matrix.compiler.ver }}
 
-      - name: Install GCC
-        if: matrix.compiler.cxx == 'g++' && matrix.compiler.ver == 14
-        run: sudo apt update && sudo apt install -y gcc-14
-
-      - name: Install fmt
-        run: |
-          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          brew install fmt
+      - name: Install GCC ${{ matrix.compiler.ver }}
+        if: matrix.compiler.cxx == 'g++'
+        run: sudo apt update && sudo apt install -y gcc-${{ matrix.compiler.ver }}
 
       - name: Build and test
         run: |
@@ -90,14 +65,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        osver: [13, 14, 15]
+        osver: [15, 26]
     steps:
       - uses: actions/checkout@v6
         with:
           submodules: true
 
-      - name: Install CMake & fmt
-        run: brew install pkg-config cmake fmt
+      - name: Install CMake
+        run: brew install pkg-config cmake
 
       - name: Build and test
         run: |

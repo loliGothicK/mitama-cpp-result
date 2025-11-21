@@ -19,10 +19,10 @@ jobs:
         compiler:
           - cc: clang
             cxx: clang++
-            ver: 17
+            ver: 21
           - cc: gcc
             cxx: g++
-            ver: 13
+            ver: 14
     env:
       CC: ${{ matrix.compiler.cc }}-${{ matrix.compiler.ver }}
       CXX: ${{ matrix.compiler.cxx }}-${{ matrix.compiler.ver }}

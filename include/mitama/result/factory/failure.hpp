@@ -5,6 +5,7 @@
 #include <mitama/result/detail/meta.hpp>
 
 #include <iostream>
+#include <string>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -475,12 +476,20 @@ template <class E>
 inline std::ostream&
 operator<<(std::ostream& os, const failure_t<E>& err)
 {
-  return os << fmt::format("failure({})", quote_str(err.get()));
+  return os << std::format("failure({})", quote_str(err.get()));
 }
 
 } // namespace mitama
 
 template <class T>
-struct fmt::formatter<mitama::failure_t<T>> : ostream_formatter
+struct std::formatter<mitama::failure_t<T>, char>
+    : std::formatter<std::string, char>
 {
+  template <class FormatContext>
+  auto format(const mitama::failure_t<T>& value, FormatContext& ctx) const
+  {
+    return std::formatter<std::string, char>::format(
+        std::format("failure({})", quote_str(value.get())), ctx
+    );
+  }
 };

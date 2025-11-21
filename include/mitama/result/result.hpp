@@ -9,8 +9,6 @@
 #include <mitama/result/factory/success.hpp>
 
 #include <cstddef>
-#include <fmt/core.h>
-#include <fmt/std.h>
 #include <functional>
 #include <memory>
 #include <source_location>
@@ -1367,7 +1365,7 @@ public:
       const std::source_location& loc = std::source_location::current()
   ) const&
   {
-    if constexpr (fmt::is_formattable<E>::value)
+    if constexpr (std::formattable<E, char>)
     {
       if (is_ok())
       {
@@ -1376,8 +1374,8 @@ public:
       else
       {
         PANIC(
-            "called `basic_result::unwrap()` on a value: `{}`",
-            std::get<failure_t<E>>(storage_), loc
+            loc, "called `basic_result::unwrap()` on a value: `{}`",
+            std::get<failure_t<E>>(storage_)
         );
       }
     }
@@ -1389,7 +1387,7 @@ public:
       }
       else
       {
-        PANIC("called `basic_result::unwrap()` on a value `failure(?)`", loc);
+        PANIC(loc, "called `basic_result::unwrap()` on a value `failure(?)`");
       }
     }
   }
@@ -1403,7 +1401,7 @@ public:
   constexpr std::conditional_t<is_mut_v<_mutability>, T&, force_add_const_t<T>&>
   unwrap(const std::source_location& loc = std::source_location::current()) &
   {
-    if constexpr (fmt::is_formattable<E>::value)
+    if constexpr (std::formattable<E, char>)
     {
       if (is_ok())
       {
@@ -1412,8 +1410,8 @@ public:
       else
       {
         PANIC(
-            "called `basic_result::unwrap()` on a value: `{}`",
-            std::get<failure_t<E>>(storage_), loc
+            loc, "called `basic_result::unwrap()` on a value: `{}`",
+            std::get<failure_t<E>>(storage_)
         );
       }
     }
@@ -1425,7 +1423,7 @@ public:
       }
       else
       {
-        PANIC("called `basic_result::unwrap()` on a value `failure_t(?)`", loc);
+        PANIC(loc, "called `basic_result::unwrap()` on a value `failure_t(?)`");
       }
     }
   }
@@ -1440,7 +1438,7 @@ public:
       const std::source_location& loc = std::source_location::current()
   ) const&
   {
-    if constexpr (fmt::is_formattable<T>::value)
+    if constexpr (std::formattable<T, char>)
     {
       if (is_err())
       {
@@ -1449,8 +1447,8 @@ public:
       else
       {
         PANIC(
-            "called `basic_result::unwrap_err()` on a value: `{}`",
-            std::get<success_t<T>>(storage_), loc
+            loc, "called `basic_result::unwrap_err()` on a value: `{}`",
+            std::get<success_t<T>>(storage_)
         );
       }
     }
@@ -1463,7 +1461,7 @@ public:
       else
       {
         PANIC(
-            "called `basic_result::unwrap_err()` on a value `success_t(?)`", loc
+            loc, "called `basic_result::unwrap_err()` on a value `success_t(?)`"
         );
       }
     }
@@ -1480,7 +1478,7 @@ public:
       const std::source_location& loc = std::source_location::current()
   ) &
   {
-    if constexpr (fmt::is_formattable<T>::value)
+    if constexpr (std::formattable<T, char>)
     {
       if (is_err())
       {
@@ -1489,8 +1487,8 @@ public:
       else
       {
         PANIC(
-            "called `basic_result::unwrap_err()` on a value: `{}`",
-            std::get<success_t<T>>(storage_), loc
+            loc, "called `basic_result::unwrap_err()` on a value: `{}`",
+            std::get<success_t<T>>(storage_)
         );
       }
     }
@@ -1503,8 +1501,8 @@ public:
       else
       {
         PANIC(
-            "called `basic_result::unwrap_err()` on a value `success_t(?)`)",
-            loc
+            loc,
+            "called `basic_result::unwrap_err()` on a value `success_t(?)`)"
         );
       }
     }
@@ -1523,7 +1521,7 @@ public:
   {
     if (is_err())
     {
-      PANIC("{}: {}", msg, unwrap_err(), loc);
+      PANIC(loc, "{}: {}", msg, unwrap_err());
     }
     else
     {
@@ -1544,7 +1542,7 @@ public:
   {
     if (is_err())
     {
-      PANIC("{}: {}", msg, unwrap_err(), loc);
+      PANIC(loc, "{}: {}", msg, unwrap_err());
     }
     else
     {
@@ -1565,7 +1563,7 @@ public:
   {
     if (is_ok())
     {
-      PANIC("{}: {}", msg, unwrap_err(), loc);
+      PANIC(loc, "{}: {}", msg, unwrap_err());
     }
     else
     {
@@ -1586,7 +1584,7 @@ public:
   {
     if (is_ok())
     {
-      PANIC("{}: {}", msg, unwrap_err(), loc);
+      PANIC(loc, "{}: {}", msg, unwrap_err());
     }
     else
     {

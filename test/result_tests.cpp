@@ -7,6 +7,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <format>
 #include <functional>
 #include <map>
 #include <memory>
@@ -658,9 +659,9 @@ TEST_CASE("format test", "[result][format]")
   {
     using namespace std::literals;
     auto res = mut_result<int, std::vector<int>>{ in_place_err, { 1, 2, 3 } };
-    REQUIRE(fmt::format("{}", res) == "failure([1, 2, 3])"s);
+    REQUIRE(std::format("{}", res) == "failure([1, 2, 3])"s);
     res = success(1);
-    REQUIRE(fmt::format("{}", res) == "success(1)"s);
+    REQUIRE(std::format("{}", res) == "success(1)"s);
   }
 }
 

@@ -5,6 +5,7 @@
 #include <mitama/result/detail/meta.hpp>
 
 #include <iostream>
+#include <string>
 #include <tuple>
 #include <type_traits>
 #include <utility>
@@ -630,7 +631,7 @@ template <class T>
 inline std::ostream&
 operator<<(std::ostream& os, const just_t<T>& j)
 {
-  return os << fmt::format("just({})", quote_str(j.get()));
+  return os << std::format("just({})", quote_str(j.get()));
 }
 
 template <class Target = void, class... Types>
@@ -685,6 +686,14 @@ public:
 } // namespace mitama
 
 template <class T>
-struct fmt::formatter<mitama::just_t<T>> : ostream_formatter
+struct std::formatter<mitama::just_t<T>, char>
+    : std::formatter<std::string, char>
 {
+  template <class FormatContext>
+  auto format(const mitama::just_t<T>& value, FormatContext& ctx) const
+  {
+    return std::formatter<std::string, char>::format(
+        std::format("just({})", quote_str(value.get())), ctx
+    );
+  }
 };

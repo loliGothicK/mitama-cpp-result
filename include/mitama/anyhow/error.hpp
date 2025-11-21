@@ -3,7 +3,6 @@
 #include <mitama/mitamagic/format.hpp>
 #include <mitama/result/factory/failure.hpp>
 
-#include <fmt/core.h>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -158,11 +157,11 @@ anyhow(E&& err) -> std::shared_ptr<mitama::anyhow::error>
   );
 }
 template <class... E>
-  requires(fmt::is_formattable<E>::value && ...)
+  requires(std::formattable<E, char> && ...)
 inline auto
-anyhow(fmt::format_string<E...> f, E&&... args)
+anyhow(std::format_string<E...> f, E&&... args)
 {
-  return anyhow(fmt::format(f, std::forward<E>(args)...));
+  return anyhow(std::format(f, std::forward<E>(args)...));
 }
 
 inline std::ostream&
@@ -184,9 +183,18 @@ failure(Args&&... args) -> mitama::failure_t<std::shared_ptr<Err>>
 } // namespace mitama::anyhow
 
 template <>
-struct fmt::formatter<std::shared_ptr<mitama::anyhow::error>>
-    : ostream_formatter
+struct std::formatter<std::shared_ptr<mitama::anyhow::error>, char>
+    : std::formatter<std::string, char>
 {
+  template <class FormatContext>
+  auto format(
+      const std::shared_ptr<mitama::anyhow::error>& err, FormatContext& ctx
+  ) const
+  {
+    return std::formatter<std::string, char>::format(
+        err ? err->what() : std::string{}, ctx
+    );
+  }
 };
 
 #define MITAMA_BAIL(...) \
