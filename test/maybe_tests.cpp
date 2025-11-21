@@ -57,10 +57,12 @@ TEST_CASE("unwrap()", "[maybe][unwrap]")
   }
   catch (const runtime_panic& p)
   {
-    REQUIRE(std::string_view{ p.what() }.starts_with(
-        "runtime panicked at 'called `maybe::unwrap()` on a "
-        "`nothing` value', "
-    ));
+    REQUIRE(
+        std::string_view{ p.what() }.starts_with(
+            "runtime panicked at 'called `maybe::unwrap()` on a "
+            "`nothing` value', "
+        )
+    );
   }
 }
 
@@ -77,9 +79,11 @@ TEST_CASE("expect()", "[maybe][expect]")
   }
   catch (const runtime_panic& p)
   {
-    REQUIRE(std::string_view{ p.what() }.starts_with(
-        "runtime panicked at 'the world is ending', "
-    ));
+    REQUIRE(
+        std::string_view{ p.what() }.starts_with(
+            "runtime panicked at 'the world is ending', "
+        )
+    );
   }
 }
 
@@ -1008,7 +1012,8 @@ TEST_CASE("format test", "[maybe][format]")
     using namespace std::literals;
     {
       std::stringstream ss;
-      ss << maybe<std::map<str, int>>(just(std::map<str, int>{ { "foo"s, 1 } })
+      ss << maybe<std::map<str, int>>(
+          just(std::map<str, int>{ { "foo"s, 1 } })
       );
       REQUIRE(ss.str() == "just({\"foo\": 1})"s);
     }

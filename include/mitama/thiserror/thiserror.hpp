@@ -60,8 +60,8 @@ public:
 
   ~error() override = default;
 
-  std::shared_ptr<anyhow::error> context(std::shared_ptr<anyhow::error> ctx
-  ) override
+  std::shared_ptr<anyhow::error>
+  context(std::shared_ptr<anyhow::error> ctx) override
   {
     return std::make_shared<anyhow::errors>(
         std::enable_shared_from_this<Self>::shared_from_this(), std::move(ctx)
@@ -107,11 +107,13 @@ struct fmt::formatter<mitama::thiserror::error<Fmt, Sources...>>
     // Check if reached the end of the range:
     if (it != end && *it != '}')
     {
-      throw format_error(fmt::format(
-          "invalid format for thiserror: (expected {{}}, found {{:{})",
-          std::string_view{ it,
-                            static_cast<std::size_t>(std::distance(it, end)) }
-      ));
+      throw format_error(
+          fmt::format(
+              "invalid format for thiserror: (expected {{}}, found {{:{})",
+              std::string_view{
+                  it, static_cast<std::size_t>(std::distance(it, end)) }
+          )
+      );
     }
 
     // Return an iterator past the end of the parsed range:

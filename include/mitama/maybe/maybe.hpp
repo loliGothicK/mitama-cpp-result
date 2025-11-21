@@ -163,8 +163,8 @@ class maybe_cloned_injector<maybe<T>>
 public:
   constexpr maybe<std::remove_reference_t<T>> cloned() const
   {
-    auto decay_copy = [](auto&& some
-                      ) -> std::remove_const_t<std::remove_reference_t<T>>
+    auto decay_copy =
+        [](auto&& some) -> std::remove_const_t<std::remove_reference_t<T>>
     { return std::forward<decltype(some)>(some); };
     const auto* self = static_cast<const maybe<T>*>(this);
     return self->is_just() ? maybe<std::remove_reference_t<T>>{ just(
@@ -471,11 +471,13 @@ public:
   constexpr auto map(F&& f, Args&&... args) &
   {
     using result_type = std::invoke_result_t<F&&, value_type&, Args&&...>;
-    return is_just()
-               ? maybe<result_type>{ just(std::invoke(
-                     std::forward<F>(f), unwrap(), std::forward<Args>(args)...
-                 )) }
-               : nothing;
+    return is_just() ? maybe<result_type>{ just(
+                           std::invoke(
+                               std::forward<F>(f), unwrap(),
+                               std::forward<Args>(args)...
+                           )
+                       ) }
+                     : nothing;
   }
 
   template <class F, class... Args>
@@ -483,11 +485,13 @@ public:
   constexpr auto map(F&& f, Args&&... args) const&
   {
     using result_type = std::invoke_result_t<F&&, const value_type&, Args&&...>;
-    return is_just()
-               ? maybe<result_type>{ just(std::invoke(
-                     std::forward<F>(f), unwrap(), std::forward<Args>(args)...
-                 )) }
-               : nothing;
+    return is_just() ? maybe<result_type>{ just(
+                           std::invoke(
+                               std::forward<F>(f), unwrap(),
+                               std::forward<Args>(args)...
+                           )
+                       ) }
+                     : nothing;
   }
 
   template <class F, class... Args>
@@ -495,10 +499,12 @@ public:
   constexpr auto map(F&& f, Args&&... args) &&
   {
     using result_type = std::invoke_result_t<F&&, value_type&&, Args&&...>;
-    return is_just() ? maybe<result_type>{ just(std::invoke(
-                           std::forward<F>(f), std::move(unwrap()),
-                           std::forward<Args>(args)...
-                       )) }
+    return is_just() ? maybe<result_type>{ just(
+                           std::invoke(
+                               std::forward<F>(f), std::move(unwrap()),
+                               std::forward<Args>(args)...
+                           )
+                       ) }
                      : nothing;
   }
 

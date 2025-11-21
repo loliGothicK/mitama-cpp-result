@@ -271,14 +271,18 @@ TEST_CASE("or_else_apply() test", "[result][or_else_apply]")
   REQUIRE(err2.or_else_apply(fn) == failure(3u));
 }
 
-TEMPLATE_TEST_CASE("is_convertible_result_with meta test", "[is_convertible_result_with][meta]",
-                    int, unsigned, std::string, std::vector<int>)
+TEMPLATE_TEST_CASE(
+    "is_convertible_result_with meta test",
+    "[is_convertible_result_with][meta]", int, unsigned, std::string,
+    std::vector<int>
+)
 {
   static_assert(is_convertible_result_with_v<
                 mitama::result<int, TestType>, mitama::failure_t<TestType>>);
-  static_assert(!is_convertible_result_with_v<
-                result<unsigned, std::vector<TestType>>,
-                mitama::failure_t<TestType>>);
+  static_assert(
+      !is_convertible_result_with_v<
+          result<unsigned, std::vector<TestType>>, mitama::failure_t<TestType>>
+  );
 }
 
 TEST_CASE("disj test", "[result][disj]")
@@ -600,8 +604,9 @@ TEST_CASE("format test", "[result][format]")
     using namespace std::literals;
     {
       std::stringstream ss;
-      ss << result<std::map<str, int>, int>(success(std::map<str, int>{
-          { "foo"s, 1 } }));
+      ss << result<std::map<str, int>, int>(
+          success(std::map<str, int>{ { "foo"s, 1 } })
+      );
       REQUIRE(ss.str() == "success({\"foo\": 1})"s);
     }
   }
@@ -621,8 +626,9 @@ TEST_CASE("format test", "[result][format]")
     using namespace std::literals;
     {
       std::stringstream ss;
-      ss << result<std::vector<std::tuple<int, int>>, int>(success(std::vector{
-          std::tuple{ 1, 1 }, std::tuple{ 1, 1 } }));
+      ss << result<std::vector<std::tuple<int, int>>, int>(
+          success(std::vector{ std::tuple{ 1, 1 }, std::tuple{ 1, 1 } })
+      );
       REQUIRE(ss.str() == "success([(1, 1), (1, 1)])"s);
     }
   }
@@ -787,9 +793,10 @@ SCENARIO("test for dangling indirect", "[result][indirect][dangling]")
     )
                         .as_ref()
                         .indirect();
-    REQUIRE(std::is_same_v<
-            decltype(indirect.unwrap()),
-            dangling<std::reference_wrapper<int>>&>);
+    REQUIRE(
+        std::is_same_v<
+            decltype(indirect.unwrap()), dangling<std::reference_wrapper<int>>&>
+    );
     // indirect.unwrap().transmute()
     // ^~~~~~~~~~~~~~~~~~~~~~~~~~ Undefined Behavior!
   }
@@ -818,7 +825,8 @@ TEST_CASE("incomplete type reference", "[result]")
 {
   static_assert(!is_complete_type<incomplete_type>::value);
   [[maybe_unused]] result<incomplete_type&, void> res =
-      success<incomplete_type&>(get_incomplete_type()
+      success<incomplete_type&>(
+          get_incomplete_type()
       ); // use incomplete_type& for result
 }
 

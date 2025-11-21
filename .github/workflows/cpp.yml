@@ -17,12 +17,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Install clang-format
+      - name: Install clang-format-21
         run: |
           wget https://apt.llvm.org/llvm.sh
           chmod +x ./llvm.sh
-          sudo ./llvm.sh 19
-          sudo apt-get install -y clang-format-19
+          sudo ./llvm.sh 21
+          sudo apt-get install -y clang-format-21
 
       - name: Install Cabin
         run: |
@@ -34,7 +34,7 @@ jobs:
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           cabin fmt --check --verbose
         env:
-          CABIN_FMT: clang-format-19
+          CABIN_FMT: clang-format-21
 
   lint:
     runs-on: ubuntu-24.04

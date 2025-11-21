@@ -84,10 +84,12 @@ public:
       const std::source_location& loc, fmt::format_string<Args...> f,
       Args&&... args
   ) noexcept
-      : std::runtime_error(fmt::format(
-            "runtime panicked at '{}', {}",
-            fmt::format(f, std::forward<Args>(args)...), loc
-        ))
+      : std::runtime_error(
+            fmt::format(
+                "runtime panicked at '{}', {}",
+                fmt::format(f, std::forward<Args>(args)...), loc
+            )
+        )
   {
   }
 };

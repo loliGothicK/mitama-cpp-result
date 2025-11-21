@@ -584,11 +584,27 @@ struct ma_expected
           std::is_copy_assignable<A>, std::is_copy_assignable<B>>>;
 };
 
-#define SP_MEM_TEST(_1, _2, _3, _4, _5, _6, _7, _8)                                                                                                                                      \
-  static_assert(cc_expected<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>::value == std::is_copy_constructible_v<Result<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>>); \
-  static_assert(ca_expected<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>::value == std::is_copy_assignable_v<Result<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>>);    \
-  static_assert(mc_expected<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>::value == std::is_move_constructible_v<Result<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>>); \
-  static_assert(ma_expected<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>::value == std::is_move_assignable_v<Result<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>>)
+#define SP_MEM_TEST(_1, _2, _3, _4, _5, _6, _7, _8)                            \
+  static_assert(                                                               \
+      cc_expected<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>::value \
+      == std::is_copy_constructible_v<                                         \
+          Result<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>>        \
+  );                                                                           \
+  static_assert(                                                               \
+      ca_expected<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>::value \
+      == std::is_copy_assignable_v<                                            \
+          Result<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>>        \
+  );                                                                           \
+  static_assert(                                                               \
+      mc_expected<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>::value \
+      == std::is_move_constructible_v<                                         \
+          Result<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>>        \
+  );                                                                           \
+  static_assert(                                                               \
+      ma_expected<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>::value \
+      == std::is_move_assignable_v<                                            \
+          Result<TestClass<_1, _2, _3, _4>, TestClass<_5, _6, _7, _8>>>        \
+  )
 
 SP_MEM_TEST(true, true, true, true, true, true, true, true);
 SP_MEM_TEST(true, true, true, true, true, true, true, false);
