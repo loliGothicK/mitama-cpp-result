@@ -9,16 +9,7 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    reviewers:
-      - LoliGothick
-    assignees:
-      - LoliGothick
   - package-ecosystem: "gitsubmodule"
     directory: "/"
     schedule:
       interval: "daily"
-    reviewers:
-      - LoliGothick
-    assignees:
-      - LoliGothick
-
