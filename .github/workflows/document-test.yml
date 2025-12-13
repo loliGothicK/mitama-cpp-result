@@ -49,7 +49,7 @@ jobs:
         run: ${{ env.CXX }} --version
 
       - name: Restore & Cache {fmt}
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         id: fmt-cache
         with:
           path: ${{ runner.temp }}/libs/fmt
