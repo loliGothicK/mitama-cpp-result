@@ -52,7 +52,7 @@ jobs:
       CC: ${{ matrix.compiler.cc }}-${{ matrix.compiler.ver }}
       CXX: ${{ matrix.compiler.cxx }}-${{ matrix.compiler.ver }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: true
 
@@ -92,7 +92,7 @@ jobs:
       matrix:
         osver: [14, 15, 26]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           submodules: true
 
